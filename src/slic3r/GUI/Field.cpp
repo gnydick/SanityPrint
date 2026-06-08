@@ -1320,14 +1320,10 @@ void Choice::BUILD()
             && m_list == nullptr) {
         m_is_editable = true;
         static Builder<choice_ctrl> builder1;
-        if ("filament_type" == m_opt_id)
-        {
-            temp = builder1.build(m_parent, wxID_ANY, wxString(""), wxDefaultPosition, size, 0, nullptr, wxCB_READONLY);
-        }
-        else
-        {
-            temp = builder1.build(m_parent, wxID_ANY, wxString(""), wxDefaultPosition, size, 0, nullptr, wxTE_PROCESS_ENTER);
-        }
+        // Open enums (gui_type f_enum_open) are meant to be typeable. filament_type used to be
+        // forced to wxCB_READONLY as a special case, which made it the only non-editable open
+        // enum and blocked entering custom/arbitrary filament types. Treat it like the rest.
+        temp = builder1.build(m_parent, wxID_ANY, wxString(""), wxDefaultPosition, size, 0, nullptr, wxTE_PROCESS_ENTER);
     }
     else {
 #ifdef UNDEIFNED__WXOSX__ // __WXOSX__ // BBS
