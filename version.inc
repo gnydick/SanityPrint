@@ -24,7 +24,32 @@ if(NOT DEFINED BBL_INTERNAL_TESTING)
 set(BBL_INTERNAL_TESTING "0")
 endif()
 if(NOT DEFINED CREALITYPRINT_VERSION)
+# This file is a placeholder that Creality's release build script rewrites with the
+# version generated from the git label (see the header comment above). Replicate that
+# here so a build checked out at a release tag (e.g. v7.1.1) reports the correct version
+# instead of the 7.0.0 placeholder. Overridable with -DCREALITYPRINT_VERSION=... and
+# skipped automatically when not building from a git working tree.
 set(CREALITYPRINT_VERSION "7.0.0")
+find_package(Git QUIET)
+if(GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/.git")
+    execute_process(
+        COMMAND ${GIT_EXECUTABLE} describe --tags --abbrev=0
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        OUTPUT_VARIABLE _cp_git_tag
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+        ERROR_QUIET)
+    if(_cp_git_tag MATCHES "^[vV]?([0-9]+\\.[0-9]+\\.[0-9]+)")
+        set(CREALITYPRINT_VERSION "${CMAKE_MATCH_1}")
+        # The internal build number (e.g. 4472 in the official V7.1.1.4472) is a CI counter
+        # that is NOT present in the public squashed source mirror (this repo has only ~46
+        # commits). Supply it via the BUILD_ID env var to reproduce an official build's
+        # full 4-part version string; without it the build is just the X.Y.Z from the tag.
+        if(DEFINED ENV{BUILD_ID} AND NOT "$ENV{BUILD_ID}" STREQUAL "")
+            set(CREALITYPRINT_VERSION "${CREALITYPRINT_VERSION}.$ENV{BUILD_ID}")
+        endif()
+    endif()
+endif()
+message(STATUS "CREALITYPRINT_VERSION resolved to ${CREALITYPRINT_VERSION}")
 endif()
 
 string(REGEX MATCH "^[0-9]+\\.[0-9]+\\.[0-9]+\\.([0-9]+)" CREALITYPRINT_VERSION_WITH_BUILD "${CREALITYPRINT_VERSION}")
