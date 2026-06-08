@@ -129,6 +129,18 @@ std::string FilamentTypeRegistry::base_type(const std::string& filament_type) co
     return {};
 }
 
+std::string FilamentTypeRegistry::effective_type(const std::string& filament_type) const
+{
+    ensure_loaded();
+    const std::string n = normalize(filament_type);
+    // A type the registry recognizes (built-in) keeps its own identity, so built-in behavior
+    // is preserved exactly; only unrecognized custom types fall through to their base.
+    if (classify(n) != Undefine || m_explicit_base.count(n) != 0)
+        return n;
+    const std::string base = base_type(filament_type);
+    return base.empty() ? n : base;
+}
+
 bool FilamentTypeRegistry::is_known(const std::string& filament_type) const
 {
     ensure_loaded();

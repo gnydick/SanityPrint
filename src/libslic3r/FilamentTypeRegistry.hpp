@@ -37,6 +37,12 @@ public:
     // else the longest known base that is a prefix of the (normalized) name, else "".
     std::string base_type(const std::string& filament_type) const;
 
+    // The key to use when matching type-specific behavior. A type the registry recognizes
+    // (a built-in: directly classified, or present in the explicit base map) returns itself,
+    // so built-in behavior is preserved exactly; an unrecognized custom type returns its
+    // inferred base so it inherits behavior. Returns a normalized (upper-case) string.
+    std::string effective_type(const std::string& filament_type) const;
+
     // True when the type is a directly-known built-in (exact match, case/space-insensitive).
     bool is_known(const std::string& filament_type) const;
 

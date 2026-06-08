@@ -5,6 +5,7 @@
 #include "Line.hpp"
 #include "PrintBase.hpp"
 #include "PrintConfig.hpp"
+#include "FilamentTypeRegistry.hpp"
 #include <boost/log/trivial.hpp>
 #include <cstddef>
 #include <vector>
@@ -64,11 +65,13 @@ struct Params
             return get_support_spots_adhesion_strength() * 2.0;
         }
 
-        if (filament_type == "PLA") {
+        // Resolve custom types to their base so e.g. "PETG-Pro" inherits PETG's adhesion.
+        const std::string ft = FilamentTypeRegistry::instance().effective_type(filament_type);
+        if (ft == "PLA") {
             return 0.02 * 1e6;
-        } else if (filament_type == "PET" || filament_type == "PETG") {
+        } else if (ft == "PET" || ft == "PETG") {
             return 0.3 * 1e6;
-        } else if (filament_type == "ABS" || filament_type == "ASA") {
+        } else if (ft == "ABS" || ft == "ASA") {
             return 0.1 * 1e6; //TODO do measurements
         } else { //PLA default value - defensive approach, PLA has quite low adhesion
             return 0.02 * 1e6;

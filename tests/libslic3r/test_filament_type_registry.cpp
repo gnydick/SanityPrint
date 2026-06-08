@@ -56,6 +56,21 @@ TEST_CASE("FilamentTypeRegistry: longest base wins (PCTG before PC)", "[Filament
     REQUIRE(r.base_type("PC-Custom") == "PC");
 }
 
+TEST_CASE("FilamentTypeRegistry effective_type: built-ins kept, customs collapse to base", "[FilamentTypeRegistry]")
+{
+    auto& r = FilamentTypeRegistry::instance();
+    // Built-ins keep their own identity, so their exact downstream behavior is preserved.
+    REQUIRE(r.effective_type("PLA")    == "PLA");
+    REQUIRE(r.effective_type("PETG")   == "PETG");
+    REQUIRE(r.effective_type("PLA-CF") == "PLA-CF");   // a known derived built-in, not collapsed
+    // Custom types collapse to their base so they inherit behavior.
+    REQUIRE(r.effective_type("PLA-Galaxy") == "PLA");
+    REQUIRE(r.effective_type("PETG-Pro")   == "PETG");
+    REQUIRE(r.effective_type("ABS-Custom") == "ABS");
+    // A type with no recognizable base resolves to itself (normalized).
+    REQUIRE(r.effective_type("zzz") == "ZZZ");
+}
+
 TEST_CASE("FilamentTypeRegistry: unknown and empty map to Undefine", "[FilamentTypeRegistry]")
 {
     auto& r = FilamentTypeRegistry::instance();
