@@ -42,9 +42,10 @@ They assume this machine's layout (see *Layout*); adjust paths if yours differs.
 2. **Cross-drive deps build fails at the patch step.** Source on `I:`, build on `D:` →
    `file(RELATIVE_PATH)` in `deps/CMakeLists.txt` returns an *absolute* path → `git apply
    --directory <abs>` fails with `error: invalid path` for OCCT / OpenCV / paho-mqtt.
-   **Fix:** the `deps/CMakeLists.txt` cross-drive patch (branch `fix/cross-drive-deps-build`,
-   commit `69ad4a2f`): disable the `--directory` flag when `BINARY_DIR_REL` is absolute.
-   Alternatively build deps on the *same drive* as the source.
+   **Fix:** configure the deps with **`-DDEP_CROSS_DRIVE_BUILD=ON`** — a CMake option in
+   `deps/CMakeLists.txt` (default OFF) that applies each dep's patches from its own source
+   dir, without `--directory`. `scripts/build_deps.ps1` passes it. Alternatively, build the
+   deps on the *same drive* as the source and leave the option OFF.
 
 3. **ATL is required (for breakpad).** VS Build Tools' `--includeRecommended` does NOT
    include ATL, so breakpad fails: `Cannot open include file: 'atlbase.h'`. Install the
@@ -106,7 +107,7 @@ cmake -S <repo>\deps -B D:\cpbuild\deps -G "Visual Studio 17 2022" -A x64 `
       -DDESTDIR=D:\cpbuild\OrcaSlicer_dep -DCMAKE_BUILD_TYPE=Release -DDEP_DEBUG=OFF -DDEPS_ARCH=x64
 cmake --build D:\cpbuild\deps --config Release --target deps -- -m
 ```
-Requires the **cross-drive patch** (Gotcha 2) and **ATL** (Gotcha 3). If a single dep
+Requires `-DDEP_CROSS_DRIVE_BUILD=ON` (Gotcha 2) and **ATL** (Gotcha 3). If a single dep
 fails under `-m`, it can interrupt sibling downloads (collateral "invalid path" errors) —
 kill workers (Gotcha 6), delete the incomplete `dep_<name>-prefix` dirs, and rebuild just
 those targets (`cmake --build D:\cpbuild\deps --target dep_OCCT dep_OpenCV ...`).

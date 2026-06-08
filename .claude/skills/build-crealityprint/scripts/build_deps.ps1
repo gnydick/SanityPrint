@@ -33,7 +33,7 @@ Log ("nmake = " + (Get-Command nmake -ErrorAction SilentlyContinue).Source)
 # 3. Configure deps
 $src='I:\IdeaProjects\CrealityPrint\deps'; $bld='D:\cpbuild\deps'; $dest='D:\cpbuild\OrcaSlicer_dep'
 Log "CONFIGURE -> $bld  DESTDIR=$dest"
-& cmake -S $src -B $bld -G "Visual Studio 17 2022" -A x64 -DDESTDIR="$dest" -DCMAKE_BUILD_TYPE=Release -DDEP_DEBUG=OFF -DORCA_INCLUDE_DEBUG_INFO=OFF -DDEPS_ARCH=x64 *>> $log
+& cmake -S $src -B $bld -G "Visual Studio 17 2022" -A x64 -DDESTDIR="$dest" -DCMAKE_BUILD_TYPE=Release -DDEP_DEBUG=OFF -DORCA_INCLUDE_DEBUG_INFO=OFF -DDEPS_ARCH=x64 -DDEP_CROSS_DRIVE_BUILD=ON *>> $log
 $cfg=$LASTEXITCODE; Log "configure exit=$cfg"
 if($cfg -ne 0){ Set-Content $done "fail-configure-$cfg"; Log "########## DEPS ABORTED (configure) ##########"; exit $cfg }
 

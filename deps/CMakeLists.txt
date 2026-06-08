@@ -342,6 +342,14 @@ if(NOT FREETYPE_FOUND)
     set(FREETYPE_PKG "dep_FREETYPE") 
 endif()
 
+# Opt-in (default OFF): apply each dependency's patches from its own source directory
+# instead of via `git apply --directory <reldir>`. Required when the deps build directory
+# is on a different drive than the source (e.g. source on I: and build on D: on Windows):
+# file(RELATIVE_PATH) below then returns an absolute path, and `git apply --directory <abs>`
+# fails with "error: invalid path" for deps that carry patches (OCCT, OpenCV, paho-mqtt).
+# Leave OFF to keep upstream behavior unchanged.
+option(DEP_CROSS_DRIVE_BUILD "Apply dep patches without 'git apply --directory' (needed when the deps build dir is on a different drive than the source)" OFF)
+
 execute_process(
     COMMAND ${GIT_EXECUTABLE} rev-parse --is-inside-work-tree
     RESULT_VARIABLE REV_PARSE_RESULT
@@ -355,6 +363,11 @@ if((REV_PARSE_RESULT EQUAL 0) AND (REV_PARSE_OUTPUT STREQUAL "true"))
     # Find relative path from root to source used for adjusting patch command
     file(RELATIVE_PATH BINARY_DIR_REL  ${CMAKE_SOURCE_DIR}/.. ${CMAKE_BINARY_DIR})
 endif ()
+
+if(DEP_CROSS_DRIVE_BUILD)
+    message(STATUS "deps: DEP_CROSS_DRIVE_BUILD=ON -> applying patches from each dep's source dir (no --directory)")
+    set(IN_GIT_REPO FALSE)
+endif()
 
 
 include(FFmpeg/ffmpeg.cmake)
