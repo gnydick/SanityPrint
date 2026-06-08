@@ -18,6 +18,24 @@ way. Read the **Gotchas** section first — most build failures map to one of th
 Helper scripts live in `scripts/` next to this file. They encode the exact steps below.
 They assume this machine's layout (see *Layout*); adjust paths if yours differs.
 
+## Source & what's already in-tree
+
+The build enablers are committed in this repo, so a clean checkout of `main` builds with no
+extra patching:
+- `version.inc` derives the product version from the git tag + `BUILD_ID` (see *Versioning*).
+- `deps/CMakeLists.txt` carries the opt-in `DEP_CROSS_DRIVE_BUILD` option (Gotcha 2).
+- `.run/CrealityPrint.run.xml` (run config) and `.idea/cmake.xml` (CLion profile) are tracked.
+
+The build work lives on **`main`** (the fork's default branch). Remotes: `origin` = your fork,
+`upstream` = `CrealityOfficial/CrealityPrint`; pull upstream updates with
+`git fetch upstream && git merge upstream/master`.
+
+The compiled binary is **byte-identical to the official 7.1.1 release** — `src/`, `xs/`, and
+`resources/` match the `v7.1.1` tag exactly. The only differences (the version string, the
+"Alpha" tag, and which cloud server it talks to) come from Creality's private release
+configuration, reproduced here via `BUILD_ID` + `-DPROJECT_VERSION_EXTRA=Release` (see
+*Versioning*) — not from any code change.
+
 ## Layout (this machine)
 
 | Thing | Path |
