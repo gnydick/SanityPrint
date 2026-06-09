@@ -5,6 +5,7 @@
 #include "format.hpp"
 #include "libslic3r/Config.hpp"
 #include "libslic3r/Model.hpp"
+#include "libslic3r/FilamentTypeRegistry.hpp"
 #include "libslic3r/PresetBundle.hpp"
 #include "MsgDialog.hpp"
 #include "libslic3r/PrintConfig.hpp"
@@ -159,7 +160,8 @@ void ConfigManipulation::check_chamber_temperature(DynamicPrintConfig* config)
    bool support_chamber_temp_control=GUI::wxGetApp().preset_bundle->printers.get_selected_preset().config.opt_bool("support_chamber_temp_control");
     if (support_chamber_temp_control&&config->has("chamber_temperatures")) {
         std::string filament_type = config->option<ConfigOptionStrings>("filament_type")->get_at(0);
-        auto iter = recommend_temp_map.find(filament_type);
+        // Resolve custom types to their base so e.g. "PLA-Galaxy" inherits PLA's safe chamber temp.
+        auto iter = recommend_temp_map.find(FilamentTypeRegistry::instance().effective_type(filament_type));
         if (iter!=recommend_temp_map.end()) {
             if (iter->second < config->option<ConfigOptionInts>("chamber_temperatures")->get_at(0)) {
                 wxString msg_text = wxString::Format(_L("Current chamber temperature is higher than the material's safe temperature,it may result in material softening and clogging.The maximum safe temperature for the material is %d"), iter->second);

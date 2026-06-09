@@ -6,6 +6,7 @@
 #include "libslic3r/PrintConfig.hpp"
 #include "libslic3r/Utils.hpp"
 #include "libslic3r/Model.hpp"
+#include "libslic3r/FilamentTypeRegistry.hpp"
 #include "libslic3r/GCode/GCodeProcessor.hpp"
 #include "slic3r/GUI/PartPlate.hpp"
 #include "WipeTowerDialog.hpp"
@@ -1903,7 +1904,7 @@ void Tab::on_value_change(const std::string& opt_key, const boost::any& value)
             if (filament)
             {
                 std::string filament_type = filament->config.option<ConfigOptionStrings>("filament_type")->values[0];
-                support_TPU = filament_type == "PLA" && has_filaments({ "TPU", "TPU-AMS" });
+                support_TPU = FilamentTypeRegistry::instance().effective_type(filament_type) == "PLA" && has_filaments({ "TPU", "TPU-AMS" });
             }
         }
 
@@ -1978,7 +1979,7 @@ void Tab::on_value_change(const std::string& opt_key, const boost::any& value)
             if (filament)
             {
                 std::string filament_type = filament->config.option<ConfigOptionStrings>("filament_type")->values[0];
-                support_TPU = filament_type == "PLA" && has_filaments({ "TPU", "TPU-AMS" });
+                support_TPU = FilamentTypeRegistry::instance().effective_type(filament_type) == "PLA" && has_filaments({ "TPU", "TPU-AMS" });
             }
         }
 

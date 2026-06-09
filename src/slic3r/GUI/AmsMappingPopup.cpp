@@ -3,6 +3,7 @@
 
 #include "libslic3r/Utils.hpp"
 #include "libslic3r/Thread.hpp"
+#include "libslic3r/FilamentTypeRegistry.hpp"
 #include "GUI.hpp"
 #include "GUI_App.hpp"
 #include "GUI_Preview.hpp"
@@ -395,7 +396,15 @@ void AmsMapingPopup::set_tag_texture(std::string texture)
 
 bool AmsMapingPopup::is_match_material(std::string material)
 {
-    return m_tag_material == material ? true : false;
+    if (m_tag_material == material)
+        return true;
+    // A custom type maps to a slot loaded with its base type (and vice versa): e.g. a
+    // "PLA-Galaxy" target matches a "PLA" tray. Built-ins with distinct effective types
+    // (PLA vs PLA-CF) still do not cross-match, so existing behavior is preserved.
+    if (m_tag_material.empty() || material.empty())
+        return false;
+    auto& reg = FilamentTypeRegistry::instance();
+    return reg.effective_type(m_tag_material) == reg.effective_type(material);
 }
 
 

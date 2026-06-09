@@ -3,6 +3,7 @@
 #include "ModelObject.hpp"
 #include "Arrange.hpp"
 #include "ModelVolume.hpp"
+#include "libslic3r/FilamentTypeRegistry.hpp"
 
 namespace Slic3r {
 
@@ -11,14 +12,17 @@ double getadhesionCoeff(const ModelVolumePtrs objectVolumes)
 {
     double adhesionCoeff = 1;
     for (const ModelVolume* modelVolume : objectVolumes) {
-        if (Model::extruderParamsMap.find(modelVolume->extruder_id()) != Model::extruderParamsMap.end())
-            if (Model::extruderParamsMap.at(modelVolume->extruder_id()).materialName == "PETG" ||
-                Model::extruderParamsMap.at(modelVolume->extruder_id()).materialName == "PCTG") {
+        if (Model::extruderParamsMap.find(modelVolume->extruder_id()) != Model::extruderParamsMap.end()) {
+            // Resolve custom types to their base so e.g. "PETG-Pro" inherits PETG's adhesion.
+            const std::string matName = FilamentTypeRegistry::instance().effective_type(
+                Model::extruderParamsMap.at(modelVolume->extruder_id()).materialName);
+            if (matName == "PETG" || matName == "PCTG") {
                 adhesionCoeff = 2;
             }
-            else if (Model::extruderParamsMap.at(modelVolume->extruder_id()).materialName == "TPU") {
+            else if (matName == "TPU") {
                 adhesionCoeff = 0.5;
             }
+        }
     }
     return adhesionCoeff;
 }

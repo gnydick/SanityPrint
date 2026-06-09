@@ -1,5 +1,6 @@
 #include "Model.hpp"
 #include "BuildVolume.hpp"
+#include "libslic3r/FilamentTypeRegistry.hpp"
 #include "Format/AMF.hpp"
 #include "Format/svg.hpp"
 #include "GCodeWriter.hpp"
@@ -1422,15 +1423,19 @@ double Model::getThermalLength(const ModelVolume* modelVolumePtr) {
     double thermalLength = 200.;
     auto aa = modelVolumePtr->extruder_id();
     if (Model::extruderParamsMap.find(aa) != Model::extruderParamsMap.end()) {
-        if (Model::extruderParamsMap.at(aa).materialName == "ABS" ||
-            Model::extruderParamsMap.at(aa).materialName == "PA-CF" ||
-            Model::extruderParamsMap.at(aa).materialName == "PET-CF") {
+        // Resolve through the registry so a custom type inherits its base's thermal length
+        // (e.g. "ABS-MyBrand" -> ABS). effective_type keeps recognized built-ins as themselves
+        // (incl. derived ones like PA-CF, which differs from PA here), so the existing
+        // per-type values are preserved exactly.
+        const std::string matName = FilamentTypeRegistry::instance().effective_type(
+            Model::extruderParamsMap.at(aa).materialName);
+        if (matName == "ABS" || matName == "PA-CF" || matName == "PET-CF") {
             thermalLength = 100;
         }
-        if (Model::extruderParamsMap.at(aa).materialName == "PC") {
+        if (matName == "PC") {
             thermalLength = 40;
         }
-        if (Model::extruderParamsMap.at(aa).materialName == "TPU") {
+        if (matName == "TPU") {
             thermalLength = 1000;
         }
 

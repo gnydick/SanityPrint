@@ -11,6 +11,7 @@
 #include "format.hpp"
 #include "libslic3r_version.h"
 #include "libslic3r/CrealityVersion.hpp"
+#include "libslic3r/FilamentTypeRegistry.hpp"
 #include "Downloader.hpp"
 #include <string>
 #include <wx/colour.h>
@@ -6314,40 +6315,44 @@ bool UpdateParamPackage(pt::ptree v,json& profile_json,json& cache_json,json& ma
                         json_out["compatible_printers"] = compatible_printers_array;
                         if (json_out.contains("filament_type")) {
                             auto filament_type = json_out["filament_type"].get<std::string>();
-                            if(filament_type=="PLA" || filament_type=="PLA-CF")
+                            // Resolve custom types to their base so e.g. a user "PLA-Galaxy" inherits the
+                            // PLA filament profile. effective_type keeps built-ins (incl. derived ones such
+                            // as PLA-CF) as themselves, so the explicit cases below still match exactly.
+                            const std::string filament_type_eff = FilamentTypeRegistry::instance().effective_type(filament_type);
+                            if(filament_type_eff=="PLA" || filament_type_eff=="PLA-CF")
                             {
                                 json_out["inherits"]            = "fdm_filament_pla";
-                            }else if(filament_type=="PETG"||filament_type=="PETG-CF")
+                            }else if(filament_type_eff=="PETG"||filament_type_eff=="PETG-CF")
                             {
                                 json_out["inherits"]            = "fdm_filament_petg";
-                            }else if(filament_type=="TPU")
+                            }else if(filament_type_eff=="TPU")
                             {
                                 json_out["inherits"]            = "fdm_filament_tpu";
-                            }else if(filament_type=="ABS")
+                            }else if(filament_type_eff=="ABS")
                             {
                                 json_out["inherits"]            = "fdm_filament_abs";
-                            }else if(filament_type=="ASA")
+                            }else if(filament_type_eff=="ASA")
                             {
                                 json_out["inherits"]            = "fdm_filament_asa";
-                            }else if(filament_type=="PP")
+                            }else if(filament_type_eff=="PP")
                             {
                                 json_out["inherits"]            = "fdm_filament_pp";
-                            }else if(filament_type=="PPS" || filament_type=="PPS-CF")
+                            }else if(filament_type_eff=="PPS" || filament_type_eff=="PPS-CF")
                             {
                                 json_out["inherits"]            = "fdm_filament_pps";
-                            }else if(filament_type=="PET" || filament_type=="PET-CF")
+                            }else if(filament_type_eff=="PET" || filament_type_eff=="PET-CF")
                             {
                                 json_out["inherits"]            = "fdm_filament_pet";
-                            }else if(filament_type=="PC")
+                            }else if(filament_type_eff=="PC")
                             {
                                 json_out["inherits"]            = "fdm_filament_pc";
-                            }else if(filament_type == "PA" || filament_type == "PA6" || filament_type == "PA6-CF" || filament_type == "PA-CF" || filament_type == "PAHT" || filament_type == "PAHT-CF")
+                            }else if(filament_type_eff == "PA" || filament_type_eff == "PA6" || filament_type_eff == "PA6-CF" || filament_type_eff == "PA-CF" || filament_type_eff == "PAHT" || filament_type_eff == "PAHT-CF")
                             {
                                 json_out["inherits"]            = "fdm_filament_pa";
-                            }else if(filament_type=="HIPS")
+                            }else if(filament_type_eff=="HIPS")
                             {
                                 json_out["inherits"]            = "fdm_filament_hips";
-                            }else if(filament_type=="BVOH")
+                            }else if(filament_type_eff=="BVOH")
                             {
                                 json_out["inherits"]            = "fdm_filament_common";
                                 if(!json_out.contains("filament_adhesiveness_category"))
@@ -12593,12 +12598,14 @@ bool is_support_filament(int extruder_id, bool strict_check)
     if (filament == nullptr) return false;
 
     std::string filament_type = filament->config.option<ConfigOptionStrings>("filament_type")->values[0];
+    // Resolve custom types to their base so e.g. "PLA-Galaxy" is treated like PLA here.
+    const std::string filament_type_eff = FilamentTypeRegistry::instance().effective_type(filament_type);
 
     Slic3r::ConfigOptionBools* support_option = dynamic_cast<Slic3r::ConfigOptionBools*>(filament->config.option("filament_is_support"));
 
-    if (!strict_check && (filament_type == "PETG" || filament_type == "PLA")) {
+    if (!strict_check && (filament_type_eff == "PETG" || filament_type_eff == "PLA")) {
         std::vector<string> model_filaments;
-        if (filament_type == "PETG")
+        if (filament_type_eff == "PETG")
             model_filaments.emplace_back("PLA");
         else {
             model_filaments = { "PETG", "TPU", "TPU-AMS" };

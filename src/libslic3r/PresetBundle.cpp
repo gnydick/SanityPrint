@@ -4,6 +4,7 @@
 #include "libslic3r.h"
 #include "Utils.hpp"
 #include "Model.hpp"
+#include "FilamentTypeRegistry.hpp"
 #include "format.hpp"
 #include "libslic3r_version.h"
 
@@ -1982,8 +1983,15 @@ const int PresetBundle::get_required_hrc_by_filament_type(const std::string& fil
     auto iter = filament_type_to_hrc.find(filament_type);
     if (iter != filament_type_to_hrc.end())
         return iter->second;
-    else
-        return 0;
+    // A custom/unknown type inherits its base type's nozzle-hardness requirement
+    // (e.g. "PA-MyBrand" -> PA). Built-ins are unaffected (handled by the exact match above).
+    const std::string effective = FilamentTypeRegistry::instance().effective_type(filament_type);
+    if (effective != filament_type) {
+        iter = filament_type_to_hrc.find(effective);
+        if (iter != filament_type_to_hrc.end())
+            return iter->second;
+    }
+    return 0;
 }
 
 //BBS: add project embedded preset logic
