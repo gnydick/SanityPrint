@@ -272,7 +272,7 @@ static int show_update_ready_dialog_guarded(wxWindow* parent)
 
 static fs::path get_update_state_path()
 {
-    std::string current_version = std::string(CREALITYPRINT_VERSION);
+    std::string current_version = std::string(SANITYPRINT_VERSION);
     std::string cache_dir = AppUpdater::get_cache_dir(current_version);
     return fs::path(cache_dir) / "update_state.json";
 }
@@ -1038,7 +1038,7 @@ static bool download_file_with_check(const std::string& url, const boost::filesy
     Slic3r::Http::get(url)
         .on_error([&](std::string body, std::string error, unsigned http_status) {
             (void)body;
-            BOOST_LOG_TRIVIAL(error) << "[CrealityPrint Update]download failed: " << url << " status " << http_status << " error " << error;
+            BOOST_LOG_TRIVIAL(error) << "[SanityPrint Update]download failed: " << url << " status " << http_status << " error " << error;
         })
         .on_complete([&](std::string body, unsigned) {
             try {
@@ -1048,7 +1048,7 @@ static bool download_file_with_check(const std::string& url, const boost::filesy
                 fs::rename(tmp_path, target_path);
                 ok = true;
             } catch (const std::exception& e) {
-                BOOST_LOG_TRIVIAL(error) << "[CrealityPrint Update]write file failed: " << target_path.string() << " reason " << e.what();
+                BOOST_LOG_TRIVIAL(error) << "[SanityPrint Update]write file failed: " << target_path.string() << " reason " << e.what();
             }
         })
         .perform_sync();
@@ -1060,7 +1060,7 @@ static bool download_file_with_check(const std::string& url, const boost::filesy
         if (expected_size > 0) {
             uintmax_t size = fs::file_size(target_path);
             if (size != static_cast<uintmax_t>(expected_size)) {
-                BOOST_LOG_TRIVIAL(error) << "[CrealityPrint Update]size mismatch for " << target_path.string() << " expected " << expected_size << " got " << size;
+                BOOST_LOG_TRIVIAL(error) << "[SanityPrint Update]size mismatch for " << target_path.string() << " expected " << expected_size << " got " << size;
                 fs::remove(target_path);
                 return false;
             }
@@ -1068,18 +1068,18 @@ static bool download_file_with_check(const std::string& url, const boost::filesy
         if (!expected_sha1.empty()) {
             std::string actual = sha1_hex_of_file(target_path);
             if (actual.empty()) {
-                BOOST_LOG_TRIVIAL(error) << "[CrealityPrint Update]sha1 compute failed for " << target_path.string();
+                BOOST_LOG_TRIVIAL(error) << "[SanityPrint Update]sha1 compute failed for " << target_path.string();
                 fs::remove(target_path);
                 return false;
             }
             if (!boost::iequals(actual, expected_sha1)) {
-                BOOST_LOG_TRIVIAL(error) << "[CrealityPrint Update]sha1 mismatch for " << target_path.string() << " expected " << expected_sha1 << " got " << actual;
+                BOOST_LOG_TRIVIAL(error) << "[SanityPrint Update]sha1 mismatch for " << target_path.string() << " expected " << expected_sha1 << " got " << actual;
                 fs::remove(target_path);
                 return false;
             }
         }
     } catch (const std::exception& e) {
-        BOOST_LOG_TRIVIAL(error) << "[CrealityPrint Update]post-check failed for " << target_path.string() << " reason " << e.what();
+        BOOST_LOG_TRIVIAL(error) << "[SanityPrint Update]post-check failed for " << target_path.string() << " reason " << e.what();
         return false;
     }
 
@@ -1092,7 +1092,7 @@ static bool get_local_update_work_dir(wxString& out_dir)
     wxString local_appdata;
     if (!wxGetEnv("LOCALAPPDATA", &local_appdata) || local_appdata.IsEmpty())
         return false;
-    wxFileName updater_dest_dir(local_appdata, "crealityprint_squirrel");
+    wxFileName updater_dest_dir(local_appdata, "sanityprint_squirrel");
     wxString updater_dest_dir_path = updater_dest_dir.GetFullPath();
     if (!wxDirExists(updater_dest_dir_path)) {
         if (!wxFileName::Mkdir(updater_dest_dir_path, wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL))
@@ -1297,7 +1297,7 @@ void GUI_App::toggle_show_gcode_window()
     app_config->set_bool("show_gcode_window", m_show_gcode_window);
 }
 #ifdef _WIN32
-static std::list<HWND> l_creality_print_hwnds;
+static std::list<HWND> l_sanity_print_hwnds;
 static BOOL CALLBACK EnumWindowsProc(_In_ HWND   hwnd, _In_ LPARAM lParam)
 {
 		//checks for other instances of prusaslicer, if found brings it to front and return false to stop enumeration and quit this instance
@@ -1315,7 +1315,7 @@ static BOOL CALLBACK EnumWindowsProc(_In_ HWND   hwnd, _In_ LPARAM lParam)
 			return true;
 		std::wstring classNameString(className);
 		std::wstring wndTextString(wndText);
-		if (wndTextString.find(L"CrealityPrint") != std::wstring::npos && classNameString == L"wxWindowNR") {
+		if (wndTextString.find(L"SanityPrint") != std::wstring::npos && classNameString == L"wxWindowNR") {
 			//check if other instances has same instance hash
 			//if not it is not same version(binary) as this version 
 			HANDLE   handle = GetProp(hwnd, L"Instance_Hash_Minor");
@@ -1326,11 +1326,11 @@ static BOOL CALLBACK EnumWindowsProc(_In_ HWND   hwnd, _In_ LPARAM lParam)
 			other_instance_hash_major = PtrToUint(handle);
 			other_instance_hash_major = other_instance_hash_major << 32;
 			other_instance_hash += other_instance_hash_major;
-            //All CrealityPrint instances send
+            //All SanityPrint instances send
 			//if(my_instance_hash == other_instance_hash) 
 			{
 				BOOST_LOG_TRIVIAL(debug) << "win enum - found correct instance";
-				l_creality_print_hwnds.push_back(hwnd);
+				l_sanity_print_hwnds.push_back(hwnd);
 				return true;
 			}
 			BOOST_LOG_TRIVIAL(debug) << "win enum - found wrong instance";
@@ -1387,9 +1387,9 @@ bool GUI_App::send_app_message(const std::string& msg,bool bforce)
     return true;
 #endif     
 #ifdef _WIN32
-    l_creality_print_hwnds.clear();
+    l_sanity_print_hwnds.clear();
     EnumWindows(EnumWindowsProc, 0);
-    if (!l_creality_print_hwnds.empty()) {
+    if (!l_sanity_print_hwnds.empty()) {
         std::wstring wstr = boost::nowide::widen(msg);
         std::unique_ptr<LPWSTR> command_line_args = std::make_unique<LPWSTR>(const_cast<LPWSTR>(wstr.c_str()));
         /*LPWSTR command_line_args = new wchar_t[wstr.size() + 1];
@@ -1404,7 +1404,7 @@ bool GUI_App::send_app_message(const std::string& msg,bool bforce)
         data_to_send.dwData = 1;
         data_to_send.cbData = sizeof(TCHAR) * (wcslen(*command_line_args.get()) + 1);
         data_to_send.lpData = *command_line_args.get();
-        for(auto hwnd : l_creality_print_hwnds)
+        for(auto hwnd : l_sanity_print_hwnds)
         {
             if(hwnd != mainframe->GetHWND())
             {
@@ -1650,8 +1650,8 @@ void GUI_App::post_init()
                 plater_->select_view_3D("3D");
                 wxArrayString input_files;
 #if AUTO_CONVERT_3MF
-                //(1) 3mf-to-3mf, format like this: CrealityPrint.exe convert_3mf "input_file.3mf" "printer_name" "output_file"
-                //(2) stl-to-3mf, format like this: CrealityPrint.exe convert_3mf "stl_dir" "printer_name" "output_file"
+                //(1) 3mf-to-3mf, format like this: SanityPrint.exe convert_3mf "input_file.3mf" "printer_name" "output_file"
+                //(2) stl-to-3mf, format like this: SanityPrint.exe convert_3mf "stl_dir" "printer_name" "output_file"
 
                 // 检查第2个参数是否是目录
                 wxString firstArg = from_u8(this->init_params->input_files[1]);
@@ -2006,7 +2006,7 @@ GUI_App::GUI_App(bool enable_test /*= false*/)
 	, m_other_instance_message_handler(std::make_unique<OtherInstanceMessageHandler>())
     , m_enable_test(enable_test)
 {
-	//app config initializes early becasuse it is used in instance checking in CrealityPrint.cpp
+	//app config initializes early becasuse it is used in instance checking in SanityPrint.cpp
     this->init_app_config();
     Test::Init(enable_test);
     this->init_download_path();
@@ -2797,9 +2797,9 @@ static boost::optional<Semver> parse_semver_from_ini(std::string path)
     std::stringstream buffer;
     buffer << stream.rdbuf();
     std::string body = buffer.str();
-    size_t start = body.find("CrealityPrint ");
+    size_t start = body.find("SanityPrint ");
     if (start == std::string::npos) {
-        start = body.find("CrealityPrint ");
+        start = body.find("SanityPrint ");
         if (start == std::string::npos)
             return boost::none;
     }
@@ -2840,7 +2840,7 @@ void GUI_App::init_webview_runtime()
 #endif
     // Check WebView Runtime
     if (!WebView::CheckWebViewRuntime()) {
-        int nRet = wxMessageBox(_L("Creality Print requires the Microsoft WebView2 Runtime to operate certain features.\nClick Yes to install it now."),
+        int nRet = wxMessageBox(_L("Sanity Print requires the Microsoft WebView2 Runtime to operate certain features.\nClick Yes to install it now."),
                                 _L("WebView2 Runtime"), wxYES_NO);
         if (nRet == wxYES) {
             WebView::DownloadAndInstallWebViewRuntime();
@@ -2860,7 +2860,7 @@ void GUI_App::reinstall_webview_runtime()
 {
     // Check WebView Runtime
     int nRet = wxMessageBox(
-        _L("Creality Print requires the Microsoft WebView2 Runtime,But it has been found that the abnormal operation of Microsoft WebView2 may be related to the installation of Microsoft Edge. \nClick the Yes to reinstall Microsoft Edge"),
+        _L("Sanity Print requires the Microsoft WebView2 Runtime,But it has been found that the abnormal operation of Microsoft WebView2 may be related to the installation of Microsoft Edge. \nClick the Yes to reinstall Microsoft Edge"),
         _L("WebView2 Runtime"), wxYES_NO);
     if (nRet == wxYES) {
         //const bool reinstall_ok = WebView::ReInstallWebViewRuntime();
@@ -2902,7 +2902,7 @@ void GUI_App::reinstall_webview_runtime()
         wxString restart_cmd = wxString::Format("\"%s\"", exe_path);
         long     pid = wxExecute(restart_cmd, wxEXEC_ASYNC);
         if (pid <= 0)
-            BOOST_LOG_TRIVIAL(error) << "[WebViewRuntime] Failed to relaunch Creality Print after reinstall.";
+            BOOST_LOG_TRIVIAL(error) << "[WebViewRuntime] Failed to relaunch Sanity Print after reinstall.";
 
         if (mainframe)
             mainframe->Close(true);
@@ -2962,7 +2962,7 @@ void GUI_App::init_app_config()
             boost::filesystem::create_directory(data_dir_path);
         }
         try {
-            if (std::string(CREALITYPRINT_VERSION_MAJOR) == "7" && !Slic3r::data_dir().empty() &&
+            if (std::string(SANITYPRINT_VERSION_MAJOR) == "7" && !Slic3r::data_dir().empty() &&
                 fs::is_empty(curUserForder) && boost::filesystem::exists(lastAppUserForder)) {
                 if (!boost::filesystem::exists(curUserForder))
                     boost::filesystem::create_directories(curUserForder);
@@ -3211,7 +3211,7 @@ std::map<std::string, std::string> GUI_App::get_extra_header()
                                                         {"__CXY_APP_CH_", "creality"},
                                                         {"__CXY_OS_LANG_", I18nToLangaugeIndex(language.Lower().ToStdString())},
                                                         {"__CXY_DUID_", GetMACAddress()}};
-    extra_headers.emplace("__CXY_APP_VER_", CREALITYPRINT_VERSION);
+    extra_headers.emplace("__CXY_APP_VER_", SANITYPRINT_VERSION);
     wxDateTime::TimeZone tz(wxDateTime::Local);
     long                 offset = tz.GetOffset();
     extra_headers.emplace("__CXY_TIMEZONE_", std::to_string(offset));
@@ -3242,8 +3242,8 @@ std::map<std::string, std::string> GUI_App::get_modellibrary_header()
     extra_headers.emplace("__CXY_UID_", app_config->get("cloud", "user_id"));
     extra_headers.emplace("__CXY_OS_LANG_", I18nToLangaugeIndex(language.Lower().ToStdString()));
     // 供前端环境识别：应用版本与 WebView 类型（跨平台一致）
-    extra_headers.emplace("__CXY_APP_VER_", CREALITYPRINT_VERSION);
-    extra_headers.emplace("__CXY_WEBVIEW_TYPE_", "creality_print_slice");
+    extra_headers.emplace("__CXY_APP_VER_", SANITYPRINT_VERSION);
+    extra_headers.emplace("__CXY_WEBVIEW_TYPE_", "sanity_print_slice");
     extra_headers.emplace("__CXY_PLATFORM_", "11");
     extra_headers.emplace( "__CXY_DUID_", Slic3r::GUI::SystemId::get_system_id());
      
@@ -3618,10 +3618,10 @@ bool GUI_App::OnInit()
                 HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
                 if (hStdOut != INVALID_HANDLE_VALUE) {
                     // 设置控制台标题
-                    SetConsoleTitleA("Creality Print Version");
+                    SetConsoleTitleA("Sanity Print Version");
 
                     // 输出版本信息
-                    std::string versionMsg = "Creality Print Version: " + std::string(CREALITYPRINT_VERSION) + "\n";
+                    std::string versionMsg = "Sanity Print Version: " + std::string(SANITYPRINT_VERSION) + "\n";
                     DWORD       bytesWritten;
                     WriteConsoleA(hStdOut, versionMsg.c_str(), versionMsg.length(), &bytesWritten, NULL);
 
@@ -3726,7 +3726,7 @@ int GUI_App::OnExit()
     BOOST_LOG_TRIVIAL(warning) << __FUNCTION__ << " start";
 
     // Clear resumable state on exit: remove any *.part files under the update cache root.
-    AppUpdater::getInstance().cleanup_partial_downloads(CREALITYPRINT_VERSION);
+    AppUpdater::getInstance().cleanup_partial_downloads(SANITYPRINT_VERSION);
 
     //stop_sync_user_preset();
     SyncUserPresets::getInstance().shutdown();
@@ -3817,7 +3817,7 @@ bool GUI_App::on_init_inner(bool isdump_launcher)
     wxInitAllImageHandlers();
 
     // If the previous run exited unexpectedly, *.part may remain. Clear them on startup as well.
-    AppUpdater::getInstance().cleanup_partial_downloads(CREALITYPRINT_VERSION);
+    AppUpdater::getInstance().cleanup_partial_downloads(SANITYPRINT_VERSION);
 #ifdef NDEBUG
     wxImage::SetDefaultLoadFlags(0); // ignore waring in release build
 #endif
@@ -3873,7 +3873,7 @@ bool GUI_App::on_init_inner(bool isdump_launcher)
     }
 #endif
 
-    BOOST_LOG_TRIVIAL(info) << boost::format("gui mode, Current CrealityPrint Version %1%")%CREALITYPRINT_VERSION;
+    BOOST_LOG_TRIVIAL(info) << boost::format("gui mode, Current SanityPrint Version %1%")%SANITYPRINT_VERSION;
     // Enable this to get the default Win32 COMCTRL32 behavior of static boxes.
 //    wxSystemOptions::SetOption("msw.staticbox.optimized-paint", 0);
     // Enable this to disable Windows Vista themes for all wxNotebooks. The themes seem to lead to terrible
@@ -3890,7 +3890,7 @@ bool GUI_App::on_init_inner(bool isdump_launcher)
             RichMessageDialog
                 dlg(nullptr,
                     wxString::Format(_L("%s\nDo you want to continue?"), msg),
-                    "CrealityPrint", wxICON_QUESTION | wxYES_NO);
+                    "SanityPrint", wxICON_QUESTION | wxYES_NO);
             dlg.ShowCheckBox(_L("Remember my choice"));
             if (dlg.ShowModal() != wxID_YES) return false;
 
@@ -4054,7 +4054,7 @@ bool GUI_App::on_init_inner(bool isdump_launcher)
         //    associate_files(L"step");
         //    associate_files(L"stp");
         //}
-        //associate_url(L"CrealityPrint");
+        //associate_url(L"SanityPrint");
 
         //if (app_config->get("associate_gcode") == "true")
         //    associate_files(L"gcode");
@@ -4075,7 +4075,7 @@ bool GUI_App::on_init_inner(bool isdump_launcher)
                /* wxString tips = wxString::Format(_L("Click to download new version in default browser: %s"), version_info.version_str);
                 DownloadDialog dialog(this->mainframe,
                     tips,
-                    _L("New version of Creality Print"),
+                    _L("New version of Sanity Print"),
                     false,
                     wxCENTER | wxICON_INFORMATION);
 
@@ -4147,7 +4147,7 @@ bool GUI_App::on_init_inner(bool isdump_launcher)
                     int new_major = 0, new_minor = 0, new_patch = 0;
                     
                     // Parse current version
-                    std::string current_version = CREALITYPRINT_VERSION;
+                    std::string current_version = SANITYPRINT_VERSION;
                     sscanf(current_version.c_str(), "%d.%d.%d", &current_major, &current_minor, &current_patch);
                     
                     // Parse new version
@@ -4209,7 +4209,7 @@ bool GUI_App::on_init_inner(bool isdump_launcher)
             wxString       tips             = wxString::Format(_L("Click to download new version in default browser: %s"), version_str);
                 DownloadDialog dialog(this->mainframe,
                     tips,
-                    _L("The Creality Print needs an upgrade"),
+                    _L("The Sanity Print needs an upgrade"),
                     false,
                     wxCENTER | wxICON_INFORMATION);
             dialog.SetExtendedMessage(description_text);
@@ -4287,7 +4287,7 @@ bool GUI_App::on_init_inner(bool isdump_launcher)
             init_params->preset_substitutions = preset_bundle->load_presets(*app_config, ForwardCompatibilitySubstitutionRule::EnableSystemSilent);
         }catch(ConfigurationError &ex)
         {
-            int ret = wxMessageBox(_L("Detected corruption in the Creality Print configuration file, attempted to rebuild, \nplease manually restart the software."), _L("Error"), wxOK | wxICON_ERROR);
+            int ret = wxMessageBox(_L("Detected corruption in the Sanity Print configuration file, attempted to rebuild, \nplease manually restart the software."), _L("Error"), wxOK | wxICON_ERROR);
             if(ret == wxOK) {
                 boost::filesystem::path dir = (boost::filesystem::path(data_dir()) / PRESET_SYSTEM_DIR).make_preferred();
                 if (boost::filesystem::exists(dir)) {
@@ -4561,7 +4561,7 @@ bool GUI_App::on_init_inner(bool isdump_launcher)
         m_config_corrupted = false;
         show_error(nullptr,
                    _u8L(
-                       "The CrealityPrint configuration file may be corrupted and cannot be parsed.\nCrealityPrint has attempted to recreate the "
+                       "The SanityPrint configuration file may be corrupted and cannot be parsed.\nSanityPrint has attempted to recreate the "
                        "configuration file.\nPlease note, application settings will be lost, but printer profiles will not be affected."));
     }
 
@@ -4983,7 +4983,7 @@ void GUI_App::UpdateDarkUI(wxWindow* window, bool highlited/* = false*/, bool ju
         auto orig_col = window->GetBackgroundColour();
         auto bg_col = StateColor::darkModeColorFor(orig_col);
         // there are cases where the background color of an item is bright, specifically:
-        // * the background color of a button: #009688  -- 73
+        // * the background color of a button: #2E86C1  -- 73
         if (bg_col != orig_col) {
             window->SetBackgroundColour(bg_col);
         }
@@ -7940,7 +7940,7 @@ void GUI_App::on_http_error(wxCommandEvent &evt)
 
     // Version limit
     if (code == HttpErrorVersionLimited) {
-        MessageDialog msg_dlg(nullptr, _L("The version of Creality Print is too low and needs to be updated to the latest version before it can be used normally"), "", wxAPPLY | wxOK);
+        MessageDialog msg_dlg(nullptr, _L("The version of Sanity Print is too low and needs to be updated to the latest version before it can be used normally"), "", wxAPPLY | wxOK);
         if (msg_dlg.ShowModal() == wxOK) {
         }
 
@@ -8100,9 +8100,9 @@ void GUI_App::check_new_version_local(bool show_tips, int by_user)
         return;
     
     // Convert version to 3-part format for Squirrel compatibility
-    std::string version_base = std::string(CREALITYPRINT_VERSION_MAJOR) + "." + 
-                               std::string(CREALITYPRINT_VERSION_MINOR) + "." + 
-                               std::string(CREALITYPRINT_VERSION_PATCH);
+    std::string version_base = std::string(SANITYPRINT_VERSION_MAJOR) + "." + 
+                               std::string(SANITYPRINT_VERSION_MINOR) + "." + 
+                               std::string(SANITYPRINT_VERSION_PATCH);
     std::string version_extra = std::string(PROJECT_VERSION_EXTRA);
     
     // Convert version extra to lowercase for Squirrel compatibility
@@ -8132,7 +8132,7 @@ void GUI_App::check_new_version_local(bool show_tips, int by_user)
         .timeout_max(TIMEOUT_RESPONSE)
         .on_error([this, show_tips](std::string body, std::string error, unsigned http_status) {
             (void)body;
-            BOOST_LOG_TRIVIAL(error) << "[CrealityPrint Update]check_new_version_local error http_status=" << http_status << " error=" << error;
+            BOOST_LOG_TRIVIAL(error) << "[SanityPrint Update]check_new_version_local error http_status=" << http_status << " error=" << error;
             if (show_tips) {
                 CallAfter([this]() {
                     this->show_dialog(_L("Network connection timed out. Please check your network settings and try again."));
@@ -8141,7 +8141,7 @@ void GUI_App::check_new_version_local(bool show_tips, int by_user)
         })
         .on_complete([this, show_tips, by_user, base_url, current_version](std::string body, unsigned status) {
             if (status != 200) {
-                BOOST_LOG_TRIVIAL(error) << "[CrealityPrint Update]check_new_version_local unexpected status " << status;
+                BOOST_LOG_TRIVIAL(error) << "[SanityPrint Update]check_new_version_local unexpected status " << status;
                 if (show_tips) {
                     CallAfter([this]() {
                         this->show_dialog(_L("Failed to check for updates."));
@@ -8165,7 +8165,7 @@ void GUI_App::check_new_version_local(bool show_tips, int by_user)
                 std::string version = j.value("latestVersion", std::string());
                 std::string file_url = j.value("fileUrl", std::string());
                 if (version.empty())
-                    version = CREALITYPRINT_VERSION;
+                    version = SANITYPRINT_VERSION;
 
                 struct LocalPackageInfo {
                     std::string name;
@@ -8218,7 +8218,7 @@ void GUI_App::check_new_version_local(bool show_tips, int by_user)
                 }
 
                 if (packages.empty()) {
-                    BOOST_LOG_TRIVIAL(error) << "[CrealityPrint Update]no packages in update response";
+                    BOOST_LOG_TRIVIAL(error) << "[SanityPrint Update]no packages in update response";
                     if (show_tips) {
                         CallAfter([this]() {
                             this->show_dialog(_L("No valid update packages found."));
@@ -8257,7 +8257,7 @@ void GUI_App::check_new_version_local(bool show_tips, int by_user)
                 process_update_packages(updater_packages, version, base_package_name, file_url, show_tips, by_user);
 
             } catch (const std::exception& e) {
-                BOOST_LOG_TRIVIAL(error) << "[CrealityPrint Update]check_new_version_local exception: " << e.what();
+                BOOST_LOG_TRIVIAL(error) << "[SanityPrint Update]check_new_version_local exception: " << e.what();
                 if (show_tips) {
                     CallAfter([this]() {
                         this->show_dialog(_L("Failed to parse update information."));
@@ -8383,7 +8383,7 @@ void GUI_App::check_new_version_cx(bool show_tips, int by_user)
     json        j;
     j["page"]                 = 1;
     j["pageSize"]                 = 999;
-    j["type"]         = 7; //CrealityPrint
+    j["type"]         = 7; //SanityPrint
     j["palform"] = palform_;
     boost::uuids::uuid uuid = boost::uuids::random_generator()();
     http.header("Content-Type", "application/json")
@@ -8433,7 +8433,7 @@ void GUI_App::check_new_version_cx(bool show_tips, int by_user)
                                     biggest_version_str = version;
                                 }
                              }
-                             if (compare_creality_versions(biggest_version_str, std::string(CREALITYPRINT_VERSION), -1, current_build_id) > 0) {
+                             if (compare_creality_versions(biggest_version_str, std::string(SANITYPRINT_VERSION), -1, current_build_id) > 0) {
                                 wxCommandEvent* evt = new wxCommandEvent(EVT_SLIC3R_VERSION_ONLINE);
                                 evt->SetString(GUI::from_u8(version_info.version_str));
                                 evt->SetInt(by_user);
@@ -8452,7 +8452,7 @@ void GUI_App::check_new_version_cx(bool show_tips, int by_user)
 void GUI_App::check_new_version_cx_updated(bool show_tips, int by_user)
 {
     // Convert version to 3-part format for compatibility
-    std::string version_base = std::string(CREALITYPRINT_VERSION);
+    std::string version_base = std::string(SANITYPRINT_VERSION);
     // Add 'V' prefix for cloud API request
     std::string request_version = "V" + version_base;
     
@@ -8466,18 +8466,18 @@ void GUI_App::check_new_version_cx_updated(bool show_tips, int by_user)
     req_body["platform"] = 1;
     boost::uuids::uuid uuid = boost::uuids::random_generator()();
     std::string req_body_str = req_body.dump();
-    BOOST_LOG_TRIVIAL(error) << "[CrealityPrint Update]check_new_version_cx_updated request headers: ";
+    BOOST_LOG_TRIVIAL(error) << "[SanityPrint Update]check_new_version_cx_updated request headers: ";
     for (const auto& header : extra_headers) {
         BOOST_LOG_TRIVIAL(error) << "  " << header.first << ": " << header.second;
     }
-    BOOST_LOG_TRIVIAL(error) << "[CrealityPrint Update]check_new_version_cx_updated request body: " << req_body_str;
+    BOOST_LOG_TRIVIAL(error) << "[SanityPrint Update]check_new_version_cx_updated request body: " << req_body_str;
     http.header("Content-Type", "application/json")
         .header("__CXY_REQUESTID_", to_string(uuid))
         .set_post_body(req_body_str)
         .timeout_connect(TIMEOUT_CONNECT)
         .timeout_max(TIMEOUT_RESPONSE)
         .on_error([this, show_tips](std::string body, std::string error, unsigned http_status) {
-            BOOST_LOG_TRIVIAL(error) << "[CrealityPrint Update]check_new_version_cx_updated error http_status=" << http_status << " error=" << error << " response body: " << body;
+            BOOST_LOG_TRIVIAL(error) << "[SanityPrint Update]check_new_version_cx_updated error http_status=" << http_status << " error=" << error << " response body: " << body;
             // Network failed — unblock deferred restore project (if any) on the UI thread.
             CallAfter([this]() { this->trigger_deferred_restore_project(); });
             if (show_tips) {
@@ -8488,7 +8488,7 @@ void GUI_App::check_new_version_cx_updated(bool show_tips, int by_user)
         })
         .on_complete([this, show_tips, by_user](std::string body, unsigned status) {
             if (status != 200) {
-                BOOST_LOG_TRIVIAL(error) << "[CrealityPrint Update]check_new_version_cx_updated unexpected status " << status;
+                BOOST_LOG_TRIVIAL(error) << "[SanityPrint Update]check_new_version_cx_updated unexpected status " << status;
                 CallAfter([this]() { this->trigger_deferred_restore_project(); });
                 if (show_tips) {
                     CallAfter([this]() {
@@ -8502,7 +8502,7 @@ void GUI_App::check_new_version_cx_updated(bool show_tips, int by_user)
                 
                 // Check if response contains result
                 if (!j.contains("result")) {
-                    BOOST_LOG_TRIVIAL(error) << "[CrealityPrint Update]check_new_version_cx_updated invalid response format, response body: " << body;
+                    BOOST_LOG_TRIVIAL(error) << "[SanityPrint Update]check_new_version_cx_updated invalid response format, response body: " << body;
                     if (show_tips) {
                         CallAfter([this]() {
                             this->show_dialog(_L("Invalid response format."));
@@ -8528,7 +8528,7 @@ void GUI_App::check_new_version_cx_updated(bool show_tips, int by_user)
                 std::string version = result.value("versionNumber", std::string());
                 std::string file_url = result.value("fileUrl", std::string());
                 if (version.empty())
-                    version = CREALITYPRINT_VERSION;
+                    version = SANITYPRINT_VERSION;
                 
                 // Remove 'V' prefix if present
                 if (!version.empty() && version[0] == 'V')
@@ -8536,7 +8536,7 @@ void GUI_App::check_new_version_cx_updated(bool show_tips, int by_user)
                 
                 // Version comparison
                 std::regex matcher("[0-9]+\\.[0-9]+(\\.[0-9]+)*(-[A-Za-z0-9]+)?(\\+[A-Za-z0-9]+)?");
-                Semver current_version = get_version(CREALITYPRINT_VERSION, matcher);
+                Semver current_version = get_version(SANITYPRINT_VERSION, matcher);
                 Semver remote_version = get_version(version, matcher);
 
                 // Helper lambda to check if patch starts with '0' and reset it to 0
@@ -8554,7 +8554,7 @@ void GUI_App::check_new_version_cx_updated(bool show_tips, int by_user)
                 };
 
                 // Adjust patch for both versions if it starts with '0'
-                adjust_patch_if_zero_leading(current_version, std::string(CREALITYPRINT_VERSION));
+                adjust_patch_if_zero_leading(current_version, std::string(SANITYPRINT_VERSION));
                 
                 if (remote_version <= current_version) {
                     if (show_tips) {
@@ -8632,7 +8632,7 @@ void GUI_App::check_new_version_cx_updated(bool show_tips, int by_user)
                 }
 
                 if (packages.empty()) {
-                    BOOST_LOG_TRIVIAL(error) << "[CrealityPrint Update]no packages in update response";
+                    BOOST_LOG_TRIVIAL(error) << "[SanityPrint Update]no packages in update response";
                     // No hot-update packages: fall back to showing the standard version dialog
                     // so the user is still notified of the new version.
                     wxCommandEvent* evt_fallback = new wxCommandEvent(EVT_SLIC3R_VERSION_ONLINE);
@@ -8664,7 +8664,7 @@ void GUI_App::check_new_version_cx_updated(bool show_tips, int by_user)
                 return;
 
             } catch (const std::exception& e) {
-                BOOST_LOG_TRIVIAL(error) << "[CrealityPrint Update]check_new_version_cx_updated exception: " << e.what();
+                BOOST_LOG_TRIVIAL(error) << "[SanityPrint Update]check_new_version_cx_updated exception: " << e.what();
                 if (show_tips) {
                     CallAfter([this]() {
                         this->show_dialog(_L("Failed to parse update information."));
@@ -8888,7 +8888,7 @@ void GUI_App::check_new_version_sf(bool show_tips, int by_user)
             }
             // if we're the most recent, don't do anything
             const std::string& latest_version = check_stable_only ? best_release_version : best_pre_version;
-            if (compare_creality_versions(latest_version, std::string(CREALITYPRINT_VERSION), -1, current_build_id) <= 0) {
+            if (compare_creality_versions(latest_version, std::string(SANITYPRINT_VERSION), -1, current_build_id) <= 0) {
                 if (by_user != 0)
                     this->no_new_version();
                 return;
@@ -8938,7 +8938,7 @@ void GUI_App::show_check_privacy_dlg(wxCommandEvent& evt)
     
     PrivacyUpdateDialog privacy_dlg(this->mainframe, wxID_ANY, _L("User Experience Improvement Program"));
     privacy_dlg.Bind(EVT_PRIVACY_UPDATE_CONFIRM, [this, online_login](wxCommandEvent &e) {
-        std::string version = std::string(CREALITYPRINT_VERSION);
+        std::string version = std::string(SANITYPRINT_VERSION);
         bool found = false;
         if (privacyData.contains("list") && !privacyData["list"].is_null()) {
             for (auto& v : privacyData["list"]) {
@@ -8980,7 +8980,7 @@ void GUI_App::show_check_privacy_dlg(wxCommandEvent& evt)
 
         });
     privacy_dlg.Bind(EVT_PRIVACY_UPDATE_CANCEL, [this](wxCommandEvent &e) {
-            std::string version = std::string(CREALITYPRINT_VERSION);
+            std::string version = std::string(SANITYPRINT_VERSION);
             bool found = false;
             if (privacyData.contains("list") && !privacyData["list"].is_null()) {
                 for (auto& v : privacyData["list"]) {
@@ -9183,7 +9183,7 @@ void GUI_App::check_creality_privacy_version(bool bShowDlg)
 { 
     bool                    needUpdate  = true;
     boost::filesystem::path device_file = boost::filesystem::path(Slic3r::data_dir()) / "privacyInfo.json";
-    std::string             version     = std::string(CREALITYPRINT_VERSION);
+    std::string             version     = std::string(SANITYPRINT_VERSION);
     auto parse_major_version = [](const std::string& ver, int& major_out) -> bool {
         size_t i = 0;
         while (i < ver.size() && !std::isdigit(static_cast<unsigned char>(ver[i])))
@@ -9278,7 +9278,7 @@ std::string GUI_App::format_display_version()
 {
     if (!version_display.empty()) return version_display;
 
-    version_display = CREALITYPRINT_VERSION;
+    version_display = SANITYPRINT_VERSION;
     return version_display;
 }
 
@@ -10534,7 +10534,7 @@ bool GUI_App::load_language(wxString language, bool initial)
     	// Get the active language from PrusaSlicer.ini, or empty string if the key does not exist.
         language = app_config->get("language");
         if (! language.empty())
-        	BOOST_LOG_TRIVIAL(info) << boost::format("language provided by CrealityPrint.conf: %1%") % language;
+        	BOOST_LOG_TRIVIAL(info) << boost::format("language provided by SanityPrint.conf: %1%") % language;
         else {
             // Get the system language.
             const wxLanguage lang_system = wxLanguage(wxLocale::GetSystemLanguage());
@@ -10591,7 +10591,7 @@ bool GUI_App::load_language(wxString language, bool initial)
 	}
 
 	if (language_info != nullptr && language_info->LayoutDirection == wxLayout_RightToLeft) {
-    	BOOST_LOG_TRIVIAL(trace) << boost::format("The following language code requires right to left layout, which is not supported by CrealityPrint: %1%") % language_info->CanonicalName.ToUTF8().data();
+    	BOOST_LOG_TRIVIAL(trace) << boost::format("The following language code requires right to left layout, which is not supported by SanityPrint: %1%") % language_info->CanonicalName.ToUTF8().data();
 		language_info = nullptr;
 	}
 
@@ -10681,7 +10681,7 @@ bool GUI_App::load_language(wxString language, bool initial)
                                    << ", initial=" << (initial ? "true" : "false")
                                    << ", config.language=" << app_config->get("language");
         boost::log::core::get()->flush();
-    	wxString message = "Switching  CrealityPrint to language " + language_info->CanonicalName + " failed.";
+    	wxString message = "Switching  SanityPrint to language " + language_info->CanonicalName + " failed.";
         bool     had_C_lang_set = false;
 #if !defined(_WIN32) && !defined(__APPLE__)
         // likely some linux system
@@ -10690,7 +10690,7 @@ bool GUI_App::load_language(wxString language, bool initial)
 #endif
         if (initial)
         	message + "\n\nApplication will close.";
-        wxMessageBox(message, "CrealityPrint - Switching language failed", wxOK | wxICON_ERROR);
+        wxMessageBox(message, "SanityPrint - Switching language failed", wxOK | wxICON_ERROR);
         if (initial) {
             if (!had_C_lang_set)
                 std::exit(EXIT_FAILURE);
@@ -11061,7 +11061,7 @@ void GUI_App::open_preferences(size_t open_on_tab, const std::string& highlight_
                 associate_files(L"step");
                 associate_files(L"stp");
             }
-            associate_url(L"crealityprint");
+            associate_url(L"sanityprint");
         }
         else {
             if (app_config->get("associate_gcode") == "true")
@@ -11109,7 +11109,7 @@ void GUI_App::open_config_relate(size_t open_on_tab, const std::string& highligh
                 associate_files(L"step");
                 associate_files(L"stp");
             }
-            associate_url(L"crealityprint");
+            associate_url(L"sanityprint");
         } else {
             if (app_config->get("associate_gcode") == "true")
                 associate_files(L"gcode");
@@ -11454,7 +11454,7 @@ void GUI_App::OSXStoreOpenFiles(const wxArrayString &fileNames)
         if (is_gcode_file(into_u8(filename)))
             ++ num_gcodes;
     if (fileNames.size() == num_gcodes) {
-        // Opening PrusaSlicer by drag & dropping a G-Code onto CrealityPrint icon in Finder,
+        // Opening PrusaSlicer by drag & dropping a G-Code onto SanityPrint icon in Finder,
         // just G-codes were passed. Switch to G-code viewer mode.
         m_app_mode = EAppMode::GCodeViewer;
         unlock_lockfile(get_instance_hash_string() + ".lock", data_dir() + "/cache/");
@@ -11646,9 +11646,9 @@ void GUI_App::open_mall_page_dialog()
     }
 
     if (link_url.find("?") != std::string::npos) {
-        link_url += "&from=crealityprint";
+        link_url += "&from=sanityprint";
     } else {
-        link_url += "?from=crealityprint";
+        link_url += "?from=sanityprint";
     }
 
     wxLaunchDefaultBrowser(link_url);
@@ -12378,7 +12378,7 @@ void GUI_App::associate_files(std::wstring extend)
 
     std::wstring prog_path = L"\"" + std::wstring(app_path) + L"\"";
     std::wstring prog_id = L" Creality.Slicer.1";
-    std::wstring prog_desc = L"CrealityPrint";
+    std::wstring prog_desc = L"SanityPrint";
     std::wstring prog_command = prog_path + L" \"%1\"";
     std::wstring reg_base = L"Software\\Classes";
     std::wstring reg_extension = reg_base + L"\\." + extend;
@@ -12405,7 +12405,7 @@ void GUI_App::disassociate_files(std::wstring extend)
 
     std::wstring prog_path = L"\"" + std::wstring(app_path) + L"\"";
     std::wstring prog_id = L" Creality.Slicer.1";
-    std::wstring prog_desc = L"CrealityPrint";
+    std::wstring prog_desc = L"SanityPrint";
     std::wstring prog_command = prog_path + L" \"%1\"";
     std::wstring reg_base = L"Software\\Classes";
     std::wstring reg_extension = reg_base + L"\\." + extend;
@@ -12496,7 +12496,7 @@ void GUI_App::start_download(std::string url)
         BOOST_LOG_TRIVIAL(error) << "Could not start URL download: plater is nullptr.";
         return;
     }
-    if(boost::starts_with(url, "crealityprintlink://open?code=")||boost::starts_with(url, "crealityprintlink://open/?code="))
+    if(boost::starts_with(url, "sanityprintlink://open?code=")||boost::starts_with(url, "sanityprintlink://open/?code="))
     {
             wxTimer *m_timer = new wxTimer(this, wxID_ANY);
            
@@ -12813,7 +12813,7 @@ void GUI_App::OpenEshopRecommendedGoods(const std::string& materialColor, const 
     data["site"] = country_code;
     // Required tracking fields
     json dataTrace = json::object();
-    dataTrace["utm_medium"] = "creality_print";
+    dataTrace["utm_medium"] = "sanity_print";
     dataTrace["utm_source"] = "creality_cloud";
     data["trace"] = dataTrace;
     body.push_back(data);

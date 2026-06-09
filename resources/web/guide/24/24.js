@@ -405,7 +405,7 @@ function getCurrentTree (val) {
     // 注：初始化页面打开，默认选择Creality第一个元素渲染
     if (treeType === 'Creality' || !curSelectTree.length) {
         // 所有creality打印机数据
-        const allCrealityPrinter = allBrandPrinterObj.Creality
+        const allSanityPrinter = allBrandPrinterObj.Creality
         // 筛选当前点击系列
         const curPrinterClass = crealityPrinterClass.reduce((acc, cur, index) => {
             if (cur.name === currentTree) {
@@ -416,7 +416,7 @@ function getCurrentTree (val) {
             return acc
         }, '')
         // 筛选数据
-        const curPrinterList = allCrealityPrinter.reduce((acc, item) => {
+        const curPrinterList = allSanityPrinter.reduce((acc, item) => {
             if (curPrinterClass.includes(item.model)) acc.push(item)
             return acc
         }, [])
@@ -465,7 +465,7 @@ function getCurrentTree (val) {
             return acc
         }, '')
         // 所有creality打印机数据
-        const allCrealityPrinter = allBrandPrinterObj.Creality
+        const allSanityPrinter = allBrandPrinterObj.Creality
         // 筛选当前点击系列
         const curPrinterClass = crealityPrinterClass.reduce((acc, cur) => {
             if (cur.name === crealityKey) {
@@ -474,7 +474,7 @@ function getCurrentTree (val) {
             return acc
         }, '')
         // 筛选数据
-        let curPrinterList = allCrealityPrinter.reduce((acc, item) => {
+        let curPrinterList = allSanityPrinter.reduce((acc, item) => {
             if (curPrinterClass.includes(item.model)) acc.push(item)
             return acc
         }, [])
@@ -538,7 +538,7 @@ function selectTreeCardNozzle (val, event) {
             return acc
         }, '')
         // 所有creality打印机数据
-        const allCrealityPrinter = allBrandPrinterObj.Creality
+        const allSanityPrinter = allBrandPrinterObj.Creality
         // 筛选当前点击系列
         const curPrinterClass = crealityPrinterClass.reduce((acc, cur) => {
             if (cur.name === crealityKey) {
@@ -547,7 +547,7 @@ function selectTreeCardNozzle (val, event) {
             return acc
         }, '')
         // 筛选数据
-        let curPrinterList = allCrealityPrinter.reduce((acc, item) => {
+        let curPrinterList = allSanityPrinter.reduce((acc, item) => {
             if (curPrinterClass.includes(item.model)) acc.push(item)
             return acc
         }, [])
@@ -580,7 +580,7 @@ function selectAllPrinter (val) {
     // 1.creality下面的分类
     const isCrealityClass = crealityPrinterClass.some(item => item.name === curTree) || curTree === ''
     if (isCrealityClass) {
-        const allCrealityPrinter = allBrandPrinterObj.Creality
+        const allSanityPrinter = allBrandPrinterObj.Creality
         const curPrinterClass = crealityPrinterClass.reduce((acc, cur) => {
             if (cur.name === curTree) {
                 acc = cur.printers
@@ -597,7 +597,7 @@ function selectAllPrinter (val) {
             }
         }
         // 筛选数据
-        const curPrinterList = allCrealityPrinter.reduce((acc, item) => {
+        const curPrinterList = allSanityPrinter.reduce((acc, item) => {
             if (curPrinterClass.includes(item.model)) acc.push(item)
             return acc
         }, [])
@@ -639,7 +639,7 @@ function selectPrinterCard (val, event) {
     // 1.creality下面的分类
     const isCrealityClass = crealityPrinterClass.some(item => item.name === curTree) || curTree === ''
     if (isCrealityClass) {
-        const allCrealityPrinter = allBrandPrinterObj.Creality
+        const allSanityPrinter = allBrandPrinterObj.Creality
         const curPrinterClass = crealityPrinterClass.reduce((acc, cur) => {
             if (cur.name === curTree) {
                 acc = cur.printers
@@ -647,7 +647,7 @@ function selectPrinterCard (val, event) {
             return acc
         }, '')
         // 筛选数据
-        let curPrinterList = allCrealityPrinter.reduce((acc, item) => {
+        let curPrinterList = allSanityPrinter.reduce((acc, item) => {
             if (curPrinterClass.includes(item.model)) acc.push(item)
             return acc
         }, [])
@@ -678,7 +678,7 @@ function isSelectAllPrinter () {
     // 1.creality情况
     const isCrealityClass = crealityPrinterClass.some(item => item.name === curTree) || curTree === ''
     if (isCrealityClass) {
-        const allCrealityPrinter = allBrandPrinterObj.Creality
+        const allSanityPrinter = allBrandPrinterObj.Creality
         const curPrinterClass = crealityPrinterClass.reduce((acc, cur) => {
             if (cur.name === curTree) {
                 acc = cur.printers
@@ -686,7 +686,7 @@ function isSelectAllPrinter () {
             return acc
         }, '')
         // 筛选数据
-        const curPrinterList = allCrealityPrinter.reduce((acc, item) => {
+        const curPrinterList = allSanityPrinter.reduce((acc, item) => {
             if (curPrinterClass.includes(item.model)) acc.push(item)
             return acc
         }, [])
@@ -711,7 +711,7 @@ function toggleChecked (val, event) {
 function isShowCheckboxArea (val) {
     $(val).find('.card-list-item-checked-printer-wrapper').show()
     $(val).addClass('hover-bth-selected')
-    $(val).find('svg path:nth-of-type(2)').attr('fill', isChangeColor ? '#17CC5F' : '#fff')
+    $(val).find('svg path:nth-of-type(2)').attr('fill', isChangeColor ? '#3498DB' : '#fff')
 }
 
 function hideCheckBox (val, event) {

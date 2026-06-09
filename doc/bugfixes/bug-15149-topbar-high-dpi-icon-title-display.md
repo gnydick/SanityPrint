@@ -5,7 +5,7 @@
 - 禅道链接: `https://zentao.creality.com/zentao/bug-view-15149.html`
 - 标题: `高分屏点击进入首页时，首页图标自动变小与模型名称只显示一半`
 - 日期: `2026-03-09`
-- 所属产品: `Creality Print`
+- 所属产品: `Sanity Print`
 - 所属模块: `准备页面`
 - 所属计划: `CP 7.1.0 Release`
 - Bug 类型: `代码错误`

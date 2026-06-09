@@ -1,12 +1,12 @@
 src/BaseException.cpp
-src/CrealityPrint.cpp
-src/CrealityPrint_app_msvc.cpp
-src/CrealityPrint_profile_validator.cpp
+src/SanityPrint.cpp
+src/SanityPrint_app_msvc.cpp
+src/SanityPrint_profile_validator.cpp
 src/CrealityrintDump.cpp
 src/Crealityrint_dump.cpp
 src/CxMiniDump.cpp
 src/StackWalker.cpp
-src/CrealityPrint.hpp
+src/SanityPrint.hpp
 src/CrealityrintDump.hpp
 src/Crealityrint_dump.hpp
 src/admesh/connect.cpp

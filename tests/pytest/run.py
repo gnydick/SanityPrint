@@ -4,8 +4,8 @@ import run_case
 import time
 
 work_dir = r"D:\WORK-REPOS\C3DSlicer\build_Release\src\Release"
-creality_process_name = work_dir+r"\CrealityPrint.exe"
-log_dir = r"C:\Users\111454\AppData\Roaming\Creality\Creality Print\6.0 Alpha\log"
+creality_process_name = work_dir+r"\SanityPrint.exe"
+log_dir = r"C:\Users\111454\AppData\Roaming\Creality\Sanity Print\6.0 Alpha\log"
 log_file = "creality.tlog"
 
 config = {

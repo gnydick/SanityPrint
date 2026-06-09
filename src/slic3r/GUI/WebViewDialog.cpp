@@ -256,7 +256,7 @@ wxString WebViewPanel::GetURL()
     std::string type = std::string(PROJECT_VERSION_EXTRA);
     type.erase(std::remove(type.begin(), type.end(), ' '), type.end());
 
-    std::string version = std::string(CREALITYPRINT_VERSION);
+    std::string version = std::string(SANITYPRINT_VERSION);
     version.erase(std::remove(version.begin(), version.end(), ' '), version.end());
 
     std::string region = wxGetApp().app_config->get("region");
@@ -634,9 +634,9 @@ void WebViewPanel::OpenModelDetail(std::string id, NetworkAgent* agent)
     std::string url;
     if ((agent ? agent->get_model_mall_detail_url(&url, id) : get_model_mall_detail_url(&url, id)) == 0) {
         if (url.find("?") != std::string::npos) {
-            url += "&from=crealityprint";
+            url += "&from=sanityprint";
         } else {
-            url += "?from=crealityprint";
+            url += "?from=sanityprint";
         }
 
         wxLaunchDefaultBrowser(url);

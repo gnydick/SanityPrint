@@ -113,8 +113,8 @@ ErrorReportDialog::ErrorReportDialog(wxWindow* parent, const wxString& title)
 
     // 创建发送按钮
     // wxButton* sendButton = new wxButton(this, wxID_OK, "SendReport");
-    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(21, 191, 89), StateColor::Pressed),
-                            std::pair<wxColour, int>(wxColour(21, 191, 89), StateColor::Hovered),
+    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(52, 152, 219), StateColor::Pressed),
+                            std::pair<wxColour, int>(wxColour(52, 152, 219), StateColor::Hovered),
                             std::pair<wxColour, int>(wxColour(142, 142, 159), StateColor::Normal));
 
     Button* sendButton = new Button(this, _L("SendReport"));
@@ -384,7 +384,7 @@ void ErrorReportDialog::sendEmail(wxString zipFilePath)
         // 创建一个zip文件
         wxString format1 = "%Y%m%d%H%M%S";
         // 使用wxFileName构建跨平台兼容的文件路径
-        wxFileName zipFileName(wxFileName::GetTempDir(), wxString::Format("CrealityPrint_%s_%s", CREALITYPRINT_VERSION, wxDateTime::Now().Format(format1)), "zip");
+        wxFileName zipFileName(wxFileName::GetTempDir(), wxString::Format("SanityPrint_%s_%s", SANITYPRINT_VERSION, wxDateTime::Now().Format(format1)), "zip");
         wxString zipFilePath = zipFileName.GetFullPath();
         BOOST_LOG_TRIVIAL(warning) << "Creating zip file: " << zipFilePath.ToStdString();
         BOOST_LOG_TRIVIAL(warning) << "Temp directory: " << wxFileName::GetTempDir().ToStdString();
@@ -525,7 +525,7 @@ void ErrorReportDialog::GetErrorReport()
         
         m_info.osDescription   = osDescription;
         m_info.cpuModel        = get_cpu_model();
-        m_info.build           = wxString(CREALITYPRINT_VERSION, wxConvUTF8);
+        m_info.build           = wxString(SANITYPRINT_VERSION, wxConvUTF8);
         m_info.uuid = Slic3r::GUI::wxGetApp().app_config->get("language") + wxDateTime::Now().Format("%Y%m%d%H%M%S") +
                       wxString::Format("%03lu", wxDateTime::UNow().GetMillisecond());
         // 记录最终展示的系统描述（提升为warning级别）

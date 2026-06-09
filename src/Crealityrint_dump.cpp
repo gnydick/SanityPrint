@@ -86,7 +86,7 @@ void ErrorReportDialog::sendEmail(wxString zipFilePath) {
     wxString ErrorReportDialog::zipFiles() {
         // 创建一个zip文件
         wxString format1 = "%Y%m%d%H%M%S";
-        wxString zipFilePath = wxString::Format("%s/CrealityPrint_%s_%s.zip",wxFileName::GetTempDir(),CREALITYPRINT_VERSION,wxDateTime::Now().Format(format1));
+        wxString zipFilePath = wxString::Format("%s/SanityPrint_%s_%s.zip",wxFileName::GetTempDir(),SANITYPRINT_VERSION,wxDateTime::Now().Format(format1));
         mz_zip_archive archive;
         mz_zip_zero_struct(&archive);
         mz_bool status = mz_zip_writer_init_file(&archive, zipFilePath.mb_str(), 0);

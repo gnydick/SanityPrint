@@ -5,7 +5,7 @@
 - 禅道链接: `https://zentao.creality.com/zentao/bug-view-15445.html`
 - 标题: `切片用两种耗材，gcode里default_filament_colour有三种耗材`
 - 文档日期: `2026-04-02`
-- 所属产品: `Creality Print`
+- 所属产品: `Sanity Print`
 - 所属模块: `其它`
 - 所属计划: `CP 7.1.1（0430）`
 - 所属执行: `CP7.1.0 260330`

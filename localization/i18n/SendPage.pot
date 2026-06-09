@@ -770,8 +770,8 @@ msgstr "Please add the device to the device list"
 msgid "Reconnecting"
 msgstr "Reconnecting"
 
-msgid "Creality Print camera function does not currently support devices that are only bound to Creality Cloud"
-msgstr "Creality Print摄像头功能暂不支持仅绑定创想云的设备"
+msgid "Sanity Print camera function does not currently support devices that are only bound to Creality Cloud"
+msgstr "Sanity Print摄像头功能暂不支持仅绑定创想云的设备"
 
 msgid "Feed issue, filament failed to exit extruder.Please resolve and click "Retry" button."
 msgstr "Feed issue, filament failed to exit extruder.Please resolve and click "Retry" button."

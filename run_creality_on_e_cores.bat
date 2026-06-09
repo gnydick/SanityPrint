@@ -1,16 +1,16 @@
 @echo off
 chcp 65001 >nul
-title CrealityPrint - Efficiency Core Launcher
+title SanityPrint - Efficiency Core Launcher
 cd /d "%~dp0"
 set "BATDIR=%~dp0"
 
 echo =================================
-echo    CrealityPrint Efficiency Core Launcher
+echo    SanityPrint Efficiency Core Launcher
 echo =================================
 echo.
 
-if not exist "CrealityPrint.exe" (
-    echo [Error] Could not find CrealityPrint.exe in %~dp0
+if not exist "SanityPrint.exe" (
+    echo [Error] Could not find SanityPrint.exe in %~dp0
     pause
     exit /b 1
 )
@@ -20,8 +20,8 @@ echo Pinning to the second half of CPU cores...
 echo.
 
 powershell -NoProfile -ExecutionPolicy Bypass -Command ^
-    "$app = Join-Path -Path $env:BATDIR -ChildPath 'CrealityPrint.exe';" ^
-    "if(-not (Test-Path $app)){ Write-Error 'CrealityPrint.exe not found.'; exit 1 }" ^
+    "$app = Join-Path -Path $env:BATDIR -ChildPath 'SanityPrint.exe';" ^
+    "if(-not (Test-Path $app)){ Write-Error 'SanityPrint.exe not found.'; exit 1 }" ^
     "$p = Start-Process $app -PassThru;" ^
     "if($p){" ^
     "  Start-Sleep -Milliseconds 1500;" ^

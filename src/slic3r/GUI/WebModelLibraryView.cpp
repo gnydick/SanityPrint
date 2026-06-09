@@ -479,8 +479,8 @@ bool WebModelLibraryView::UpdateUserAgent()
         if (!m_ua_initialized) {
             wxString user_agent = wxString::Format(
                 "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) "
-                "creality_print_slice/%s WebView/%s",
-                CREALITYPRINT_VERSION, "141.0.0.0");
+                "sanity_print_slice/%s WebView/%s",
+                SANITYPRINT_VERSION, "141.0.0.0");
             m_browser->SetUserAgent(user_agent);
             m_ua_initialized   = true;
             BOOST_LOG_TRIVIAL(info) << "UpdateUserAgent: UA initialized (Linux): " << user_agent.ToStdString();
@@ -491,8 +491,8 @@ bool WebModelLibraryView::UpdateUserAgent()
         if (!m_ua_initialized) {
             wxString user_agent = wxString::Format(
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
-                "creality_print_slice/%s webview/%s;",
-                CREALITYPRINT_VERSION, "141.0.0.0");
+                "sanity_print_slice/%s webview/%s;",
+                SANITYPRINT_VERSION, "141.0.0.0");
             m_browser->SetUserAgent(user_agent);
             m_ua_initialized   = true;
             BOOST_LOG_TRIVIAL(info) << "UpdateUserAgent: UA initialized (Windows): " << user_agent.ToStdString();

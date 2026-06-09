@@ -2581,12 +2581,12 @@ void MaterialSubMenuItem::OnPaint(wxPaintEvent&)
     dc.SetPen(wxPen(penColor,0));
     // 绘制边框（hover 或点击时）
     if (m_clicked) {
-        dc.SetPen(wxPen(wxColour(21, 192, 89), 1)); // 边框颜色
-        dc.SetBrush(wxBrush(is_dark ? wxColour("#1FCA63") :  wxColour(21, 192, 89))); // 点击时的背景色
+        dc.SetPen(wxPen(wxColour(52, 152, 219), 1)); // 边框颜色
+        dc.SetBrush(wxBrush(is_dark ? wxColour("#3498DB") :  wxColour(52, 152, 219))); // 点击时的背景色
         dc.DrawRoundedRectangle(GetClientRect(), 3); // 边角为 5 的边框
     } else if (m_hovered) {
-        dc.SetPen(wxPen(wxColour(21, 192, 89), 1)); // 边框颜色
-        dc.SetBrush(wxBrush(is_dark ? wxColour("#2E4838") : wxColour("#DCF6E6"))); // hover 时的背景色 = (21, 192, 89,0.15)
+        dc.SetPen(wxPen(wxColour(52, 152, 219), 1)); // 边框颜色
+        dc.SetBrush(wxBrush(is_dark ? wxColour("#2E4838") : wxColour("#DCF6E6"))); // hover 时的背景色 = (52, 152, 219,0.15)
         dc.DrawRoundedRectangle(GetClientRect(), 3); // 边角为 5 的边框
     } else {
         dc.SetBrush(wxBrush(bgColor)); // 默认背景色
@@ -2657,7 +2657,7 @@ HoverButton::HoverButton(wxWindow* parent,
 {
     bool is_dark = Slic3r::GUI::wxGetApp().dark_mode();
     m_baseColor = is_dark  ? wxColour("#313131") : * wxWHITE;
-    m_pressedColor = is_dark ? wxColour("#1FCA63") :  wxColour("#DCF6E6");
+    m_pressedColor = is_dark ? wxColour("#3498DB") :  wxColour("#DCF6E6");
     SetBackgroundColour(m_baseColor);
     SetForegroundColour(is_dark ? *wxWHITE : wxColour("#30373D"));
     BindEvents();
@@ -2741,13 +2741,13 @@ void HoverButton::OnPaint(wxPaintEvent&)
     wxColour bgColor = this->GetBackgroundColour();
     // 绘制边框（hover 或点击时）
     if (isHover || m_isExpend) {
-        dc.SetPen(wxPen(is_dark ? wxColour("#1FCA63") : wxColour(21, 192, 89), 1)); // 边框颜色
-        dc.SetBrush(wxBrush(is_dark ? wxColour("#2E4838") : wxColour("#DCF6E6"))); // hover 时的背景色 = (21, 192, 89,0.15)
+        dc.SetPen(wxPen(is_dark ? wxColour("#3498DB") : wxColour(52, 152, 219), 1)); // 边框颜色
+        dc.SetBrush(wxBrush(is_dark ? wxColour("#2E4838") : wxColour("#DCF6E6"))); // hover 时的背景色 = (52, 152, 219,0.15)
         SetTransparent(0.15 * 255);
         dc.DrawRoundedRectangle(GetClientRect(), 3); // 边角为 5 的边框
     }
     else {
-        //dc.SetPen(wxPen(wxColour(21, 192, 89), 1)); // 边框颜色
+        //dc.SetPen(wxPen(wxColour(52, 152, 219), 1)); // 边框颜色
         dc.SetBrush(wxBrush(bgColor)); // 默认背景色
         dc.DrawRectangle(GetClientRect());
     }

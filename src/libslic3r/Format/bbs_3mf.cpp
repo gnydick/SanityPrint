@@ -987,7 +987,7 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
         bool m_load_restore = false;
         std::string m_backup_path;
         std::string m_origin_file;
-        // Semantic version of Creality Print, that generated this 3MF.
+        // Semantic version of Sanity Print, that generated this 3MF.
         boost::optional<Semver> m_bambuslicer_generator_version;
         unsigned int m_fdm_supports_painting_version = 0;
         unsigned int m_seam_painting_version         = 0;
@@ -1743,7 +1743,7 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
         // Orca: skip version check
         bool dont_load_config = !m_load_config;
         // if (m_bambuslicer_generator_version) {
-        //     Semver app_version = *(Semver::parse(CREALITYPRINT_VERSION));
+        //     Semver app_version = *(Semver::parse(SANITYPRINT_VERSION));
         //     Semver file_version = *m_bambuslicer_generator_version;
         //     if (file_version.maj() != app_version.maj())
         //         dont_load_config = true;
@@ -1870,7 +1870,7 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
         lock.close();
 
         if (!m_is_bbl_3mf) {
-            // if the 3mf was not produced by CrealityPrint and there is more than one instance,
+            // if the 3mf was not produced by SanityPrint and there is more than one instance,
             // split the object in as many objects as instances
             BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << ":" << __LINE__ << boost::format(", found 3mf from other vendor, split as instance");
             for (const IdToModelObjectMap::value_type& object : m_objects) {
@@ -3481,7 +3481,7 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
         }
 
         if (!m_is_bbl_3mf) {
-            // if the 3mf was not produced by CrealityPrint and there is only one object,
+            // if the 3mf was not produced by SanityPrint and there is only one object,
             // set the object name to match the filename
             if (m_model->objects.size() == 1)
                 m_model->objects.front()->name = m_name;
@@ -3881,7 +3881,7 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
             }*/
         } else if (m_curr_metadata_name == BBL_APPLICATION_TAG) {
             // Generator application of the 3MF.
-            // SLIC3R_APP_KEY - CREALITYPRINT_VERSION
+            // SLIC3R_APP_KEY - SANITYPRINT_VERSION
             if (boost::starts_with(m_curr_characters, "BambuStudio-")) {
                 m_is_bbl_3mf = true;
                 m_bambuslicer_generator_version = Semver::parse(m_curr_characters.substr(12));
@@ -3916,15 +3916,15 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
         /*} else if (m_curr_metadata_name == BBS_FDM_SUPPORTS_PAINTING_VERSION) {
             m_fdm_supports_painting_version = (unsigned int) atoi(m_curr_characters.c_str());
             check_painting_version(m_fdm_supports_painting_version, FDM_SUPPORTS_PAINTING_VERSION,
-                _(L("The selected 3MF contains FDM supports painted object using a newer version of CrealityPrint and is not compatible.")));
+                _(L("The selected 3MF contains FDM supports painted object using a newer version of SanityPrint and is not compatible.")));
         } else if (m_curr_metadata_name == BBS_SEAM_PAINTING_VERSION) {
             m_seam_painting_version = (unsigned int) atoi(m_curr_characters.c_str());
             check_painting_version(m_seam_painting_version, SEAM_PAINTING_VERSION,
-                _(L("The selected 3MF contains seam painted object using a newer version of CrealityPrint and is not compatible.")));
+                _(L("The selected 3MF contains seam painted object using a newer version of SanityPrint and is not compatible.")));
         } else if (m_curr_metadata_name == BBS_MM_PAINTING_VERSION) {
             m_mm_painting_version = (unsigned int) atoi(m_curr_characters.c_str());
             check_painting_version(m_mm_painting_version, MM_PAINTING_VERSION,
-                _(L("The selected 3MF contains multi-material painted object using a newer version of CrealityPrint and is not compatible.")));*/
+                _(L("The selected 3MF contains multi-material painted object using a newer version of SanityPrint and is not compatible.")));*/
         } else if (m_curr_metadata_name == BBL_MODEL_ID_TAG) {
             m_model_id = xml_unescape(m_curr_characters);
         } else if (m_curr_metadata_name == BBL_MODEL_NAME_TAG) {
@@ -5111,7 +5111,7 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
             TriangleMesh triangle_mesh(std::move(its), volume_data.mesh_stats);
 
             if (!m_is_bbl_3mf) {
-                // if the 3mf was not produced by CrealityPrint and there is only one instance,
+                // if the 3mf was not produced by SanityPrint and there is only one instance,
                 // bake the transformation into the geometry to allow the reload from disk command
                 // to work properly
                 if (object.instances.size() == 1) {
@@ -6021,7 +6021,7 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
 		{
 			const std::string& temp_path = parameter.work_directory;
 			std::string temp_file = temp_path + std::string("/") + "_temp_xxxx.config";
-			std::string        version{ CREALITYPRINT_VERSION };
+			std::string        version{ SANITYPRINT_VERSION };
 			parameter.config->save_to_json(temp_file, std::string("project_settings"), std::string("project"), version);
 			if (!_add_file_to_archive(archive, BBS_PROJECT_CONFIG_FILE, temp_file))
 			{
@@ -6050,8 +6050,8 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
 			stream << "<" << CONFIG_TAG << ">\n";
 			// save slice header for debug
 			stream << "  <" << SLICE_HEADER_TAG << ">\n";		
-			stream << "    <" << SLICE_HEADER_ITEM_TAG << " " << KEY_ATTR << "=\"" << "X-CX-Client-Type" << "\" " << VALUE_ATTR << "=\"" << "creality_print" << "\"/>\n";
-			stream << "    <" << SLICE_HEADER_ITEM_TAG << " " << KEY_ATTR << "=\"" << "X-CX-Client-Version" << "\" " << VALUE_ATTR << "=\"" << convert_to_full_version(CREALITYPRINT_VERSION) << "\"/>\n";
+			stream << "    <" << SLICE_HEADER_ITEM_TAG << " " << KEY_ATTR << "=\"" << "X-CX-Client-Type" << "\" " << VALUE_ATTR << "=\"" << "sanity_print" << "\"/>\n";
+			stream << "    <" << SLICE_HEADER_ITEM_TAG << " " << KEY_ATTR << "=\"" << "X-CX-Client-Version" << "\" " << VALUE_ATTR << "=\"" << convert_to_full_version(SANITYPRINT_VERSION) << "\"/>\n";
 			stream << "  </" << SLICE_HEADER_TAG << ">\n";
 			stream << "</" << CONFIG_TAG << ">\n";
 
@@ -6084,7 +6084,7 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
             metadata_item_map["cloud_model_user"]      = parameter.model_user;
             metadata_item_map["cloud_model_copyright"] = parameter.model_copyright;
 
-			metadata_item_map[BBL_APPLICATION_TAG] = (boost::format("%1% V%2% %3%") % "Creality_Print" % CREALITYPRINT_VERSION % PROJECT_VERSION_EXTRA).str();
+			metadata_item_map[BBL_APPLICATION_TAG] = (boost::format("%1% V%2% %3%") % "Creality_Print" % SANITYPRINT_VERSION % PROJECT_VERSION_EXTRA).str();
 
 			for (auto item : metadata_item_map) 
             {
@@ -6278,7 +6278,7 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
         }
 
         // Adds content types file ("[Content_Types].xml";).
-        // The content of this file is the same for each CrealityPrint 3mf.
+        // The content of this file is the same for each SanityPrint 3mf.
         if (!_add_content_types_file_to_archive(archive)) {
             return false;
         }
@@ -6670,7 +6670,7 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
         }
 
         // Adds relationships file ("_rels/.rels").
-        // The content of this file is the same for each CrealityPrint 3mf.
+        // The content of this file is the same for each SanityPrint 3mf.
         // The relationshis file contains a reference to the geometry file "3D/3dmodel.model", the name was chosen to be compatible with CURA.
         if (!_add_relationships_file_to_archive(archive, {}, {}, {}, temp_data, export_plate_idx)) {
             BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << ":" <<__LINE__ << boost::format(", _add_relationships_file_to_archive failed\n");
@@ -7150,7 +7150,7 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
                 std::string application_tag;
                 switch (type_3mf) {
                 case Slic3r::En3mfType::From_Creality: {
-                    application_tag = (boost::format("%1% V%2% %3%") % "Creality_Print" % CREALITYPRINT_VERSION % PROJECT_VERSION_EXTRA).str();
+                    application_tag = (boost::format("%1% V%2% %3%") % "Creality_Print" % SANITYPRINT_VERSION % PROJECT_VERSION_EXTRA).str();
                     break;
                 }
                 case Slic3r::En3mfType::From_Orca: {
@@ -8006,7 +8006,7 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
     {
         const std::string& temp_path = model.get_backup_path();
         std::string temp_file = temp_path + std::string("/") + "_temp_1.config";
-        std::string        version{CREALITYPRINT_VERSION};
+        std::string        version{SANITYPRINT_VERSION};
         switch (type_3mf) {
         case Slic3r::En3mfType::From_BBS: {
             version = COMATIBLE_BAMBU_3MF_VERSION;
@@ -8385,8 +8385,8 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
         // save slice header for debug
         stream << "  <" << SLICE_HEADER_TAG << ">\n";
         if (type_3mf == En3mfType::From_Creality) {
-            stream << "    <" << SLICE_HEADER_ITEM_TAG << " " << KEY_ATTR << "=\"" << "X-CX-Client-Type"    << "\" " << VALUE_ATTR << "=\"" << "creality_print" << "\"/>\n";
-            stream << "    <" << SLICE_HEADER_ITEM_TAG << " " << KEY_ATTR << "=\"" << "X-CX-Client-Version" << "\" " << VALUE_ATTR << "=\"" << convert_to_full_version(CREALITYPRINT_VERSION) << "\"/>\n";
+            stream << "    <" << SLICE_HEADER_ITEM_TAG << " " << KEY_ATTR << "=\"" << "X-CX-Client-Type"    << "\" " << VALUE_ATTR << "=\"" << "sanity_print" << "\"/>\n";
+            stream << "    <" << SLICE_HEADER_ITEM_TAG << " " << KEY_ATTR << "=\"" << "X-CX-Client-Version" << "\" " << VALUE_ATTR << "=\"" << convert_to_full_version(SANITYPRINT_VERSION) << "\"/>\n";
         }
 		else if (type_3mf == En3mfType::From_BBS || type_3mf == En3mfType::From_Orca) {
         stream << "    <" << SLICE_HEADER_ITEM_TAG << " " << KEY_ATTR << "=\"" << "X-BBL-Client-Type"    << "\" " << VALUE_ATTR << "=\"" << "slicer" << "\"/>\n";
@@ -8482,7 +8482,7 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
     {
         /*
         nlohmann::json j;
-        j["version"] = std::string(CREALITYPRINT_VERSION);
+        j["version"] = std::string(SANITYPRINT_VERSION);
         j["stage_version"] = std::string(PROJECT_VERSION_EXTRA);
         std::string out    = j.dump();
         if (!mz_zip_writer_add_mem(&archive, CREALITY_CONFIG_FILE.c_str(), (const void*) out.data(), out.length(),
@@ -8509,7 +8509,7 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
                << "\" " << VALUE_ATTR << "=\"" << appName3mf << "\"/>\n";
         stream << "    <" << METADATA_TAG << " " << KEY_ATTR << "=\""
                << "AppVersion"
-               << "\" " << VALUE_ATTR << "=\"" << std::string(CREALITYPRINT_VERSION) << "\"/>\n";
+               << "\" " << VALUE_ATTR << "=\"" << std::string(SANITYPRINT_VERSION) << "\"/>\n";
         stream << "    <" << METADATA_TAG << " " << KEY_ATTR << "=\""
                << "AppStage"
                << "\" " << VALUE_ATTR << "=\"" << std::string(PROJECT_VERSION_EXTRA) << "\"/>\n";

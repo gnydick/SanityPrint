@@ -172,7 +172,7 @@ echo Build completed successfully!
 echo ========================================
 echo.
 echo Build directory: %build_dir%
-echo Solution file: %build_dir%\CrealityPrint.sln
+echo Solution file: %build_dir%\SanityPrint.sln
 echo.
 echo To build Debug configuration:
 echo   1. Open Visual Studio: build_vs2022_unified.bat open
@@ -187,12 +187,12 @@ echo.
 exit /b 0
 
 :open
-if not exist "%build_dir%\CrealityPrint.sln" (
+if not exist "%build_dir%\SanityPrint.sln" (
     echo ERROR: Solution file not found!
     echo Please build the project first: build_vs2022_unified.bat all
     exit /b 1
 )
 
 echo Opening Visual Studio...
-start "" "%build_dir%\CrealityPrint.sln"
+start "" "%build_dir%\SanityPrint.sln"
 exit /b 0

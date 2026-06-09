@@ -5,7 +5,7 @@
 - 禅道链接: `https://zentao.creality.com/zentao/bug-view-13999.html`
 - 标题: `高分屏下机型管理/耗材管理弹窗显示过大`
 - 日期: `2026-03-17`
-- 所属产品: `Creality Print`
+- 所属产品: `Sanity Print`
 - 所属模块: `准备页面`
 - 所属计划: `CP 7.1.0 Release`
 - Bug 类型: `代码错误`

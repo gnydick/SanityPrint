@@ -27,7 +27,7 @@ TextInput::TextInput()
 {
     radius = 4;
     border_width = 1;
-    border_color = StateColor(std::make_pair(0xDBDBDB, (int) StateColor::Disabled), std::make_pair(0x15BF59, (int) StateColor::Hovered),
+    border_color = StateColor(std::make_pair(0xDBDBDB, (int) StateColor::Disabled), std::make_pair(0x2E86C1, (int) StateColor::Hovered),
                               std::make_pair(0xDBDBDB, (int) StateColor::Normal));
     background_color = StateColor(std::make_pair(0xF0F0F1, (int) StateColor::Disabled), std::make_pair(*wxWHITE, (int) StateColor::Normal));
     SetFont(Label::Body_12);

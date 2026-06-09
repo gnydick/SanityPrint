@@ -51,7 +51,7 @@
 
 ## 验证结果
 - 编译验证：
-  - `cmake --build build_Release --config Release --target CrealityPrint_Slicer` 通过。
+  - `cmake --build build_Release --config Release --target SanityPrint_Slicer` 通过。
   - `cmake --install build_Release --config Release` 通过。
 - 结果验证：
   - 新生成 G-code 的分喷嘴 `filament used [g]` 与预览界面“总计”一致。

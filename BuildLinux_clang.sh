@@ -152,7 +152,7 @@ fi
 
 if [[ -n "${BUILD_ORCA}" ]]
 then
-    echo "Configuring CrealityPrint..."
+    echo "Configuring SanityPrint..."
     if [[ -n "${CLEAN_BUILD}" ]]
     then
         rm -fr build
@@ -180,10 +180,10 @@ then
         -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
         ${BUILD_ARGS}
     echo "done"
-    echo "Building CrealityPrint ..."
-    cmake --build build --target CrealityPrint
-    echo "Building CrealityPrint_profile_validator .."
-    cmake --build build --target CrealityPrint_profile_validator
+    echo "Building SanityPrint ..."
+    cmake --build build --target SanityPrint
+    echo "Building SanityPrint_profile_validator .."
+    cmake --build build --target SanityPrint_profile_validator
     ./run_gettext.sh
     echo "done"
 fi

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop">
+    <id>io.github.crealityofficial.SanityPrint</id>
+    <launchable type="desktop-id">io.github.crealityofficial.SanityPrint.desktop</launchable>
+    <provides>
+        <id>io.github.crealityofficial.SanityPrint.desktop</id>
+    </provides>
+    <name>SanityPrint</name>
+    <!-- hehe hadess @ppd 
+    ... seriously though, thanks -->
+    <summary>Get even more perfect prints!</summary>
+    <developer id="io.github.crealityofficial">
+        <name>CrealityOfficial</name>
+        <email>hemiao@creality.com</email>
+    </developer>
+    <url type="homepage">https://github.com/CrealityOfficial/SanityPrint</url>
+    <url type="help">https://wiki.creality.com/en/software/6-0</url>
+    <url type="bugtracker">https://github.com/CrealityOfficial/SanityPrint/issues/</url>
+    <metadata_license>0BSD</metadata_license>
+    <project_license>AGPL-3.0-only</project_license>
+    <content_rating type="oars-1.1" />
+    <requires>
+        <display_length compare="gt">768</display_length>
+    </requires>
+    <recommends>
+        <control>keyboard</control>
+        <control>pointing</control>
+    </recommends>
+    <screenshots>
+	    <screenshot type="default">
+		    <image>https://github.com/CrealityOfficial/SanityPrint/raw/master/flatpak/images/1.png</image>
+		    <caption>A model ready to be sliced on a buildplate.</caption>
+	    </screenshot>
+	    <screenshot>
+		    <image>https://github.com/CrealityOfficial/SanityPrint/raw/master/flatpak/images/1.png</image>
+	        <caption>Control and manage multiple devices</caption>
+	    </screenshot>
+    </screenshots>
+    <description>
+	    <p>Sanity Print is a self-developed FDM slicing software produced by Shenzhen Creality 3D Technology Co., Ltd. It’s a practical and easy-to-use tool that can help you remote control and monitor your 3D printer and help print directly from your computer.</p>
+    </description>
+    <branding>
+	  <color type="primary" scheme_preference="light">#2E86C1</color>
+	</branding>
+    <releases>
+	    <release version="6.2.0" date="2025-06-30"> <url>https://github.com/CrealityOfficial/SanityPrint/commit/5d2ac094fe3f37ce446a0ee1390a44e6b8649d46</url>
+        </release>
+    </releases>
+</component>

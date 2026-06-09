@@ -30,7 +30,7 @@ Button::Button()
     background_color = StateColor(
         std::make_pair(0xF0F0F1, (int) StateColor::Disabled),
         std::make_pair(0x52c7b8, (int) StateColor::Hovered | StateColor::Checked),
-        std::make_pair(0x009688, (int) StateColor::Checked),
+        std::make_pair(0x2E86C1, (int) StateColor::Checked),
         std::make_pair(*wxLIGHT_GREY, (int) StateColor::Hovered), 
         std::make_pair(*wxWHITE, (int) StateColor::Normal));
     text_color       = StateColor(
@@ -539,7 +539,7 @@ CustomRoundCornerButton::CustomRoundCornerButton(wxWindow* parent, wxWindowID id
     : wxPanel(parent),
     m_label(label),
     m_radiusTopLeft(10), m_radiusTopRight(10), m_radiusBottomLeft(0), m_radiusBottomRight(0),
-    m_normalColor(wxColor("#4b4b4d")), m_hoverColor("#17cc5f"), m_pressedColor("#17cc5f"), m_borderColor("#6e6e72"),
+    m_normalColor(wxColor("#4b4b4d")), m_hoverColor("#3498db"), m_pressedColor("#3498db"), m_borderColor("#6e6e72"),
     m_isHovered(false), m_isPressed(false), m_isChecked(false){
     Bind(wxEVT_PAINT, &CustomRoundCornerButton::OnPaint, this);
     Bind(wxEVT_ENTER_WINDOW, &CustomRoundCornerButton::OnMouseEnter, this);

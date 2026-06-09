@@ -4,7 +4,7 @@
 - Bug ID: `15855`
 - 禅道链接: `https://zentao.creality.com/zentao/bug-view-15855.html`
 - 标题: `选择克隆，焦点没有移动到没有到数量选择上`
-- 所属产品: `Creality Print`
+- 所属产品: `Sanity Print`
 - 所属模块: `模型操作`
 - 所属计划: `来源用例`
 - 所属执行: `CP7.1.1 260430`

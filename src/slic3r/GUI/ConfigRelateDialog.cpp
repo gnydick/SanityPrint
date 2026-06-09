@@ -53,7 +53,7 @@
 #include "CommunicateWithCXCloud.hpp"
 
 namespace ConfigRelateGUI {
-    static wxColour green = wxColour("#17CC5F");
+    static wxColour green = wxColour("#3498DB");
     static wxColour white = wxColour("#FFFFFF");
     static wxSize   windowSize = wxSize(1112, 734);
     static wxSize   contentSize = wxSize(1112, 706);

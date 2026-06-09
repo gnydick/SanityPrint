@@ -74,7 +74,7 @@ namespace instance_check_internal
         for (int i = 1; i < argc; ++i) {
 			const std::string token = argv[i];
 			// Processing of boolean command line arguments shall match DynamicConfig::read_cli().
-			if (token == "--single-instance" || token == "crealityprintlink://open/")
+			if (token == "--single-instance" || token == "sanityprintlink://open/")
 				ret.should_send = true;
 			else if (token == "--no-single-instance")
 				ret.should_send = false;
@@ -112,7 +112,7 @@ namespace instance_check_internal
 			return true;
 		std::wstring classNameString(className);
 		std::wstring wndTextString(wndText);
-		if (wndTextString.find(L"CrealityPrint") != std::wstring::npos && classNameString == L"wxWindowNR") {
+		if (wndTextString.find(L"SanityPrint") != std::wstring::npos && classNameString == L"wxWindowNR") {
 			//check if other instances has same instance hash
 			//if not it is not same version(binary) as this version 
 			HANDLE   handle = GetProp(hwnd, L"Instance_Hash_Minor");
@@ -244,10 +244,10 @@ namespace instance_check_internal
 			dbus_uint32_t 	serial = 0;
 			const char* sigval = message_text.c_str();
 			//std::string		interface_name = "com.prusa3d.prusaslicer.InstanceCheck";
-			std::string		interface_name = "io.github.crealityofficial.CrealityPrint.InstanceCheck.Object" + version;
+			std::string		interface_name = "io.github.crealityofficial.SanityPrint.InstanceCheck.Object" + version;
 			std::string   	method_name = "AnotherInstance";
 			//std::string		object_name = "/com/prusa3d/prusaslicer/InstanceCheck";
-			std::string		object_name = "/io/github/crealityofficial/CrealityPrint/InstanceCheck/Object" + version;
+			std::string		object_name = "/io/github/crealityofficial/SanityPrint/InstanceCheck/Object" + version;
 
 
 			// initialise the error value
@@ -557,7 +557,7 @@ void OtherInstanceMessageHandler::handle_message(const std::string& message)
 
 	std::vector<boost::filesystem::path> paths;
 	std::vector<std::string> downloads;
-	boost::regex re(R"(^(crealityprint|prusaslicer|cura|bambustudio):\/\/open[\/]?\?file=)", boost::regbase::icase);
+	boost::regex re(R"(^(sanityprint|prusaslicer|cura|bambustudio):\/\/open[\/]?\?file=)", boost::regbase::icase);
 	boost::smatch results;
 
 	// Skip the first argument, it is the path to the slicer executable.
@@ -606,7 +606,7 @@ namespace MessageHandlerDBusInternal
 	        "       <arg name=\"data\" direction=\"out\" type=\"s\" />"
 	        "     </method>"
 	        "   </interface>"
-	        "   <interface name=\"io.github.crealityofficial.CrealityPrint.InstanceCheck\">"
+	        "   <interface name=\"io.github.crealityofficial.SanityPrint.InstanceCheck\">"
 	        "     <method name=\"AnotherInstance\">"
 	        "       <arg name=\"data\" direction=\"in\" type=\"s\" />"
 	        "     </method>"
@@ -618,7 +618,7 @@ namespace MessageHandlerDBusInternal
 	    dbus_connection_send(connection, reply, NULL);
 	    dbus_message_unref(reply);
 	}
-	//method AnotherInstance receives message from another CrealityPrint instance 
+	//method AnotherInstance receives message from another SanityPrint instance 
 	static void handle_method_another_instance(DBusConnection *connection, DBusMessage *request)
 	{
 	    DBusError     err;
@@ -644,7 +644,7 @@ namespace MessageHandlerDBusInternal
 	{
 		const char* interface_name = dbus_message_get_interface(message);
 	    const char* member_name    = dbus_message_get_member(message);
-	    std::string our_interface  = "io.github.crealityofficial.CrealityPrint.InstanceCheck.Object" + wxGetApp().get_instance_hash_string();
+	    std::string our_interface  = "io.github.crealityofficial.SanityPrint.InstanceCheck.Object" + wxGetApp().get_instance_hash_string();
 	    BOOST_LOG_TRIVIAL(trace) << "DBus message received: interface: " << interface_name << ", member: " << member_name;
 	    if (0 == strcmp("org.freedesktop.DBus.Introspectable", interface_name) && 0 == strcmp("Introspect", member_name)) {		
 	        respond_to_introspect(connection, message);
@@ -664,8 +664,8 @@ void OtherInstanceMessageHandler::listen()
     int 				 name_req_val;
     DBusObjectPathVTable vtable;
     std::string 		 instance_hash  = wxGetApp().get_instance_hash_string();
-	std::string			 interface_name = "io.github.crealityofficial.CrealityPrint.InstanceCheck.Object" + instance_hash;
-    std::string			 object_name 	= "/io/github/crealityofficial/CrealityPrint/InstanceCheck/Object" + instance_hash;
+	std::string			 interface_name = "io.github.crealityofficial.SanityPrint.InstanceCheck.Object" + instance_hash;
+    std::string			 object_name 	= "/io/github/crealityofficial/SanityPrint/InstanceCheck/Object" + instance_hash;
 
     //BOOST_LOG_TRIVIAL(debug) << "init dbus listen " << interface_name << " " << object_name;
     dbus_error_init(&err);
@@ -693,7 +693,7 @@ void OtherInstanceMessageHandler::listen()
 	    return;
 	}
 	if (DBUS_REQUEST_NAME_REPLY_PRIMARY_OWNER != name_req_val) {
-		BOOST_LOG_TRIVIAL(error) << "Not primary owner of DBus name - probably another CrealityPrint instance is running.";
+		BOOST_LOG_TRIVIAL(error) << "Not primary owner of DBus name - probably another SanityPrint instance is running.";
 	    BOOST_LOG_TRIVIAL(error) << "Dbus Messages listening terminating.";
 	    dbus_connection_unref(conn);
 	    return;

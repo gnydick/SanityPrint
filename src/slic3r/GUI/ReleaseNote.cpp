@@ -66,7 +66,7 @@ ReleaseNoteDialog::ReleaseNoteDialog(Plater *plater /*= nullptr*/)
 
     m_sizer_body->Add(0, 0, 0, wxLEFT, FromDIP(38));
 
-    auto sm = create_scaled_bitmap("CrealityPrint", nullptr,  70);
+    auto sm = create_scaled_bitmap("SanityPrint", nullptr,  70);
     auto brand = new wxStaticBitmap(this, wxID_ANY, sm, wxDefaultPosition, wxSize(FromDIP(70), FromDIP(70)));
 
     m_sizer_body->Add(brand, 0, wxALL, 0);
@@ -140,7 +140,7 @@ UpdatePluginDialog::UpdatePluginDialog(wxWindow* parent /*= nullptr*/)
 
 
 
-    auto sm = create_scaled_bitmap("CrealityPrint", nullptr, 55);
+    auto sm = create_scaled_bitmap("SanityPrint", nullptr, 55);
     auto brand = new wxStaticBitmap(this, wxID_ANY, sm, wxDefaultPosition, wxSize(FromDIP(55), FromDIP(55)));
 
     wxBoxSizer* m_sizer_right = new wxBoxSizer(wxVERTICAL);
@@ -150,7 +150,7 @@ UpdatePluginDialog::UpdatePluginDialog(wxWindow* parent /*= nullptr*/)
     m_text_up_info->SetForegroundColour(wxColour(0x26, 0x2E, 0x30));
 
 
-    operation_tips = new ::Label(this, Label::Body_12, _L("Click OK to update the Network plug-in when Creality Print launches next time."), LB_AUTO_WRAP);
+    operation_tips = new ::Label(this, Label::Body_12, _L("Click OK to update the Network plug-in when Sanity Print launches next time."), LB_AUTO_WRAP);
     operation_tips->SetMinSize(wxSize(FromDIP(260), -1));
     operation_tips->SetMaxSize(wxSize(FromDIP(260), -1));
 
@@ -162,7 +162,7 @@ UpdatePluginDialog::UpdatePluginDialog(wxWindow* parent /*= nullptr*/)
 
     auto sizer_button = new wxBoxSizer(wxHORIZONTAL);
 
-    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(0, 137, 123), StateColor::Pressed), std::pair<wxColour, int>(wxColour(38, 166, 154), StateColor::Hovered),
+    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(26, 111, 163), StateColor::Pressed), std::pair<wxColour, int>(wxColour(93, 173, 226), StateColor::Hovered),
         std::pair<wxColour, int>(AMS_CONTROL_BRAND_COLOUR, StateColor::Normal));
 
     StateColor btn_bg_white(std::pair<wxColour, int>(wxColour(206, 206, 206), StateColor::Pressed), std::pair<wxColour, int>(wxColour(238, 238, 238), StateColor::Hovered),
@@ -308,7 +308,7 @@ void CustomScrolledWindow::OnDraw(wxDC& dc)
 }
 
 UpdateVersionDialog::UpdateVersionDialog(wxWindow *parent)
-    : DPIDialog(parent, wxID_ANY, _L("New version of Creality Print"), wxDefaultPosition, wxDefaultSize, wxCAPTION | wxCLOSE_BOX| wxRESIZE_BORDER)
+    : DPIDialog(parent, wxID_ANY, _L("New version of Sanity Print"), wxDefaultPosition, wxDefaultSize, wxCAPTION | wxCLOSE_BOX| wxRESIZE_BORDER)
 {
     std::string icon_path = (boost::format("%1%/images/%2%.ico") % resources_dir() % Slic3r::CxBuildInfo::getIconName()).str();
     SetIcon(wxIcon(encode_path(icon_path.c_str()), wxBITMAP_TYPE_ICO));
@@ -354,7 +354,7 @@ UpdateVersionDialog::UpdateVersionDialog(wxWindow *parent)
     //m_vebview_release_note->Bind(wxEVT_WEBVIEW_NAVIGATING,[=](wxWebViewEvent& event){
     //    static bool load_url_first = false;
     //    if(load_url_first){
-    //        // Orca: not used in Creality Print
+    //        // Orca: not used in Sanity Print
     //        // wxLaunchDefaultBrowser(url_line);
     //        event.Veto();
     //    }else{
@@ -391,7 +391,7 @@ UpdateVersionDialog::UpdateVersionDialog(wxWindow *parent)
     m_link_open_in_browser->SetFont(Label::Body_14);
     
     StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(18, 162, 76), StateColor::Pressed), std::pair<wxColour, int>(wxColour(40, 210, 100), StateColor::Hovered),
-                            std::pair<wxColour, int>(wxColour(21, 191, 89), StateColor::Normal));
+                            std::pair<wxColour, int>(wxColour(52, 152, 219), StateColor::Normal));
 
     StateColor btn_bg_white(std::pair<wxColour, int>(wxColour(206, 206, 206), StateColor::Pressed), std::pair<wxColour, int>(wxColour(238, 238, 238), StateColor::Hovered),
                             std::pair<wxColour, int>(*wxWHITE, StateColor::Normal));
@@ -661,7 +661,7 @@ void UpdateVersionDialog::update_version_info(wxString release_note, wxString ve
         m_bitmap_open_in_browser->Hide();
         m_link_open_in_browser->Hide();
         //m_simplebook_release_note->SetMaxSize(wxSize(FromDIP(560), FromDIP(430)));
-        auto current_version = _L("Creality Print ") + " V" + std::string(CREALITYPRINT_VERSION) + " " + get_vertion_type();
+        auto current_version = _L("Sanity Print ") + " V" + std::string(SANITYPRINT_VERSION) + " " + get_vertion_type();
 
         m_simplebook_release_note->SetSelection(0);
         m_text_up_info->SetLabel(wxString::Format(_L("New version found: %s, it's recommended to update"), version));
@@ -729,7 +729,7 @@ SecondaryCheckDialog::SecondaryCheckDialog(wxWindow* parent, wxWindowID id, cons
 
     auto bottom_sizer = new wxBoxSizer(wxVERTICAL);
     auto sizer_button = new wxBoxSizer(wxHORIZONTAL);
-    btn_bg_green = StateColor(std::pair<wxColour, int>(wxColour(0, 137, 123), StateColor::Pressed), std::pair<wxColour, int>(wxColour(38, 166, 154), StateColor::Hovered),
+    btn_bg_green = StateColor(std::pair<wxColour, int>(wxColour(26, 111, 163), StateColor::Pressed), std::pair<wxColour, int>(wxColour(93, 173, 226), StateColor::Hovered),
         std::pair<wxColour, int>(AMS_CONTROL_BRAND_COLOUR, StateColor::Normal));
 
     btn_bg_white = StateColor(std::pair<wxColour, int>(wxColour(206, 206, 206), StateColor::Pressed), std::pair<wxColour, int>(wxColour(238, 238, 238), StateColor::Hovered),
@@ -1347,9 +1347,9 @@ ConfirmBeforeSendDialog::ConfirmBeforeSendDialog(wxWindow* parent, wxWindowID id
 
     auto bottom_sizer = new wxBoxSizer(wxVERTICAL);
     auto sizer_button = new wxBoxSizer(wxHORIZONTAL);
-    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(21, 191, 89), StateColor::Pressed), 
-        std::pair<wxColour, int>(wxColour(21, 191, 89), StateColor::Hovered),
-        std::pair<wxColour, int>(wxColour(21, 191, 89), StateColor::Normal));
+    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(52, 152, 219), StateColor::Pressed), 
+        std::pair<wxColour, int>(wxColour(52, 152, 219), StateColor::Hovered),
+        std::pair<wxColour, int>(wxColour(52, 152, 219), StateColor::Normal));
 
     StateColor btn_bg_white(std::pair<wxColour, int>(wxColour(206, 206, 206), StateColor::Pressed), std::pair<wxColour, int>(wxColour(238, 238, 238), StateColor::Hovered),
         std::pair<wxColour, int>(*wxWHITE, StateColor::Normal));
@@ -1583,7 +1583,7 @@ void ConfirmBeforeSendDialog::disable_button_ok()
 void ConfirmBeforeSendDialog::enable_button_ok()
 {
     m_button_ok->Enable();
-    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(38, 166, 154), StateColor::Pressed), std::pair<wxColour, int>(wxColour(38, 166, 154), StateColor::Hovered),
+    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(93, 173, 226), StateColor::Pressed), std::pair<wxColour, int>(wxColour(93, 173, 226), StateColor::Hovered),
         std::pair<wxColour, int>(AMS_CONTROL_BRAND_COLOUR, StateColor::Normal));
     m_button_ok->SetBackgroundColor(btn_bg_green);
     m_button_ok->SetBorderColor(btn_bg_green);
@@ -1611,7 +1611,7 @@ InputIpAddressDialog::InputIpAddressDialog(wxWindow* parent)
     auto        m_line_top = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1, 1));
     m_line_top->SetBackgroundColour(wxColour(166, 169, 170));
 
-    comfirm_before_enter_text = _L("Step 1, please confirm Creality Print and your printer are in the same LAN.");
+    comfirm_before_enter_text = _L("Step 1, please confirm Sanity Print and your printer are in the same LAN.");
     comfirm_after_enter_text = _L("Step 2, if the IP and Access Code below are different from the actual values on your printer, please correct them.");
 
 
@@ -1657,7 +1657,7 @@ InputIpAddressDialog::InputIpAddressDialog(wxWindow* parent)
     m_input_area->Add(m_input_access_code, 0, wxALIGN_CENTER, 0);
 
     m_test_right_msg = new Label(this, Label::Body_13, wxEmptyString, LB_AUTO_WRAP);
-    m_test_right_msg->SetForegroundColour(wxColour(38, 166, 154));
+    m_test_right_msg->SetForegroundColour(wxColour(93, 173, 226));
     m_test_right_msg->Hide();
 
     
@@ -1680,7 +1680,7 @@ InputIpAddressDialog::InputIpAddressDialog(wxWindow* parent)
 
     auto m_sizer_button = new wxBoxSizer(wxHORIZONTAL);
 
-    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(38, 166, 154), StateColor::Pressed), std::pair<wxColour, int>(wxColour(38, 166, 154), StateColor::Hovered),
+    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(93, 173, 226), StateColor::Pressed), std::pair<wxColour, int>(wxColour(93, 173, 226), StateColor::Hovered),
         std::pair<wxColour, int>(AMS_CONTROL_BRAND_COLOUR, StateColor::Normal));
 
     StateColor btn_bg_white(std::pair<wxColour, int>(wxColour(206, 206, 206), StateColor::Pressed), std::pair<wxColour, int>(wxColour(238, 238, 238), StateColor::Hovered),
@@ -1865,7 +1865,7 @@ void InputIpAddressDialog::set_machine_obj(MachineObject* obj)
     auto str_access_code = m_input_access_code->GetTextCtrl()->GetValue();
     if (isIp(str_ip.ToStdString()) && str_access_code.Length() == 8) {
         m_button_ok->Enable(true);
-        StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(0, 137, 123), StateColor::Pressed), std::pair<wxColour, int>(wxColour(38, 166, 154), StateColor::Hovered),
+        StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(26, 111, 163), StateColor::Pressed), std::pair<wxColour, int>(wxColour(93, 173, 226), StateColor::Hovered),
             std::pair<wxColour, int>(AMS_CONTROL_BRAND_COLOUR, StateColor::Normal));
         m_button_ok->SetTextColor(StateColor::darkModeColorFor("#FFFFFE"));
         m_button_ok->SetBackgroundColor(btn_bg_green);
@@ -2025,7 +2025,7 @@ void InputIpAddressDialog::on_check_ip_address_failed(wxCommandEvent& evt)
     }
     
     m_button_ok->Enable(true);
-    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(0, 137, 123), StateColor::Pressed), std::pair<wxColour, int>(wxColour(38, 166, 154), StateColor::Hovered),
+    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(26, 111, 163), StateColor::Pressed), std::pair<wxColour, int>(wxColour(93, 173, 226), StateColor::Hovered),
         std::pair<wxColour, int>(AMS_CONTROL_BRAND_COLOUR, StateColor::Normal));
     m_button_ok->SetTextColor(StateColor::darkModeColorFor("#FFFFFE"));
     m_button_ok->SetBackgroundColor(btn_bg_green);
@@ -2038,7 +2038,7 @@ void InputIpAddressDialog::on_text(wxCommandEvent& evt)
 
     if (isIp(str_ip.ToStdString()) && str_access_code.Length() == 8) {
         m_button_ok->Enable(true);
-        StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(0, 137, 123), StateColor::Pressed), std::pair<wxColour, int>(wxColour(38, 166, 154), StateColor::Hovered),
+        StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(26, 111, 163), StateColor::Pressed), std::pair<wxColour, int>(wxColour(93, 173, 226), StateColor::Hovered),
             std::pair<wxColour, int>(AMS_CONTROL_BRAND_COLOUR, StateColor::Normal));
         m_button_ok->SetTextColor(StateColor::darkModeColorFor("#FFFFFE"));
         m_button_ok->SetBackgroundColor(btn_bg_green);

@@ -6,7 +6,7 @@ import pytest
 
 
 @pytest.fixture(scope="package", autouse=True)
-def open_max_cp(open_creality_printer):
+def open_max_cp(open_sanity_printer):
     yield
 
 # 动态参数化配置

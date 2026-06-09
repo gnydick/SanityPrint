@@ -9,7 +9,7 @@
 
 ## 0. TL;DR
 
-CrealityPrint (an OrcaSlicer/Bambu-Studio fork) currently decides a bunch of slicing behavior with
+SanityPrint (an OrcaSlicer/Bambu-Studio fork) currently decides a bunch of slicing behavior with
 hardcoded `if (filament_type == "PLA")`-style switches scattered across ~11 sites. That makes
 filament *types* a closed, compiled-in set: users cannot create a genuinely new material, only reuse
 an existing type's behavior.
@@ -246,7 +246,7 @@ reverted on the base branch in commit `36dedfff`); the editable Type lives in **
 
 ## 12. Build & test on THIS machine
 
-There is a committed project skill **`build-crealityprint`** with the full toolchain setup — read it.
+There is a committed project skill **`build-sanityprint`** with the full toolchain setup — read it.
 Key facts and prebuilt scripts:
 
 - Windows, VS 2022 Build Tools. **Pin CMake 3.31.12** (CMake 4.x breaks this legacy tree).
@@ -254,17 +254,17 @@ Key facts and prebuilt scripts:
 - Release build uses `-DPROJECT_VERSION_EXTRA=Release` and `BUILD_ID=4472` → version 7.1.1.4472.
 - **App build:** `D:\cpbuild\build_app.ps1` (configures `-DSLIC3R_BUILD_TESTS=OFF`, builds
   `ALL_BUILD`). Logs to `D:\cpbuild\app_build.log`; sentinel `D:\cpbuild\app.done` =
-  `build-exit-<N>`; binaries land in `D:\cpbuild\app\src\Release\` (`CrealityPrint.exe`,
-  `CrealityPrint_Slicer.dll`). Run it `run_in_background`.
+  `build-exit-<N>`; binaries land in `D:\cpbuild\app\src\Release\` (`SanityPrint.exe`,
+  `SanityPrint_Slicer.dll`). Run it `run_in_background`.
 - **Unit-test build/run:** `D:\cpbuild\build_tests.ps1` (reconfigures `-DSLIC3R_BUILD_TESTS=ON`,
   builds a single small test target, runs it with app DLLs on `PATH`). Sentinel
   `D:\cpbuild\tests.done` = `tests-exit-<N>`. Catch2 v2 (`#include <catch2/catch.hpp>`).
 - **Gotchas:**
   - `build_app.ps1` and `build_tests.ps1` reconfigure the same cache (TESTS OFF/ON) — never run them
     concurrently; run sequentially.
-  - **Close any running `CrealityPrint.exe` before building** — a running app holds
-    `CrealityPrint_Slicer.dll` open and the link fails with `LNK1104: cannot open file ...dll`. Check
-    `Get-Process -Name CrealityPrint`.
+  - **Close any running `SanityPrint.exe` before building** — a running app holds
+    `SanityPrint_Slicer.dll` open and the link fails with `LNK1104: cannot open file ...dll`. Check
+    `Get-Process -Name SanityPrint`.
   - The build log contains NUL bytes (MSBuild); strip with `-replace "\0",""` when tailing.
   - No `/WX` (warnings are not errors), but `-Werror=return-type` is on — make all paths return.
 - libslic3r sources: explicit list in `src/libslic3r/CMakeLists.txt` plus appends in
@@ -290,7 +290,7 @@ Key facts and prebuilt scripts:
 
 - Base off **`feature/arbitrary-filament-types`** (it has the inheritance impl to remove + the
   `36dedfff` Field.cpp revert). Name e.g. `feature/parameterize-filament-types`.
-- Origin is the user's fork `gnydick/CrealityPrint`. Commit in logical chunks; push when asked.
+- Origin is the user's fork `gnydick/SanityPrint`. Commit in logical chunks; push when asked.
 - End git commit messages with:
   `Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>`
 

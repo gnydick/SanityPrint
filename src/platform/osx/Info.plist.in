@@ -7,13 +7,13 @@
   <key>CFBundleGetInfoString</key>
   <string>@SLIC3R_APP_NAME@ Copyright(C) 2021-2023 Lunkuo All Rights Reserved</string>
   <key>CFBundleIconFile</key>
-  <string>images/CrealityPrint.icns</string>
+  <string>images/SanityPrint.icns</string>
   <key>CFBundleName</key>
   <string>@SLIC3R_APP_KEY@</string>
   <key>CFBundleShortVersionString</key>
   <string>@SLIC3R_APP_NAME@ @SLIC3R_BUILD_ID@</string>
   <key>CFBundleIdentifier</key>
-  <string>com.creality.crealityprint/</string>
+  <string>com.creality.sanityprint/</string>
   <key>CFBundleInfoDictionaryVersion</key>
   <string>6.0</string>
   <key>CFBundlePackageType</key>
@@ -29,10 +29,10 @@
     <dict>  
         <key>CFBundleURLSchemes</key>  
         <array>  
-            <string>CrealityPrintLink</string>  
+            <string>SanityPrintLink</string>  
         </array>  
         <key>CFBundleURLName</key>  
-        <string>com.creality.crealityprint</string>  
+        <string>com.creality.sanityprint</string>  
     </dict>
   </array>
   <key>CFBundleDocumentTypes</key>
@@ -61,7 +61,7 @@
         <string>OBJ</string>
       </array>
       <key>CFBundleTypeIconFile</key>
-      <string>images/CrealityPrint.icns</string>
+      <string>images/SanityPrint.icns</string>
       <key>CFBundleTypeName</key>
       <string>STL</string>
       <key>CFBundleTypeRole</key>
@@ -78,7 +78,7 @@
         <string>AMF</string>
       </array>
       <key>CFBundleTypeIconFile</key>
-      <string>images/CrealityPrint.icns</string>
+      <string>images/SanityPrint.icns</string>
       <key>CFBundleTypeName</key>
       <string>AMF</string>
       <key>CFBundleTypeRole</key>

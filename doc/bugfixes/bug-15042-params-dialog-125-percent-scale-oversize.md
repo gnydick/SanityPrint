@@ -5,7 +5,7 @@
 - 禅道链接: `https://zentao.creality.com/zentao/bug-view-15042.html`
 - 标题: `普通屏 125% 缩放下机型/耗材设置页面显示过大`
 - 日期: `2026-03-17`
-- 所属产品: `Creality Print`
+- 所属产品: `Sanity Print`
 - 所属模块: `准备页面`
 - 所属计划: `CP 7.1.0 Release`
 - Bug 类型: `代码错误`

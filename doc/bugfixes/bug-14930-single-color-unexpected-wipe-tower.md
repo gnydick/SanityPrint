@@ -6,7 +6,7 @@
 - 标题: `【用户反馈】附件文件，没有多色。但有擦拭塔不合理`
 - 创建人: `康美樱`
 - 指派给: `王文彬`
-- 所属产品: `Creality Print`
+- 所属产品: `Sanity Print`
 - 修复日期: `2026-03-03`
 
 ## 2. 问题现象
@@ -71,7 +71,7 @@
   - 准备页与预览页表现一致。
 - 编译验证：
   - `cmake --build build_Release --config Release -j 8` 通过；
-  - `CrealityPrint_Slicer.dll` / `CrealityPrint.exe` 生成成功。
+  - `SanityPrint_Slicer.dll` / `SanityPrint.exe` 生成成功。
 
 ## 8. 风险评估
 - 风险等级：`中低`

@@ -41,7 +41,7 @@ void SelectableCard::OnPaint(wxPaintEvent&)
     dc.DrawRectangle(rc);
 
     // 颜色 & 尺寸
-    const wxColour colBorderSel(21, 192, 89);  // 选中边
+    const wxColour colBorderSel(52, 152, 219);  // 选中边
     const wxColour colBorderNor(150, 150, 152); // 未选边
     const wxColour colBorderHov(190, 190, 190); // 悬停
     const wxColour colTitle(145, 149, 153); //标题字体颜色

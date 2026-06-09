@@ -1490,7 +1490,7 @@ void Upload3mfToCloudDialog::show_status(PrintDialogStatus status, std::vector<w
         Enable_Send_Button(false);
         Enable_Refresh_Button(true);
     } else if (status == PrintDialogStatus::PrintStatusNotOnTheSameLAN) {
-        wxString msg_text = _L("The printer is required to be in the same LAN as Creality Print");
+        wxString msg_text = _L("The printer is required to be in the same LAN as Sanity Print");
         update_print_status_msg(msg_text, true, true);
         Enable_Send_Button(false);
         Enable_Refresh_Button(true);

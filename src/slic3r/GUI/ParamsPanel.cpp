@@ -367,7 +367,7 @@ void CustomTreeCtrl::OnPaint(wxPaintEvent& event)
     //        // 绘制选中状态
     //        if (IsSelected(item)) {
     //            dc.SetPen(*wxTRANSPARENT_PEN);
-    //            dc.SetBrush(wxBrush(wxColour(21, 191, 89))); // 设置选中背景色
+    //            dc.SetBrush(wxBrush(wxColour(52, 152, 219))); // 设置选中背景色
     //            dc.DrawRectangle(rect);
     //        }
     //    }
@@ -485,7 +485,7 @@ ParamsPanel::ParamsPanel( wxWindow* parent, wxWindowID id, const wxPoint& pos, c
         m_mode_view->SetMaxSize({em_unit(this) * 12, -1});
         //m_mode_view->SetLabels(_L("    "), _L("    "));
         StateColor stateColor = StateColor(std::make_pair(is_dark ? 0x4B4B4D : 0xFFFFFF, (int) StateColor::Disabled),
-                                     std::make_pair(0x15BF59, (int) StateColor::Hovered),
+                                     std::make_pair(0x2E86C1, (int) StateColor::Hovered),
                                      std::make_pair(is_dark ? 0x4B4B4D : 0xFFFFFF, (int) StateColor::Normal));
         //m_mode_view_box = new HoverBorderBox(m_top_panel, m_mode_view, wxDefaultPosition, wxSize(FromDIP(24),FromDIP(24)), wxTE_PROCESS_ENTER);
         m_mode_view->SetToolTip(_L("Advance parameters"));
@@ -865,11 +865,11 @@ void ParamsPanel::create_layout_printerAndFilament()
 
         bool is_dark = wxGetApp().dark_mode();
         int em = em_unit(this);
-        StateColor bg_color = StateColor(std::pair{wxColour(21, 191, 89), (int) StateColor::Hovered},
+        StateColor bg_color = StateColor(std::pair{wxColour(52, 152, 219), (int) StateColor::Hovered},
                                          std::pair{is_dark ? wxColour(142, 142, 159) : wxColour(214, 214, 220), (int) StateColor::Normal});
 
-        StateColor bg_checkedColor = StateColor(std::pair{wxColour(21, 191, 89), (int) StateColor::Hovered},
-                                                std::pair{wxColour(21, 191, 89), (int) StateColor::Normal});
+        StateColor bg_checkedColor = StateColor(std::pair{wxColour(52, 152, 219), (int) StateColor::Hovered},
+                                                std::pair{wxColour(52, 152, 219), (int) StateColor::Normal});
 
         StateColor text_color = StateColor(std::pair{is_dark ? wxColour(254, 254, 254) : wxColour(255, 255, 255), (int) StateColor::Hovered},
                                            std::pair{is_dark ? wxColour(254, 254, 254) : wxColour(0, 0, 0), (int) StateColor::Normal});
@@ -1281,7 +1281,7 @@ void ParamsPanel::create_layout_process()
 //    m_tmp_panel->GetSizer()->Add(m_page_view, 1, wxEXPAND);
 //#else
     // m_left_sizer->Add( m_page_view, 4, wxEXPAND );
-    m_color_border_box->SetBorderColor(wxColour(21, 191, 89));
+    m_color_border_box->SetBorderColor(wxColour(52, 152, 219));
     m_left_sizer->Add(m_color_border_box, 4, wxEXPAND | wxRIGHT | wxDOWN, FromDIP(10));
     //#endif
 
@@ -2251,8 +2251,8 @@ void ParamsPanel::updateItemState()
     StateColor bg_color = StateColor(std::pair{wxColour(142, 142, 159), (int) StateColor::Hovered},
                                      std::pair{is_dark ? wxColour(142, 142, 159) : wxColour(214, 214, 220), (int) StateColor::Normal});
 
-    StateColor bg_checkedColor = StateColor(std::pair{wxColour(21, 191, 89), (int) StateColor::Hovered},
-                                            std::pair{wxColour(21, 191, 89), (int) StateColor::Normal});
+    StateColor bg_checkedColor = StateColor(std::pair{wxColour(52, 152, 219), (int) StateColor::Hovered},
+                                            std::pair{wxColour(52, 152, 219), (int) StateColor::Normal});
 
     function setSystemType = [this, bg_color, bg_checkedColor]() {
         m_btn_save->Hide();
@@ -2938,7 +2938,7 @@ void ParamsPanel::layoutPrinterAndFilament()
 
     int em = em_unit(this);
     StateColor text_color = StateColor(std::pair{ is_dark ? wxColour(254, 254, 254) : wxColour(0,0,0), (int)StateColor::Normal });
-    StateColor bg_color = StateColor(std::pair{ wxColour(23, 204, 95), (int)StateColor::Hovered },
+    StateColor bg_color = StateColor(std::pair{ wxColour(52, 152, 219), (int)StateColor::Hovered },
         std::pair{ is_dark ? wxColour(110, 110, 115) : wxColour(214, 214, 220), (int)StateColor::Normal });
 
 

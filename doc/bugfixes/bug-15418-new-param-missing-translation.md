@@ -4,7 +4,7 @@
 - 15418
 - 禅道链接: https://zentao.creality.com/zentao/bug-view-15418.html
 - 标题: 新增参数没翻译
-- 产品/模块: Creality Print / 工艺管理
+- 产品/模块: Sanity Print / 工艺管理
 - 严重程度/优先级: 一般 / 中
 
 【问题现象】
@@ -16,7 +16,7 @@
 - 参数说明渲染层存在显示边界问题：若不调整 `MarkdownTip` 相关逻辑，UI 参数 `label/tooltip` 页面会出现 `label` 显示不全。
 - 具体表现为以下一种或多种情况:
   - 新文案未使用 `_L(...)`（或按场景使用 `_L_ZH(...)`）包装。
-  - 新文案未被提取到 `CrealityPrint.pot`。
+  - 新文案未被提取到 `SanityPrint.pot`。
   - `zh_CN` 对应 `po` 未补齐 `msgstr`。
   - `mo` 文件未重新编译，运行时仍加载旧翻译产物。
 
@@ -26,7 +26,7 @@
 3. 在项目根目录执行提取与合并:
    - `run_gettext.bat --full`
 4. 在中文翻译文件补齐新增文案:
-   - `localization/i18n/zh_CN/CrealityPrint_zh_CN.po`
+   - `localization/i18n/zh_CN/SanityPrint_zh_CN.po`
 5. 重新编译语言包:
    - `run_gettext.bat`
 6. 启动应用并在中文环境验证参数名称显示。
@@ -35,9 +35,9 @@
 - `src/slic3r/GUI/MarkdownTip.cpp`
   - 说明: 该文件改动用于修复 UI 参数 `label/tooltip` 页面的 `label` 显示不全问题；若不改会出现文本截断。
 - `src/...`（新增参数所在代码文件，新增或修正 `_L(...)` 调用）
-- `localization/i18n/CrealityPrint.pot`
-- `localization/i18n/zh_CN/CrealityPrint_zh_CN.po`
-- `resources/i18n/zh_CN/CrealityPrint.mo`
+- `localization/i18n/SanityPrint.pot`
+- `localization/i18n/zh_CN/SanityPrint_zh_CN.po`
+- `resources/i18n/zh_CN/SanityPrint.mo`
 
 【验证结果】
 - 禅道问题 `BUG #15418` 已复核，问题为“新增参数没翻译”。

@@ -26,7 +26,7 @@ void HoverBorderBox::Create(wxWindow* parent, wxWindow* insideChild, const wxPoi
     SetCornerRadius(6);
 
     StaticBox::SetBorderColor(StateColor(std::make_pair(is_dark ? 0x4B4B4D : 0xFFFFFF, (int) StateColor::Disabled),
-                                         std::make_pair(0x15BF59, (int) StateColor::Hovered),
+                                         std::make_pair(0x2E86C1, (int) StateColor::Hovered),
                                          std::make_pair(is_dark ? 0x4B4B4D : 0xFFFFFF, (int) StateColor::Normal)));
     StaticBox::SetBackgroundColor(
         StateColor(std::make_pair(0xF0F0F1, (int) StateColor::Disabled),
@@ -57,7 +57,7 @@ void HoverBorderBox::SetToolTip_( const wxString &tip )
 void HoverBorderBox::on_change_color_mode(bool is_dark)
 {
     StaticBox::SetBorderColor(StateColor(std::make_pair(is_dark ? 0x4B4B4D : 0xFFFFFF, (int) StateColor::Disabled),
-                                         std::make_pair(0x15BF59, (int) StateColor::Hovered),
+                                         std::make_pair(0x2E86C1, (int) StateColor::Hovered),
                                          std::make_pair(is_dark ? 0x4B4B4D : 0xFFFFFF, (int) StateColor::Normal)));
 
     state_handler.update_binds();

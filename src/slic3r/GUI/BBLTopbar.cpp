@@ -135,7 +135,7 @@ void ButtonsCtrl::SetSelection(int sel)
     }
 
     // BBS: change button color
-    wxColour selected_btn_bg("#009688"); // Gradient #009688
+    wxColour selected_btn_bg("#2E86C1"); // Gradient #2E86C1
     if (m_selection >= 0) {
         wxColour   hover_bg = is_dark ? wxColour(76, 213, 130) : wxColour(68, 205, 122);
         StateColor bg_color = StateColor(std::pair{hover_bg, (int) StateColor::Hovered},
@@ -158,7 +158,7 @@ void ButtonsCtrl::SetSelection(int sel)
     m_mapPageButtons[m_selection]->SetTextColor(text_color);
 
     StateColor bg_color = StateColor(std::pair{ wxColour(68, 205, 122), (int)StateColor::Hovered },
-                                     std::pair{is_dark ? wxColour(31, 202, 99) : wxColour(21, 192, 89), (int) StateColor::Normal});
+                                     std::pair{is_dark ? wxColour(65, 179, 224) : wxColour(52, 152, 219), (int) StateColor::Normal});
     m_mapPageButtons[m_selection]->SetBackgroundColor(bg_color);
     m_mapPageButtons[m_selection]->SetFocus();
 
@@ -188,7 +188,7 @@ void ButtonsCtrl::RefreshColor()
         {
             button->SetSelected(true);
             bg_color = StateColor(std::pair{wxColour(68, 205, 122), (int) StateColor::Hovered},
-                std::pair{is_dark ? wxColour(31, 202, 99) : wxColour(21, 192, 89), (int) StateColor::Normal});
+                std::pair{is_dark ? wxColour(65, 179, 224) : wxColour(52, 152, 219), (int) StateColor::Normal});
             button->SetBackgroundColor(bg_color);
             StateColor text_color = StateColor(std::pair{ is_dark ? wxColour(254, 254, 254) : wxColour(255,255,255), (int)StateColor::Hovered },
                 std::pair{ is_dark ? wxColour(254, 254, 254) : wxColour(255,255,255), (int)StateColor::Normal });
@@ -428,21 +428,21 @@ void BBLTopbarArt::DrawButton(wxDC& dc, wxWindow* wnd, const wxAuiToolBarItem& i
     {
         if (item.GetState() & wxAUI_BUTTON_STATE_PRESSED)
         {
-            dc.SetPen(wxPen(StateColor::darkModeColorFor("#15BF59"))); // ORCA
-            //dc.SetBrush(wxBrush(StateColor::darkModeColorFor("#15BF59"))); // ORCA
+            dc.SetPen(wxPen(StateColor::darkModeColorFor("#2E86C1"))); // ORCA
+            //dc.SetBrush(wxBrush(StateColor::darkModeColorFor("#2E86C1"))); // ORCA
             if (UPLOAD_BTN_CODE != item.GetUserData()) {
                 dc.DrawRoundedRectangle(rect, wnd->FromDIP(5));
             }
         }
         else if ((item.GetState() & wxAUI_BUTTON_STATE_HOVER) || item.IsSticky())
         {
-            dc.SetPen(wxPen(StateColor::darkModeColorFor("#15BF59"))); // ORCA
-            //dc.SetBrush(wxBrush(StateColor::darkModeColorFor("#009688"))); // ORCA
+            dc.SetPen(wxPen(StateColor::darkModeColorFor("#2E86C1"))); // ORCA
+            //dc.SetBrush(wxBrush(StateColor::darkModeColorFor("#2E86C1"))); // ORCA
 
             // draw an even lighter background for checked item hovers (since
             // the hover background is the same color as the check background)
             if (item.GetState() & wxAUI_BUTTON_STATE_CHECKED)
-                dc.SetBrush(wxBrush(StateColor::darkModeColorFor("#009688"))); // ORCA
+                dc.SetBrush(wxBrush(StateColor::darkModeColorFor("#2E86C1"))); // ORCA
 
             // dc.DrawRoundedRectangle(rect, 3);
             if(gc)
@@ -473,14 +473,14 @@ void BBLTopbarArt::DrawButton(wxDC& dc, wxWindow* wnd, const wxAuiToolBarItem& i
         else if (item.GetState() & wxAUI_BUTTON_STATE_CHECKED)
         {
             if (HOME_BTN_CODE_CHECKED == item.GetUserData()) {
-                dc.SetPen(wxPen(StateColor::darkModeColorFor("#15BF59")));     // ORCA
-                dc.SetBrush(wxBrush(StateColor::darkModeColorFor("#15BF59"))); // ORCA
+                dc.SetPen(wxPen(StateColor::darkModeColorFor("#2E86C1")));     // ORCA
+                dc.SetBrush(wxBrush(StateColor::darkModeColorFor("#2E86C1"))); // ORCA
                 dc.DrawRoundedRectangle(rect, wnd->FromDIP(5));
             } else {
                 // it's important to put this code in an else statement after the
                 // hover, otherwise hovers won't draw properly for checked items
-                dc.SetPen(wxPen(StateColor::darkModeColorFor("#009688"))); // ORCA
-                // dc.SetBrush(wxBrush(StateColor::darkModeColorFor("#009688"))); // ORCA
+                dc.SetPen(wxPen(StateColor::darkModeColorFor("#2E86C1"))); // ORCA
+                // dc.SetBrush(wxBrush(StateColor::darkModeColorFor("#2E86C1"))); // ORCA
                 dc.DrawRectangle(rect);
             }
         }

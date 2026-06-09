@@ -5,7 +5,7 @@
 - 标题: `关闭发送页时，崩溃`
 - 日期: `2026-03-17`
 - 禅道链接: `https://zentao.creality.com/zentao/bug-view-15321.html`
-- 所属产品: `Creality Print`
+- 所属产品: `Sanity Print`
 - 所属模块: `设备管理`
 - Bug 类型: `代码错误`
 - 严重程度: `致命`
@@ -13,7 +13,7 @@
 - 状态: `激活`
 - 创建人: `冷金辉`
 - 指派给: `贺淼`
-- 影响版本: `CrealityPrint_7.1.0.4318_Beta`
+- 影响版本: `SanityPrint_7.1.0.4318_Beta`
 - 所属执行: `CP7.1.0 260330`
 
 ## 2. 问题现象

@@ -26,7 +26,7 @@ void TextDisplay::Create(wxWindow* parent, const wxString& text, const wxString&
 
     StaticBox::SetFont(Label::Body_13);
     StaticBox::SetBorderColor(StateColor(std::make_pair(0xDBDBDB, (int) StateColor::Disabled),
-                                         std::make_pair(0x15BF59, (int) StateColor::Hovered),
+                                         std::make_pair(0x2E86C1, (int) StateColor::Hovered),
                                          std::make_pair(0xDBDBDB, (int) StateColor::Normal)));
     StaticBox::SetBackgroundColor(
         StateColor(std::make_pair(0xF0F0F1, (int) StateColor::Disabled),

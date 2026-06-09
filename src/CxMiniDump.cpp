@@ -99,7 +99,7 @@ std::string MiniDump::dumpDir()
 		std::wcout << L"Failed to get the AppData path" << std::endl;
 	}
 	//A.0
-	std::string versionDir = CREALITYPRINT_VERSION_MAJOR + std::string(".0");
+	std::string versionDir = SANITYPRINT_VERSION_MAJOR + std::string(".0");
 	std::string version = std::string(PROJECT_VERSION_EXTRA);
 	bool        is_alpha = boost::algorithm::icontains(version, "alpha");
 	if (is_alpha) {
@@ -137,7 +137,7 @@ LONG MiniDump::ApplicationCrashHandler(EXCEPTION_POINTERS *pException)
 	std::string dumpStr = dumpDir();
 	std::wstring strDumpPath(dumpStr.begin(), dumpStr.end());
 
-	std::string processNameStr = SLIC3R_PROCESS_NAME + std::string("_") + CREALITYPRINT_VERSION + std::string("_") + PROJECT_VERSION_EXTRA;
+	std::string processNameStr = SLIC3R_PROCESS_NAME + std::string("_") + SANITYPRINT_VERSION + std::string("_") + PROJECT_VERSION_EXTRA;
 	// 将 std::string 转换为 std::wstring
 	std::wstring processNameWStr(processNameStr.begin(), processNameStr.end());
 	::GetCurrentDirectory(MAX_PATH, szDumpDir);
@@ -156,8 +156,8 @@ LONG MiniDump::ApplicationCrashHandler(EXCEPTION_POINTERS *pException)
 	CreateDumpFile(szDumpFile, pException);
 	
 	std::wstring exePath = GetExecutableDirectory() + L"/resources/dumptools/dumptool.exe";
-	//"C:/Users/Administrator/AppData/Roaming/Creality/New C3D/dump/20241023_114858_CrealityPrint_6.0.0.382_Alpha.dmp" "" "6.0.0.192" "zh_CN"
-	std::string version = CREALITYPRINT_VERSION;
+	//"C:/Users/Administrator/AppData/Roaming/Creality/New C3D/dump/20241023_114858_SanityPrint_6.0.0.382_Alpha.dmp" "" "6.0.0.192" "zh_CN"
+	std::string version = SANITYPRINT_VERSION;
 	std::wstring wVersion(version.begin(), version.end());
 	std::string lang = GlobalConfig::getInstance()->getCurrentLanguage();
 	if (lang.empty()) {

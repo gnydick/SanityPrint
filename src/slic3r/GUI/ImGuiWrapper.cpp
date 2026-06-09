@@ -3782,7 +3782,7 @@ static void recolor_greenish_pixels(unsigned char* rgba, int n_pixels, bool to_w
         if (a == 0)
             continue;
 
-        // Heuristic: "green-ish" pixels (covers #17CC5F plus antialiased edges).
+        // Heuristic: "green-ish" pixels (covers #3498DB plus antialiased edges).
         // Keep non-green strokes (often gray) unchanged.
         const int g_dominance = int(g) - std::max(int(r), int(b));
         const bool greenish   = (g_dominance >= 25) && (g >= 60) && (r <= 200) && (b <= 200);

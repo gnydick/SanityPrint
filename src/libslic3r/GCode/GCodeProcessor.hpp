@@ -948,7 +948,7 @@ class Print;
         enum class EProducer
         {
             Unknown,
-            CrealityPrint,
+            SanityPrint,
             Slic3rPE,
             Slic3r,
             SuperSlicer,

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# CrealityPrint gettext
+# SanityPrint gettext
 # Created by SoftFever on 27/5/23.
 
 # Check for --full argument
@@ -31,7 +31,7 @@ if [ $FULL_MODE -eq 1 ]; then
     done
     
     echo "Get the list of files to .pot"
-    ./tools/xgettext --keyword=L --keyword=_L --keyword=_u8L --keyword=_L_ZH --keyword=L_CONTEXT:1,2c --keyword=_L_PLURAL:1,2 --add-comments=TRN --from-code=UTF-8 --no-location --debug --boost -f "$TEMP_FILE" -o ./localization/i18n/CrealityPrint.pot
+    ./tools/xgettext --keyword=L --keyword=_L --keyword=_u8L --keyword=_L_ZH --keyword=L_CONTEXT:1,2c --keyword=_L_PLURAL:1,2 --add-comments=TRN --from-code=UTF-8 --no-location --debug --boost -f "$TEMP_FILE" -o ./localization/i18n/SanityPrint.pot
     build/src/hints/Release/hintsToPot ./resources ./localization/i18n
 fi
 
@@ -67,9 +67,9 @@ processFile() {
 }
 
 # Run the script for each .po file
-pot_file="./localization/i18n/CrealityPrint.pot"
+pot_file="./localization/i18n/SanityPrint.pot"
 echo "Run the script for each .po file"
-find "./localization/i18n/" -name "CrealityPrint*.po" | while read -r file; do
-    processFile "$file" "CrealityPrint"
+find "./localization/i18n/" -name "SanityPrint*.po" | while read -r file; do
+    processFile "$file" "SanityPrint"
 done
 

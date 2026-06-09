@@ -2,7 +2,7 @@
 #define _libslic3r_h_
 
 #include "libslic3r_version.h"
-#define SLIC3R_APP_FULL_NAME "Creality Print"
+#define SLIC3R_APP_FULL_NAME "Sanity Print"
 #define GCODEVIEWER_APP_NAME "Creality3DSlicer G-code Viewer"
 #define GCODEVIEWER_APP_KEY  "Creality3DSlicerGcodeViewer"
 #define GCODEVIEWER_BUILD_ID std::string("Creality3DSlicer G-code Viewer-") + std::string(SLIC3R_VERSION) + std::string("-RC")

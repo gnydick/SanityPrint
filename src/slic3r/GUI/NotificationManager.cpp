@@ -1187,7 +1187,7 @@ void NotificationManager::ProgressBarNotification::render_bar(ImGuiWrapper& imgu
 
     int alpha = (int)(255 * m_current_fade_opacity);
     ImColor bg_color(74, 74, 77, alpha);   
-    ImColor fg_color(23, 204, 95, alpha);  
+    ImColor fg_color(52, 152, 219, alpha);  
 
     ImVec4 orange_color         = ImVec4(0, 0.588, 0.533, 1);
     ImVec4 gray_color           = ImVec4(.7f, .7f, .7f, 1.0f);

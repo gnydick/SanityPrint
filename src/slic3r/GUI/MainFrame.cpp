@@ -124,10 +124,10 @@ enum class ERescaleTarget
 };
 
 #ifdef __APPLE__
-class CrealityPrintTaskBarIcon : public wxTaskBarIcon
+class SanityPrintTaskBarIcon : public wxTaskBarIcon
 {
 public:
-    CrealityPrintTaskBarIcon(wxTaskBarIconType iconType = wxTBI_DEFAULT_TYPE) : wxTaskBarIcon(iconType) {}
+    SanityPrintTaskBarIcon(wxTaskBarIconType iconType = wxTBI_DEFAULT_TYPE) : wxTaskBarIcon(iconType) {}
     wxMenu *CreatePopupMenu() override {
         wxMenu *menu = new wxMenu;
         if (wxGetApp().app_config->get("single_instance") == "false") {
@@ -277,8 +277,8 @@ MainFrame::MainFrame()
     switch (wxGetApp().get_app_mode()) {
     default:
     case GUI_App::EAppMode::Editor:
-        m_taskbar_icon = std::make_unique<CrealityPrintTaskBarIcon>(wxTBI_DOCK);
-        m_taskbar_icon->SetIcon(wxIcon(Slic3r::var("CrealityPrint-mac_256px.ico"), wxBITMAP_TYPE_ICO), "CrealityPrint");
+        m_taskbar_icon = std::make_unique<SanityPrintTaskBarIcon>(wxTBI_DOCK);
+        m_taskbar_icon->SetIcon(wxIcon(Slic3r::var("SanityPrint-mac_256px.ico"), wxBITMAP_TYPE_ICO), "SanityPrint");
         break;
     case GUI_App::EAppMode::GCodeViewer:
         break;
@@ -1957,7 +1957,7 @@ wxBoxSizer* MainFrame::create_side_tools()
                 p->append_button(export_gcode_btn);
             }
             else {
-                //Creality Print Buttons
+                //Sanity Print Buttons
                 SideButton* print_plate_btn = new SideButton(p, _L("Print plate"), "");
                 print_plate_btn->SetCornerRadius(0);
 
@@ -2298,9 +2298,9 @@ void MainFrame::update_side_button_style()
     m_slice_btn->SetExtraSize(wxSize(FromDIP(38), FromDIP(10)));
     m_slice_btn->SetBottomColour(wxColour(0x3B4446));*/
     StateColor m_btn_bg_enable = StateColor(
-        std::pair<wxColour, int>(wxColour(0, 137, 123), StateColor::Pressed), 
+        std::pair<wxColour, int>(wxColour(26, 111, 163), StateColor::Pressed), 
         std::pair<wxColour, int>(wxColour(48, 221, 112), StateColor::Hovered),
-        std::pair<wxColour, int>(wxColour(0, 150, 136), StateColor::Normal)
+        std::pair<wxColour, int>(wxColour(46, 134, 193), StateColor::Normal)
     );
 
     // m_publish_btn->SetMinSize(wxSize(FromDIP(125), FromDIP(24)));
@@ -2529,7 +2529,7 @@ static wxMenu* generate_help_menu(MainFrame* mainframe)
     //     });
 
     // Report a bug
-    //append_menu_item(helpMenu, wxID_ANY, _L("Report Bug(TODO)"), _L("Report a bug of CrealityPrint"),
+    //append_menu_item(helpMenu, wxID_ANY, _L("Report Bug(TODO)"), _L("Report a bug of SanityPrint"),
     //    [](wxCommandEvent&) {
     //        //TODO
     //    });
@@ -3160,7 +3160,7 @@ void MainFrame::init_menubar_as_editor()
 #ifdef __APPLE__
     wxWindowID bambu_studio_id_base = wxWindow::NewControlId(int(2));
     wxMenu* parent_menu = m_menubar->OSXGetAppleMenu();
-    //auto preference_item = new wxMenuItem(parent_menu, CrealityPrintMenuPreferences + bambu_studio_id_base, _L("Preferences") + "\tCtrl+,", "");
+    //auto preference_item = new wxMenuItem(parent_menu, SanityPrintMenuPreferences + bambu_studio_id_base, _L("Preferences") + "\tCtrl+,", "");
 #else
     wxMenu* parent_menu = m_topbar->GetTopMenu();
     auto preference_item = new wxMenuItem(parent_menu, ConfigMenuPreferences + config_id_base, _L("Preferences") + "\t" + ctrl + "P", "");
@@ -3235,13 +3235,13 @@ void MainFrame::init_menubar_as_editor()
 
 #ifdef __APPLE__
     wxString about_title = wxString::Format(_L("&About %s"), SLIC3R_APP_FULL_NAME);
-    //auto about_item = new wxMenuItem(parent_menu, CrealityPrintMenuAbout + bambu_studio_id_base, about_title, "");
+    //auto about_item = new wxMenuItem(parent_menu, SanityPrintMenuAbout + bambu_studio_id_base, about_title, "");
         //parent_menu->Bind(wxEVT_MENU, [this, bambu_studio_id_base](wxEvent& event) {
         //    switch (event.GetId() - bambu_studio_id_base) {
-        //        case CrealityPrintMenuAbout:
+        //        case SanityPrintMenuAbout:
         //            Slic3r::GUI::about();
         //            break;
-        //        case CrealityPrintMenuPreferences:
+        //        case SanityPrintMenuPreferences:
         //            CallAfter([this] {
         //                PreferencesDialog dlg(this);
         //                dlg.ShowModal();
@@ -4092,7 +4092,7 @@ void MainFrame::load_config_file()
  //       return;
     wxFileDialog dlg(this, _L("Select profile to load:"),
         !m_last_config.IsEmpty() ? get_dir_name(m_last_config) : wxGetApp().app_config->get_last_dir(),
-        "config.json", "Config files (*.json;*.zip;*.creality_printer;*.creality_filament)|*.json;*.zip;*.creality_printer;*.creality_filament", wxFD_OPEN | wxFD_MULTIPLE | wxFD_FILE_MUST_EXIST);
+        "config.json", "Config files (*.json;*.zip;*.sanity_printer;*.creality_filament)|*.json;*.zip;*.sanity_printer;*.creality_filament", wxFD_OPEN | wxFD_MULTIPLE | wxFD_FILE_MUST_EXIST);
      wxArrayString files;
     if (dlg.ShowModal() != wxID_OK)
         return;

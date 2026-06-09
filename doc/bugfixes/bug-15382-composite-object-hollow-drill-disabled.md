@@ -109,7 +109,7 @@ for (unsigned int idx : m_list) {
 - 已确认目标对象 `object 12` 为组合体对象。
 - 已完成本地编译验证：
   - `cmake --build build_Release --config Release --target libslic3r_gui -- /m`
-  - `cmake --build build_Release --config Release --target CrealityPrint_app_gui -- /m`
+  - `cmake --build build_Release --config Release --target SanityPrint_app_gui -- /m`
 
 ## 10. 风险与回归点
 - 风险较低，本次仅修改 gizmo 启用条件和 selection 的 sinking 判定范围。

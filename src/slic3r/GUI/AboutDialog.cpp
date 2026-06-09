@@ -152,9 +152,9 @@ wxString CopyrightsDialog::get_html_text()
                 "<font size=\"3\">",
          bgr_clr_str, text_clr_str, text_clr_str,
         _L("License"),
-        _L("CrealityPrint is licensed under "),
+        _L("SanityPrint is licensed under "),
         "https://www.gnu.org/licenses/agpl-3.0.html",_L("GNU Affero General Public License, version 3"),
-        _L("CrealityPrint is based on PrusaSlicer and BambuStudio"),
+        _L("SanityPrint is based on PrusaSlicer and BambuStudio"),
         _L("Libraries"),
         _L("This software uses open source components whose copyright and other proprietary rights belong to their respective owners"));
 
@@ -245,7 +245,7 @@ AboutDialog::AboutDialog()
     // m_logo->SetSizer(vesizer);
 
     // vesizer->Add(0, FromDIP(80), 1, wxEXPAND, FromDIP(5));
-    std::string   name_text     = "Creality Print";
+    std::string   name_text     = "Sanity Print";
     wxStaticText* creality_name = new wxStaticText(this, wxID_ANY, name_text.c_str(), wxDefaultPosition, wxDefaultSize);
     creality_name->SetFont(Label::Body_14);
     creality_name->SetBackgroundColour(font_bg);
@@ -276,7 +276,7 @@ AboutDialog::AboutDialog()
 
     // version
     {
-        auto version_string = _L("Creality Print ") + " V" + std::string(CREALITYPRINT_VERSION) + " " + get_vertion_type();
+        auto version_string = _L("Sanity Print ") + " V" + std::string(SANITYPRINT_VERSION) + " " + get_vertion_type();
         wxStaticText* version_text = new wxStaticText(m_panel, wxID_ANY, version_string.c_str(), wxDefaultPosition, wxDefaultSize);
         version_text->SetFont(Label::Body_12);
         version_text->SetBackgroundColour(font_bg);
@@ -289,7 +289,7 @@ AboutDialog::AboutDialog()
     wxBoxSizer *text_sizer = new wxBoxSizer(wxVERTICAL);
     text_sizer_horiz->Add( 0, 0, 0, wxLEFT, FromDIP(0));
 
-    auto version_string = _L("Creality Print ") + " V" + std::string(CREALITYPRINT_VERSION);
+    auto version_string = _L("Sanity Print ") + " V" + std::string(SANITYPRINT_VERSION);
     std::vector<wxString> text_list;
     wxString pre_empty_space = "    ";
     text_list.push_back(pre_empty_space + version_string + " " + _L("engine_copyright1"));

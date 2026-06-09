@@ -811,7 +811,7 @@ wxBoxSizer *PreferencesDialog::create_item_checkbox(wxString title, wxWindow *pa
 
         m_sizer_checkbox->Add(panel, 0, wxALIGN_CENTER | wxALL, 3);
         boost::filesystem::path device_file = boost::filesystem::path(Slic3r::data_dir()) / "privacyInfo.json";
-        std::string             version     = std::string(CREALITYPRINT_VERSION);
+        std::string             version     = std::string(SANITYPRINT_VERSION);
         boost::nowide::ifstream t(device_file.string());
         std::stringstream       buffer;
         buffer << t.rdbuf();
@@ -1139,7 +1139,7 @@ wxWindow *PreferencesDialog ::create_item_radiobox(wxString title, wxWindow *par
 wxBoxSizer* PreferencesDialog::create_item_link_association(wxWindow* parent, wxString url_prefix, wxString website_name)
 {
     wxString title = _L("Associate") + (boost::format(" %1%://") % url_prefix.c_str()).str();
-    wxString tooltip = _L("Associate") + " " + url_prefix + ":// " + _L("with CrealityPrint so that CrealityPrint can open models from") + " " + website_name;
+    wxString tooltip = _L("Associate") + " " + url_prefix + ":// " + _L("with SanityPrint so that SanityPrint can open models from") + " " + website_name;
 
     std::wstring registered_bin; // not used, just here to provide a ref to check fn
     bool reg_to_current_instance = wxGetApp().check_url_association(url_prefix.ToStdWstring(), registered_bin);

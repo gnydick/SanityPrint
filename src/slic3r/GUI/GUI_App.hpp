@@ -372,7 +372,7 @@ private:
     bool is_editor() const { return m_app_mode == EAppMode::Editor; }
     bool is_gcode_viewer() const { return m_app_mode == EAppMode::GCodeViewer; }
     bool is_recreating_gui() const { return m_is_recreating_gui; }
-    std::string logo_name() const { return is_editor() ? "CrealityPrint" : "CrealityPrint-gcodeviewer"; }
+    std::string logo_name() const { return is_editor() ? "SanityPrint" : "SanityPrint-gcodeviewer"; }
 
     void set_cloud_model_download(const std::string& data) { m_cloud_download_model.push_back(data); }
     std::list<std::string> get_cloud_model_download() { return m_cloud_download_model; }

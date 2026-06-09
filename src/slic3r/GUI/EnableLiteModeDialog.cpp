@@ -89,14 +89,14 @@ EnableLiteModeDialog::EnableLiteModeDialog(wxWindow* parent, wxWindowID id, cons
     m_sizer_right->Add(m_website_html, 0, wxEXPAND | wxCENTER, FromDIP(15));
 
     auto sizer_button = new wxBoxSizer(wxHORIZONTAL);
-    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(0, 137, 123), StateColor::Pressed), std::pair<wxColour, int>(wxColour(38, 166, 154), StateColor::Hovered),
-        std::pair<wxColour, int>(wxColour(0, 150, 136), StateColor::Normal));
+    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(26, 111, 163), StateColor::Pressed), std::pair<wxColour, int>(wxColour(93, 173, 226), StateColor::Hovered),
+        std::pair<wxColour, int>(wxColour(46, 134, 193), StateColor::Normal));
 
     StateColor btn_bg_white(std::pair<wxColour, int>(wxColour(206, 206, 206), StateColor::Pressed), std::pair<wxColour, int>(wxColour(220, 220, 220), StateColor::Hovered),
         std::pair<wxColour, int>(wxColour(238, 238, 238), StateColor::Normal));
 
     m_button_ok = new Button(this, _L("Enable"));
-    m_button_ok->SetBackgroundColor(wxColour("#17CC5F"));
+    m_button_ok->SetBackgroundColor(wxColour("#3498DB"));
     m_button_ok->SetBorderColor(*wxWHITE);
     m_button_ok->SetTextColor(wxColour("#FFFFFE"));
     m_button_ok->SetFont(Label::Body_12);

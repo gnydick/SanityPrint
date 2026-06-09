@@ -40,9 +40,9 @@ on run argv
         set statusbar visible to false
         set toolbar visible to false
         set the bounds to { 400, 100, 900, 465 }
-        set position of item "CrealityPrint.app" to { 133, 200 }
+        set position of item "SanityPrint.app" to { 133, 200 }
         set position of item "Applications" to { 378, 200 }
-        set name of item "CrealityPrint.app" to "Creality Print.app"
+        set name of item "SanityPrint.app" to "Sanity Print.app"
       end tell
       update without registering applications
       delay 5

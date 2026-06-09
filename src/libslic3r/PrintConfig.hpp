@@ -68,7 +68,7 @@ enum class NoiseType {
 };
 
 enum PrintHostType {
-    htPrusaLink, htPrusaConnect, htOctoPrint, htDuet, htFlashAir, htAstroBox, htRepetier, htMKS, htESP3D, htObico, htFlashforge, htSimplyPrint, htCrealityPrint
+    htPrusaLink, htPrusaConnect, htOctoPrint, htDuet, htFlashAir, htAstroBox, htRepetier, htMKS, htESP3D, htObico, htFlashforge, htSimplyPrint, htSanityPrint
 };
 
 enum AuthorizationType {

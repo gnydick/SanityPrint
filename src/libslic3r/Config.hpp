@@ -223,8 +223,8 @@ class  ConfigOptionDef;
 struct ConfigOptionDeleter { void operator()(ConfigOption* p); };
 using  ConfigOptionUniquePtr = std::unique_ptr<ConfigOption, ConfigOptionDeleter>;
 
-// When parsing a configuration value, if the old_value is not understood by this CrealityPrint version,
-// it is being substituted with some default value that this CrealityPrint could work with.
+// When parsing a configuration value, if the old_value is not understood by this SanityPrint version,
+// it is being substituted with some default value that this SanityPrint could work with.
 // This structure serves to inform the user about the substitutions having been done during file import.
 struct ConfigSubstitution {
     const ConfigOptionDef   *opt_def { nullptr };

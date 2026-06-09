@@ -308,7 +308,7 @@ void set_data_dir(const std::string &dir, bool use_directly)
 		g_data_dir = dir;
 	}else{
 		//A.0
-		std::string version_dir = CREALITYPRINT_VERSION_MAJOR + std::string(".0");
+		std::string version_dir = SANITYPRINT_VERSION_MAJOR + std::string(".0");
 		std::string version = std::string(PROJECT_VERSION_EXTRA);
 	    bool  is_alpha = boost::algorithm::icontains(version, "alpha");
 	   if (is_alpha) {
@@ -380,7 +380,7 @@ void set_log_path_and_level(const std::string& file, unsigned int level, bool en
 	}
 #endif
 
-	//BBS log file at C:\\Users\\[yourname]\\AppData\\Roaming\\CrealityPrint\\log\\[log_filename].log
+	//BBS log file at C:\\Users\\[yourname]\\AppData\\Roaming\\SanityPrint\\log\\[log_filename].log
 	auto log_folder = boost::filesystem::path(g_data_dir) / "log";
 	if (!boost::filesystem::exists(log_folder)) {
 		boost::filesystem::create_directory(log_folder);
@@ -1224,20 +1224,20 @@ std::string string_printf(const char *format, ...)
 }
 std::string header_slic3r_generated2()
 {
-	return std::string("Creality_Print V" CREALITYPRINT_VERSION);
+	return std::string("Creality_Print V" SANITYPRINT_VERSION);
 }
 
-std::string header_slic3r_generated_cloud() { return std::string("Creality_Cloud_Slicer V" CREALITYPRINT_VERSION); }
+std::string header_slic3r_generated_cloud() { return std::string("Creality_Cloud_Slicer V" SANITYPRINT_VERSION); }
 
 
 std::string header_slic3r_generated()
 {
-	return std::string(SLIC3R_APP_NAME " " CREALITYPRINT_VERSION);
+	return std::string(SLIC3R_APP_NAME " " SANITYPRINT_VERSION);
 }
 
 std::string header_gcodeviewer_generated()
 {
-	return std::string(GCODEVIEWER_APP_NAME " " CREALITYPRINT_VERSION);
+	return std::string(GCODEVIEWER_APP_NAME " " SANITYPRINT_VERSION);
 }
 
 unsigned get_current_pid()

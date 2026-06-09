@@ -14,7 +14,7 @@
 ## 3. 影响范围
 - 模块: `崩溃捕获 / Breakpad 集成`
 - 关键文件:
-  - `src/CrealityPrint.cpp`
+  - `src/SanityPrint.cpp`
 - 受影响流程:
   - CRT invalid parameter 类崩溃的堆栈采集（不影响其他类型崩溃的正常捕获）
 
@@ -38,7 +38,7 @@
 - 包含 `InterlockedCompareExchange` 重入保护，防止 handler 内部再次触发 invalid parameter 导致死循环
 
 ## 7. 代码改动摘要
-- 文件: `src/CrealityPrint.cpp`
+- 文件: `src/SanityPrint.cpp`
 - 关键修改点:
   - 添加头文件: `#include <stdlib.h>`（确保 `_set_invalid_parameter_handler` 声明可用）
   - 新增函数: `CrealityInvalidParameterHandler`（约 70 行，含重入保护、堆栈采集、模块解析、文件写入、链式调用）
@@ -48,7 +48,7 @@
 
 ## 8. 验证清单
 - [ ] 正常使用各项功能，无新增崩溃或异常。
-- [ ] 人为触发 CRT invalid parameter 崩溃时，temp 目录下生成 `crealityprint_invalid_param_stack.log` 文件，包含完整堆栈帧。
+- [ ] 人为触发 CRT invalid parameter 崩溃时，temp 目录下生成 `sanityprint_invalid_param_stack.log` 文件，包含完整堆栈帧。
 - [ ] 上述崩溃同时仍正常生成 Breakpad dump 文件，现有崩溃上报流程不受影响。
 - [ ] 正常退出程序时，temp 目录下不会生成该日志文件（仅崩溃时才产生）。
 - [ ] 日志中的模块名+RVA 配合 PDB 可正确解析出函数名和行号。

@@ -8,9 +8,9 @@ target_link_libraries(${_TEST_NAME}_tests test_common libslic3r OpenSSL::SSL Ope
 set_property(TARGET ${_TEST_NAME}_tests PROPERTY FOLDER "tests")
 if (WIN32)
     if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-        crealityprint_copy_dlls(COPY_DLLS "Debug" "d" "")
+        sanityprint_copy_dlls(COPY_DLLS "Debug" "d" "")
     else()
-        crealityprint_copy_dlls(COPY_DLLS "Release" "" "")
+        sanityprint_copy_dlls(COPY_DLLS "Release" "" "")
     endif()
 endif()
 

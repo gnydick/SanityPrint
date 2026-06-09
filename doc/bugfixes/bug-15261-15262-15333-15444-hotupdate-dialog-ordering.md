@@ -13,7 +13,7 @@
   - 15333: `【热更新】把UAC的权限拉到最高，不安装，下次打开还会弹出热更新的窗口`
   - 15444: `【热更新】项目弹窗和热更新的安装弹窗存在遮挡，应该要有先后顺序`
 - 日期: `2026-03-23`
-- 所属产品: `Creality Print`
+- 所属产品: `Sanity Print`
 - 所属模块: `其它`
 - 所属计划: `CP7.1 软件热更新`
 - Bug 类型: `代码错误`
@@ -94,7 +94,7 @@
 - 将 `pending_update.json` 与新增的安装尝试标记合并为单一文件 `update_state.json`，使用 `attempted` 字段区分两种状态：
   - `attempted = false`：用户点了"稍后安装"，下次启动弹"更新就绪"。
   - `attempted = true`：用户点了"立即安装"，下次后台检查对同版本静默跳过。
-- 文件路径：`%LOCALAPPDATA%\crealityprint_squirrel\<当前版本>\update_state.json`
+- 文件路径：`%LOCALAPPDATA%\sanityprint_squirrel\<当前版本>\update_state.json`
 - 当服务端推送真正更新的版本号时，清除旧标记并正常进入 `UpdateVersionDialog` 流程。
 
 **15261 / 15444 — 启动时弹窗时序管控**
@@ -147,5 +147,5 @@
 - 回滚方案: 回退 `GUI_App.cpp` 中状态辅助函数区（256～380 行）及 `EVT_SLIC3R_VERSION_ONLINE` / `EVT_APP_UPDATE_COMPLETE` 相关修改，恢复原有 `pending_update.json` 单文件逻辑。
 
 ## 10. 备注
-- `update_state.json` 存放在版本号目录（`%LOCALAPPDATA%\crealityprint_squirrel\<版本>\`）下，软件升级到新版本后目录自然废弃，无需主动清理旧版本遗留文件。
+- `update_state.json` 存放在版本号目录（`%LOCALAPPDATA%\sanityprint_squirrel\<版本>\`）下，软件升级到新版本后目录自然废弃，无需主动清理旧版本遗留文件。
 - 本次修复同时覆盖了 15261、15262、15333、15444 四个 Bug，核心改动集中在 `GUI_App.cpp` 的热更新事件处理逻辑中。

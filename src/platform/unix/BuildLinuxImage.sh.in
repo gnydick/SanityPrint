@@ -40,8 +40,8 @@ cat << EOF >@SLIC3R_APP_CMD@
 DIR=\$(readlink -f "\$0" | xargs dirname)
 export LD_LIBRARY_PATH="\$DIR/bin:\$DIR/usr/lib"
 
-# FIXME: CrealityPrint segfault workarounds
-# 1) CrealityPrint will segfault on systems where locale info is not as expected (i.e. Holo-ISO arch-based distro)
+# FIXME: SanityPrint segfault workarounds
+# 1) SanityPrint will segfault on systems where locale info is not as expected (i.e. Holo-ISO arch-based distro)
 export LC_ALL=C
 
 exec "\$DIR/bin/@SLIC3R_APP_CMD@" "\$@"
@@ -63,7 +63,7 @@ echo -n "Creating Appimage for distribution..."
     chmod +x ../build_appimage.sh
     ../build_appimage.sh
     popd
-    mv package/"@SLIC3R_APP_NAME@-V@CREALITYPRINT_VERSION@-x86_64-@PROJECT_VERSION_EXTRA@.AppImage" "@SLIC3R_APP_NAME@-V@CREALITYPRINT_VERSION@-x86_64-@PROJECT_VERSION_EXTRA@.AppImage"
+    mv package/"@SLIC3R_APP_NAME@-V@SANITYPRINT_VERSION@-x86_64-@PROJECT_VERSION_EXTRA@.AppImage" "@SLIC3R_APP_NAME@-V@SANITYPRINT_VERSION@-x86_64-@PROJECT_VERSION_EXTRA@.AppImage"
 #} &> $ROOT/Build.log # Capture all command output
 echo "done"
 fi

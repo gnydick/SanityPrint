@@ -196,7 +196,7 @@ public:
     void set_userPresets(const std::string& model,bool isClear = false);
     void set_userPresets(const AppConfig &from); 
 
-	// CrealityPrint printer settings
+	// SanityPrint printer settings
     typedef std::map<std::string, nlohmann::json> MachineSettingMap;
     bool has_printer_settings(std::string printer) const {
         return m_printer_settings.find(printer) != m_printer_settings.end();
@@ -273,7 +273,7 @@ public:
 	// This returns a hardcoded string unless it is overriden by "version_check_url" in the ini file.
 	std::string 		version_check_url(bool stable_only = false) const;
 
-	// Get the CrealityPrint profile update url.
+	// Get the SanityPrint profile update url.
 	std::string 		profile_update_url() const;
 
 	// Returns the original Slic3r version found in the ini file before it was overwritten

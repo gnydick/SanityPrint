@@ -95,12 +95,12 @@ GuidePanel::GuidePanel(wxWindow* parent) : wxPanel(parent)
 
     StateColor report_bg(std::pair<wxColour, int>(wxColour(255, 255, 255), StateColor::Disabled),
                          std::pair<wxColour, int>(wxColour(206, 206, 206), StateColor::Pressed),
-                         std::pair<wxColour, int>(wxColour(21, 191, 89), StateColor::Hovered),
+                         std::pair<wxColour, int>(wxColour(52, 152, 219), StateColor::Hovered),
                          std::pair<wxColour, int>(wxColour(255, 255, 255), StateColor::Enabled),
                          std::pair<wxColour, int>(wxColour(255, 255, 255), StateColor::Normal));
 
     StateColor report_bd(std::pair<wxColour, int>(wxColour(144, 144, 144), StateColor::Disabled),
-                         std::pair<wxColour, int>(wxColour(21, 191, 89), StateColor::Hovered),
+                         std::pair<wxColour, int>(wxColour(52, 152, 219), StateColor::Hovered),
                          std::pair<wxColour, int>(wxColour(166, 172, 180), StateColor::Enabled));
 
     StateColor report_text(std::pair<wxColour, int>(wxColour(144, 144, 144), StateColor::Disabled),

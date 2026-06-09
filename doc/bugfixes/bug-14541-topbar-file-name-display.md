@@ -4,7 +4,7 @@
 - Bug ID: `14541`
 - 禅道链接: `https://zentao.creality.com/zentao/bug-view-14541.html`
 - 标题: `【7.0UAT】【bug类需求】文件名称的显示太短了，需要加长`
-- 所属产品: `Creality Print`
+- 所属产品: `Sanity Print`
 - 所属模块: `准备页面`
 - 所属计划: `CP 7.1.1（0430）`
 - Bug 类型: `代码错误`

@@ -151,8 +151,8 @@ function build_deps() {
 function process_debug_symbols() {
     echo "Processing debug symbols..."
     
-    # 对于 build_release_macos.sh，应用名称固定为 CrealityPrint
-    local app_name="CrealityPrint"
+    # 对于 build_release_macos.sh，应用名称固定为 SanityPrint
+    local app_name="SanityPrint"
     local app_path="$PROJECT_BUILD_DIR/src$BUILD_DIR_CONFIG_SUBDIR/$app_name.app"
     local binary_path="$app_path/Contents/MacOS/$app_name"
     local symbols_dir="$PROJECT_BUILD_DIR/symbols"
@@ -270,7 +270,7 @@ function build_slicer() {
                 -DUPDATE_ONLINE_MACHINES=1 \
                 -DGENERATE_ORCA_HEADER=0 \
                 -DCMAKE_PREFIX_PATH="$DEPS/usr/local" \
-                -DCMAKE_INSTALL_PREFIX="$PWD/CrealityPrint" \
+                -DCMAKE_INSTALL_PREFIX="$PWD/SanityPrint" \
                 -DCMAKE_BUILD_TYPE="$BUILD_CONFIG" \
                 -DCMAKE_MACOSX_RPATH=ON \
                 -DCMAKE_INSTALL_RPATH="${DEPS}/usr/local" \
@@ -291,22 +291,22 @@ function build_slicer() {
     # echo "Fix macOS app package..."
     # (
     #     cd "$PROJECT_BUILD_DIR"
-    #     mkdir -p CrealityPrint
-    #     cd CrealityPrint
+    #     mkdir -p SanityPrint
+    #     cd SanityPrint
     #     # remove previously built app
-    #     rm -rf ./CrealityPrint.app
+    #     rm -rf ./SanityPrint.app
     #     # fully copy newly built app
-    #     cp -pR "../src$BUILD_DIR_CONFIG_SUBDIR/CrealityPrint.app" ./CrealityPrint.app
+    #     cp -pR "../src$BUILD_DIR_CONFIG_SUBDIR/SanityPrint.app" ./SanityPrint.app
     #     # fix resources
-    #     resources_path=$(readlink ./CrealityPrint.app/Contents/Resources)
-    #     rm ./CrealityPrint.app/Contents/Resources
-    #     cp -R "$resources_path" ./CrealityPrint.app/Contents/Resources
+    #     resources_path=$(readlink ./SanityPrint.app/Contents/Resources)
+    #     rm ./SanityPrint.app/Contents/Resources
+    #     cp -R "$resources_path" ./SanityPrint.app/Contents/Resources
     #     # delete .DS_Store file
-    #     find ./CrealityPrint.app/ -name '.DS_Store' -delete
+    #     find ./SanityPrint.app/ -name '.DS_Store' -delete
     # )
 
     # extract version
-    # export ver=$(grep '^#define CREALITYPRINT_VERSION' ../src/libslic3r/libslic3r_version.h | cut -d ' ' -f3)
+    # export ver=$(grep '^#define SANITYPRINT_VERSION' ../src/libslic3r/libslic3r_version.h | cut -d ' ' -f3)
     # ver="_V${ver//\"}"
     # echo $PWD
     # if [ "1." != "$NIGHTLY_BUILD". ];
@@ -314,7 +314,7 @@ function build_slicer() {
     #     ver=${ver}_dev
     # fi
 
-    # zip -FSr CrealityPrint${ver}_Mac_${ARCH}.zip CrealityPrint.app
+    # zip -FSr SanityPrint${ver}_Mac_${ARCH}.zip SanityPrint.app
 }
 
 case "${BUILD_TARGET}" in

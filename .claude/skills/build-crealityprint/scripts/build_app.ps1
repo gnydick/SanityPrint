@@ -18,7 +18,7 @@ $cmake = Join-Path $cmakeBin 'cmake.exe'
 
 # 2. Import VS developer environment
 $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
-if(-not (Test-Path $vswhere)){ $vswhere = 'I:\IdeaProjects\CrealityPrint\tools\vswhere.exe' }
+if(-not (Test-Path $vswhere)){ $vswhere = 'I:\IdeaProjects\SanityPrint\tools\vswhere.exe' }
 $vsPath = & $vswhere -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
 $vcvars = Join-Path $vsPath 'VC\Auxiliary\Build\vcvars64.bat'
 cmd /c "`"$vcvars`" && set" | ForEach-Object { if($_ -match '^(.*?)=(.*)$'){ [Environment]::SetEnvironmentVariable($matches[1],$matches[2]) } }
@@ -35,10 +35,10 @@ $deps = 'D:\cpbuild\OrcaSlicer_dep\usr\local'
 if(-not (Test-Path $deps)){ Log "FATAL: deps prefix missing: $deps"; Set-Content $done 'fail-no-deps'; exit 1 }
 
 # 4. Configure app
-$src='I:\IdeaProjects\CrealityPrint'; $bld='D:\cpbuild\app'
+$src='I:\IdeaProjects\SanityPrint'; $bld='D:\cpbuild\app'
 Log "CONFIGURE -> $bld  PREFIX=$deps"
 & $cmake -S $src -B $bld -G "Visual Studio 17 2022" -A x64 `
-    -U CREALITYPRINT_VERSION `
+    -U SANITYPRINT_VERSION `
     -DBBL_RELEASE_TO_PUBLIC=1 `
     -DPROJECT_VERSION_EXTRA=Release `
     -DCMAKE_PREFIX_PATH="$deps" `

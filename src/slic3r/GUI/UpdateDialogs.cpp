@@ -115,7 +115,7 @@ MsgUpdateConfig::MsgUpdateConfig(const std::vector<Update> &updates, bool force_
 
     m_sizer_body->Add(0, 0, 0, wxLEFT, FromDIP(38));
 
-    auto sm    = create_scaled_bitmap("CrealityPrint", nullptr, 70);
+    auto sm    = create_scaled_bitmap("SanityPrint", nullptr, 70);
     auto brand = new wxStaticBitmap(this, wxID_ANY, sm, wxDefaultPosition, wxSize(FromDIP(70), FromDIP(70)));
 
     m_sizer_body->Add(brand, 0, wxALL, 0);
@@ -143,8 +143,8 @@ MsgUpdateConfig::MsgUpdateConfig(const std::vector<Update> &updates, bool force_
     sizer_button->Add(0, 0, 1, wxEXPAND, 5);
 
 
-	StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(0, 137, 123), StateColor::Pressed),
-                            std::pair<wxColour, int>(wxColour(38, 166, 154), StateColor::Hovered), std::pair<wxColour, int>(AMS_CONTROL_BRAND_COLOUR, StateColor::Normal));
+	StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(26, 111, 163), StateColor::Pressed),
+                            std::pair<wxColour, int>(wxColour(93, 173, 226), StateColor::Hovered), std::pair<wxColour, int>(AMS_CONTROL_BRAND_COLOUR, StateColor::Normal));
 
     StateColor btn_bg_white(std::pair<wxColour, int>(wxColour(206, 206, 206), StateColor::Pressed),
                             std::pair<wxColour, int>(wxColour(238, 238, 238), StateColor::Hovered),

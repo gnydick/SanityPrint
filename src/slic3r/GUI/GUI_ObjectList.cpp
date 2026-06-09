@@ -109,7 +109,7 @@ ObjectList::ObjectList(wxWindow* parent) : wxDataViewCtrl(parent, wxID_ANY, wxDe
 
 #ifdef __linux__
     // Temporary fix for incorrect dark mode application regarding list item's text color.
-    // See: https://github.com/SoftFever/CrealityPrint/issues/2086
+    // See: https://github.com/SoftFever/SanityPrint/issues/2086
     this->SetForegroundColour(*wxBLACK);
 #endif
 

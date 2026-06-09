@@ -319,10 +319,10 @@ func detectCPDarkModeFromConfig() (bool, bool) {
 	}
 
 	patterns := []string{
-		filepath.Join(appData, "Creality", "CrealityPrint", "*", "CrealityPrint.conf"),
-		filepath.Join(appData, "CrealityPrint", "*", "CrealityPrint.conf"),
-		filepath.Join(appData, "Creality", "CrealityPrint", "CrealityPrint.conf"),
-		filepath.Join(appData, "CrealityPrint", "CrealityPrint.conf"),
+		filepath.Join(appData, "Creality", "SanityPrint", "*", "SanityPrint.conf"),
+		filepath.Join(appData, "SanityPrint", "*", "SanityPrint.conf"),
+		filepath.Join(appData, "Creality", "SanityPrint", "SanityPrint.conf"),
+		filepath.Join(appData, "SanityPrint", "SanityPrint.conf"),
 	}
 
 	var bestPath string
@@ -1426,10 +1426,10 @@ func subclassCloseButton(hwnd uintptr) {
 	procSetWindowLongPtrW.Call(hwnd, gwlpWndProc, syscall.NewCallback(closeBtnWndProc))
 }
 
-func launchCrealityPrint(log func(args ...interface{}), installDir string) {
-	exePath := filepath.Join(installDir, "CrealityPrint.exe")
+func launchSanityPrint(log func(args ...interface{}), installDir string) {
+	exePath := filepath.Join(installDir, "SanityPrint.exe")
 	if _, err := os.Stat(exePath); err != nil {
-		log("skip launch, CrealityPrint.exe not found:", err)
+		log("skip launch, SanityPrint.exe not found:", err)
 		return
 	}
 	verb := toUTF16Ptr("open")
@@ -1444,10 +1444,10 @@ func launchCrealityPrint(log func(args ...interface{}), installDir string) {
 		swShow,
 	)
 	if ret <= 32 {
-		log("launch CrealityPrint.exe failed:", ret, err)
+		log("launch SanityPrint.exe failed:", ret, err)
 		return
 	}
-	log("launched CrealityPrint.exe:", exePath)
+	log("launched SanityPrint.exe:", exePath)
 }
 
 func installWndProc(hwnd uintptr, msgID uint32, wParam, lParam uintptr) uintptr {
@@ -1987,7 +1987,7 @@ func isCanceled() bool { return gCancelRequested.Load() }
 func main() {
 	runtime.LockOSThread()
 
-	installDir := flag.String("install-dir", "", "install directory of CrealityPrint")
+	installDir := flag.String("install-dir", "", "install directory of SanityPrint")
 	currentVer := flag.String("current-version", "", "current version string")
 	manualURL := flag.String("manual-url", "", "manual download URL")
 	darkMode := flag.Int("dark-mode", -1, "0=light, 1=dark, -1=auto")
@@ -2045,7 +2045,7 @@ func main() {
 			messageBox(formatIncompleteMessage(res), getText("update_incomplete"), mbOK|mbIconError|mbSystemModal)
 			os.Exit(1)
 		}
-		launchCrealityPrint(log, *installDir)
+		launchSanityPrint(log, *installDir)
 		os.Exit(0)
 	}
 
@@ -2060,7 +2060,7 @@ func main() {
 
 	res := <-done
 	if res.err == nil {
-		launchCrealityPrint(log, *installDir)
+		launchSanityPrint(log, *installDir)
 		os.Exit(0)
 	}
 	if errors.Is(res.err, errCanceled) {
@@ -2189,7 +2189,7 @@ func getText(key string, args ...interface{}) string {
 		case "incomplete_rollback_fail_no_backup":
 			return "更新未完成，且自动恢复失败。请点击" + quote("手动下载") + "重新安装最新版本。"
 		case "incomplete_access_denied":
-			return "更新未完成。当前安装目录正在被占用。\r\n请先退出 CrealityPrint（含后台进程），再点击" + quote("Install Now") + "重试；或点击" + quote("手动下载") + "重新安装最新版本。"
+			return "更新未完成。当前安装目录正在被占用。\r\n请先退出 SanityPrint（含后台进程），再点击" + quote("Install Now") + "重试；或点击" + quote("手动下载") + "重新安装最新版本。"
 		case "incomplete_generic":
 			return "更新未完成。请点击" + quote("手动下载") + "重新安装最新版本。"
 		case "update_incomplete_title":
@@ -2197,7 +2197,7 @@ func getText(key string, args ...interface{}) string {
 		case "update_incomplete_fail_title":
 			return "更新未完成，且自动恢复失败。\r\n请尝试手动恢复备份目录：\r\n" + fmt.Sprintf("%v", args[0]) + "\r\n或点击" + quote("手动下载") + "重新安装最新版本。"
 		case "update_incomplete_access_title":
-			return "更新未完成。当前安装目录正在被占用。\r\n请先退出 CrealityPrint（含后台进程），再点击" + quote("Install Now") + "重试；或点击" + quote("手动下载") + "重新安装最新版本。"
+			return "更新未完成。当前安装目录正在被占用。\r\n请先退出 SanityPrint（含后台进程），再点击" + quote("Install Now") + "重试；或点击" + quote("手动下载") + "重新安装最新版本。"
 		case "update_incomplete_generic_title":
 			return "更新未完成。请点击" + quote("手动下载") + "重新安装最新版本。"
 		}
@@ -2243,7 +2243,7 @@ func getText(key string, args ...interface{}) string {
 	case "incomplete_rollback_fail_no_backup":
 		return "Update incomplete and automatic restore failed. Please click " + quote("Manual Download") + " to reinstall the latest version."
 	case "incomplete_access_denied":
-		return "Update incomplete. The installation directory is currently in use.\r\nPlease exit CrealityPrint (including background processes) first, then click " + quote("Install Now") + " to retry; or click " + quote("Manual Download") + " to reinstall the latest version."
+		return "Update incomplete. The installation directory is currently in use.\r\nPlease exit SanityPrint (including background processes) first, then click " + quote("Install Now") + " to retry; or click " + quote("Manual Download") + " to reinstall the latest version."
 	case "incomplete_generic":
 		return "Update incomplete. Please click " + quote("Manual Download") + " to reinstall the latest version."
 	case "update_incomplete_title":
@@ -2251,7 +2251,7 @@ func getText(key string, args ...interface{}) string {
 	case "update_incomplete_fail_title":
 		return "Update incomplete and automatic restore failed.\r\nPlease try to manually restore the backup directory:\r\n" + fmt.Sprintf("%v", args[0]) + "\r\nor click " + quote("Manual Download") + " to reinstall the latest version."
 	case "update_incomplete_access_title":
-		return "Update incomplete. The installation directory is currently in use.\r\nPlease exit CrealityPrint (including background processes) first, then click " + quote("Install Now") + " to retry; or click " + quote("Manual Download") + " to reinstall the latest version."
+		return "Update incomplete. The installation directory is currently in use.\r\nPlease exit SanityPrint (including background processes) first, then click " + quote("Install Now") + " to retry; or click " + quote("Manual Download") + " to reinstall the latest version."
 	case "update_incomplete_generic_title":
 		return "Update incomplete. Please click " + quote("Manual Download") + " to reinstall the latest version."
 	}
@@ -2336,8 +2336,8 @@ func runUpdateWithUI(log func(args ...interface{}), baseDir, installDir, current
 		return updateResult{err: err}
 	}
 
-	if _, err := os.Stat(filepath.Join(newDir, "CrealityPrint.exe")); err != nil {
-		log("CrealityPrint.exe not found in new version dir:", err)
+	if _, err := os.Stat(filepath.Join(newDir, "SanityPrint.exe")); err != nil {
+		log("SanityPrint.exe not found in new version dir:", err)
 		os.RemoveAll(newDir)
 		return updateResult{err: err}
 	}
@@ -3073,8 +3073,8 @@ func applyDeltaNupkg(log func(args ...interface{}), nupkgPath, root string) erro
 	patchedCount := 0
 	candidateCount := 0
 	criticalBases := map[string]struct{}{
-		"CrealityPrint.exe":        {},
-		"CrealityPrint_Slicer.dll": {},
+		"SanityPrint.exe":        {},
+		"SanityPrint_Slicer.dll": {},
 	}
 	criticalSeen := make(map[string]bool, len(criticalBases))
 	criticalPatched := make(map[string]bool, len(criticalBases))

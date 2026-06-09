@@ -6,7 +6,7 @@
 - Date: `2026-03-18`
 - Reporter: `冷金辉`
 - Assignee: `唐俊俊`
-- Affected Version: `CrealityPrint_7.0.0.3860_Beta`
+- Affected Version: `SanityPrint_7.0.0.3860_Beta`
 - Plan: `CP 7.1.0 Release`
 - Branch/Commit:
 

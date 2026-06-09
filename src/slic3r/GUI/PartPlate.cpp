@@ -3439,7 +3439,7 @@ void PartPlateList::generate_icon_textures()
 			else
 				file_name = std::to_string(i+1);
 
-			wxColour foreground = m_is_dark ? wxColour(23, 204, 95, 0xff) : wxColour(0x4E, 0x59, 0x69, 0xff);
+			wxColour foreground = m_is_dark ? wxColour(52, 152, 219, 0xff) : wxColour(0x4E, 0x59, 0x69, 0xff);
 			if (!m_idx_textures[i].generate_from_text_string(file_name, *font, *wxBLACK, foreground)) {
 				BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << boost::format(":load file %1% failed") % file_name;
 			}

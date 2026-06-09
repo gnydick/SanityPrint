@@ -5,7 +5,7 @@
 - 标题: `特殊模型切片进度卡在 25%（Generating infill regions）`
 - 创建人: `杨艳虹`
 - 指派给: `王文彬`
-- 所属产品: `C3DSlicer / CrealityPrint`
+- 所属产品: `C3DSlicer / SanityPrint`
 - 修复日期: `2026-03-05`
 
 ## 2. 问题现象
@@ -46,7 +46,7 @@
   - 切片不再卡在 25%。
   - 能继续到后续阶段并成功结束（`PROCESS_EXITED:0`）。
 - 编译验证：
-  - `cmake --build build_Release --config Release --target CrealityPrint_Slicer -- /m` 通过。
+  - `cmake --build build_Release --config Release --target SanityPrint_Slicer -- /m` 通过。
 
 ## 8. 回归建议
 - 回归以下场景：

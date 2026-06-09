@@ -1,5 +1,5 @@
 #!/bin/bash
-BUNDLE_ID="com.creality.crealityprint"
+BUNDLE_ID="com.creality.sanityprint"
 USERNAME="dev@creality.com"
 PASSWORD=$3
 CURRENT_DIR=$1

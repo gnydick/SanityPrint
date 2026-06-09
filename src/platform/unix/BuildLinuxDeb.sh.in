@@ -64,8 +64,8 @@ EOF
 chmod 755 "$DEB_ROOT/$USR_BIN/@SLIC3R_APP_CMD@"
 
 # Desktop file
-if [ -f "../src/platform/unix/CrealityPrint.desktop" ]; then
-  cp "../src/platform/unix/CrealityPrint.desktop" "$DEB_ROOT/$USR_SHARE_APPS/@SLIC3R_APP_NAME@.desktop"
+if [ -f "../src/platform/unix/SanityPrint.desktop" ]; then
+  cp "../src/platform/unix/SanityPrint.desktop" "$DEB_ROOT/$USR_SHARE_APPS/@SLIC3R_APP_NAME@.desktop"
   # Use absolute Exec path to improve desktop integration across environments
   sed -i "s#Exec=.*#Exec=/usr/bin/@SLIC3R_APP_CMD@#" "$DEB_ROOT/$USR_SHARE_APPS/@SLIC3R_APP_NAME@.desktop"
   sed -i "s#Icon=.*#Icon=@SLIC3R_APP_NAME@#" "$DEB_ROOT/$USR_SHARE_APPS/@SLIC3R_APP_NAME@.desktop"
@@ -86,7 +86,7 @@ fi
 # Control file
 cat << EOF > "$DEB_ROOT/DEBIAN/control"
 Package: $PKG_NAME_LOWER
-Version: @CREALITYPRINT_VERSION@-@PROJECT_VERSION_EXTRA@
+Version: @SANITYPRINT_VERSION@-@PROJECT_VERSION_EXTRA@
 Section: utils
 Priority: optional
 Architecture: $ARCH
@@ -114,7 +114,7 @@ exit 0
 EOF
 chmod 755 "$DEB_ROOT/DEBIAN/postinst"
 
-DEB_NAME="@SLIC3R_APP_NAME@-V@CREALITYPRINT_VERSION@-@PROJECT_VERSION_EXTRA@-$ARCH.deb"
+DEB_NAME="@SLIC3R_APP_NAME@-V@SANITYPRINT_VERSION@-@PROJECT_VERSION_EXTRA@-$ARCH.deb"
 dpkg-deb --build "$DEB_ROOT" "$DEB_NAME"
 
 echo "done"

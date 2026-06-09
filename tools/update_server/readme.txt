@@ -1,9 +1,9 @@
-CrealityPrint 简易更新服务器说明
+SanityPrint 简易更新服务器说明
 ================================
 
 1. 功能概述
 -----------
-- 提供一个简易的 HTTP 服务，用于给 CrealityPrint 主程序返回更新信息，并托管 RELEASES 和 .nupkg 包。
+- 提供一个简易的 HTTP 服务，用于给 SanityPrint 主程序返回更新信息，并托管 RELEASES 和 .nupkg 包。
 - 主要接口：
   - GET /api/update/check
   - 静态文件：/releases/RELEASES 和各版本 .nupkg
@@ -50,17 +50,17 @@ CrealityPrint 简易更新服务器说明
 {
   "hasUpdate": true,
   "latestVersion": "7.0.0-alpha",
-  "basePackage": "CrealityPrint-6.0.1-alpha-full.nupkg",
+  "basePackage": "SanityPrint-6.0.1-alpha-full.nupkg",
   "fullFile": {
-    "name": "CrealityPrint-7.0.0-alpha-full.nupkg",
-    "url": "http://localhost:9000/releases/CrealityPrint-7.0.0-alpha-full.nupkg",
+    "name": "SanityPrint-7.0.0-alpha-full.nupkg",
+    "url": "http://localhost:9000/releases/SanityPrint-7.0.0-alpha-full.nupkg",
     "size": 123456,
     "sha1": "xxxxxxxx..."
   },
   "deltaFiles": [
     {
-      "name": "CrealityPrint-6.0.1-alpha-to-7.0.0-alpha-delta.nupkg",
-      "url": "http://localhost:9000/releases/CrealityPrint-6.0.1-alpha-to-7.0.0-alpha-delta.nupkg",
+      "name": "SanityPrint-6.0.1-alpha-to-7.0.0-alpha-delta.nupkg",
+      "url": "http://localhost:9000/releases/SanityPrint-6.0.1-alpha-to-7.0.0-alpha-delta.nupkg",
       "size": 654321,
       "sha1": "yyyyyyyy..."
     }
@@ -87,7 +87,7 @@ CrealityPrint 简易更新服务器说明
 
 注意：
 - 服务器不再根据包大小决定“本次用 full 还是 delta”，只负责按版本返回 fullFile + 全量 deltaFiles；
-- CrealityPrint 客户端会在下载前，根据 fullFile.size 与所有 deltaFiles.size 的总和，在本地决定：
+- SanityPrint 客户端会在下载前，根据 fullFile.size 与所有 deltaFiles.size 的总和，在本地决定：
   - 若 delta 总大小为 0 或大于 full 包大小：只下载 fullFile；
   - 否则：下载 deltaFiles 中的全部包；
 - fullFile 始终提供 last full 包的信息，方便客户端：
@@ -102,13 +102,13 @@ CrealityPrint 简易更新服务器说明
 
 你需要手动准备：
 - releases/RELEASES
-- releases/CrealityPrint-7.0.0-alpha-full.nupkg
-- releases/CrealityPrint-6.0.1-alpha-to-7.0.0-alpha-delta.nupkg
+- releases/SanityPrint-7.0.0-alpha-full.nupkg
+- releases/SanityPrint-6.0.1-alpha-to-7.0.0-alpha-delta.nupkg
   （具体文件名只要与 RELEASES 中保持一致即可）
 
 访问示例：
 - http://localhost:9000/releases/RELEASES
-- http://localhost:9000/releases/CrealityPrint-7.0.0-alpha-full.nupkg
+- http://localhost:9000/releases/SanityPrint-7.0.0-alpha-full.nupkg
 
 测试：
 - 浏览器访问（GET 方式，便于快速调试）：
@@ -116,7 +116,7 @@ CrealityPrint 简易更新服务器说明
 -  - 应返回 hasUpdate=true ，并带 full + delta
 - - http://localhost:9000/api/update/check?currentVersion=7.0.0-alpha&platform=1
 -  - 应返回 hasUpdate=false
-- http://localhost:9000/releases/CrealityPrint-7.0.0-alpha-full.nupkg
+- http://localhost:9000/releases/SanityPrint-7.0.0-alpha-full.nupkg
   - 应直接下载你上传的 full 包
 
 
@@ -138,7 +138,7 @@ CrealityPrint 简易更新服务器说明
   - delta 包缺失会被忽略（只返回 full 更新方案）。
 
 
-7. 与 CrealityPrint 主程序的配合关系（简要）
+7. 与 SanityPrint 主程序的配合关系（简要）
 -----------------------------------------
 - 主程序在检查更新时，调用：
   - GET http://localhost:9000/api/update/check?currentVersion=<当前版本>&platform=<平台标记>

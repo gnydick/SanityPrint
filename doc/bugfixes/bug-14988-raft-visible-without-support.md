@@ -16,7 +16,7 @@
 
 ## 3. 影响范围
 - 模块: `准备页面 / 支撑与筏层参数`
-- 产品: `Creality Print`
+- 产品: `Sanity Print`
 - 计划: `CP 7.1.0 Release`
 - 关键文件:
   - `src/slic3r/GUI/ConfigManipulation.cpp`

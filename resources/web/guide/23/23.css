@@ -37,7 +37,7 @@ input
 {
 	flex: 0 0 40px;
 	height:40px;
-	border-top: 1px solid #009688;
+	border-top: 1px solid #2E86C1;
 	display: flex;
 	align-items: center;
 }
@@ -153,8 +153,8 @@ input
 	height: 100%;
 	display: flex;
 	align-items: center;
-	/* border-bottom: 6px solid #009688; */
-	background-color: #17CC5F;
+	/* border-bottom: 6px solid #2E86C1; */
+	background-color: #3498DB;
 	color: #fff;
 }
 

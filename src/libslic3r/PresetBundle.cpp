@@ -793,7 +793,7 @@ PresetsConfigSubstitutions PresetBundle::import_presets(std::vector<std::string>
             import_json_presets(substitutions, file, override_confirm, rule, overwrite, result);
         }
         // Determine if it is a preset bundle
-        if (boost::iends_with(file, ".creality_printer") || boost::iends_with(file, ".creality_filament") || boost::iends_with(file, ".zip")) {
+        if (boost::iends_with(file, ".sanity_printer") || boost::iends_with(file, ".creality_filament") || boost::iends_with(file, ".zip")) {
             boost::system::error_code ec;
             // create user folder
             fs::path user_folder(data_dir() + "/" + PRESET_USER_DIR);
@@ -1131,7 +1131,7 @@ PresetsConfigSubstitutions PresetBundle::import_presets_multifile(std::vector<st
             delete item;
         }
         lstOverrideConfirmFile.clear();
-        m_isCrealityPrinter  = false;
+        m_isSanityPrinter  = false;
         m_isCrealityFilament = false;
 
         STOverrideConfirmFile* pSTOverrideConfirmFile = new STOverrideConfirmFile;
@@ -1162,10 +1162,10 @@ PresetsConfigSubstitutions PresetBundle::import_presets_multifile(std::vector<st
                 }, rule, overwrite, result);
         }
         // Determine if it is a preset bundle
-        if (boost::iends_with(file, ".creality_printer") || boost::iends_with(file, ".creality_filament") ||
+        if (boost::iends_with(file, ".sanity_printer") || boost::iends_with(file, ".creality_filament") ||
             boost::iends_with(file, ".zip")) {
-            if (boost::iends_with(file, ".creality_printer"))
-                m_isCrealityPrinter = true;
+            if (boost::iends_with(file, ".sanity_printer"))
+                m_isSanityPrinter = true;
             if (boost::iends_with(file, ".creality_filament"))
                 m_isCrealityFilament = true;
 

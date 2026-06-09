@@ -66,7 +66,7 @@ public:
     // Completed packages (e.g. *.nupkg) are not removed.
     void cleanup_partial_downloads(const std::string& version_for_path);
 
-    // Helper to get cache directory: %LOCALAPPDATA%/crealityprint_squirrel/<version>/
+    // Helper to get cache directory: %LOCALAPPDATA%/sanityprint_squirrel/<version>/
     // Made public for version-specific storage access
     static std::string get_cache_dir(const std::string& version);
 

@@ -18,7 +18,7 @@ from pyautogui import ImageNotFoundException
 # CREALITY_PRINTER_LOG_PATH
 # CREALITY_PRINTER_THEME
 
-def creality_printer_path():
+def sanity_printer_path():
     """return creality printer path.
     """
     path = os.getenv("CREALITY_PRINTER_PATH")
@@ -43,9 +43,9 @@ def test_resources_path(pytestconfig):
     rootdir = pytestconfig.rootdir
     return os.path.join(rootdir, "_resources_")
 
-############ Creality Printer操作 #########
+############ Sanity Printer操作 #########
 @pytest.fixture(scope="session")
-def open_creality_printer():
+def open_sanity_printer():
     """Open and close creality printer.
     """
     if os.path.exists(log_path()):
@@ -53,7 +53,7 @@ def open_creality_printer():
     if os.path.exists(f"{log_path()}.offset"):
         os.remove(f"{log_path()}.offset")        
     proc = subprocess.Popen(
-        [creality_printer_path(), "test#157369"],
+        [sanity_printer_path(), "test#157369"],
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
     )

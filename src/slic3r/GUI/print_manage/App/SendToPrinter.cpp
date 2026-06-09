@@ -122,7 +122,7 @@ CxSentToPrinterDialog::CxSentToPrinterDialog(Plater *plater,
     SetSizer(topsizer);
 
     topsizer->Add(m_browser, 1, wxEXPAND | wxALL, 0);
-    std::string version = std::string(CREALITYPRINT_VERSION);
+    std::string version = std::string(SANITYPRINT_VERSION);
     std::string os      = wxGetOsDescription().ToStdString();
     int port = wxGetApp().get_server_port();
 //#define _DEBUG1

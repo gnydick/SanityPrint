@@ -1185,21 +1185,21 @@ wxString PrusaConnect::get_test_failed_msg(wxString& msg) const
     return GUI::format_wxstr("%s: %s", _L("Could not connect to Prusa Connect"), msg);
 }
 
-CrealityPrint::CrealityPrint(DynamicPrintConfig* config): PrusaLink(config){};
+SanityPrint::SanityPrint(DynamicPrintConfig* config): PrusaLink(config){};
 
-bool CrealityPrint::validate_version_text(const boost::optional<std::string> &version_text) const
+bool SanityPrint::validate_version_text(const boost::optional<std::string> &version_text) const
 {
     return  true;
 }
 
-wxString CrealityPrint::get_test_ok_msg () const
+wxString SanityPrint::get_test_ok_msg () const
 {
-    return _(L("Connection to CrealityPrint works correctly."));
+    return _(L("Connection to SanityPrint works correctly."));
 }
 
-wxString CrealityPrint::get_test_failed_msg (wxString &msg) const
+wxString SanityPrint::get_test_failed_msg (wxString &msg) const
 {
-    return GUI::format_wxstr("%s: %s", _L("Could not connect to CrealityPrint"), msg);
+    return GUI::format_wxstr("%s: %s", _L("Could not connect to SanityPrint"), msg);
 }
 
 

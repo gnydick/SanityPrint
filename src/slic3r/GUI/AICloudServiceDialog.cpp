@@ -597,9 +597,9 @@ void AICloudService_ResultDialog::build_dialog()
     btnApply->SetMinSize(wxSize(FromDIP(104), FromDIP(32)));
     btnApply->SetMaxSize(wxSize(FromDIP(104), FromDIP(32)));
     btnApply->SetBorderColorNormal(wxColour(wxGetApp().dark_mode() ? "#FFFFFF" : "#000000"));
-    btnApply->SetBackgroundColor(StateColor(std::pair<wxColour, int>(wxColour("#1FCA63"), StateColor::Pressed),
-                                            std::pair<wxColour, int>(wxColour("#1FCA63"), StateColor::Hovered),
-                                            std::pair<wxColour, int>(wxColour("#1FCA63"), StateColor::Normal)));
+    btnApply->SetBackgroundColor(StateColor(std::pair<wxColour, int>(wxColour("#3498DB"), StateColor::Pressed),
+                                            std::pair<wxColour, int>(wxColour("#3498DB"), StateColor::Hovered),
+                                            std::pair<wxColour, int>(wxColour("#3498DB"), StateColor::Normal)));
     btnApply->Bind(wxEVT_LEFT_DOWN, &AICloudService_ResultDialog::on_apply_btn_clicked, this);
     panelSizer->Add(btnApply, 1, wxLEFT | wxALIGN_CENTER_VERTICAL, FromDIP(16));
     panelSizer->AddStretchSpacer();
@@ -1101,7 +1101,7 @@ void AICloudService_ProgressDialog::build_dialog()
     m_progressBar->SetMaxSize(wxSize(FromDIP(-1), FromDIP(10)));
     m_progressBar->SetBackgroundColour(bgColor);
     m_progressBar->SetProgressForedColour(wxGetApp().dark_mode() ? wxColour("#505052") : wxColour("#E1E4E9"));
-    m_progressBar->SetProgressBackgroundColour(wxColour("#1FCA63"));
+    m_progressBar->SetProgressBackgroundColour(wxColour("#3498DB"));
     m_progressBar->SetRadius(5);
     m_progressBar->SetValue(1);
     panelSizer->Add(m_progressBar, 1, wxEXPAND | wxLEFT | wxRIGHT | wxALIGN_CENTER_VERTICAL, FromDIP(40));
@@ -1446,7 +1446,7 @@ void AICloudService_TipDialog::build_dialog()
     m_ckAIRecommendationSupportGeneration->setItemClickedCb([bgColor, this]() {
         if (m_ckAIRecommendationSupportGeneration->GetValue()) {
             m_okBtn->Enable(true);
-            m_okBtn->SetBackgroundColor(wxColour("#1FCA63"));
+            m_okBtn->SetBackgroundColor(wxColour("#3498DB"));
         } else if (!m_ckAIRecommendationZseamPainting->GetValue()) {
             m_okBtn->Enable(false);
             m_okBtn->SetBackgroundColor(bgColor);
@@ -1463,7 +1463,7 @@ void AICloudService_TipDialog::build_dialog()
     m_ckAIRecommendationZseamPainting->setItemClickedCb([bgColor, this]() {
         if (m_ckAIRecommendationZseamPainting->GetValue()) {
             m_okBtn->Enable(true);
-            m_okBtn->SetBackgroundColor(wxColour("#1FCA63"));
+            m_okBtn->SetBackgroundColor(wxColour("#3498DB"));
         } else if (!m_ckAIRecommendationSupportGeneration->GetValue()) {
             m_okBtn->Enable(false);
             m_okBtn->SetBackgroundColor(bgColor);
@@ -1489,9 +1489,9 @@ void AICloudService_TipDialog::build_dialog()
     m_okBtn->SetMaxSize(wxSize(FromDIP(104), FromDIP(32)));
     m_okBtn->SetFont(Label::Body_16);
     m_okBtn->SetBorderColor(wxColour(wxGetApp().dark_mode() ? "#6C6E71" : "#A6ACB4"));
-    m_okBtn->SetBackgroundColor(StateColor(std::pair<wxColour, int>(wxColour("#1FCA63"), StateColor::Pressed),
-                                         std::pair<wxColour, int>(wxColour("#1FCA63"), StateColor::Hovered),
-                                         std::pair<wxColour, int>(wxColour("#1FCA63"), StateColor::Normal)));
+    m_okBtn->SetBackgroundColor(StateColor(std::pair<wxColour, int>(wxColour("#3498DB"), StateColor::Pressed),
+                                         std::pair<wxColour, int>(wxColour("#3498DB"), StateColor::Hovered),
+                                         std::pair<wxColour, int>(wxColour("#3498DB"), StateColor::Normal)));
     m_okBtn->Bind(wxEVT_LEFT_DOWN, &AICloudService_TipDialog::on_ok_btn_clicked, this);
     panelSizer->AddStretchSpacer();
     panelSizer->Add(m_okBtn, 1, wxEXPAND | wxTOP | wxALIGN_CENTER_HORIZONTAL, FromDIP(32));

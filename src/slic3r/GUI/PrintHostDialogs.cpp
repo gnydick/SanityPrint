@@ -44,7 +44,7 @@ class UploadErrorDialog : public MsgDialog
 public:
     UploadErrorDialog(const wxString& summary, const wxString& details)
         : MsgDialog(static_cast<wxWindow*>(wxGetApp().mainframe),
-            _L("CrealityPrint error"),wxEmptyString, wxOK)
+            _L("SanityPrint error"),wxEmptyString, wxOK)
     {
         init(summary, details);
     }
@@ -184,9 +184,9 @@ PrintHostSendDialog::PrintHostSendDialog(const fs::path &path, PrintHostPostUplo
 
     content_sizer->AddSpacer(40);
 
-    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(21, 191, 89), StateColor::Pressed),
-                        std::pair<wxColour, int>(wxColour(21, 191, 89), StateColor::Hovered),
-                        std::pair<wxColour, int>(wxColour(21, 191, 89), StateColor::Normal));
+    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(52, 152, 219), StateColor::Pressed),
+                        std::pair<wxColour, int>(wxColour(52, 152, 219), StateColor::Hovered),
+                        std::pair<wxColour, int>(wxColour(52, 152, 219), StateColor::Normal));
 
     add_button(wxID_CANCEL,false, _L("Cancel"));
 

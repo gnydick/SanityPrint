@@ -983,8 +983,8 @@ void UnsavedChangesDialog::build(Preset::Type type, PresetCollection *dependent_
     wxFont      btn_font = this->GetFont().Scaled(1.4f);
 
     StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(206, 206, 206), StateColor::Disabled),
-        std::pair<wxColour, int>(wxColour(21, 191, 89), StateColor::Pressed),
-        std::pair<wxColour, int>(wxColour(21, 191, 89), StateColor::Hovered),
+        std::pair<wxColour, int>(wxColour(52, 152, 219), StateColor::Pressed),
+        std::pair<wxColour, int>(wxColour(52, 152, 219), StateColor::Hovered),
         std::pair<wxColour, int>(wxColour(110, 110, 115), StateColor::Normal));
 
     auto add_btn = [this, m_sizer_button, btn_font, dependent_presets, btn_bg_green](Button **btn, int &btn_id, const std::string &icon_name, Action close_act, const wxString &label,
@@ -1997,7 +1997,7 @@ void DiffPresetDialog::create_buttons()
 
     // Transfer 
     m_transfer_btn = new Button(this, L("Transfer"));
-    m_transfer_btn->SetBorderColor(wxColour(0, 150, 136));
+    m_transfer_btn->SetBorderColor(wxColour(46, 134, 193));
     m_transfer_btn->SetTextColor(wxColour("#FFFFFE"));
     m_transfer_btn->SetMinSize(wxSize(-1, -1));
     m_transfer_btn->SetCornerRadius(FromDIP(12));

@@ -1367,7 +1367,7 @@ void AnalyticsDataUploadManager::send_print_begin_event(const nlohmann::json& da
             std::string collect_id = generate_uuid();
             std::string device_id = SystemId::get_system_id();
             std::string app_version = GUI_App::format_display_version().c_str();
-            int app_type = 6;  // Creality Print
+            int app_type = 6;  // Sanity Print
             
             // 2. 从缓存读取所有参数（使用 plate_idx=0，后续可扩展）
             int plate_idx = 0;

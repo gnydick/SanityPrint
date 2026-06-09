@@ -49,7 +49,7 @@ include(GNUInstallDirs)
 include(CMakeDependentOption)
 
 project(${SOLUTION_NAME})
-message("CREALITYPRINT_VERSION=${CREALITYPRINT_VERSION}")
+message("SANITYPRINT_VERSION=${SANITYPRINT_VERSION}")
 message("PROCESS_NAME=${PROCESS_NAME}")
 
 set(SLIC3R_RESOURCES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/resources")
@@ -70,12 +70,12 @@ else()
         endif()
 endif()
 
-option(SLIC3R_STATIC 			"Compile CrealityPrint with static libraries (Boost, TBB, glew)" ${SLIC3R_STATIC_INITIAL})
-option(SLIC3R_GUI    			"Compile CrealityPrint with GUI components (OpenGL, wxWidgets)" 1)
+option(SLIC3R_STATIC 			"Compile SanityPrint with static libraries (Boost, TBB, glew)" ${SLIC3R_STATIC_INITIAL})
+option(SLIC3R_GUI    			"Compile SanityPrint with GUI components (OpenGL, wxWidgets)" 1)
 option(SLIC3R_DEV_AUE_CUSTOM_PREVIEW "Enable development-only AUE custom preview in GCodeViewer" OFF)
-option(SLIC3R_FHS               "Assume CrealityPrint is to be installed in a FHS directory structure" 0)
+option(SLIC3R_FHS               "Assume SanityPrint is to be installed in a FHS directory structure" 0)
 option(SLIC3R_WX_STABLE         "Build against wxWidgets stable (3.0) as oppsed to dev (3.1) on Linux" 0)
-option(SLIC3R_PROFILE 			"Compile CrealityPrint with an invasive Shiny profiler" 0)
+option(SLIC3R_PROFILE 			"Compile SanityPrint with an invasive Shiny profiler" 0)
 option(SLIC3R_PCH               "Use precompiled headers" 1)
 option(SLIC3R_MSVC_COMPILE_PARALLEL "Compile on Visual Studio in parallel" 1)
 option(SLIC3R_MSVC_PDB          "Generate PDB files on MSVC in Release mode" 1)
@@ -102,7 +102,7 @@ if (APPLE)
     if (CMAKE_MACOSX_BUNDLE)
         set(CMAKE_INSTALL_RPATH @executable_path/../Frameworks)
     endif()
-    SET(CMAKE_XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "com.creality.crealityprint")
+    SET(CMAKE_XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "com.creality.sanityprint")
 
     message(STATUS "Orca: IS_CROSS_COMPILE: ${IS_CROSS_COMPILE}")
 endif ()
@@ -173,7 +173,7 @@ if (MINGW)
 endif ()
 
 if (NOT MSVC)
-    # ARMs (Raspberry PI) use an unsigned char by default. Let's make it consistent for CrealityPrint on all platforms.
+    # ARMs (Raspberry PI) use an unsigned char by default. Let's make it consistent for SanityPrint on all platforms.
     add_compile_options(-fsigned-char)
 endif ()
 
@@ -415,7 +415,7 @@ if(WIN32)
     if(MSVC)
         # BOOST_ALL_NO_LIB: Avoid the automatic linking of Boost libraries on Windows. Rather rely on explicit linking.
         add_definitions(-DBOOST_ALL_NO_LIB -DBOOST_USE_WINAPI_VERSION=0x602 -DBOOST_SYSTEM_USE_UTF8 )
-        # Force the source code encoding to UTF-8. See CrealityPrint GH pull request #5583
+        # Force the source code encoding to UTF-8. See SanityPrint GH pull request #5583
         add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
         add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
     endif(MSVC)
@@ -427,7 +427,7 @@ add_definitions(-DwxUSE_UNICODE -D_UNICODE -DUNICODE -DWXINTL_NO_GETTEXT_MACRO)
 add_definitions(-DwxNO_UNSAFE_WXSTRING_CONV)
 
 if (SLIC3R_PROFILE)
-    message("CrealityPrint will be built with a Shiny invasive profiler")
+    message("SanityPrint will be built with a Shiny invasive profiler")
     add_definitions(-DSLIC3R_PROFILE)
 endif ()
 
@@ -634,7 +634,7 @@ set(BBL_L18N_DIR "${CMAKE_CURRENT_SOURCE_DIR}/localization/i18n")
 add_custom_target(gettext_make_pot
     COMMAND xgettext --keyword=L --keyword=_L --keyword=_u8L --keyword=L_CONTEXT:1,2c --keyword=_L_PLURAL:1,2 --add-comments=TRN --from-code=UTF-8 --no-location --debug --boost
         -f "${BBL_L18N_DIR}/list.txt"
-        -o "${BBL_L18N_DIR}/CrealityPrint.pot"
+        -o "${BBL_L18N_DIR}/SanityPrint.pot"
 	COMMAND hintsToPot ${SLIC3R_RESOURCES_DIR} ${BBL_L18N_DIR}	
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
     COMMENT "Generate pot file from strings in the source tree"
@@ -643,13 +643,13 @@ add_custom_target(gettext_merge_po_with_pot
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
     COMMENT "Merge localization po with new generted pot file"
 )
-file(GLOB BBL_L10N_PO_FILES "${BBL_L18N_DIR}/*/CrealityPrint*.po")
+file(GLOB BBL_L10N_PO_FILES "${BBL_L18N_DIR}/*/SanityPrint*.po")
 foreach(po_file ${BBL_L10N_PO_FILES})
     GET_FILENAME_COMPONENT(po_dir "${po_file}" DIRECTORY)
-    SET(po_new_file "${po_dir}/CrealityPrint_.po")
+    SET(po_new_file "${po_dir}/SanityPrint_.po")
     add_custom_command(
         TARGET gettext_merge_po_with_pot PRE_BUILD
-        COMMAND msgmerge -N -o ${po_file} ${po_file} "${BBL_L18N_DIR}/CrealityPrint.pot"
+        COMMAND msgmerge -N -o ${po_file} ${po_file} "${BBL_L18N_DIR}/SanityPrint.pot"
         DEPENDS ${po_file}
     )
 endforeach()
@@ -657,11 +657,11 @@ add_custom_target(gettext_po_to_mo
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
     COMMENT "Generate localization po files (binary) from mo files (texts)"
 )
-file(GLOB L10N_PO_FILES "${BBL_L18N_DIR}/*/CrealityPrint*.po")
+file(GLOB L10N_PO_FILES "${BBL_L18N_DIR}/*/SanityPrint*.po")
 foreach(po_file ${BBL_L10N_PO_FILES})
     GET_FILENAME_COMPONENT(SECOND_FOLDER_ABSOLUTE ${po_file} DIRECTORY)
     string(REGEX REPLACE ".*/(.*)" "\\1" po_dir "${SECOND_FOLDER_ABSOLUTE}" )
-    SET(mo_file "${L10N_DIR}/${po_dir}/CrealityPrint.mo")
+    SET(mo_file "${L10N_DIR}/${po_dir}/SanityPrint.mo")
     add_custom_command(
         TARGET gettext_po_to_mo PRE_BUILD
         COMMAND msgfmt ARGS --check-format -o ${mo_file} ${po_file}
@@ -729,7 +729,7 @@ function(copy_vld_dlls  target config)
     file(COPY $ENV{VLD_HOME}/vld.ini DESTINATION "${_out_dir}")
 endfunction()
 
-function(crealityprint_copy_dlls target config postfix output_dlls)
+function(sanityprint_copy_dlls target config postfix output_dlls)
     if ("${CMAKE_SIZEOF_VOID_P}" STREQUAL "8")
         set(_bits 64)
     elseif ("${CMAKE_SIZEOF_VOID_P}" STREQUAL "4")
@@ -891,7 +891,7 @@ function(crealityprint_copy_dlls target config postfix output_dlls)
     
 endfunction()
 
-# libslic3r, CrealityPrint GUI and the CrealityPrint executable.
+# libslic3r, SanityPrint GUI and the SanityPrint executable.
 add_subdirectory(src)
 
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${STARTUP_PROJECT_NAME})
@@ -935,20 +935,20 @@ if (WIN32)
     message(STATUS "CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS=${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}")
 elseif (SLIC3R_FHS)
     # CMAKE_INSTALL_FULL_DATAROOTDIR: read-only architecture-independent data root (share)
-    set(SLIC3R_FHS_RESOURCES "${CMAKE_INSTALL_FULL_DATAROOTDIR}/CrealityPrint")
+    set(SLIC3R_FHS_RESOURCES "${CMAKE_INSTALL_FULL_DATAROOTDIR}/SanityPrint")
     install(DIRECTORY ${SLIC3R_RESOURCES_DIR}/ DESTINATION ${SLIC3R_FHS_RESOURCES}
         PATTERN "*/udev" EXCLUDE
     )
-    install(FILES src/platform/unix/CrealityPrint.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications)
+    install(FILES src/platform/unix/SanityPrint.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications)
     foreach(SIZE 32 128 192)
-        install(FILES ${SLIC3R_RESOURCES_DIR}/images/CrealityPrint_${SIZE}px.png
-            DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/${SIZE}x${SIZE}/apps RENAME CrealityPrint.png
+        install(FILES ${SLIC3R_RESOURCES_DIR}/images/SanityPrint_${SIZE}px.png
+            DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/${SIZE}x${SIZE}/apps RENAME SanityPrint.png
         )
     endforeach()
 elseif (CMAKE_MACOSX_BUNDLE)
-    #install(DIRECTORY "${SLIC3R_RESOURCES_DIR}/" DESTINATION "${CMAKE_INSTALL_PREFIX}/CrealityPrint.app/Contents/resources")
+    #install(DIRECTORY "${SLIC3R_RESOURCES_DIR}/" DESTINATION "${CMAKE_INSTALL_PREFIX}/SanityPrint.app/Contents/resources")
 else ()
-    install(FILES src/platform/unix/CrealityPrint.desktop DESTINATION ${CMAKE_INSTALL_PREFIX}/resources/applications)
+    install(FILES src/platform/unix/SanityPrint.desktop DESTINATION ${CMAKE_INSTALL_PREFIX}/resources/applications)
     install(DIRECTORY "${SLIC3R_RESOURCES_DIR}/" DESTINATION "${CMAKE_INSTALL_PREFIX}/resources")
 endif ()
 if (NOT APPLE)

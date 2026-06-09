@@ -1,17 +1,17 @@
 ---
-name: build-crealityprint
+name: build-sanityprint
 description: >-
-  Build CrealityPrint from source on Windows — full toolchain setup, dependency
+  Build SanityPrint from source on Windows — full toolchain setup, dependency
   build, app build, release versioning, and CLion wiring, including the known
   gotchas (CMake 4.x incompatibility, cross-drive deps, missing ATL, version/update
-  channel). Use when building, compiling, rebuilding, or setting up CrealityPrint
+  channel). Use when building, compiling, rebuilding, or setting up SanityPrint
   on this machine, or when diagnosing its version / update-channel behavior.
 ---
 
-# Building CrealityPrint (Windows)
+# Building SanityPrint (Windows)
 
-CrealityPrint is a large C++/CMake desktop slicer (lineage: Slic3r → PrusaSlicer →
-BambuStudio → OrcaSlicer → CrealityPrint). This skill captures the **complete, working
+SanityPrint is a large C++/CMake desktop slicer (lineage: Slic3r → PrusaSlicer →
+BambuStudio → OrcaSlicer → SanityPrint). This skill captures the **complete, working
 build process** for this machine, including every non-obvious gotcha discovered the hard
 way. Read the **Gotchas** section first — most build failures map to one of them.
 
@@ -24,10 +24,10 @@ The build enablers are committed in this repo, so a clean checkout of `main` bui
 extra patching:
 - `version.inc` derives the product version from the git tag + `BUILD_ID` (see *Versioning*).
 - `deps/CMakeLists.txt` carries the opt-in `DEP_CROSS_DRIVE_BUILD` option (Gotcha 2).
-- `.run/CrealityPrint.run.xml` (run config) and `.idea/cmake.xml` (CLion profile) are tracked.
+- `.run/SanityPrint.run.xml` (run config) and `.idea/cmake.xml` (CLion profile) are tracked.
 
 The build work lives on **`main`** (the fork's default branch). Remotes: `origin` = your fork,
-`upstream` = `CrealityOfficial/CrealityPrint`; pull upstream updates with
+`upstream` = `CrealityOfficial/SanityPrint`; pull upstream updates with
 `git fetch upstream && git merge upstream/master`.
 
 The compiled binary is **byte-identical to the official 7.1.1 release** — `src/`, `xs/`, and
@@ -40,13 +40,13 @@ configuration, reproduced here via `BUILD_ID` + `-DPROJECT_VERSION_EXTRA=Release
 
 | Thing | Path |
 |---|---|
-| Source repo | `I:\IdeaProjects\CrealityPrint` |
+| Source repo | `I:\IdeaProjects\SanityPrint` |
 | Build outputs | `D:\cpbuild\` (source is on a small drive; builds go on D:) |
 | Pinned CMake 3.31.12 | `D:\cpbuild\tools\cmake-3.31.12-windows-x86_64\bin\cmake.exe` |
 | Deps build dir | `D:\cpbuild\deps` |
 | Deps install prefix | `D:\cpbuild\OrcaSlicer_dep\usr\local` (→ `CMAKE_PREFIX_PATH`) |
 | App build dir | `D:\cpbuild\app` |
-| Built exe | `D:\cpbuild\app\src\Release\CrealityPrint.exe` (thin launcher; logic in `CrealityPrint_Slicer.dll`) |
+| Built exe | `D:\cpbuild\app\src\Release\SanityPrint.exe` (thin launcher; logic in `SanityPrint_Slicer.dll`) |
 
 ## Gotchas (read this first)
 
@@ -135,7 +135,7 @@ those targets (`cmake --build D:\cpbuild\deps --target dep_OCCT dep_OpenCV ...`)
 ```
 $env:BUILD_ID = '4472'   # release build number (see Versioning)
 cmake -S <repo> -B D:\cpbuild\app -G "Visual Studio 17 2022" -A x64 `
-      -U CREALITYPRINT_VERSION `
+      -U SANITYPRINT_VERSION `
       -DBBL_RELEASE_TO_PUBLIC=1 -DPROJECT_VERSION_EXTRA=Release `
       -DCMAKE_PREFIX_PATH=D:\cpbuild\OrcaSlicer_dep\usr\local -DCMAKE_BUILD_TYPE=Release `
       -DWIN10SDK_PATH="C:/Program Files (x86)/Windows Kits/10/Include/10.0.22621.0"
@@ -144,7 +144,7 @@ cmake --build D:\cpbuild\app --config Release --target ALL_BUILD -- -m
 
 ## Versioning & update channel (important — not just cosmetic)
 
-`version.inc` is a **placeholder** that hardcodes `CREALITYPRINT_VERSION "7.0.0"` for *every*
+`version.inc` is a **placeholder** that hardcodes `SANITYPRINT_VERSION "7.0.0"` for *every*
 7.x release tag. Creality's private CI rewrites it "from the git label" (per the file's own
 header comment). The public GitHub repo is a **squashed snapshot** (~46 commits total), so
 the internal build number (e.g. `4472`) is **not** in the source and cannot be derived.
@@ -152,10 +152,10 @@ the internal build number (e.g. `4472`) is **not** in the source and cannot be d
 The committed fix (in `version.inc`) does what the CI does, properly:
 - Derive `X.Y.Z` from `git describe --tags --abbrev=0` (e.g. `v7.1.1` → `7.1.1`).
 - Append the build number from `$ENV{BUILD_ID}` (the missing CI counter) → `7.1.1.4472`.
-- Pass `-U CREALITYPRINT_VERSION` on configure: a prior `-D` override caches the value
+- Pass `-U SANITYPRINT_VERSION` on configure: a prior `-D` override caches the value
   (e.g. a mangled `7`) and silently **blocks** the derivation. `-U` clears it.
 
-The app renders `"V" + CREALITYPRINT_VERSION` → **V7.1.1.4472**.
+The app renders `"V" + SANITYPRINT_VERSION` → **V7.1.1.4472**.
 
 **`PROJECT_VERSION_EXTRA` selects the cloud/update server** (`GUI.cpp get_cloud_api_url`):
 - `Alpha`/`Dev` → `admin-pre.crealitycloud.com` (pre-release server; reports a stale older
@@ -171,7 +171,7 @@ CLion's bundled CMake is 4.2.2 (broken, Gotcha 1). One-time setup:
 1. Settings → Build, Execution, Deployment → **Toolchains** → Visual Studio, architecture
    `amd64`, and set **CMake** to `D:\cpbuild\tools\cmake-3.31.12-windows-x86_64\bin\cmake.exe`.
 2. The CLion CMake profile is committed at `.idea/cmake.xml` (Release profile with the cache
-   vars above), and `.run/CrealityPrint.run.xml` sets `SLIC3R_RESOURCES_DIR` so Run works
+   vars above), and `.run/SanityPrint.run.xml` sets `SLIC3R_RESOURCES_DIR` so Run works
    out of the box.
 
 Note: plain **IntelliJ IDEA cannot build C++/CMake** — use **CLion**.
@@ -179,11 +179,11 @@ Note: plain **IntelliJ IDEA cannot build C++/CMake** — use **CLion**.
 ## Running
 
 Set `SLIC3R_RESOURCES_DIR=<repo>\resources` (the run config does this), then launch
-`D:\cpbuild\app\src\Release\CrealityPrint.exe`.
+`D:\cpbuild\app\src\Release\SanityPrint.exe`.
 
 ## Quick verification
 
 - Deps done: 30 `*-done` stamps under `D:\cpbuild\deps\*-prefix\src\*-stamp`.
 - App version: `D:\cpbuild\app\src\libslic3r\libslic3r_version.h` →
-  `CREALITYPRINT_VERSION "7.1.1.4472"`, `PROJECT_VERSION_EXTRA "Release"`.
-- Output: `CrealityPrint_Slicer.dll` (~73 MB) + `CrealityPrint.exe` under `…\src\Release\`.
+  `SANITYPRINT_VERSION "7.1.1.4472"`, `PROJECT_VERSION_EXTRA "Release"`.
+- Output: `SanityPrint_Slicer.dll` (~73 MB) + `SanityPrint.exe` under `…\src\Release\`.

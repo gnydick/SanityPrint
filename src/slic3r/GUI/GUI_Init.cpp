@@ -102,7 +102,7 @@ int GUI_Run(GUI_InitParams &params)
                     ss << now;
 
                     std::string timeStr        = ss.str();
-                    std::string processNameStr = timeStr + std::string("_") + SLIC3R_PROCESS_NAME + std::string("_") + CREALITYPRINT_VERSION +
+                    std::string processNameStr = timeStr + std::string("_") + SLIC3R_PROCESS_NAME + std::string("_") + SANITYPRINT_VERSION +
                                                 std::string("_") + PROJECT_VERSION_EXTRA;
                     boost::filesystem::path newPath(dump_dir);
                     newPath.append(processNameStr).replace_extension(".dmp");
@@ -244,10 +244,10 @@ int GUI_Run(GUI_InitParams &params)
         }
     } catch (const Slic3r::Exception &ex) {
         BOOST_LOG_TRIVIAL(error) << ex.what() << std::endl;
-        wxMessageBox(boost::nowide::widen(ex.what()), _L("Creality Print GUI initialization failed"), wxICON_STOP);
+        wxMessageBox(boost::nowide::widen(ex.what()), _L("Sanity Print GUI initialization failed"), wxICON_STOP);
     } catch (const std::exception &ex) {
         BOOST_LOG_TRIVIAL(error) << ex.what() << std::endl;
-        wxMessageBox(format_wxstr(_L("Fatal error, exception catched: %1%"), ex.what()), _L("Creality Print GUI initialization failed"), wxICON_STOP);
+        wxMessageBox(format_wxstr(_L("Fatal error, exception catched: %1%"), ex.what()), _L("Sanity Print GUI initialization failed"), wxICON_STOP);
     }
     // error
     return 1;

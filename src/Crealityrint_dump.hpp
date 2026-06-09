@@ -119,7 +119,7 @@ public:
             // 获取错误报告
             wxString osDescription = wxGetOsDescription();
             m_info.osDescription = osDescription;
-            m_info.build = wxString(CREALITYPRINT_VERSION, wxConvUTF8);
+            m_info.build = wxString(SANITYPRINT_VERSION, wxConvUTF8);
             m_info.uuid = wxDateTime::Now().Format("%Y%m%d%H%M%S");
             // 获取显卡信息
            if (!glfwInit()) {

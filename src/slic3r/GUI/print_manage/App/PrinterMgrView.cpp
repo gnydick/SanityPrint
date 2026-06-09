@@ -483,7 +483,7 @@ PrinterMgrView::PrinterMgrView(wxWindow *parent)
     RegisterHandler("set_user_custom_color_list", [this](const nlohmann::json& json_data) {
         this->handle_set_user_custom_color_list(json_data);
     });
-    std::string version = std::string(CREALITYPRINT_VERSION);
+    std::string version = std::string(SANITYPRINT_VERSION);
     std::string os = wxGetOsDescription().ToStdString();
     int port = wxGetApp().get_server_port();
     int customized = 0;
@@ -569,7 +569,7 @@ void PrinterMgrView::initMqtt()
        token = extra_headers["__CXY_TOKEN_"];
 
     }
-    std::string username= (boost::format("%s:%s:%s")%duid%plat%appVer).str();//"crealityprint:11:6.2.0";
+    std::string username= (boost::format("%s:%s:%s")%duid%plat%appVer).str();//"sanityprint:11:6.2.0";
     std::string password=(boost::format("%s:%s")%userid%token).str();//"3656792567:083fa893b41e1af54dbc32396e41b605986df75622eb6e64b897cea378203f7d";
     bool connected_ = false;
     std::string region = wxGetApp().app_config->get("region");
@@ -823,7 +823,7 @@ void PrinterMgrView::OnError(wxWebViewEvent &evt)
             wxString restart_cmd = wxString::Format("\"%s\"", exe_path);
             long pid = wxExecute(restart_cmd, wxEXEC_ASYNC);
             if (pid <= 0)
-                BOOST_LOG_TRIVIAL(error) << "[WebViewRuntime] Failed to relaunch Creality Print after enabling single-process.";
+                BOOST_LOG_TRIVIAL(error) << "[WebViewRuntime] Failed to relaunch Sanity Print after enabling single-process.";
             if (Slic3r::GUI::wxGetApp().mainframe)
                 Slic3r::GUI::wxGetApp().mainframe->Close(true);
             else

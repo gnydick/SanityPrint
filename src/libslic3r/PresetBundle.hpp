@@ -368,7 +368,7 @@ private:
     bool validation_mode = false;
     std::string vendor_to_validate = ""; 
     int m_errors = 0;
-    bool m_isCrealityPrinter = false;
+    bool m_isSanityPrinter = false;
     bool m_isCrealityFilament = false;
 };
 
