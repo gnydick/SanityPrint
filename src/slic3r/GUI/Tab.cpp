@@ -4147,6 +4147,16 @@ void TabFilament::build()
         };
 
 
+        optgroup = page->new_optgroup(L("Material properties"), L"param_material_properties");
+        optgroup->append_single_option_line("filament_temp_type");
+        optgroup->append_single_option_line("filament_cooling_smart_zone");
+        optgroup->append_single_option_line("filament_bed_adhesion_strength");
+        optgroup->append_single_option_line("filament_thermal_length");
+        optgroup->append_single_option_line("filament_brim_adhesion_coeff");
+        optgroup->append_single_option_line("filament_small_island_threshold");
+        optgroup->append_single_option_line("filament_chamber_temp_limit");
+        optgroup->append_single_option_line("filament_is_flexible");
+
         optgroup = page->new_optgroup(L("Print chamber temperature"), L"param_chamber_temp");
         optgroup->append_single_option_line("chamber_temperature", "chamber-temperature");
         optgroup->append_single_option_line("activate_chamber_temp_control", "chamber-temperature");
