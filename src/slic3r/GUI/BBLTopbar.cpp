@@ -103,7 +103,7 @@ void ButtonsCtrl::SetSelection(int sel)
     if(-1!=sel && m_mapPageButtons.end() == m_mapPageButtons.find(sel))//not found
     {
         if (m_selection >= 0) {
-            wxColour   hover_bg = is_dark ? wxColour(76, 213, 130) : wxColour(68, 205, 122);
+            wxColour   hover_bg = is_dark ? wxColour(80, 160, 220) : wxColour(93, 173, 226);
             StateColor bg_color = StateColor(std::pair{hover_bg, (int) StateColor::Hovered},
                                              std::pair{is_dark ? wxColour(1, 1, 1) : wxColour(214, 214, 220), (int) StateColor::Normal});
             m_mapPageButtons[m_selection]->SetBackgroundColor(bg_color);
@@ -120,7 +120,7 @@ void ButtonsCtrl::SetSelection(int sel)
     if (-1 == sel) 
     {
         if (m_selection >= 0) {
-            wxColour   hover_bg = is_dark ? wxColour(76, 213, 130) : wxColour(68, 205, 122);
+            wxColour   hover_bg = is_dark ? wxColour(80, 160, 220) : wxColour(93, 173, 226);
             StateColor bg_color = StateColor(std::pair{hover_bg, (int) StateColor::Hovered},
                                              std::pair{is_dark ? wxColour(1, 1, 1) : wxColour(214, 214, 220), (int) StateColor::Normal});
             m_mapPageButtons[m_selection]->SetBackgroundColor(bg_color);
@@ -137,7 +137,7 @@ void ButtonsCtrl::SetSelection(int sel)
     // BBS: change button color
     wxColour selected_btn_bg("#2E86C1"); // Gradient #2E86C1
     if (m_selection >= 0) {
-        wxColour   hover_bg = is_dark ? wxColour(76, 213, 130) : wxColour(68, 205, 122);
+        wxColour   hover_bg = is_dark ? wxColour(80, 160, 220) : wxColour(93, 173, 226);
         StateColor bg_color = StateColor(std::pair{hover_bg, (int) StateColor::Hovered},
                                          std::pair{is_dark ? wxColour(1, 1, 1) : wxColour(214, 214, 220), (int) StateColor::Normal});
         m_mapPageButtons[m_selection]->SetBackgroundColor(bg_color);
@@ -157,7 +157,7 @@ void ButtonsCtrl::SetSelection(int sel)
     m_mapPageButtons[m_selection]->SetSelected(true);
     m_mapPageButtons[m_selection]->SetTextColor(text_color);
 
-    StateColor bg_color = StateColor(std::pair{ wxColour(68, 205, 122), (int)StateColor::Hovered },
+    StateColor bg_color = StateColor(std::pair{ wxColour(93, 173, 226), (int)StateColor::Hovered },
                                      std::pair{is_dark ? wxColour(65, 179, 224) : wxColour(52, 152, 219), (int) StateColor::Normal});
     m_mapPageButtons[m_selection]->SetBackgroundColor(bg_color);
     m_mapPageButtons[m_selection]->SetFocus();
@@ -174,7 +174,7 @@ void ButtonsCtrl::RefreshColor()
     wxColour default_btn_bg = Slic3r::GUI::wxGetApp().dark_mode() ? wxColour("#010101") : wxColour(214, 214, 220); // Gradient #414B4E
     SetBackgroundColour(default_btn_bg);
     for (auto& [index, button] : m_mapPageButtons) {
-        wxColour   hover_bg = is_dark ? wxColour(76, 213, 130) : wxColour(68, 205, 122);
+        wxColour   hover_bg = is_dark ? wxColour(80, 160, 220) : wxColour(93, 173, 226);
         StateColor bg_color = StateColor(std::pair{hover_bg, (int) StateColor::Hovered},
                                          std::pair{is_dark ? wxColour(1, 1, 1) : wxColour(214, 214, 220), (int) StateColor::Normal});
         button->SetCornerRadius(FromDIP(3));
@@ -187,7 +187,7 @@ void ButtonsCtrl::RefreshColor()
         if (m_selection == index)
         {
             button->SetSelected(true);
-            bg_color = StateColor(std::pair{wxColour(68, 205, 122), (int) StateColor::Hovered},
+            bg_color = StateColor(std::pair{wxColour(93, 173, 226), (int) StateColor::Hovered},
                 std::pair{is_dark ? wxColour(65, 179, 224) : wxColour(52, 152, 219), (int) StateColor::Normal});
             button->SetBackgroundColor(bg_color);
             StateColor text_color = StateColor(std::pair{ is_dark ? wxColour(254, 254, 254) : wxColour(255,255,255), (int)StateColor::Hovered },
@@ -247,7 +247,7 @@ bool ButtonsCtrl::InsertPage(
     // BBS set size for button
     btn->SetMinSize({(text.empty() ? FromDIP(40) : FromDIP(100)), FromDIP(30)});
     bool is_dark = Slic3r::GUI::wxGetApp().dark_mode();
-    wxColour   hover_bg = is_dark ? wxColour(76, 213, 130) : wxColour(68, 205, 122);
+    wxColour   hover_bg = is_dark ? wxColour(80, 160, 220) : wxColour(93, 173, 226);
     StateColor bg_color = StateColor(std::pair{hover_bg, (int) StateColor::Hovered},
                                      std::pair{is_dark ? wxColour("1, 1, 1") : wxColour(214, 214, 220), (int) StateColor::Normal});
 

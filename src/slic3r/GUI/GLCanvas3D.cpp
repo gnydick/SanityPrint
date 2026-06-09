@@ -11395,7 +11395,7 @@ void GLCanvas3D::_render_imgui_select_plate_toolbar()
             }
         }
 
-        ImVec4      text_clr = m_is_dark ? ImVec4(0.0f, 150.f / 255.0f, 136.0f / 255, 1.0f) :
+        ImVec4      text_clr = m_is_dark ? ImVec4(46.0f / 255.0f, 134.0f / 255.0f, 193.0f / 255.0f, 1.0f) :
                                            ImVec4(48.0f / 255.0f, 55.0f / 255.0f, 61.0f / 255.0f, 1.0f);
         ImTextureID btn_texture_id;
         if (all_plates_stats_item->slice_state == IMToolbarItem::SliceState::UNSLICED ||

@@ -633,8 +633,8 @@ void AppUpdateFinishDialog::apply_theme()
     const wxColour fg = is_dark ? *wxWHITE : *wxBLACK;
     const wxColour line = is_dark ? wxColour("#616165") : wxColour("#E8EAEE");
     const wxColour accent = is_dark ? wxColour("#3498DB") : wxColour("#2E86C1");
-    const wxColour now_hover = is_dark ? wxColour("#19D567") : wxColour("#19D567");
-    const wxColour now_pressed = is_dark ? wxColour("#12AA50") : wxColour("#12AA50");
+    const wxColour now_hover = is_dark ? wxColour("#5DADE2") : wxColour("#5DADE2");
+    const wxColour now_pressed = is_dark ? wxColour("#1A6FA3") : wxColour("#1A6FA3");
     const wxColour cancel_border = is_dark ? wxColour("#6E6E72") : wxColour("#DBDBDB");
     const wxColour cancel_hover_bg = is_dark ? wxColour("#535355") : wxColour("#F3F4F6");
     const wxColour cancel_pressed_bg = is_dark ? wxColour("#434345") : wxColour("#E8EAEE");
