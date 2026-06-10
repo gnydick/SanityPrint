@@ -178,12 +178,27 @@ std::vector<SyncDevice> FilamentSyncDialog::collect_devices()
                     continue;
                 SyncDevice dev;
                 dev.address = data.address;
-                dev.name    = data.name.empty() ? data.address : data.name;
+
+                // The persisted store usually has an empty name (and a model code
+                // like "F008"); the friendly name shown on the Device page is the
+                // printer's live self-reported one from DataCenter. Prefer it,
+                // then the persisted name, then the model, then the address.
+                DM::Device runtime;
                 try {
-                    dev.online = DM::DataCenter::Ins().get_printer_data(data.address).online;
-                } catch (...) {
-                    dev.online = false;
-                }
+                    runtime = DM::DataCenter::Ins().get_printer_data(data.address);
+                } catch (...) {}
+                dev.online = runtime.online;
+                if (!runtime.name.empty())
+                    dev.name = runtime.name;
+                else if (!data.name.empty())
+                    dev.name = data.name;
+                else if (!runtime.modelName.empty())
+                    dev.name = runtime.modelName;
+                else if (!data.model.empty())
+                    dev.name = data.model;
+                else
+                    dev.name = data.address;
+
                 devices.push_back(std::move(dev));
             }
         }
