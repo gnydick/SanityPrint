@@ -424,7 +424,8 @@ void BBLTopbarArt::DrawButton(wxDC& dc, wxWindow* wnd, const wxAuiToolBarItem& i
             (textHeight / 2);
     }
 
-    if (!(item.GetState() & wxAUI_BUTTON_STATE_DISABLED))
+    // The SP logo is purely decorative: no hover/pressed/checked highlight.
+    if (!(item.GetState() & wxAUI_BUTTON_STATE_DISABLED) && item.GetId() != ID_LOGO)
     {
         if (item.GetState() & wxAUI_BUTTON_STATE_PRESSED)
         {
@@ -460,9 +461,6 @@ void BBLTopbarArt::DrawButton(wxDC& dc, wxWindow* wnd, const wxAuiToolBarItem& i
                 if (UPLOAD_BTN_CODE != item.GetUserData()) {
                     gc->StrokePath(path);
                 }
-
-                // Destroy the graphics context to free resources
-                delete gc;
             }
             else
             {
@@ -484,6 +482,8 @@ void BBLTopbarArt::DrawButton(wxDC& dc, wxWindow* wnd, const wxAuiToolBarItem& i
             }
         }
     }
+
+    delete gc;
 
     if (bmp.IsOk())
         dc.DrawBitmap(bmp, bmpX, bmpY, true);
