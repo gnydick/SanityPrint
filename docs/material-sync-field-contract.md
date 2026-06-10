@@ -53,6 +53,16 @@
 | `filament_chamber_temp_limit` | int (degC) | max safe chamber temp, 0 = no limit |
 | `filament_is_flexible` | `"0"`/`"1"` | TPU-like flexible material |
 
+## Color policy
+
+Colors are authored ONLY in the slicer. The printer stores `default_filament_colour`
+verbatim when the `color` param is provided and must NEVER fabricate a value
+(no `#FFFFFF` default). When the param is absent, the stored value is left
+untouched (absent stays absent). Junk values — empty string and the literal
+two-character string `""` — are never stored; the slicer likewise never sends
+them. Bare 6-hex values (gcode registrations cannot send `#`) may be
+normalized to `#RRGGBB` on either side.
+
 ## Rules
 
 1. Any param absent from a request -> leave that kvParam untouched (partial upsert).
