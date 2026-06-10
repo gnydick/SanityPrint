@@ -552,8 +552,16 @@ void FilamentSyncDialog::start_pull(const std::vector<SyncDevice> &targets)
                     // kvParam keys are literal slicer config keys.
                     ConfigSubstitutionContext ctx(ForwardCompatibilitySubstitutionRule::EnableSilent);
                     for (const auto &kv : entry.second.second) {
+                        std::string value = kv.second;
+                        // Empty values would erase existing settings; gcode-registered
+                        // materials cannot carry '#' so colors may arrive bare.
+                        if (value.empty())
+                            continue;
+                        if (kv.first == "default_filament_colour" && value.front() != '#' && value.size() == 6 &&
+                            value.find_first_not_of("0123456789abcdefABCDEF") == std::string::npos)
+                            value = "#" + value;
                         try {
-                            preset->config.set_deserialize(kv.first, kv.second, ctx);
+                            preset->config.set_deserialize(kv.first, value, ctx);
                         } catch (...) {}
                     }
                     if (!entry.second.first.empty() && is_placeholder_id(preset->filament_id))
