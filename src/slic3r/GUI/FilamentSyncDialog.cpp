@@ -104,6 +104,12 @@ static MaterialPayload payload_from_preset(const Preset &preset)
     }
     p.emplace_back("name", preset.name); // upsert identity key
 
+    // Carry the slicer's filament id (P + md5 prefix for user presets) onto the
+    // printer as base.id so catalog rows are traceable back to the preset. The
+    // printer accepts at most 5 characters, so send a truncated prefix.
+    if (!preset.filament_id.empty() && preset.filament_id != "null")
+        p.emplace_back("id", preset.filament_id.substr(0, 5));
+
     add_string_param(cfg, p, "type", "filament_type");
     add_string_param(cfg, p, "color", "default_filament_colour");
     add_int_param(cfg, p, "mintemp", "nozzle_temperature_range_low");
