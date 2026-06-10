@@ -26,7 +26,7 @@ namespace GUI {
 static const Slic3r::ColorRGBA SELECTED_1ST_COLOR = { 0.25f, 0.75f, 0.75f, 1.0f };
 static const Slic3r::ColorRGBA SELECTED_2ND_COLOR = { 0.75f, 0.25f, 0.75f, 1.0f };
 static const Slic3r::ColorRGBA NEUTRAL_COLOR      = {0.5f, 0.5f, 0.5f, 1.0f};
-static const Slic3r::ColorRGBA HOVER_COLOR        = ColorRGBA::GREEN();
+static const Slic3r::ColorRGBA HOVER_COLOR        = {46.0f / 255.0f, 134.0f / 255.0f, 193.0f / 255.0f, 1.0f};
 
 static const int POINT_ID         = 100;
 static const int EDGE_ID          = 200;

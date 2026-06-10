@@ -38,7 +38,7 @@
 #include "Jobs/ArrangeJob.hpp"
 
 static const Slic3r::ColorRGBA UNIFORM_SCALE_COLOR     = Slic3r::ColorRGBA::ORANGE();
-static const Slic3r::ColorRGBA SOLID_PLANE_COLOR       = {0.0f, 174.0f / 255.0f, 66.0f / 255.0f, 1.0f};
+static const Slic3r::ColorRGBA SOLID_PLANE_COLOR       = {46.0f / 255.0f, 134.0f / 255.0f, 193.0f / 255.0f, 1.0f};
 static const Slic3r::ColorRGBA TRANSPARENT_PLANE_COLOR = { 0.8f, 0.8f, 0.8f, 0.5f };
 
 namespace Slic3r {
