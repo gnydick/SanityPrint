@@ -106,7 +106,7 @@ std::string MiniDump::dumpDir()
 		versionDir = versionDir + std::string(" Alpha");
 	}
 	//save to log folder
-	const std::string dumpDir = PWSTRToString(path) + "\\Creality\\" + SLIC3R_APP_USE_FORDER + "\\" + versionDir + "\\log";
+	const std::string dumpDir = PWSTRToString(path) + "\\" + SLIC3R_APP_FOLDER_KEY + "\\" + SLIC3R_APP_USE_FORDER + "\\" + versionDir + "\\log";
 	if (!dumpDir.empty() && !boost::filesystem::exists(dumpDir)) {
 		boost::filesystem::create_directories(dumpDir);
 	}

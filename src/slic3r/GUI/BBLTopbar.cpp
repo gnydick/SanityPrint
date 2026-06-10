@@ -577,10 +577,10 @@ void BBLTopbar::Init(wxFrame* parent)
     addDipSpacer(5);
 
     bool is_dark = Slic3r::GUI::wxGetApp().dark_mode();
+    // Static SP logo: purely decorative, no hover bitmap and no click handler
+    // (the Creality Cloud home screen it used to open is gone).
     wxBitmap logo_bitmap = create_scaled_bitmap("logo", this, (20));
-    wxBitmap logo_bitmap_checked = create_scaled_bitmap("logo_checked", this, (20));
     logo_item   = this->AddTool(ID_LOGO, "", logo_bitmap);
-    logo_item->SetHoverBitmap(logo_bitmap_checked);
 
     addDipSpacer(10);
     this->AddSeparator(); 
@@ -651,7 +651,7 @@ void BBLTopbar::Init(wxFrame* parent)
     this->AddStretchSpacer(1);
     //CX
     ButtonsCtrl* pCtr = new ButtonsCtrl(this);
-    pCtr->InsertPage(MainFrame::tpOnlineModel, _L("Online Models"), 0);
+    // "Online Models" tab removed: it opened the Creality Cloud model library.
     pCtr->InsertPage(MainFrame::tp3DEditor, _L("Prepare"), 0);
     pCtr->InsertPage(MainFrame::tpPreview, _L("Preview"), 0);
     pCtr->InsertPage(MainFrame::tpDeviceMgr, _L("Device"), 0);
@@ -691,16 +691,8 @@ void BBLTopbar::Init(wxFrame* parent)
     m_feedback_separator_item = this->AddSeparator();
     addDipSpacer(10);
 
-    {
-        wxSize   feedbackSize(FromDIP(24), FromDIP(24));
-        wxBitmap feedback_bitmap = create_scaled_bitmap3(is_dark ? "user_feedback" : "user_feedback_light", this, (TOPBAR_ICON_SIZE), feedbackSize);
-        wxBitmap feedback_disable_bitmap = create_scaled_bitmap3("user_feedback_disable", this, (TOPBAR_ICON_SIZE), feedbackSize);
-        wxBitmap feedback_hover_bitmap = create_scaled_bitmap3("user_feedback_hover", this, (TOPBAR_ICON_SIZE), feedbackSize);
-        m_feedback_item = this->AddTool(ID_FEEDBACK_BTN, "", feedback_bitmap, _L("User Feedback"));
-        m_feedback_item->SetDisabledBitmap(feedback_disable_bitmap);
-        m_feedback_item->SetHoverBitmap(feedback_hover_bitmap);
-        addDipSpacer(10);
-    }
+    // User-feedback button removed: it linked to the Creality support site.
+    m_feedback_item = nullptr;
 
 #if CUSTOM_CXCLOUD  
     //wxSize   targetSize(FromDIP(40), FromDIP(24));
@@ -764,7 +756,6 @@ void BBLTopbar::Init(wxFrame* parent)
     this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnIconize, this, ID_MINBTN);
     this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnFullScreen, this, wxID_MAXIMIZE_FRAME);
     this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnCloseFrame, this, wxID_CLOSE_FRAME);
-    this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnFeedback, this, ID_FEEDBACK_BTN);
     this->Bind(wxEVT_LEFT_DCLICK, &BBLTopbar::OnMouseLeftDClock, this);
     #ifdef WIN32
     this->Bind(wxEVT_LEFT_DOWN, &BBLTopbar::OnMouseLeftDown, this);
@@ -778,7 +769,6 @@ void BBLTopbar::Init(wxFrame* parent)
     this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnPublishClicked, this, ID_PUBLISH);
     //this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnPreferences, this, ID_PREFERENCES);
     this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnConfigRelate, this, ID_CONFIG_RELATE);
-    this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnLogo, this, ID_LOGO);
     this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnDownMgr, this, ID_DOWNMANAGER);
     this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnLogin, this, ID_LOGIN);
 
@@ -1162,19 +1152,7 @@ void BBLTopbar::OnDownMgr(wxAuiToolBarEvent& evt) {}
 
 void BBLTopbar::OnLogin(wxAuiToolBarEvent& evt) {}
 
-void BBLTopbar::OnFeedback(wxAuiToolBarEvent& evt)
-{
-    AnalyticsEventPayload payload;
-    payload.type = AnalyticsDataEventType::ANALYTICS_GOTO_SUPPORT;
-    payload.data["entry"] = "toolbar";
-    AnalyticsDataUploadManager::getInstance().triggerUploadTasksWithPayload(payload);
-    AnalyticsDataUploadManager::uploadSlice822ClickEvent("user_feedback",2);
-    try {
-        wxLaunchDefaultBrowser(user_feedback_website(), wxBROWSER_NEW_WINDOW);
-    } catch (...) {
-        // Fallback: ignore errors silently
-    }
-}
+void BBLTopbar::OnFeedback(wxAuiToolBarEvent& evt) {}
 
 void BBLTopbar::SetFileMenu(wxMenu* file_menu)
 {
@@ -1253,7 +1231,6 @@ void BBLTopbar::Rescale(bool isResize) {
 #ifndef __APPLE__
     item = this->FindTool(ID_LOGO);
     item->SetBitmap(create_scaled_bitmap("logo", this, (20)));
-    item->SetHoverBitmap(create_scaled_bitmap("logo_checked", this, (20)));
     item = this->FindTool(ID_TOP_FILE_MENU);
     item->SetBitmap(create_scaled_bitmap(is_dark ? "file_down" : "file_down_light", this, (TOPBAR_ICON_SIZE)));
     item = this->FindTool(ID_TOP_DROPDOWN_MENU);
@@ -1314,19 +1291,6 @@ void BBLTopbar::Rescale(bool isResize) {
     item = this->FindTool(wxID_CLOSE_FRAME);
     item->SetBitmap(create_scaled_bitmap(is_dark ? "topbar_close" : "topbar_close_light", this, (TOPBAR_ICON_SIZE)));
 #endif
-    // Update User Feedback button bitmaps to match current theme
-    {
-        wxAuiToolBarItem* feedback_item = this->FindTool(ID_FEEDBACK_BTN);
-        if (feedback_item) {
-            wxSize feedbackSize(FromDIP(24), FromDIP(24));
-            wxBitmap feedback_bitmap         = create_scaled_bitmap3(is_dark ? "user_feedback" : "user_feedback_light", this, (TOPBAR_ICON_SIZE), feedbackSize);
-            wxBitmap feedback_disable_bitmap = create_scaled_bitmap3("user_feedback_disable", this, (TOPBAR_ICON_SIZE), feedbackSize);
-            wxBitmap feedback_hover_bitmap   = create_scaled_bitmap3("user_feedback_hover", this, (TOPBAR_ICON_SIZE), feedbackSize);
-            feedback_item->SetBitmap(feedback_bitmap);
-            feedback_item->SetDisabledBitmap(feedback_disable_bitmap);
-            feedback_item->SetHoverBitmap(feedback_hover_bitmap);
-        }
-    }
     if (m_tabCtrol) {
         ButtonsCtrl* pCtr = dynamic_cast<ButtonsCtrl*>(m_tabCtrol);
         pCtr->RefreshColor();

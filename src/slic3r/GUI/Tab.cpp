@@ -3059,7 +3059,7 @@ wxSizer* TabPrint::create_limit_mess_enable_widget(const std::string& title, wxW
                                        std::pair<wxColour, int>(wxColour(is_dark ? 0x4B4B4D : 0xFFFFFF), StateColor::Hovered),
                                        std::pair<wxColour, int>(wxColour(is_dark ? 0x4B4B4D : 0xFFFFFF), StateColor::Normal)));
     btn->Bind(wxEVT_ENTER_WINDOW, [=](wxMouseEvent& e) {
-        btn->SetBorderColor(wxColour("#18CC5C"));
+        btn->SetBorderColor(wxColour("#2E86C1"));
     });
     btn->Bind(wxEVT_LEAVE_WINDOW, [=](wxMouseEvent& e) {
         btn->SetBorderColor(wxColour("#DBDBDB"));

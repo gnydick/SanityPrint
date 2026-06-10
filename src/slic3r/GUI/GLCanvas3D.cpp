@@ -358,8 +358,8 @@ void GLCanvas3D::LayersEditing::render_variable_layer_height_dialog(const GLCanv
 
     ImGui::PushItemWidth(input_box_width);
     ImGui::PushStyleColor(ImGuiCol_BorderActive, ImGuiWrapper::COL_CREALITY);
-    ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.090f, 0.80f, 0.373f, 0.00f));
-    ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.090f, 0.80f, 0.373f, 0.00f));
+    ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.180f, 0.525f, 0.757f, 0.00f));
+    ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.180f, 0.525f, 0.757f, 0.00f));
     // if (ImGui::BBLDragScalar("##radius_input", ImGuiDataType_S32, &radius, 1, &v_min, &v_max))
     bool radius_changed = wxGetApp().plater()->get_view3D_canvas3D()->draw_input_int("##radius_input", &radius, 1, &v_min, &v_max,
                                                                                      Vec2d(input_box_width, 30.f));
@@ -438,8 +438,8 @@ void GLCanvas3D::LayersEditing::render_variable_layer_height_dialog(const GLCanv
     ImGui::SetCursorPosX(input_align);
     ImGui::PushItemWidth(input_box_width);
     ImGui::PushStyleColor(ImGuiCol_BorderActive, ImGuiWrapper::COL_CREALITY);
-    ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.090f, 0.80f, 0.373f, 0.00f));
-    ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.090f, 0.80f, 0.373f, 0.00f));
+    ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.180f, 0.525f, 0.757f, 0.00f));
+    ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.180f, 0.525f, 0.757f, 0.00f));
     ImGui::BBLDragScalar("##radius_input", ImGuiDataType_S32, &radius, 1, &v_min, &v_max);
     ImGui::PopStyleColor(3);
 
@@ -6955,7 +6955,7 @@ bool GLCanvas3D::_render_object_clone_options(float left, float right, float bot
     ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(238 / 255.0f, 238 / 255.0f, 238 / 255.0f, 0.00f));
     ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(238 / 255.0f, 238 / 255.0f, 238 / 255.0f, 0.00f));
     ImGui::PushStyleColor(ImGuiCol_SliderGrab, ImVec4(0.81f, 0.81f, 0.81f, 1.0f));
-    const ImVec4 COL_CREALITY = ImVec4{0.090f, 0.80f, 0.373, 1.0f};
+    const ImVec4 COL_CREALITY = ImVec4{0.180f, 0.525f, 0.757f, 1.0f};
     ImGui::PushStyleColor(ImGuiCol_SliderGrabActive, COL_CREALITY);
 
     // bool slider_number_change = imgui->bbl_slider_int_style("##Number of copies:", &m_clone_settings.clone_num, 1, 100, "%d", true,

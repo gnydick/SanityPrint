@@ -1411,20 +1411,8 @@ void AICloudService_TipDialog::build_dialog()
     textInfo->SetForegroundColour(fgColor);
     panelSizer->Add(textInfo, 0, wxEXPAND | wxLEFT | wxALIGN_CENTER_VERTICAL, FromDIP(1));
     panelSizer->AddSpacer(FromDIP(5));
-    wxString url = "";
-    if (wxGetApp().app_config->get("language").find("zh") == 0) {
-        url = _L("https://wiki.creality.com/zh/software/6-0/privacy");
-    } else {
-        url = _L("https://wiki.creality.com/en/software/6-0/privacy");
-    }
-    wxHyperlinkCtrl* privacyLink = new wxHyperlinkCtrl(panel, wxID_ANY, 
-        _L("<<Privacy Policy>>"), url);
-    privacyLink->SetBackgroundColour(bgColor);
-    privacyLink->SetNormalColour(wxColour(0, 0, 255)); // 蓝色文本
-    privacyLink->SetVisitedColour(wxColour(128, 0, 128)); // 访问后紫色
-    privacyLink->SetFont(wxFontInfo().Bold()); // 粗体
-    panelSizer->Add(privacyLink, 0, wxLEFT | wxALIGN_CENTER_VERTICAL, FromDIP(1));
-    
+    // "<<Privacy Policy>>" hyperlink removed: it opened the Creality privacy wiki.
+
 
     panel = new wxPanel(this, wxID_ANY);
     panel->SetMinSize(wxSize(FromDIP(-1), FromDIP(26)));

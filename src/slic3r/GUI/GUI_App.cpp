@@ -2912,10 +2912,105 @@ void GUI_App::reinstall_webview_runtime()
 }
 #endif
 
+// Inject the parameterized filament behavior fields into user filament presets
+// migrated from a CrealityPrint install, which predate those fields. Values are
+// derived from filament_type exactly like the built-in profile migration
+// (scripts/migrate_builtin_filament_profiles.py); keys already present are kept.
+static void migrate_user_filament_presets(const boost::filesystem::path& data_root)
+{
+    static const std::unordered_map<std::string, std::string> temp_type = {
+        {"ABS", "0"}, {"ASA", "0"}, {"PC", "0"}, {"PA", "0"}, {"PA-CF", "0"}, {"PA-GF", "0"},
+        {"PA6-CF", "0"}, {"PET-CF", "0"}, {"PPS", "0"}, {"PPS-CF", "0"}, {"PPA-CF", "0"},
+        {"PPA-GF", "0"}, {"ABS-GF", "0"}, {"ASA-Aero", "0"},
+        {"PLA", "1"}, {"TPU", "1"}, {"PLA-CF", "1"}, {"PLA-AERO", "1"}, {"PVA", "1"}, {"BVOH", "1"},
+        {"HIPS", "2"}, {"PETG", "2"}, {"PE", "2"}, {"PP", "2"}, {"EVA", "2"},
+        {"PE-CF", "2"}, {"PP-CF", "2"}, {"PP-GF", "2"}, {"PHA", "2"},
+    };
+    static const std::unordered_map<std::string, std::string> bed_adhesion = {
+        {"PET", "0.3"}, {"PETG", "0.3"}, {"ABS", "0.1"}, {"ASA", "0.1"},
+    };
+    static const std::unordered_map<std::string, std::string> thermal_length = {
+        {"ABS", "100"}, {"PA-CF", "100"}, {"PET-CF", "100"}, {"PC", "40"}, {"TPU", "1000"},
+    };
+    static const std::unordered_map<std::string, std::string> brim_adhesion_coeff = {
+        {"PETG", "2"}, {"PCTG", "2"}, {"TPU", "0.5"},
+    };
+    static const std::unordered_map<std::string, std::string> chamber_temp_limit = {
+        {"PLA", "45"}, {"PLA-CF", "45"}, {"PVA", "45"}, {"TPU", "50"},
+        {"PETG", "55"}, {"PCTG", "55"}, {"PETG-CF", "55"},
+    };
+
+    boost::system::error_code ec;
+    fs::path user_root = data_root / PRESET_USER_DIR;
+    if (!fs::exists(user_root, ec))
+        return;
+    for (auto& user_entry : fs::directory_iterator(user_root)) {
+        fs::path filament_dir = user_entry.path() / "filament";
+        if (!fs::is_directory(filament_dir, ec))
+            continue;
+        for (auto& file_entry : fs::directory_iterator(filament_dir)) {
+            if (file_entry.path().extension() != ".json")
+                continue;
+            try {
+                nlohmann::json j;
+                {
+                    boost::nowide::ifstream f(file_entry.path().string());
+                    if (!f.is_open())
+                        continue;
+                    j = nlohmann::json::parse(f);
+                }
+                if (!j.contains("filament_type"))
+                    continue;
+                const auto& ft_raw = j["filament_type"];
+                std::string ft = ft_raw.is_array() ? (ft_raw.empty() ? "" : ft_raw[0].get<std::string>())
+                                                   : ft_raw.get<std::string>();
+                if (ft.empty())
+                    continue;
+
+                bool changed = false;
+                auto put = [&j, &changed](const char* key, const std::string& value) {
+                    if (!j.contains(key)) {
+                        j[key] = nlohmann::json::array({value});
+                        changed = true;
+                    }
+                };
+                auto put_mapped = [&put](const char* key, const std::unordered_map<std::string, std::string>& table,
+                                         const std::string& type) {
+                    auto it = table.find(type);
+                    if (it != table.end())
+                        put(key, it->second);
+                };
+                put_mapped("filament_temp_type", temp_type, ft);
+                put_mapped("filament_bed_adhesion_strength", bed_adhesion, ft);
+                put_mapped("filament_thermal_length", thermal_length, ft);
+                put_mapped("filament_brim_adhesion_coeff", brim_adhesion_coeff, ft);
+                put_mapped("filament_chamber_temp_limit", chamber_temp_limit, ft);
+                if (ft == "PLA" || ft == "PETG" || ft == "ABS")
+                    put("filament_cooling_smart_zone", "1");
+                if (ft == "PETG")
+                    put("filament_small_island_threshold", "20");
+                if (ft == "TPU")
+                    put("filament_is_flexible", "1");
+
+                if (changed) {
+                    boost::nowide::ofstream f(file_entry.path().string());
+                    if (f.is_open())
+                        f << j.dump(4);
+                }
+            } catch (...) {
+                // Leave unreadable presets untouched; the preset loader will
+                // surface its own diagnostics for genuinely broken files.
+            }
+        }
+    }
+}
+
 void GUI_App::init_app_config()
 {
 	// Profiles for the alpha are stored into the PrusaSlicer-alpha directory to not mix with the current release.
-    SetAppName(SLIC3R_APP_KEY);
+    // SLIC3R_APP_FOLDER_KEY ("Sanity"), not SLIC3R_APP_KEY ("Creality"): user data
+    // lives under %APPDATA%/Sanity so an existing CrealityPrint install is never touched.
+    SetAppName(SLIC3R_APP_FOLDER_KEY);
 //	SetAppName(SLIC3R_APP_KEY "-alpha");
 //  SetAppName(SLIC3R_APP_KEY "-beta");
 //	SetAppDisplayName(SLIC3R_APP_NAME);
@@ -2963,14 +3058,29 @@ void GUI_App::init_app_config()
         }
         try {
             if (std::string(SANITYPRINT_VERSION_MAJOR) == "7" && !Slic3r::data_dir().empty() &&
-                fs::is_empty(curUserForder) && boost::filesystem::exists(lastAppUserForder)) {
-                if (!boost::filesystem::exists(curUserForder))
-                    boost::filesystem::create_directories(curUserForder);
-                fs::copy_options option = fs::copy_options::recursive | fs::copy_options::copy_symlinks;
-                fs::copy(lastAppUserForder, curUserForder, option);
-
-                is_copy_after = true;
-                
+                fs::is_empty(curUserForder)) {
+                // First launch: migrate user data by COPYING from an existing
+                // CrealityPrint install (%APPDATA%/Creality/Creality Print/<ver>),
+                // newest version first, falling back to a previous SanityPrint 6.0
+                // folder. The source is never modified, so the original
+                // CrealityPrint profiles stay intact.
+                fs::path old_creality_base = data_dir_path.parent_path() / "Creality" / "Creality Print";
+                std::vector<fs::path> migration_sources = {
+                    old_creality_base / (std::string(SANITYPRINT_VERSION_MAJOR) + ".0"),
+                    old_creality_base / "6.0",
+                    fs::path(lastAppUserForder),
+                };
+                for (const fs::path& src : migration_sources) {
+                    if (!fs::exists(src) || fs::is_empty(src))
+                        continue;
+                    if (!boost::filesystem::exists(curUserForder))
+                        boost::filesystem::create_directories(curUserForder);
+                    fs::copy_options option = fs::copy_options::recursive | fs::copy_options::copy_symlinks;
+                    fs::copy(src, curUserForder, option);
+                    migrate_user_filament_presets(curUserForder);
+                    is_copy_after = true;
+                    break;
+                }
             }
         } catch (const fs::filesystem_error& e) {}
 
@@ -4595,6 +4705,8 @@ void  GUI_App::on_init_custom_config()
 }
 void  GUI_App::track_event(const std::string& event, const std::string& data)
 {
+    // SanityPrint: event tracking to Creality Cloud is permanently disabled.
+    return;
     std::string final_data = data;
     try {
         nlohmann::json js = nlohmann::json::parse(data);
@@ -5532,6 +5644,8 @@ void GUI_App::ShowDownNetPluginDlg() {
 
 void GUI_App::ShowUserLogin(bool show,const wxString& loginUrl)
 {
+    // SanityPrint: the Creality account login dialog is permanently disabled.
+    return;
 #if 0
         // BBS: User Login Dialog
     if (show) {
@@ -5807,13 +5921,7 @@ wxString GUI_App::transition_tridid(int trid_id)
 //BBS
 void GUI_App::request_login(bool show_user_info)
 {
-#if !AUTO_CONVERT_3MF
-    ShowUserLogin(true, wxT("https://www.creality.com/pages/login"));
-
-    if (show_user_info) {
-        get_login_info();
-    }
-#endif
+    // SanityPrint: Creality account login is permanently disabled.
 }
 
 void GUI_App::get_login_info()
@@ -5855,15 +5963,8 @@ const Slic3r::GUI::UserInfo& GUI_App::get_user()
 
 bool GUI_App::check_login()
 {
-    bool result = false;
-    if (m_agent) {
-        result = m_agent->is_user_login();
-    }
-
-    if (!result) {
-        ShowUserLogin(true, wxT("https://www.creality.com/pages/login"));
-    }
-    return result;
+    // SanityPrint: Creality account login is permanently disabled.
+    return false;
 }
 
 void GUI_App::request_user_handle(int online_login)
@@ -8360,6 +8461,8 @@ Semver get_version(const std::string& str, const std::regex& regexp) {
 }
 void GUI_App::check_new_version_cx(bool show_tips, int by_user)
 {
+    // SanityPrint: update checks against the Creality Cloud API are disabled.
+    return;
     int palform_ = 0;
     #ifdef __WINDOWS__
         palform_ = 1;
@@ -8451,6 +8554,8 @@ void GUI_App::check_new_version_cx(bool show_tips, int by_user)
 
 void GUI_App::check_new_version_cx_updated(bool show_tips, int by_user)
 {
+    // SanityPrint: update checks against the Creality Cloud API are disabled.
+    return;
     // Convert version to 3-part format for compatibility
     std::string version_base = std::string(SANITYPRINT_VERSION);
     // Add 'V' prefix for cloud API request

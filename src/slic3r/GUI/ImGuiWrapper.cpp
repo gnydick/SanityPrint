@@ -185,7 +185,7 @@ const ImVec4 ImGuiWrapper::COL_WINDOW_BG         = { 1.000f, 1.000f, 1.000f, 1.0
 const ImVec4 ImGuiWrapper::COL_WINDOW_BG_DARK    = { 75 / 255.f, 75 / 255.f, 77 / 255.f, 1.f };
 //const ImVec4 ImGuiWrapper::COL_WINDOW_BG_DARK    = {0.294f, 0.294f, 0.302f, 1.f};
 const ImVec4 ImGuiWrapper::COL_ORCA              = to_ImVec4(ColorRGBA::ORCA());
-const ImVec4 ImGuiWrapper::COL_CREALITY          = ImVec4{0.090f, 0.80f, 0.373, 1.0f};
+const ImVec4 ImGuiWrapper::COL_CREALITY          = ImVec4{0.180f, 0.525f, 0.757f, 1.0f};
 
 int ImGuiWrapper::TOOLBAR_WINDOW_FLAGS = ImGuiWindowFlags_AlwaysAutoResize
                                  | ImGuiWindowFlags_NoMove

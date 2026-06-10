@@ -30,11 +30,8 @@ const bool isCusotmized()
 
 const bool isEnabledCxCloud()
 {
-#if defined(CUSTOMIZED) && !defined(CUSTOM_CXCLOUD_ENABLED)
+    // SanityPrint: Creality Cloud connectivity is permanently disabled.
     return false;
-#else
-    return true;
-#endif
 }
 const std::string getIconName_noTheme() {
 #if defined(CUSTOMIZED) && defined(CUSTOM_ICON_NAME)

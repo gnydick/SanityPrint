@@ -7162,26 +7162,10 @@ void GCodeViewer::render(int canvas_width, int canvas_height)
                         ImVec2 switch_size(2.0f * h, h);
                         ImVec2 grap_size(h, h);
 
-						//draw text
+						//draw text (plain label; the wiki hyperlink was removed)
                         ImGui::SetCursorPosX(ImGui::GetWindowWidth() - grap_size.x - switch_size.x - labelsz.x - 2);
-						ImVec2 p_start = window->DC.CursorPos;
-						bool hover_text = ImGui::IsMouseHoveringRect(p_start, ImVec2(p_start.x + labelsz.x, p_start.y + labelsz.y));
-						ImVec4 text_color = hover_text ? ImGuiWrapper::COL_CREALITY : ImGui::GetStyleColorVec4(ImGuiCol_Text);
-                        ImGui::TextColored(text_color, "%s", label.c_str());
-
-						ImVec2 textPos = ImGui::GetItemRectMin();
-                        ImGui::GetWindowDrawList()->AddLine(ImVec2(textPos.x, textPos.y + labelsz.y),
-                                                            ImVec2(textPos.x + labelsz.x, textPos.y + labelsz.y),
-                                                            ImGui::ColorConvertFloat4ToU32(text_color));
-
-                        if (ImGui::IsItemHovered()) {
-                            //ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
-                            if (ImGui::IsMouseClicked(0)) {
-                                wxGetApp().open_browser_with_warning_dialog(wxGetApp().app_config->get("language").find("zh_CN") == 0 ?
-                                                                                "https://wiki.creality.com/zh/software/6-0/lite-mode" :
-                                                                                "https://wiki.creality.com/en/software/6-0/lite-mode");
-                            }
-                        }
+                        ImVec2 p_start = window->DC.CursorPos;
+                        ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_Text), "%s", label.c_str());
 
                         ImGui::SameLine();
                         
@@ -7194,7 +7178,7 @@ void GCodeViewer::render(int canvas_width, int canvas_height)
                         ImGui::PushStyleColor(ImGuiCol_Border, border_color);
                         ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, is_lite_mode ? 0.0f : 1.0f);
 
-                        ImU32 sw_bg = is_lite_mode ? IM_COL32(8, 122, 51, 255) : IM_COL32_BLACK_TRANS;
+                        ImU32 sw_bg = is_lite_mode ? IM_COL32(46, 134, 193, 255) : IM_COL32_BLACK_TRANS;
                         
                         ImGui::RenderFrame(p_min, p_max, sw_bg, true, h * 0.5f);
                         

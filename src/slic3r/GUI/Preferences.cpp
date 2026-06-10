@@ -772,44 +772,7 @@ wxBoxSizer *PreferencesDialog::create_item_checkbox(wxString title, wxWindow *pa
     m_sizer_checkbox->Add(checkbox_title, 0, wxALIGN_CENTER | wxALL, 3);
 
     if (param == "user_exp") {
-        wxPanel* panel = new wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0);
-        //panel->SetBackgroundColour(DESIGN_GRAY400_COLOR); // 设置面板背景颜色
-        bool     is_dark = Slic3r::GUI::wxGetApp().dark_mode();
-        wxColour color   = is_dark ? wxColor("#4b4b4d") : wxColour(255, 255, 255);
-        wxColour textColor = is_dark ? wxColor("#4287FF") : wxColour("#387DFF");
-
-        wxString text = _L("(Content of the collected data)");
-        wxBitmap   bitmap(1, 1);
-        wxMemoryDC dc;
-        dc.SelectObject(bitmap);
-        dc.SetBackground(color);        
-        dc.SetBackgroundMode(wxBRUSHSTYLE_TRANSPARENT); 
-        dc.SetFont(::Label::Body_13);
-        dc.SetTextForeground(textColor);
-        wxCoord w, h;
-        dc.GetTextExtent(text, &w, &h);
-        bitmap.Create(w, h, wxBITMAP_SCREEN_DEPTH);
-        dc.SelectObject(wxNullBitmap);
-        dc.SelectObject(bitmap);
-        dc.Clear();
-        dc.DrawText(text, 0, 0);
-
-        wxStaticBitmap* bitmapCtrl = new wxStaticBitmap(panel, wxID_ANY, bitmap, wxDefaultPosition, wxDefaultSize);
-        bitmapCtrl->Bind(wxEVT_LEFT_UP, [=](wxMouseEvent& event) {
-            std::string url = "https://wiki.creality.com/en/software/6-0/privacy";
-            if (wxGetApp().app_config->get("language").find("zh")==0) {
-                 url = "https://wiki.creality.com/zh/software/6-0/privacy"; 
-            }
-            wxGetApp().open_browser_with_warning_dialog(url);
-            event.Skip();
-        });
-
-        // 将位图控件添加到面板中
-        wxBoxSizer* sizer = new wxBoxSizer(wxHORIZONTAL);
-        sizer->Add(bitmapCtrl, 0, wxALL, 5);
-        panel->SetSizer(sizer);
-
-        m_sizer_checkbox->Add(panel, 0, wxALIGN_CENTER | wxALL, 3);
+        // "(Content of the collected data)" link removed: it opened the Creality privacy wiki.
         boost::filesystem::path device_file = boost::filesystem::path(Slic3r::data_dir()) / "privacyInfo.json";
         std::string             version     = std::string(SANITYPRINT_VERSION);
         boost::nowide::ifstream t(device_file.string());

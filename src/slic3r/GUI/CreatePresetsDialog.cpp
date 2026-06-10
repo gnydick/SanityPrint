@@ -4254,7 +4254,7 @@ int ParamCheckbox::s_proportion = 1;
 ParamCheckbox::ParamCheckbox(wxWindow* parent, Preset* preset) : wxPanel(parent, wxID_ANY)
 {
     this->SetMinSize(wxSize(FromDIP(124), FromDIP(48)));
-    this->SetBackgroundColour(wxColour("#18CC5C"));
+    this->SetBackgroundColour(wxColour("#2E86C1"));
     wxBoxSizer* mainBoxSize = new wxBoxSizer(wxHORIZONTAL);
     this->SetSizer(mainBoxSize);
     ::CheckBox* checkbox = new ::CheckBox(this);
@@ -4972,7 +4972,7 @@ ExportMidPanel::STTreeDataNode* ExportMidPanel::createTreeNode(wxString nodeName
     panel->SetSizer(sizer);
     panel->Bind(wxEVT_LEFT_DOWN, [panel](wxMouseEvent&) {
         panel->SetBackgroundStyle(wxBG_STYLE_COLOUR);
-        panel->SetBackgroundColour(wxColour("#18CC5C"));
+        panel->SetBackgroundColour(wxColour("#2E86C1"));
     });
     ::CheckBox* checkbox = new ::CheckBox(panel);
     //checkbox->SetHalfChecked(true);
@@ -5290,7 +5290,7 @@ ExportRightPanel::ExportRightPanel(wxWindow* parent, wxString titleName)
     pBtnExport->SetSize(wxSize(FromDIP(128), FromDIP(32)));
     pBtnExport->SetMinSize(wxSize(FromDIP(128), FromDIP(32)));
     pBtnExport->SetForegroundColour(wxColour("#FFFFFF"));
-    //pBtnExport->SetBackgroundColour(wxColour("#18CC5C"));
+    //pBtnExport->SetBackgroundColour(wxColour("#2E86C1"));
     pBtnExport->SetBackgroundColour(wxColour("#6E6E72"));
     pBtnExport->Bind(wxEVT_LEFT_DOWN, [this](wxMouseEvent& e) {
         if (!m_bCanExport)
@@ -5419,7 +5419,7 @@ void ExportRightPanel::setExportBtnState(bool bCanExport)
 {
     if (bCanExport) {
         m_bCanExport = true;
-        m_pBtnExport->SetBackgroundColour(wxColour("#18CC5C"));
+        m_pBtnExport->SetBackgroundColour(wxColour("#2E86C1"));
 
     } else {
         m_bCanExport = false;
@@ -5543,7 +5543,7 @@ void ExportConfigsDialog::exportPresets()
     onBtnPrinterClicked();
     m_stPrinterPresets.bClicked = true;
     m_stPrinterPresets.pBtnPresets->SetForegroundColour(wxColour("#FFFFFF"));
-    m_stPrinterPresets.pBtnPresets->SetBackgroundColour(wxColour("#18CC5C"));
+    m_stPrinterPresets.pBtnPresets->SetBackgroundColour(wxColour("#2E86C1"));
 
     this->Center();
     this->ShowModal();
@@ -6240,7 +6240,7 @@ wxBoxSizer* ExportConfigsDialog::create_left_navigation(wxWindow* parent)
     pBtnPrinterPresets->SetBackgroundColour(wxColour("#4B4B4D"));
     pBtnPrinterPresets->Bind(wxEVT_ENTER_WINDOW, [this](wxMouseEvent& e) {
         m_stPrinterPresets.pBtnPresets->SetForegroundColour(wxColour("#FFFFFF"));
-        m_stPrinterPresets.pBtnPresets->SetBackgroundColour(wxColour("#18CC5C"));
+        m_stPrinterPresets.pBtnPresets->SetBackgroundColour(wxColour("#2E86C1"));
     });
     pBtnPrinterPresets->Bind(wxEVT_LEAVE_WINDOW, [this](wxMouseEvent& e) {
         if (!m_stPrinterPresets.bClicked)
@@ -6248,7 +6248,7 @@ wxBoxSizer* ExportConfigsDialog::create_left_navigation(wxWindow* parent)
     });
     pBtnPrinterPresets->Bind(wxEVT_LEFT_DOWN, [this](wxMouseEvent& e) {
         m_stPrinterPresets.bClicked = true;
-        m_stPrinterPresets.pBtnPresets->SetBackgroundColour(wxColour("#18CC5C"));
+        m_stPrinterPresets.pBtnPresets->SetBackgroundColour(wxColour("#2E86C1"));
         m_stFilamentPresets.bClicked = false;
         m_stFilamentPresets.pBtnPresets->SetBackgroundColour(wxColour("#4B4B4D"));
         m_stProcessPresets.bClicked = false;
@@ -6268,7 +6268,7 @@ wxBoxSizer* ExportConfigsDialog::create_left_navigation(wxWindow* parent)
     pBtnFilamentPresets->SetBackgroundColour(wxColour("#4B4B4D"));
     pBtnFilamentPresets->Bind(wxEVT_ENTER_WINDOW, [this](wxMouseEvent& e) {
         m_stFilamentPresets.pBtnPresets->SetForegroundColour(wxColour("#FFFFFF"));
-        m_stFilamentPresets.pBtnPresets->SetBackgroundColour(wxColour("#18CC5C"));
+        m_stFilamentPresets.pBtnPresets->SetBackgroundColour(wxColour("#2E86C1"));
     });
     pBtnFilamentPresets->Bind(wxEVT_LEAVE_WINDOW, [this](wxMouseEvent& e) {
         if (!m_stFilamentPresets.bClicked)
@@ -6276,7 +6276,7 @@ wxBoxSizer* ExportConfigsDialog::create_left_navigation(wxWindow* parent)
     });
     pBtnFilamentPresets->Bind(wxEVT_LEFT_DOWN, [this](wxMouseEvent& e) {
         m_stFilamentPresets.bClicked = true;
-        m_stFilamentPresets.pBtnPresets->SetBackgroundColour(wxColour("#18CC5C"));
+        m_stFilamentPresets.pBtnPresets->SetBackgroundColour(wxColour("#2E86C1"));
         m_stPrinterPresets.bClicked = false;
         m_stPrinterPresets.pBtnPresets->SetBackgroundColour(wxColour("#4B4B4D"));
         m_stProcessPresets.bClicked = false;
@@ -6296,7 +6296,7 @@ wxBoxSizer* ExportConfigsDialog::create_left_navigation(wxWindow* parent)
     pBtnProcessPresets->SetBackgroundColour(wxColour("#4B4B4D"));
     pBtnProcessPresets->Bind(wxEVT_ENTER_WINDOW, [this](wxMouseEvent& e) {
         m_stProcessPresets.pBtnPresets->SetForegroundColour(wxColour("#FFFFFF"));
-        m_stProcessPresets.pBtnPresets->SetBackgroundColour(wxColour("#18CC5C"));
+        m_stProcessPresets.pBtnPresets->SetBackgroundColour(wxColour("#2E86C1"));
     });
     pBtnProcessPresets->Bind(wxEVT_LEAVE_WINDOW, [this](wxMouseEvent& e) {
         if (!m_stProcessPresets.bClicked)
@@ -6304,7 +6304,7 @@ wxBoxSizer* ExportConfigsDialog::create_left_navigation(wxWindow* parent)
     });
     pBtnProcessPresets->Bind(wxEVT_LEFT_DOWN, [this](wxMouseEvent& e) {
         m_stProcessPresets.bClicked = true;
-        m_stProcessPresets.pBtnPresets->SetBackgroundColour(wxColour("#18CC5C"));
+        m_stProcessPresets.pBtnPresets->SetBackgroundColour(wxColour("#2E86C1"));
         m_stPrinterPresets.bClicked = false;
         m_stPrinterPresets.pBtnPresets->SetBackgroundColour(wxColour("#4B4B4D"));
         m_stFilamentPresets.bClicked = false;

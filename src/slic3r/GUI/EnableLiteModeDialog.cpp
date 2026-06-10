@@ -56,11 +56,6 @@ EnableLiteModeDialog::EnableLiteModeDialog(wxWindow* parent, wxWindowID id, cons
 
     m_sizer_right->Add(0, 0, 1, wxTOP, FromDIP(15));
 
-     std::string url = "https://wiki.creality.com/en/software/6-0/lite-mode";
-    if (wxGetApp().app_config->get("language").find("zh_CN")==0) {
-        url = "https://wiki.creality.com/zh/software/6-0/lite-mode";
-    }
-
     wxHtmlWindow* m_website_html = new wxHtmlWindow(this, wxID_ANY, wxDefaultPosition, wxSize(FromDIP(480),FromDIP(100)), 0x0002 /*NEVER*/);
      
     {
@@ -76,15 +71,12 @@ EnableLiteModeDialog::EnableLiteModeDialog(wxWindow* parent, wxWindowID id, cons
         wxString content1 = format_wxstr(
             _L("In the slicing preview, Lite Mode displays only the essential toolpath data and hides internal infill structures, effectively preventing unresponsiveness caused by excessive rendering. You can disable this mode at any time in the preview interface."));
         
-        wxString content2 = format_wxstr(_L("[Learn more]"));
-                    
+        // "[Learn more]" hyperlink removed: it opened the Creality wiki.
         const wxString color = wxGetApp().app_config->get("dark_color_mode") == "1" ? wxString("#FFFFFF") : wxString("#000000");
         const auto  text =
-            wxString::Format("<html> <body><font style=\"color: %s;font-size:20px;\">%s<a href=\"%s\">%s</a></font></body></html>", color.c_str(), content1.c_str(), url.c_str(), content2.c_str());
-                                                                 
-        m_website_html->SetPage(text);
-        m_website_html->Bind(wxEVT_HTML_LINK_CLICKED, &EnableLiteModeDialog::onLinkClicked, this);
+            wxString::Format("<html> <body><font style=\"color: %s;font-size:20px;\">%s</font></body></html>", color.c_str(), content1.c_str());
 
+        m_website_html->SetPage(text);
     }
     m_sizer_right->Add(m_website_html, 0, wxEXPAND | wxCENTER, FromDIP(15));
 

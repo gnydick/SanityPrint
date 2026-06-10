@@ -2709,21 +2709,11 @@ High_Flowrate_Dlg::High_Flowrate_Dlg(wxWindow* parent, wxWindowID id, Plater* pl
     auto     info_str_size = wxWindow::GetTextExtent(info_str);
     auto     wx_info       = new wxStaticText(this, wxID_ANY, info_str, wxDefaultPosition, info_str_size, wxALIGN_LEFT);
 
-    wxButton* svgButton = new wxButton(this, wxID_HIGHEST + 3, "", wxDefaultPosition, wxSize(FromDIP(18), FromDIP(18)), wxBORDER_NONE);
-    svgButton->SetBackgroundColour(this->GetBackgroundColour());
-
-    wxBitmap qImg = create_scaled_bitmap3("cali_page_caption_help", this, FromDIP(25), wxSize(FromDIP(25), FromDIP(25)));
-    svgButton->SetBitmap(qImg);
-    svgButton->Bind(wxEVT_BUTTON, [](wxCommandEvent&) {
-        wxLaunchDefaultBrowser("https://wiki.creality.com/zh/software/update-released/Basic-introduction/calibration-tutorial");
-    });
-
     wxBoxSizer* v_sizer = new wxBoxSizer(wxVERTICAL);
     SetSizer(v_sizer);
 
     auto topSizer = new wxBoxSizer(wxHORIZONTAL);
     topSizer->Add(wx_info, 0, wxALL | wxALIGN_CENTER_VERTICAL, FromDIP(2));
-    topSizer->Add(svgButton, 0, wxALL | wxALIGN_CENTER_VERTICAL, FromDIP(2));
     v_sizer->Add(topSizer, 0, wxTOP | wxALIGN_CENTRE_HORIZONTAL, FromDIP(30));
 
     wxGridSizer* gridSizer = new wxGridSizer(3, 3, FromDIP(6), FromDIP(17));

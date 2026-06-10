@@ -174,24 +174,16 @@ AnalyticsDataUploadManager::~AnalyticsDataUploadManager()
 
 void AnalyticsDataUploadManager::triggerUploadTasks(AnalyticsUploadTiming triggerTiming, const std::vector<AnalyticsDataEventType>& dataEventTypes, int plate_idx, const std::string& device_mac)
 {
-    try
-    {
-        if(wxGetApp().is_privacy_checked()) {
-            for (const auto& dataEventType : dataEventTypes) {
-                processUploadData(dataEventType, plate_idx, device_mac);
-            }
-        }
-    }
-    catch (...)
-    {
-
-    }
+    // SanityPrint: analytics upload to Creality Cloud is permanently disabled.
+    return;
 }
 
 
 
 void AnalyticsDataUploadManager::triggerUploadTasksWithPayload(const AnalyticsEventPayload& payload, int plate_idx, const std::string& device_mac)
 {
+    // SanityPrint: analytics upload to Creality Cloud is permanently disabled.
+    return;
     try
     {
         if (wxGetApp().is_privacy_checked()) {
@@ -1516,6 +1508,8 @@ void AnalyticsDataUploadManager::init_sensors_config_if_needed()
 
 bool AnalyticsDataUploadManager::test_sensors_connection()
 {
+    // SanityPrint: analytics upload to Creality Cloud is permanently disabled.
+    return false;
     try {
         // 先初始化配置获取 URL
         getInstance().init_sensors_config_if_needed();
@@ -1568,6 +1562,8 @@ bool AnalyticsDataUploadManager::test_sensors_connection()
 
 void AnalyticsDataUploadManager::send_sensors_payload_to_creality(const nlohmann::json& payload)
 {
+    // SanityPrint: analytics upload to Creality Cloud is permanently disabled.
+    return;
     try {
         // 初始化配置（仅首次调用时执行）
         init_sensors_config_if_needed();

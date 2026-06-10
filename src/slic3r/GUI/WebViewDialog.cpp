@@ -238,6 +238,10 @@ WebViewPanel::WebViewPanel(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefau
 
 wxString WebViewPanel::GetURL()
 {
+    // SanityPrint: the Creality Cloud community home page is removed; the
+    // hidden home tab stays blank.
+    return wxString("about:blank");
+
     // alpha/beta/dev 对社区的影响：社区使用不同的创想云服务环境
     // alpha：预发布环境（pre）+ cpp 启动的本地 http 服务
     // beta：生产环境 + c++ 启动的本地 http 服务

@@ -56,11 +56,6 @@ PrivacyUpdateDialog::PrivacyUpdateDialog(wxWindow* parent, wxWindowID id, const 
 
     m_sizer_right->Add(0, 0, 1, wxTOP, FromDIP(15));
 
-     std::string url = "https://wiki.creality.com/en/software/6-0/privacy";
-    if (wxGetApp().app_config->get("language").find("zh")==0) {
-        url = "https://wiki.creality.com/zh/software/6-0/privacy";
-    }
-
     wxHtmlWindow* m_website_html = new wxHtmlWindow(this, wxID_ANY, wxDefaultPosition, wxSize(FromDIP(480),FromDIP(150)), 0x0002 /*NEVER*/);
      
     {
@@ -81,13 +76,12 @@ PrivacyUpdateDialog::PrivacyUpdateDialog(wxWindow* parent, wxWindowID id, const 
                     wxString    content3    = format_wxstr(_L(". You can turn off this feature in the settings at any time."));
                     std::string color       = wxGetApp().app_config->get("dark_color_mode") == "1" ? " #FFFFFF " : " #000000";
                     int fontSize    = FromDIP(16);
-                    const auto  text        = wxString::Format("<html> <body><font  style=\"color: %s;font-size:20px\">%s<a href=\"%s\">%s</a>%s</font></body></html>" ,
-                        color, content1, url, content2, content3 );
-                                            
-                                             
-        m_website_html->SetPage(text);
-        m_website_html->Bind(wxEVT_HTML_LINK_CLICKED, &PrivacyUpdateDialog::onLinkClicked, this);
+                    // Privacy Policy hyperlink removed: it opened the Creality privacy wiki.
+                    const auto  text        = wxString::Format("<html> <body><font  style=\"color: %s;font-size:20px\">%s%s%s</font></body></html>" ,
+                        color, content1, content2, content3 );
 
+
+        m_website_html->SetPage(text);
     }
     m_sizer_right->Add(m_website_html, 0, wxEXPAND | wxCENTER, FromDIP(15));
 

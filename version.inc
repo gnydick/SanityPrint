@@ -3,6 +3,9 @@
 
 set(SLIC3R_APP_NAME "SanityPrint")
 set(SLIC3R_APP_KEY "Creality")
+# Base folder for user data (%APPDATA%/<key> on Windows). Kept separate from
+# SLIC3R_APP_KEY, which still names the printer vendor / profile family.
+set(SLIC3R_APP_FOLDER_KEY "Sanity")
 set(SLIC3R_APP_USE_FORDER "Sanity Print")
 if(NOT DEFINED PROCESS_NAME)
 set(PROCESS_NAME "SanityPrint")

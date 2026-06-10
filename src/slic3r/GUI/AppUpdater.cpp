@@ -761,14 +761,8 @@ void AppUpdater::install_update()
          std::wstring winstall_dir = boost::nowide::widen(install_dir.string());
          std::wstring wversion = boost::nowide::widen(current_version);
 
-         std::string manual_url;
-         if (!m_manual_url.empty()) {
-             manual_url = m_manual_url;
-         } else {
-             manual_url = (wxGetApp().app_config->get("language") == "zh_CN")
-                 ? "https://wiki.creality.com/zh/software/update-released"
-                 : "https://wiki.creality.com/en/software/update-released";
-         }
+         // No fallback manual URL: the release-notes link to the Creality wiki was removed.
+         std::string manual_url = m_manual_url;
          std::wstring wmanual_url = boost::nowide::widen(manual_url);
          std::string dark_mode = (wxGetApp().app_config->get("dark_color_mode") == "1") ? "1" : "0";
          std::wstring wdark_mode = boost::nowide::widen(dark_mode);
