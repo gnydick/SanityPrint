@@ -7,14 +7,14 @@
       <stop offset="100%" stop-color="#1A6FA3"/>
     </linearGradient>
   </defs>
-  <g transform="translate(120 76) skewX(-8) scale(16)">
-    <g transform="translate(1.4 1.4)" fill="#0B2E4A">
-      <path d="M0,0 H9 V4 H4 V8 H9 V20 H0 V16 H5 V12 H0 Z"/>
-      <path fill-rule="evenodd" d="M11,0 H20 V12 H15 V20 H11 Z M15,4 H16 V8 H15 Z"/>
+  <g transform="translate(48 152) skewX(-6) scale(13)">
+    <g transform="translate(1 1)" fill="#0B2E4A">
+      <path d="M0,0 H14 V4 H4 V6 H14 V16 H0 V12 H10 V10 H0 Z"/>
+      <path fill-rule="evenodd" d="M17,0 H31 V10 H21 V16 H17 Z M21,4 H27 V6 H21 Z"/>
     </g>
-    <g fill="url(#spGrad)" stroke="#0B2E4A" stroke-width="0.5">
-      <path d="M0,0 H9 V4 H4 V8 H9 V20 H0 V16 H5 V12 H0 Z"/>
-      <path fill-rule="evenodd" d="M11,0 H20 V12 H15 V20 H11 Z M15,4 H16 V8 H15 Z"/>
+    <g fill="url(#spGrad)" stroke="#0B2E4A" stroke-width="0.4">
+      <path d="M0,0 H14 V4 H4 V6 H14 V16 H0 V12 H10 V10 H0 Z"/>
+      <path fill-rule="evenodd" d="M17,0 H31 V10 H21 V16 H17 Z M21,4 H27 V6 H21 Z"/>
     </g>
   </g>
 </svg>
