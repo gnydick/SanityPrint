@@ -390,7 +390,7 @@ UpdateVersionDialog::UpdateVersionDialog(wxWindow *parent)
                                                    wxHL_ALIGN_LEFT);
     m_link_open_in_browser->SetFont(Label::Body_14);
     
-    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(18, 162, 76), StateColor::Pressed), std::pair<wxColour, int>(wxColour(40, 210, 100), StateColor::Hovered),
+    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(26, 111, 163), StateColor::Pressed), std::pair<wxColour, int>(wxColour(93, 173, 226), StateColor::Hovered),
                             std::pair<wxColour, int>(wxColour(52, 152, 219), StateColor::Normal));
 
     StateColor btn_bg_white(std::pair<wxColour, int>(wxColour(206, 206, 206), StateColor::Pressed), std::pair<wxColour, int>(wxColour(238, 238, 238), StateColor::Hovered),

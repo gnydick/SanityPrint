@@ -75,7 +75,7 @@ namespace GUI {
         m_hideButton = new ScalableButton(this, wxID_ANY, is_dark ? "button_hide_img_tooltip" : "button_hide_img_light", wxEmptyString, wxDefaultSize, 
                                   wxDefaultPosition, wxBU_EXACTFIT | wxNO_BORDER, true, 10, true);
 
-        m_hideButton->SetBackgroundColour(wxColour(54, 154, 56)); // Set button background color to grey
+        m_hideButton->SetBackgroundColour(wxColour(46, 134, 193)); // Set button background color to grey
         m_textButtonSizer->Add(m_hideButton, 0, wxALIGN_RIGHT | wxALL, 5);
 
         m_hideButton->Bind(wxEVT_BUTTON, &ImageTooltipPanel::OnHideButtonClick, this);

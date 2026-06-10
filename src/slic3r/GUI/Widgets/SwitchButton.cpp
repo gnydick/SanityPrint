@@ -251,7 +251,7 @@ void SwitchBoard::doRender(wxDC &dc)
 
 	/*left*/
     if (switch_left) {
-        is_enable ? dc.SetBrush(wxBrush(wxColour(0, 174, 66))) : dc.SetBrush(disable_color);
+        is_enable ? dc.SetBrush(wxBrush(wxColour(46, 134, 193))) : dc.SetBrush(disable_color);
         dc.DrawRoundedRectangle(0, 0, GetSize().x / 2, GetSize().y, 8);
 	}
 
@@ -269,7 +269,7 @@ void SwitchBoard::doRender(wxDC &dc)
 
 	/*right*/
     if (switch_right) {
-        if (is_enable) {dc.SetBrush(wxBrush(wxColour(0, 174, 66)));
+        if (is_enable) {dc.SetBrush(wxBrush(wxColour(46, 134, 193)));
         } else {dc.SetBrush(disable_color);}
         dc.DrawRoundedRectangle(GetSize().x / 2, 0, GetSize().x / 2, GetSize().y, 8);
 	}

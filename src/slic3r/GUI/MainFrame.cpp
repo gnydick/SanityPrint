@@ -1218,7 +1218,7 @@ void MainFrame::init_tabpanel() {
 
         m_param_panel = new ProcessParamsPanel(m_tabpanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBK_LEFT | wxTAB_TRAVERSAL);
         //m_param_panel->create_image_tooltip_panel();
-        m_param_panel->set_border_panel_color(wxColour(49, 139, 86));
+        m_param_panel->set_border_panel_color(wxColour(46, 134, 193));
     }
 
     m_plater = new Plater(this, this);
@@ -2299,7 +2299,7 @@ void MainFrame::update_side_button_style()
     m_slice_btn->SetBottomColour(wxColour(0x3B4446));*/
     StateColor m_btn_bg_enable = StateColor(
         std::pair<wxColour, int>(wxColour(26, 111, 163), StateColor::Pressed), 
-        std::pair<wxColour, int>(wxColour(48, 221, 112), StateColor::Hovered),
+        std::pair<wxColour, int>(wxColour(93, 173, 226), StateColor::Hovered),
         std::pair<wxColour, int>(wxColour(46, 134, 193), StateColor::Normal)
     );
 

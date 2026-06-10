@@ -536,7 +536,7 @@ ImU32 DispConfig::getColorImU32(ColorType ct) {
         ret = IM_COL32(52, 152, 219,255);
         break;
     case Slic3r::GUI::DispConfig::e_ct_slider_hand:
-        ret = IM_COL32(0, 255, 101,255);
+        ret = IM_COL32(46, 134, 193,255);
         break;
     case Slic3r::GUI::DispConfig::e_ct_sliderTip:
         ret = s_isDark ? IM_COL32(66, 75, 81,255) : IM_COL32(78, 89, 105, 255);

@@ -123,7 +123,7 @@ wxEND_EVENT_TABLE()
                 m_openSystemBrowserLink->SetFont(f);
 
                 const bool is_dark = Slic3r::GUI::wxGetApp().dark_mode();
-                const wxColour normal = wxColour("#00bb4c");//is_dark ? wxColour(0x67, 0xC2, 0x3A) : wxColour(0x19, 0x90, 0xFF);
+                const wxColour normal = wxColour("#2E86C1");//is_dark ? wxColour(0x67, 0xC2, 0x3A) : wxColour(0x19, 0x90, 0xFF);
                 m_openSystemBrowserLink->SetForegroundColour(normal);
                 m_openSystemBrowserLink->SetCursor(wxCursor(wxCURSOR_HAND));
             }

@@ -107,7 +107,7 @@ private:
     long       m_zoomFactor;
     wxString   m_apikey;
     bool       m_apikey_sent;
-    wxColour   m_colour_def_color{ wxColour(0, 255, 0) };
+    wxColour   m_colour_def_color{ wxColour(46, 134, 193) };
 
     bool m_show_status = false;
     Plater*	 m_plater{ nullptr };

@@ -126,7 +126,7 @@ StepMeshDialog::StepMeshDialog(wxWindow* parent, Slic3r::Step& file, double line
     //wxStaticText *tips = new wxStaticText(this, wxID_ANY, _L("View Wiki for more information"));
     //wxFont font(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false);
     //font.SetUnderlined(true);
-    //tips->SetForegroundColour(StateColor::darkModeColorFor(wxColour(0, 174, 66)));
+    //tips->SetForegroundColour(StateColor::darkModeColorFor(wxColour(46, 134, 193)));
     //tips->SetFont(font);
     //tips->Bind(wxEVT_LEFT_DOWN, [this](wxMouseEvent& e) {
     //    wxLaunchDefaultBrowser("https://wiki.creality.com/en/software/creality/step");
@@ -285,8 +285,8 @@ StepMeshDialog::StepMeshDialog(wxWindow* parent, Slic3r::Step& file, double line
     m_checkbox->SetForegroundColour(StateColor::darkModeColorFor(FONT_COLOR));
     bSizer_button->Add(m_checkbox, 0, wxALIGN_LEFT);
     bSizer_button->AddStretchSpacer(1);
-    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(27, 136, 68), StateColor::Pressed), std::pair<wxColour, int>(wxColour(61, 203, 115), StateColor::Hovered),
-                            std::pair<wxColour, int>(wxColour(0, 174, 66), StateColor::Normal));
+    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(26, 111, 163), StateColor::Pressed), std::pair<wxColour, int>(wxColour(93, 173, 226), StateColor::Hovered),
+                            std::pair<wxColour, int>(wxColour(46, 134, 193), StateColor::Normal));
     m_button_ok = new Button(this, _L("OK"));
     m_button_ok->SetBackgroundColor(btn_bg_green);
     m_button_ok->SetBorderColor(btn_bg_green);
@@ -422,9 +422,9 @@ void StepMeshDialog::OnMeshNumberUpdated(wxCommandEvent& event)
 {
     wxString number_text = event.GetString();
     mesh_face_number_text->SetLabel(number_text);
-    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(27, 136, 68), StateColor::Pressed),
-                            std::pair<wxColour, int>(wxColour(61, 203, 115), StateColor::Hovered),
-                            std::pair<wxColour, int>(wxColour(0, 174, 66), StateColor::Normal));
+    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(26, 111, 163), StateColor::Pressed),
+                            std::pair<wxColour, int>(wxColour(93, 173, 226), StateColor::Hovered),
+                            std::pair<wxColour, int>(wxColour(46, 134, 193), StateColor::Normal));
     if (m_button_ok) {
         m_button_ok->SetBackgroundColor(btn_bg_green);
         m_button_ok->Enable(true);
