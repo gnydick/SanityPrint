@@ -50,6 +50,7 @@
 #include "GLCanvas3D.hpp"
 #include "Plater.hpp"
 #include "WebViewDialog.hpp"
+#include "FilamentSyncDialog.hpp"
 #include "../Utils/Process.hpp"
 #include "format.hpp"
 // BBS
@@ -1828,6 +1829,7 @@ wxBoxSizer* MainFrame::create_side_tools()
     m_slice_option_btn = new SideButton(this, "", "sidebutton_dropdown", 0, FromDIP(14));
     m_print_btn = new SideButton(this, _L("Print plate"), "");
     m_print_option_btn = new SideButton(this, "", "sidebutton_dropdown", 0, FromDIP(14));
+    m_sync_btn = new SideButton(this, _L("Sync"), "");
 
     update_side_button_style();
     // m_publish_btn->Hide();
@@ -1840,6 +1842,8 @@ wxBoxSizer* MainFrame::create_side_tools()
     sizer->Add(FromDIP(15), 0, 0, 0, 0);
     sizer->Add(m_print_option_btn, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, FromDIP(1));
     sizer->Add(m_print_btn, 0, wxLEFT | wxALIGN_CENTER_VERTICAL, FromDIP(1));
+    sizer->Add(FromDIP(15), 0, 0, 0, 0);
+    sizer->Add(m_sync_btn, 0, wxLEFT | wxALIGN_CENTER_VERTICAL, FromDIP(1));
     sizer->Add(FromDIP(19), 0, 0, 0, 0);
 
     sizer->Layout();
@@ -1891,6 +1895,12 @@ wxBoxSizer* MainFrame::create_side_tools()
             /* else if (m_print_select == ePrintMultiMachine)
                  wxPostEvent(m_plater, SimpleEvent(EVT_GLTOOLBAR_PRINT_MULTI_MACHINE));*/
         });
+
+    m_sync_btn->Bind(wxEVT_BUTTON, [this](wxCommandEvent& event) {
+        // Push every custom filament preset to the printers picked in the dialog.
+        FilamentSyncDialog dlg(this);
+        dlg.ShowModal();
+    });
 
     m_slice_option_btn->Bind(wxEVT_BUTTON, [this](wxCommandEvent& event)
         {
@@ -2331,6 +2341,13 @@ void MainFrame::update_side_button_style()
     m_print_option_btn->SetExtraSize(wxSize(FromDIP(10), FromDIP(10)));
     m_print_option_btn->SetIconOffset(FromDIP(2));
     m_print_option_btn->SetMinSize(wxSize(FromDIP(24), FromDIP(24)));
+
+    if (m_sync_btn) {
+        m_sync_btn->SetTextLayout(SideButton::EHorizontalOrientation::HO_Center, FromDIP(15));
+        m_sync_btn->SetCornerRadius(FromDIP(12));
+        m_sync_btn->SetExtraSize(wxSize(FromDIP(38), FromDIP(10)));
+        m_sync_btn->SetMinSize(wxSize(-1, FromDIP(24)));
+    }
 }
 
 void MainFrame::update_slice_print_status(SlicePrintEventType event, bool can_slice, bool can_print)
