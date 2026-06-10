@@ -7665,7 +7665,7 @@ static float       identityMatrix[16]   = {1.f, 0.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.
 static const float cameraProjection[16] = {1.f, 0.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 0.f, 1.f};
 
 #define TEXT_SELECT_COLOR 1, 1, 1
-#define FACE_SELECT_COLOR 23 / 255.f, 204 / 255.f, 95 / 255.f
+#define FACE_SELECT_COLOR 46 / 255.f, 134 / 255.f, 193 / 255.f
 
 #define TEXT_UNSELECT_DATK 207 / 255.f, 207 / 255.f, 212 / 255.f
 #define TEXT_UNSELECT_UNDARK 110 / 255.f, 110 / 255.f, 114 / 255.f
