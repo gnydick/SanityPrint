@@ -97,9 +97,14 @@ new row under exactly that id; `DELETE ?id=` removes **every** row sharing the i
 
 - **Push always carries a slicer-minted id.** Before minting, the slicer collects the
   union of all ids in every selected printer's catalog (stock and custom alike) plus
-  its own presets' filament ids, and mints the first free `P####`. Because every
-  printer receives the same explicit id at registration, the same filament can never
-  acquire different ids on different printers.
+  its own presets' filament ids, and mints the first free **`S####`**. `S` is
+  SanityPrint's own namespace letter: the printer catalog uses vendor letters
+  (`E`=eSUN, `P`=Polymaker, `U`=API mint fallback), so minting under `P` — inherited
+  from upstream's unrelated `"P"+md5[0:7]` 8-char scheme — squats Polymaker's space
+  and caused the original collision. `S####` keeps the catalog's native 5-char shape
+  (registration verified live with a probe row). Because every printer receives the
+  same explicit id at registration, the same filament can never acquire different ids
+  on different printers.
 - **The "adopt the first printer's minted id" convergence logic is deleted** (the
   current `have_canonical` flow in `start_push`). It pushed id-less, let one printer
   mint, and forwarded that id to the rest — which both diverges (name-tier rescues
@@ -114,6 +119,18 @@ new row under exactly that id; `DELETE ?id=` removes **every** row sharing the i
   canonical id and full values. Serial, like the rest of pull. The slicer holds the
   complete preset, so a failure between delete and re-register self-heals on the next
   push; the worst case is a transient gap on one printer, not data loss.
+
+### Implementation notes (reuse, not new plumbing)
+
+- Preset creation reuses the Create Filament wizard machinery: custom roots in
+  `filament/base/` and `PresetCollection::clone_presets_for_printer(...)` for the
+  per-printer children (`CreatePresetsDialog.cpp` "preset for printer" flow), plus
+  `PresetCollection::load_preset(path_from_name(...), ...)` / `Preset::save` for
+  batch creation without UI selection churn.
+- The fork's hash-based mint in `CreatePresetsDialog.cpp` (`get_filament_id`,
+  `"P%04u"` from md5 — only collision-checked against slicer-known ids) is replaced
+  by the union-checked `S####` minter; the sync dialog and the wizard should share
+  it so wizard-created filaments are also catalog-collision-free.
 
 ## Out of scope
 
