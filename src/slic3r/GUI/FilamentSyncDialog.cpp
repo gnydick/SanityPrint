@@ -366,10 +366,9 @@ static bool is_placeholder_id(const std::string &id)
     return id.empty() || id == "null" || id.front() == 'P';
 }
 
-// POST one material to one device. Returns the canonical id from the response
-// (empty on failure).
-static std::string post_material(const SyncDevice &dev, const std::vector<std::pair<std::string, std::string>> &params,
-                                 const std::string &preset_name)
+// POST one material to one device. Returns true on a 200 response.
+static bool post_material(const SyncDevice &dev, const std::vector<std::pair<std::string, std::string>> &params,
+                          const std::string &preset_name)
 {
     std::string url = "http://" + dev.address + ":" + std::to_string(MATERIAL_API_PORT) + "/server/material";
     char        sep = '?';
@@ -378,9 +377,8 @@ static std::string post_material(const SyncDevice &dev, const std::vector<std::p
         sep = '&';
     }
 
-    std::string canonical_id;
-    bool        ok = false;
-    Http        http = Http::post(url);
+    bool ok   = false;
+    Http http = Http::post(url);
     // A non-empty body is required: Http::priv::http_perform installs a file
     // read callback unconditionally, and a body-less POST makes libcurl invoke
     // it with a garbage userp (hard crash). All request data is in the query
@@ -388,22 +386,13 @@ static std::string post_material(const SyncDevice &dev, const std::vector<std::p
     http.set_post_body(std::string("{}"));
     http.timeout_connect(5)
         .timeout_max(15)
-        .on_complete([&canonical_id, &ok](std::string body, unsigned status) {
-            if (status != 200)
-                return;
-            ok = true;
-            try {
-                nlohmann::json j = nlohmann::json::parse(body);
-                if (j.contains("result") && j["result"].contains("id"))
-                    canonical_id = j["result"]["id"].get<std::string>();
-            } catch (...) {}
-        })
+        .on_complete([&ok](std::string /*body*/, unsigned status) { ok = (status == 200); })
         .on_error([&preset_name, &dev](std::string /*body*/, std::string error, unsigned status) {
             BOOST_LOG_TRIVIAL(error) << "FilamentSync: POST failed for '" << preset_name << "' on " << dev.address
                                      << " status=" << status << " error=" << error;
         })
         .perform_sync();
-    return ok ? (canonical_id.empty() ? std::string("?") : canonical_id) : std::string();
+    return ok;
 }
 
 void FilamentSyncDialog::start_sync(const std::vector<SyncDevice> &targets)
@@ -415,33 +404,16 @@ void FilamentSyncDialog::start_sync(const std::vector<SyncDevice> &targets)
         int         ok_count   = 0;
         int         fail_count = 0;
         std::string failures;
-        // preset name -> printer-minted canonical id to adopt
-        auto reconciled = std::make_shared<std::map<std::string, std::string>>();
 
         try {
-            for (MaterialPayload &payload : *payloads) {
-                // Find the current id param (set when the preset already has a
-                // canonical id; absent for placeholders).
-                auto id_it = std::find_if(payload.params.begin(), payload.params.end(),
-                                          [](const auto &kv) { return kv.first == "id"; });
-                bool have_canonical = id_it != payload.params.end();
-
+            for (const MaterialPayload &payload : *payloads) {
                 for (const SyncDevice &dev : *devices) {
-                    std::string got_id = post_material(dev, payload.params, payload.preset_name);
-                    if (got_id.empty()) {
+                    if (post_material(dev, payload.params, payload.preset_name)) {
+                        ++ok_count;
+                    } else {
                         ++fail_count;
                         if (failures.size() < 600)
                             failures += "\n" + payload.preset_name + " -> " + dev.name;
-                        continue;
-                    }
-                    ++ok_count;
-                    // First successful response of a placeholder push: adopt the
-                    // printer-minted id and include it for the remaining devices,
-                    // so all printers converge on one id.
-                    if (!have_canonical && got_id != "?") {
-                        payload.params.emplace_back("id", got_id);
-                        have_canonical = true;
-                        (*reconciled)[payload.preset_name] = got_id;
                     }
                 }
             }
@@ -449,27 +421,8 @@ void FilamentSyncDialog::start_sync(const std::vector<SyncDevice> &targets)
             BOOST_LOG_TRIVIAL(error) << "FilamentSync: push thread exception: " << e.what();
         }
 
-        wxGetApp().CallAfter([ok_count, fail_count, failures, reconciled]() {
-            // Adopt printer-minted ids on the main thread (preset bundle is not
-            // thread safe) and persist them.
-            int adopted = 0;
-            try {
-                PresetBundle *bundle = wxGetApp().preset_bundle;
-                for (const auto &entry : *reconciled) {
-                    Preset *preset = bundle->filaments.find_preset(entry.first, false, true);
-                    if (preset && preset->is_user() && is_placeholder_id(preset->filament_id)) {
-                        preset->filament_id = entry.second;
-                        preset->save(nullptr);
-                        ++adopted;
-                    }
-                }
-            } catch (const std::exception &e) {
-                BOOST_LOG_TRIVIAL(error) << "FilamentSync: id reconciliation failed: " << e.what();
-            }
-
+        wxGetApp().CallAfter([ok_count, fail_count, failures]() {
             wxString msg = wxString::Format(_L("Filament sync finished: %d pushed, %d failed."), ok_count, fail_count);
-            if (adopted > 0)
-                msg += "\n" + wxString::Format(_L("%d filament(s) adopted printer-assigned ids."), adopted);
             if (fail_count > 0)
                 msg += "\n" + from_u8(failures);
             MessageDialog dlg(wxGetApp().mainframe, msg, wxString(SLIC3R_APP_FULL_NAME) + " - " + _L("Sync Filaments"),
