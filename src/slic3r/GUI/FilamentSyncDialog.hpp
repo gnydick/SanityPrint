@@ -34,13 +34,11 @@ public:
 
 private:
     void start_sync(const std::vector<SyncDevice> &targets);
-    void start_pull(const std::vector<SyncDevice> &targets);
     std::vector<SyncDevice> selected_targets(bool require_any);
 
     std::vector<std::pair<CheckBox *, SyncDevice>> m_device_rows;
     CheckBox *m_select_all  = nullptr;
     Button   *m_sync_button = nullptr;
-    Button   *m_pull_button = nullptr;
     size_t    m_filament_count = 0;
 };
 

@@ -139,7 +139,7 @@ static MaterialPayload payload_from_preset(const Preset &preset)
 
     // Parameterized material behavior fields (SanityPrint extension). The param
     // names are the literal slicer config keys; the printer stores them verbatim
-    // in kvParam, which makes Pull apply them generically with no further mapping.
+    // in kvParam.
     add_int_param(cfg, p, "filament_temp_type", "filament_temp_type");
     add_bool_param(cfg, p, "filament_cooling_smart_zone", "filament_cooling_smart_zone");
     add_float_param(cfg, p, "filament_bed_adhesion_strength", "filament_bed_adhesion_strength");
@@ -303,13 +303,6 @@ FilamentSyncDialog::FilamentSyncDialog(wxWindow *parent)
     m_sync_button->SetCornerRadius(FromDIP(12));
     btn_sizer->Add(m_sync_button, 0, wxRIGHT, FromDIP(10));
 
-    m_pull_button = new Button(this, _L("Pull"));
-    m_pull_button->SetBackgroundColor(btn_bg_blue);
-    m_pull_button->SetTextColor(wxColour("#FFFFFE"));
-    m_pull_button->SetMinSize(wxSize(FromDIP(58), FromDIP(24)));
-    m_pull_button->SetCornerRadius(FromDIP(12));
-    btn_sizer->Add(m_pull_button, 0, wxRIGHT, FromDIP(10));
-
     auto *cancel_button = new Button(this, _L("Cancel"));
     cancel_button->SetBackgroundColor(btn_bg_white);
     cancel_button->SetMinSize(wxSize(FromDIP(58), FromDIP(24)));
@@ -331,13 +324,6 @@ FilamentSyncDialog::FilamentSyncDialog(wxWindow *parent)
         start_sync(targets);
         EndModal(wxID_OK);
     });
-    m_pull_button->Bind(wxEVT_BUTTON, [this](wxCommandEvent &) {
-        std::vector<SyncDevice> targets = selected_targets(true);
-        if (targets.empty())
-            return;
-        start_pull(targets);
-        EndModal(wxID_OK);
-    });
     cancel_button->Bind(wxEVT_BUTTON, [this](wxCommandEvent &) { EndModal(wxID_CANCEL); });
 
     SetSizerAndFit(main_sizer);
@@ -357,13 +343,6 @@ std::vector<SyncDevice> FilamentSyncDialog::selected_targets(bool require_any)
         dlg.ShowModal();
     }
     return targets;
-}
-
-// A slicer-minted id (P-prefixed) is a placeholder; canonical ids are minted by
-// the printer (U####) and adopted by the slicer on first successful push.
-static bool is_placeholder_id(const std::string &id)
-{
-    return id.empty() || id == "null" || id.front() == 'P';
 }
 
 // POST one material to one device. Returns true on a 200 response.
@@ -425,115 +404,6 @@ void FilamentSyncDialog::start_sync(const std::vector<SyncDevice> &targets)
             wxString msg = wxString::Format(_L("Filament sync finished: %d pushed, %d failed."), ok_count, fail_count);
             if (fail_count > 0)
                 msg += "\n" + from_u8(failures);
-            MessageDialog dlg(wxGetApp().mainframe, msg, wxString(SLIC3R_APP_FULL_NAME) + " - " + _L("Sync Filaments"),
-                              wxOK | wxCENTRE);
-            dlg.ShowModal();
-        });
-    }).detach();
-}
-
-void FilamentSyncDialog::start_pull(const std::vector<SyncDevice> &targets)
-{
-    auto devices = std::make_shared<std::vector<SyncDevice>>(targets);
-
-    boost::thread([devices]() {
-        // material name -> (id, kvParam) ; first device wins on duplicates
-        auto pulled = std::make_shared<std::map<std::string, std::pair<std::string, std::map<std::string, std::string>>>>();
-        int  fetch_fail = 0;
-
-        try {
-            for (const SyncDevice &dev : *devices) {
-                std::string url  = "http://" + dev.address + ":" + std::to_string(MATERIAL_API_PORT) + "/server/material";
-                bool        ok   = false;
-                std::string body_out;
-                Http http = Http::get(url);
-                http.timeout_connect(5)
-                    .timeout_max(15)
-                    .on_complete([&ok, &body_out](std::string body, unsigned status) {
-                        if (status == 200) { ok = true; body_out = std::move(body); }
-                    })
-                    .perform_sync();
-                if (!ok) { ++fetch_fail; continue; }
-                try {
-                    nlohmann::json j = nlohmann::json::parse(body_out);
-                    for (const auto &mat : j["result"]["materials"]) {
-                        if (!mat.contains("base") || !mat["base"].contains("name"))
-                            continue;
-                        std::string name = mat["base"]["name"].get<std::string>();
-                        if (pulled->count(name))
-                            continue;
-                        std::string id = mat["base"].contains("id") ? mat["base"]["id"].get<std::string>() : "";
-                        std::map<std::string, std::string> kv;
-                        if (mat.contains("kvParam"))
-                            for (auto it = mat["kvParam"].begin(); it != mat["kvParam"].end(); ++it)
-                                if (it.value().is_string())
-                                    kv[it.key()] = it.value().get<std::string>();
-                        (*pulled)[name] = {id, kv};
-                    }
-                } catch (const std::exception &e) {
-                    BOOST_LOG_TRIVIAL(error) << "FilamentSync: pull parse failed for " << dev.address << ": " << e.what();
-                    ++fetch_fail;
-                }
-            }
-        } catch (const std::exception &e) {
-            BOOST_LOG_TRIVIAL(error) << "FilamentSync: pull thread exception: " << e.what();
-        }
-
-        wxGetApp().CallAfter([pulled, fetch_fail]() {
-            int updated = 0, unmatched = 0, stock = 0;
-            std::string unmatched_names;
-            try {
-                PresetBundle *bundle = wxGetApp().preset_bundle;
-                for (const auto &entry : *pulled) {
-                    Preset *preset = bundle->filaments.find_preset(entry.first, false, true);
-                    if (!preset || !preset->is_user()) {
-                        // Only user-managed catalog rows are interesting: printer-minted
-                        // (U####) or slicer-pushed (P####) ids. Everything else is the
-                        // printer's built-in stock database, which the slicer already
-                        // mirrors as system presets.
-                        const std::string &id = entry.second.first;
-                        if (id.empty() || (id.front() != 'U' && id.front() != 'P')) {
-                            ++stock;
-                            continue;
-                        }
-                        ++unmatched;
-                        if (unmatched_names.size() < 400)
-                            unmatched_names += "\n" + entry.first;
-                        continue;
-                    }
-                    // kvParam keys are literal slicer config keys.
-                    ConfigSubstitutionContext ctx(ForwardCompatibilitySubstitutionRule::EnableSilent);
-                    for (const auto &kv : entry.second.second) {
-                        std::string value = kv.second;
-                        // Empty values would erase existing settings, and "\"\"" is
-                        // legacy junk from pushed unset colors. Gcode-registered
-                        // materials cannot carry '#' so colors may arrive bare.
-                        if (value.empty() || value == "\"\"")
-                            continue;
-                        if (kv.first == "default_filament_colour" && value.front() != '#' && value.size() == 6 &&
-                            value.find_first_not_of("0123456789abcdefABCDEF") == std::string::npos)
-                            value = "#" + value;
-                        try {
-                            preset->config.set_deserialize(kv.first, value, ctx);
-                        } catch (...) {}
-                    }
-                    if (!entry.second.first.empty() && is_placeholder_id(preset->filament_id))
-                        preset->filament_id = entry.second.first;
-                    preset->save(nullptr);
-                    ++updated;
-                }
-            } catch (const std::exception &e) {
-                BOOST_LOG_TRIVIAL(error) << "FilamentSync: pull apply failed: " << e.what();
-            }
-
-            wxString msg = wxString::Format(_L("Pull finished: %d preset(s) updated."), updated);
-            if (unmatched > 0)
-                msg += "\n" + wxString::Format(_L("%d custom material(s) exist only on the printer (no matching preset):"), unmatched)
-                     + from_u8(unmatched_names);
-            if (stock > 0)
-                msg += "\n" + wxString::Format(_L("%d stock catalog material(s) ignored."), stock);
-            if (fetch_fail > 0)
-                msg += "\n" + wxString::Format(_L("%d printer(s) could not be reached."), fetch_fail);
             MessageDialog dlg(wxGetApp().mainframe, msg, wxString(SLIC3R_APP_FULL_NAME) + " - " + _L("Sync Filaments"),
                               wxOK | wxCENTRE);
             dlg.ShowModal();
