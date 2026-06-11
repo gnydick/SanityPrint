@@ -1,11 +1,7 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="SanityPrint" type="CMakeRunConfiguration" factoryName="Application"
-                PROGRAM_PARAMS="" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false"
-                EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true"
-                PROJECT_NAME="SanityPrint" TARGET_NAME="SanityPrint" CONFIG_NAME="Release"
-                RUN_TARGET_PROJECT_NAME="SanityPrint" RUN_TARGET_NAME="SanityPrint">
+  <configuration default="false" name="SanityPrint" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SanityPrint" TARGET_NAME="SanityPrint_app_gui" CONFIG_NAME="Release" RUN_TARGET_PROJECT_NAME="SanityPrint" RUN_TARGET_NAME="SanityPrint_app_gui">
     <envs>
-      <env name="SLIC3R_RESOURCES_DIR" value="I:\IdeaProjects\SanityPrint\resources" />
+      <env name="SLIC3R_RESOURCES_DIR" value="I:\IdeaProjects\CrealityPrint\resources" />
     </envs>
     <method v="2">
       <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
