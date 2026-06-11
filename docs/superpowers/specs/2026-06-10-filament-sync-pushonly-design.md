@@ -44,9 +44,9 @@ by design; the slicer never reads the catalog back.
 
 ### Code removals (all in fork feature code)
 
-- `FilamentSyncDialog.cpp`: the `id` param emission in `build_payload`
+- `FilamentSyncDialog.cpp`: the `id` param emission in `payload_from_preset`
   (the `preset.filament_id` check), the `have_canonical` / `reconciled` id-adoption
-  flow in `start_push` and its `CallAfter` persistence pass, `is_placeholder_id`,
+  flow in `start_sync` and its `CallAfter` persistence pass, `is_placeholder_id`,
   and the entire pull path (`start_pull`, the Pull button/choice in the dialog UI).
 - `CreatePresetsDialog.cpp`: revert the fork's 5-char `"P%04u"` mint in
   `get_filament_id` to upstream v7.1.1's `"P" + md5(name).substr(0, 7)`. The 5-char
