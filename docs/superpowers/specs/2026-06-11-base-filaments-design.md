@@ -146,18 +146,30 @@ in the template scheme. Builds on v1's plumbing; not part of v1.
   matching, and old project files resolve unchanged. Effective-value
   equivalence is asserted by scripted resolved-config diff (must be empty).
   Each generated file is stamped with generator version + source provenance.
-- **Suppression at load**: the Creality vendor's *filament* section is not
-  loaded when the mirror is present and passed its completeness check; machines
-  and process profiles load from Creality as today. Policy is expressed in our
-  data files (e.g. a supersedes declaration in the mirror's index), not
-  hardcoded vendor names in C++. If the mirror is missing or incomplete, the
-  factory filaments load as normal (automatic fallback — a broken mirror must
-  degrade to stock behavior, never to an empty filament system).
-- **Open investigations before implementation**: (1) `ProfileFamilyLoader` /
-  Creality printer-management UI reads `Creality.json` filament lists directly —
-  verify behavior when those presets aren't loaded; (2) define the
-  completeness-check criteria; (3) one end-to-end CFS/sync check with mirrored
-  ids.
+- **Install-time materialization (no load-path changes at all)**: the app
+  loads system presets only from the `%APPDATA%\Sanity\system\` copy
+  (`PresetBundle.cpp:1715`), which is produced by the existing version-gated
+  resources→system install/refresh step. That step becomes the transform
+  point: regenerated filament files are written into the copy **under the
+  original filenames** (flattened complete configs; hidden material bases live
+  in the Template vendor). The factory originals in `resources/` are never
+  loaded — not by suppression, but because they were never the load source;
+  they are the transform's input. The copied `Creality.json` index is
+  unchanged (every listed file exists), so `ProfileFamilyLoader` and CFS
+  machinery see a fully consistent bundle. The loader remains stock.
+- **Safety**: the transform validates output (resolved-config equivalence,
+  completeness) and swaps atomically; on failure the previous good copy stays
+  in place. Re-runs when the transform version changes or after any upstream
+  copy refresh (idempotent, marker-tracked).
+- **Propagation semantics**: shipped leaves are regenerated at transform time
+  (edit a base → re-run transform); user-created filaments keep live load-time
+  template inheritance from v1. The authoring layer (bases + per-machine
+  deltas) is the source of truth; the system copy is its build artifact.
+- **Open investigations before implementation**: (1) identify the exact copy
+  site(s) in this fork (`PresetUpdater` vs `ProfileFamilyLoader`) and their
+  refresh triggers; (2) check what the config wizard reads from
+  `resources/profiles` directly for display; (3) one end-to-end CFS/sync check
+  with regenerated files.
 - Upstream merges remain clean: factory files and `Creality.json` stay
   untouched; after a merge that changes factory filaments, re-run the
   generator, review the diff, re-apply curation.
