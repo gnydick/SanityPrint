@@ -1,6 +1,6 @@
 {
     "name": "Creality",
-    "version": "25.12.26.17",
+    "version": "25.12.26.18",
     "force_update": "1",
     "description": "Creality configurations",
     "machine_list": [
@@ -3291,6 +3291,14 @@
         {
             "name": "Generic PC @Creality K2 Pro 0.4 nozzle",
             "sub_path": "filament/Generic PC @Creality K2 Pro 0.4 nozzle.json"
+        },
+        {
+            "name": "Generic PC @Creality K2 0.4 nozzle",
+            "sub_path": "filament/Generic PC @Creality K2 0.4 nozzle.json"
+        },
+        {
+            "name": "Generic PC @Creality K1 SE 0.4 nozzle",
+            "sub_path": "filament/Generic PC @Creality K1 SE 0.4 nozzle.json"
         },
         {
             "name": "Generic PET @Creality K2 Pro 0.4 nozzle",
