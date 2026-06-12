@@ -784,6 +784,13 @@ CreateFilamentPresetDialog::~CreateFilamentPresetDialog()
             p = nullptr;
         }
     }
+    for (std::pair<std::string, Preset *> preset : m_template_presets) {
+        Preset *p = preset.second;
+        if (p) {
+            delete p;
+            p = nullptr;
+        }
+    }
 }
 
 void CreateFilamentPresetDialog::on_dpi_changed(const wxRect &suggested_rect) {
@@ -1569,6 +1576,17 @@ void CreateFilamentPresetDialog::get_all_filament_presets()
         m_all_presets_map[filament_preset_name] = filament_preset;
         BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << " loaded preset name is: " << filament_preset->name;
     }
+
+    // Template-vendor base filaments: id-less and invisible, so the loops above
+    // skip them. Collect them separately and let them extend the type list —
+    // authoring a template for a new material makes that type selectable.
+    for (const Preset &preset : preset_bundle->filaments.get_presets()) {
+        if (!preset.is_system || !preset.vendor || preset.vendor->id != PRESET_TEMPLATE_DIR) continue;
+        auto *filament_types = preset.config.option<ConfigOptionStrings>("filament_type");
+        if (filament_types && !filament_types->values.empty())
+            m_system_filament_types_set.insert(filament_types->values[0]);
+        m_template_presets[preset.name] = new Preset(preset);
+    }
 }
 
 void CreateFilamentPresetDialog::get_all_visible_printer_name()
@@ -1645,6 +1663,14 @@ void CreateFilamentPresetDialog::clear_filament_preset_map()
     m_filament_preset.clear();
     m_machint_filament_preset.clear();
     m_public_name_to_filament_id_map.clear();
+    for (std::pair<std::string, Preset *> preset : m_template_presets) {
+        Preset *p = preset.second;
+        if (p) {
+            delete p;
+            p = nullptr;
+        }
+    }
+    m_template_presets.clear();
     m_filament_preset_panel->Freeze();
     m_filament_presets_sizer->Clear(true);
     m_filament_preset_panel->Thaw();

@@ -74,6 +74,7 @@ private:
     std::unordered_map<std::string, std::vector<Preset *>>           m_filament_choice_map;
     std::unordered_map<wxString, std::string>                        m_public_name_to_filament_id_map;
     std::unordered_map<std::string, Preset *>                        m_all_presets_map;
+    std::unordered_map<std::string, Preset *>                        m_template_presets; // Template-vendor base filaments, offered for every printer
     std::unordered_set<std::string>                                  m_system_filament_types_set;
     std::set<std::string>                                            m_visible_printers;
     CreateType                                                       m_create_type;
