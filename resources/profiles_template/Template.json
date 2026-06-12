@@ -29,6 +29,14 @@
       "sub_path": "filament/filament_pa_template.json"
     },
     {
+      "name": "filament_pc_template",
+      "sub_path": "filament/filament_pc_template.json"
+    },
+    {
+      "name": "filament_pctg_template",
+      "sub_path": "filament/filament_pctg_template.json"
+    },
+    {
       "name": "filament_pet_template",
       "sub_path": "filament/filament_pet_template.json"
     },
