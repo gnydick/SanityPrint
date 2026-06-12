@@ -102,6 +102,7 @@
 #include <wx/evtloop.h>
 
 #include "libslic3r/Utils.hpp"
+#include "libslic3r/MaterialBehavior.hpp"
 #include "libslic3r/Model.hpp"
 #include "libslic3r/ModelVolume.hpp"
 #include "libslic3r/PresetBundle.hpp"
@@ -2914,32 +2915,12 @@ void GUI_App::reinstall_webview_runtime()
 
 // Inject the parameterized filament behavior fields into user filament presets
 // migrated from a CrealityPrint install, which predate those fields. Values are
-// derived from filament_type exactly like the built-in profile migration
-// (scripts/migrate_builtin_filament_profiles.py); keys already present are kept.
+// derived from filament_type via the shared tables in
+// resources/profiles_template/material_behavior.json, exactly like the built-in
+// profile migration (scripts/migrate_builtin_filament_profiles.py); keys already
+// present are kept.
 static void migrate_user_filament_presets(const boost::filesystem::path& data_root)
 {
-    static const std::unordered_map<std::string, std::string> temp_type = {
-        {"ABS", "0"}, {"ASA", "0"}, {"PC", "0"}, {"PA", "0"}, {"PA-CF", "0"}, {"PA-GF", "0"},
-        {"PA6-CF", "0"}, {"PET-CF", "0"}, {"PPS", "0"}, {"PPS-CF", "0"}, {"PPA-CF", "0"},
-        {"PPA-GF", "0"}, {"ABS-GF", "0"}, {"ASA-Aero", "0"},
-        {"PLA", "1"}, {"TPU", "1"}, {"PLA-CF", "1"}, {"PLA-AERO", "1"}, {"PVA", "1"}, {"BVOH", "1"},
-        {"HIPS", "2"}, {"PETG", "2"}, {"PE", "2"}, {"PP", "2"}, {"EVA", "2"},
-        {"PE-CF", "2"}, {"PP-CF", "2"}, {"PP-GF", "2"}, {"PHA", "2"},
-    };
-    static const std::unordered_map<std::string, std::string> bed_adhesion = {
-        {"PET", "0.3"}, {"PETG", "0.3"}, {"ABS", "0.1"}, {"ASA", "0.1"},
-    };
-    static const std::unordered_map<std::string, std::string> thermal_length = {
-        {"ABS", "100"}, {"PA-CF", "100"}, {"PET-CF", "100"}, {"PC", "40"}, {"TPU", "1000"},
-    };
-    static const std::unordered_map<std::string, std::string> brim_adhesion_coeff = {
-        {"PETG", "2"}, {"PCTG", "2"}, {"TPU", "0.5"},
-    };
-    static const std::unordered_map<std::string, std::string> chamber_temp_limit = {
-        {"PLA", "45"}, {"PLA-CF", "45"}, {"PVA", "45"}, {"TPU", "50"},
-        {"PETG", "55"}, {"PCTG", "55"}, {"PETG-CF", "55"},
-    };
-
     boost::system::error_code ec;
     fs::path user_root = data_root / PRESET_USER_DIR;
     if (!fs::exists(user_root, ec))
@@ -2974,22 +2955,28 @@ static void migrate_user_filament_presets(const boost::filesystem::path& data_ro
                         changed = true;
                     }
                 };
-                auto put_mapped = [&put](const char* key, const std::unordered_map<std::string, std::string>& table,
-                                         const std::string& type) {
-                    auto it = table.find(type);
-                    if (it != table.end())
-                        put(key, it->second);
+                auto put_if_listed = [&put](const char *json_key, const char *table_key, const std::string &type) {
+                    const nlohmann::json &tables = MaterialBehavior::tables();
+                    if (!MaterialBehavior::listed(table_key, type))
+                        return;
+                    double value = tables[table_key][type].get<double>();
+                    std::string s = (value == (long long) value) ? std::to_string((long long) value) : std::to_string(value);
+                    if (s.find('.') != std::string::npos) {
+                        s.erase(s.find_last_not_of('0') + 1);
+                        if (!s.empty() && s.back() == '.') s.pop_back();
+                    }
+                    put(json_key, s);
                 };
-                put_mapped("filament_temp_type", temp_type, ft);
-                put_mapped("filament_bed_adhesion_strength", bed_adhesion, ft);
-                put_mapped("filament_thermal_length", thermal_length, ft);
-                put_mapped("filament_brim_adhesion_coeff", brim_adhesion_coeff, ft);
-                put_mapped("filament_chamber_temp_limit", chamber_temp_limit, ft);
-                if (ft == "PLA" || ft == "PETG" || ft == "ABS")
+                put_if_listed("filament_temp_type", "temp_type", ft);
+                put_if_listed("filament_bed_adhesion_strength", "bed_adhesion", ft);
+                put_if_listed("filament_thermal_length", "thermal_length", ft);
+                put_if_listed("filament_brim_adhesion_coeff", "brim_adhesion_coeff", ft);
+                put_if_listed("filament_chamber_temp_limit", "chamber_temp_limit", ft);
+                if (MaterialBehavior::contains("cooling_smart_zone_types", ft))
                     put("filament_cooling_smart_zone", "1");
                 if (ft == "PETG")
                     put("filament_small_island_threshold", "20");
-                if (ft == "TPU")
+                if (MaterialBehavior::contains("flexible_types", ft))
                     put("filament_is_flexible", "1");
 
                 if (changed) {

@@ -270,6 +270,8 @@ set(lisbslic3r_sources
     LocalesUtils.hpp
     CutUtils.cpp
     CutUtils.hpp
+    MaterialBehavior.cpp
+    MaterialBehavior.hpp
     ModelCommon.cpp
     ModelCommon.hpp
     Model.cpp

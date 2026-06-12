@@ -4,7 +4,8 @@ One-time migration: populate the 8 new parameterized filament behavior fields
 onto the vendor fdm_filament_<type> base profiles (and any concrete profiles that
 set filament_type directly without inheriting from a type base).
 
-Values are taken verbatim from §5 of parameterize-filament-types-prompt.md.
+Values are loaded from resources/profiles_template/material_behavior.json
+(originally §5 of parameterize-filament-types-prompt.md).
 Run from the repo root:
     python scripts/migrate_builtin_filament_profiles.py
 
@@ -20,58 +21,40 @@ REPO_ROOT = pathlib.Path(__file__).parent.parent
 PROFILES_DIR = REPO_ROOT / "resources" / "profiles"
 
 # ---------------------------------------------------------------------------
-# §5 tables — byte-for-byte source of truth
+# Tables — loaded from the shared data file (single source of truth, also read
+# by CreatePresetsDialog.cpp and the GUI_App user-preset migration).
+# Per-table coercion preserves the script's historical string output:
+# float tables render "100.0"/"2.0", int tables render "0"/"45".
 # ---------------------------------------------------------------------------
+_TABLES_PATH = REPO_ROOT / "resources" / "profiles_template" / "material_behavior.json"
+_TABLES = json.loads(_TABLES_PATH.read_text(encoding="utf-8"))
+
 # filament_temp_type: 0=HighTemp, 1=LowTemp, 2=HighLowCompatible, 3=Undefine
-TEMP_TYPE = {
-    "ABS": 0, "ASA": 0, "PC": 0, "PA": 0, "PA-CF": 0, "PA-GF": 0,
-    "PA6-CF": 0, "PET-CF": 0, "PPS": 0, "PPS-CF": 0, "PPA-CF": 0,
-    "PPA-GF": 0, "ABS-GF": 0, "ASA-Aero": 0,
-    "PLA": 1, "TPU": 1, "PLA-CF": 1, "PLA-AERO": 1, "PVA": 1, "BVOH": 1,
-    "HIPS": 2, "PETG": 2, "PE": 2, "PP": 2, "EVA": 2,
-    "PE-CF": 2, "PP-CF": 2, "PP-GF": 2, "PHA": 2,
-    # default 3 (Undefine) for everything else
-}
+TEMP_TYPE = {k: int(v) for k, v in _TABLES["temp_type"].items()}  # default 3 (Undefine)
 
-COOLING_SMART_ZONE = {"PLA", "PETG", "ABS"}  # true; else false
+COOLING_SMART_ZONE = set(_TABLES["cooling_smart_zone_types"])  # true; else false
 
-BED_ADHESION = {
-    "PLA": 0.02, "PET": 0.3, "PETG": 0.3, "ABS": 0.1, "ASA": 0.1,
-    # default 0.02
-}
+BED_ADHESION = {k: float(v) for k, v in _TABLES["bed_adhesion"].items()}  # default 0.02
 
-THERMAL_LENGTH = {
-    "ABS": 100.0, "PA-CF": 100.0, "PET-CF": 100.0, "PC": 40.0, "TPU": 1000.0,
-    # default 200.0
-}
+THERMAL_LENGTH = {k: float(v) for k, v in _TABLES["thermal_length"].items()}  # default 200.0
 
-BRIM_ADHESION_COEFF = {
-    "PETG": 2.0, "PCTG": 2.0, "TPU": 0.5,
-    # default 1.0
-}
+BRIM_ADHESION_COEFF = {k: float(v) for k, v in _TABLES["brim_adhesion_coeff"].items()}  # default 1.0
 
-SMALL_ISLAND_THRESHOLD = {
-    "PETG": 20.0,
-    # default 10.0
-}
+SMALL_ISLAND_THRESHOLD = {k: float(v) for k, v in _TABLES["small_island_threshold"].items()}  # default 10.0
 
-CHAMBER_TEMP_LIMIT = {
-    "PLA": 45, "PLA-CF": 45, "PVA": 45, "TPU": 50,
-    "PETG": 55, "PCTG": 55, "PETG-CF": 55,
-    # default 0
-}
+CHAMBER_TEMP_LIMIT = {k: int(v) for k, v in _TABLES["chamber_temp_limit"].items()}  # default 0
 
-IS_FLEXIBLE = {"TPU"}  # true; else false
+IS_FLEXIBLE = set(_TABLES["flexible_types"])  # true; else false
 
 # Defaults (used to decide whether to skip writing a key)
 DEFAULTS = {
-    "filament_temp_type": 3,
+    "filament_temp_type": int(_TABLES["temp_type_default"]),
     "filament_cooling_smart_zone": 0,
-    "filament_bed_adhesion_strength": 0.02,
-    "filament_thermal_length": 200.0,
-    "filament_brim_adhesion_coeff": 1.0,
-    "filament_small_island_threshold": 10.0,
-    "filament_chamber_temp_limit": 0,
+    "filament_bed_adhesion_strength": float(_TABLES["bed_adhesion_default"]),
+    "filament_thermal_length": float(_TABLES["thermal_length_default"]),
+    "filament_brim_adhesion_coeff": float(_TABLES["brim_adhesion_coeff_default"]),
+    "filament_small_island_threshold": float(_TABLES["small_island_threshold_default"]),
+    "filament_chamber_temp_limit": int(_TABLES["chamber_temp_limit_default"]),
     "filament_is_flexible": 0,
 }
 

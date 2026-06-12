@@ -18,6 +18,7 @@
 #include "MainFrame.hpp"
 #include "libslic3r_version.h"
 #include "libslic3r/common_header/common_header.h"
+#include "libslic3r/MaterialBehavior.hpp"
 #include "slic3r/GUI/PresetComboBoxes.hpp"
 #include "libslic3r/Time.hpp"
 #include <filesystem>
@@ -1253,42 +1254,19 @@ wxBoxSizer *CreateFilamentPresetDialog::create_button_item()
 
         // Seed the parameterized material behavior fields from the chosen type so a
         // cross-type clone (e.g. PLA seed for a TPU filament) starts with sensible
-        // values. Mirrors scripts/migrate_builtin_filament_profiles.py (§5 table);
-        // every field stays editable in the filament editor afterwards.
+        // values. Tables live in resources/profiles_template/material_behavior.json
+        // (shared with the GUI_App user-preset migration and
+        // scripts/migrate_builtin_filament_profiles.py); every field stays editable
+        // in the filament editor afterwards.
         auto seed_material_behavior = [](DynamicConfig &cfg, const std::string &ft) {
-            static const std::unordered_map<std::string, int> temp_type = {
-                {"ABS", 0}, {"ASA", 0}, {"PC", 0}, {"PA", 0}, {"PA-CF", 0}, {"PA-GF", 0},
-                {"PA6-CF", 0}, {"PET-CF", 0}, {"PPS", 0}, {"PPS-CF", 0}, {"PPA-CF", 0},
-                {"PPA-GF", 0}, {"ABS-GF", 0}, {"ASA-Aero", 0},
-                {"PLA", 1}, {"TPU", 1}, {"PLA-CF", 1}, {"PLA-AERO", 1}, {"PVA", 1}, {"BVOH", 1},
-                {"HIPS", 2}, {"PETG", 2}, {"PE", 2}, {"PP", 2}, {"EVA", 2},
-                {"PE-CF", 2}, {"PP-CF", 2}, {"PP-GF", 2}, {"PHA", 2},
-            };
-            static const std::unordered_map<std::string, double> bed_adhesion = {
-                {"PET", 0.3}, {"PETG", 0.3}, {"ABS", 0.1}, {"ASA", 0.1},
-            };
-            static const std::unordered_map<std::string, double> thermal_length = {
-                {"ABS", 100.0}, {"PA-CF", 100.0}, {"PET-CF", 100.0}, {"PC", 40.0}, {"TPU", 1000.0},
-            };
-            static const std::unordered_map<std::string, double> brim_adhesion = {
-                {"PETG", 2.0}, {"PCTG", 2.0}, {"TPU", 0.5},
-            };
-            static const std::unordered_map<std::string, int> chamber_limit = {
-                {"PLA", 45}, {"PLA-CF", 45}, {"PVA", 45}, {"TPU", 50},
-                {"PETG", 55}, {"PCTG", 55}, {"PETG-CF", 55},
-            };
-            auto find_or = [](const auto &table, const std::string &key, auto fallback) {
-                auto it = table.find(key);
-                return it == table.end() ? fallback : it->second;
-            };
-            cfg.set_key_value("filament_temp_type", new ConfigOptionInts({find_or(temp_type, ft, 3)}));
-            cfg.set_key_value("filament_cooling_smart_zone", new ConfigOptionBools({ft == "PLA" || ft == "PETG" || ft == "ABS"}));
-            cfg.set_key_value("filament_bed_adhesion_strength", new ConfigOptionFloats({find_or(bed_adhesion, ft, 0.02)}));
-            cfg.set_key_value("filament_thermal_length", new ConfigOptionFloats({find_or(thermal_length, ft, 200.0)}));
-            cfg.set_key_value("filament_brim_adhesion_coeff", new ConfigOptionFloats({find_or(brim_adhesion, ft, 1.0)}));
-            cfg.set_key_value("filament_small_island_threshold", new ConfigOptionFloats({ft == "PETG" ? 20.0 : 10.0}));
-            cfg.set_key_value("filament_chamber_temp_limit", new ConfigOptionInts({find_or(chamber_limit, ft, 0)}));
-            cfg.set_key_value("filament_is_flexible", new ConfigOptionBools({ft == "TPU"}));
+            cfg.set_key_value("filament_temp_type", new ConfigOptionInts({(int) MaterialBehavior::lookup("temp_type", ft, 3)}));
+            cfg.set_key_value("filament_cooling_smart_zone", new ConfigOptionBools({MaterialBehavior::contains("cooling_smart_zone_types", ft)}));
+            cfg.set_key_value("filament_bed_adhesion_strength", new ConfigOptionFloats({MaterialBehavior::lookup("bed_adhesion", ft, 0.02)}));
+            cfg.set_key_value("filament_thermal_length", new ConfigOptionFloats({MaterialBehavior::lookup("thermal_length", ft, 200.0)}));
+            cfg.set_key_value("filament_brim_adhesion_coeff", new ConfigOptionFloats({MaterialBehavior::lookup("brim_adhesion_coeff", ft, 1.0)}));
+            cfg.set_key_value("filament_small_island_threshold", new ConfigOptionFloats({MaterialBehavior::lookup("small_island_threshold", ft, 10.0)}));
+            cfg.set_key_value("filament_chamber_temp_limit", new ConfigOptionInts({(int) MaterialBehavior::lookup("chamber_temp_limit", ft, 0)}));
+            cfg.set_key_value("filament_is_flexible", new ConfigOptionBools({MaterialBehavior::contains("flexible_types", ft)}));
         };
 
         const wxString &curr_create_type = curr_create_filament_type();
