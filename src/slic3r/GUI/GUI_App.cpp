@@ -3147,17 +3147,6 @@ void GUI_App::init_app_config()
     }
 }
 
-// returns true if found newer version and user agreed to use it
-bool GUI_App::check_older_app_config(Semver current_version, bool backup)
-{
-    //BBS: current no need these logic
-    return false;
-}
-
-void GUI_App::copy_older_config()
-{
-    preset_bundle->copy_files(m_older_data_dir_path);
-}
 #if defined(WIN32)
 std::string GetMACAddress() {
     std::string result;
@@ -4149,10 +4138,6 @@ bool GUI_App::on_init_inner(bool isdump_launcher)
     // just checking for existence of Slic3r::data_dir is not enough : it may be an empty directory
     // supplied as argument to --datadir; in that case we should still run the wizard
     preset_bundle->setup_directories();
-
-
-    if (m_init_app_config_from_older)
-        copy_older_config();
 
     if (is_editor()) {
 //#ifdef __WXMSW__

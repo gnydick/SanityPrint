@@ -821,8 +821,6 @@ private:
     void            remove_old_networking_plugins();
     void            init_http_extra_header();
     void            update_http_extra_header();
-    bool            check_older_app_config(Semver current_version, bool backup);
-    void            copy_older_config();
     void            window_pos_save(wxTopLevelWindow* window, const std::string &name);
     bool            window_pos_restore(wxTopLevelWindow* window, const std::string &name, bool default_maximized = false);
     void            window_pos_sanitize(wxTopLevelWindow* window);
@@ -835,9 +833,7 @@ private:
     void            save_app_first_launch_info();
     void            check_app_first_launch_info();
 
-    bool                    m_init_app_config_from_older { false };
     bool                    m_datadir_redefined { false };
-    std::string             m_older_data_dir_path;
     boost::optional<Semver> m_last_config_version;
     bool                    m_config_corrupted { false };
     std::string             m_open_method;
