@@ -1663,14 +1663,6 @@ void CreateFilamentPresetDialog::clear_filament_preset_map()
     m_filament_preset.clear();
     m_machint_filament_preset.clear();
     m_public_name_to_filament_id_map.clear();
-    for (std::pair<std::string, Preset *> preset : m_template_presets) {
-        Preset *p = preset.second;
-        if (p) {
-            delete p;
-            p = nullptr;
-        }
-    }
-    m_template_presets.clear();
     m_filament_preset_panel->Freeze();
     m_filament_presets_sizer->Clear(true);
     m_filament_preset_panel->Thaw();
