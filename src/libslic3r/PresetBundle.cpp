@@ -1787,6 +1787,17 @@ std::pair<PresetsConfigSubstitutions, std::string> PresetBundle::load_system_pre
                 std::vector<std::string> duplicates = this->merge_presets(std::move(other));
                 for (const std::string &dup : duplicates)
                     BOOST_LOG_TRIVIAL(error) << "Template vendor preset duplicates existing preset: " << dup;
+                // Force templates hidden: they are seed/inheritance bases only and
+                // must never appear in the filament picker or be auto-selected.
+                // Default is_visible is true, and the appconfig-based hide only
+                // kicks in once a [filaments] section exists, so they would leak
+                // on a fresh install without this.
+                PresetCollection &fil = this->filaments;
+                for (size_t i = 0; i < fil.get_presets().size(); ++i) {
+                    const Preset &p = fil.get_presets()[i];
+                    if (p.is_system && p.vendor && p.vendor->id == PRESET_TEMPLATE_DIR)
+                        fil.preset(i, true).is_visible = false;
+                }
             } catch (const std::exception &err) {
                 BOOST_LOG_TRIVIAL(error) << "Failed loading Template vendor: " << err.what();
             }

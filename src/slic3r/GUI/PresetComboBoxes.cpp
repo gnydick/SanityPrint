@@ -401,7 +401,7 @@ void PresetComboBox::add_ams_filaments(std::string selected, bool alias_name)
                 if (!filament_type.empty()) {
                     filament_type = "Generic " + filament_type;
                     iter          = std::find_if(filaments.begin(), filaments.end(),
-                                        [&filament_type](auto &f) { return f.is_compatible && f.is_system && boost::algorithm::starts_with(f.name, filament_type); });
+                                        [&filament_type](auto &f) { return f.is_compatible && f.is_system && (!f.vendor || f.vendor->id != PRESET_TEMPLATE_DIR) && boost::algorithm::starts_with(f.name, filament_type); });
                 }
             }
             if (iter == filaments.end()) {
