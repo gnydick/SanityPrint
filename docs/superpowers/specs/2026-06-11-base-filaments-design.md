@@ -132,17 +132,53 @@ need a validation print before being trusted.
   `PrintConfig.cpp:2337`); a template makes the type selectable via A3's
   type harvest.
 
+## Phase 2 (planned): library materialization
+
+Replace the loaded factory filament library with a generated mirror organized
+in the template scheme. Builds on v1's plumbing; not part of v1.
+
+- **Generator script** reads the pristine factory tree
+  (`resources/profiles/Creality/filament/` — kept byte-identical as the
+  generator's *input*, never loaded as presets once phase 2 is active) and
+  emits our mirror: material bases at the root (hidden, template-style),
+  machine-tuned leaves as their children. **Preset names, `filament_id`s and
+  `setting_id`s are preserved verbatim**, so existing user presets, CFS slot
+  matching, and old project files resolve unchanged. Effective-value
+  equivalence is asserted by scripted resolved-config diff (must be empty).
+  Each generated file is stamped with generator version + source provenance.
+- **Suppression at load**: the Creality vendor's *filament* section is not
+  loaded when the mirror is present and passed its completeness check; machines
+  and process profiles load from Creality as today. Policy is expressed in our
+  data files (e.g. a supersedes declaration in the mirror's index), not
+  hardcoded vendor names in C++. If the mirror is missing or incomplete, the
+  factory filaments load as normal (automatic fallback — a broken mirror must
+  degrade to stock behavior, never to an empty filament system).
+- **Open investigations before implementation**: (1) `ProfileFamilyLoader` /
+  Creality printer-management UI reads `Creality.json` filament lists directly —
+  verify behavior when those presets aren't loaded; (2) define the
+  completeness-check criteria; (3) one end-to-end CFS/sync check with mirrored
+  ids.
+- Upstream merges remain clean: factory files and `Creality.json` stay
+  untouched; after a merge that changes factory filaments, re-run the
+  generator, review the diff, re-apply curation.
+
 ## Out of scope (explicitly rejected/deferred)
 
-- **Rewiring shipped leaves to inherit from templates** — cross-vendor
+- **Rewiring shipped leaves to inherit from templates in place** — cross-vendor
   inheritance is unsupported by the loader; would touch ~1,200 upstream files;
-  permanent merge conflict with upstream. Rejected.
-- **Factory-chain flatten script (regenerate templates from
-  `fdm_filament_common` + `fdm_filament_*`)** — cut from v1 per YAGNI; research
-  curation supersedes it. Revisit only if a filler-key inconsistency is ever
-  traced.
-- Touching the `fdm_filament_*` layer in any way. It remains the shipped
-  library's load-time dedup mechanism.
+  permanent merge conflict with upstream. Rejected (phase 2's mirror achieves
+  the goal without it).
+- **Deleting factory filament files** — forces a `Creality.json` rewrite
+  (perpetual upstream conflicts), leaves stale copies loading from
+  `%APPDATA%\Sanity\system\` on existing installs anyway, and severs the
+  generator's input. Suppression-at-load produces the identical user-visible
+  result. Rejected.
+- **Factory-chain flatten script for template values** — cut from v1 per YAGNI;
+  research curation supersedes it (phase 2's generator is its successor for the
+  mirror use case).
+- Touching the `fdm_filament_*` layer in any way during v1. It remains the
+  shipped library's load-time dedup mechanism until phase 2 supersedes the
+  loaded copies.
 
 ## Update semantics (for reference)
 
