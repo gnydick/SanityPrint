@@ -726,6 +726,28 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
 
 ---
 
+## Verification
+
+**Code-side (complete):**
+- All 8 tasks implemented, each per-task spec-reviewed and committed (`58c25bf9`..`e1578589`).
+- Integration review found 1 Critical + 2 Important issues, all fixed:
+  - Issue 1 (template-derived presets lost filament_id on reload) → dropped the
+    `inherits` injection; created filaments are standalone with a minted id
+    (`dc38d95a`).
+  - Issue 2a (templates visible pre-wizard) → force `is_visible=false` after the
+    Template merge (`ac11368d`).
+  - Issue 2b (CFS name-fallback force-shows templates) → exclude the Template
+    vendor from that fallback (`ac11368d`).
+- Per-user-direction id change: user filament ids now mint as 5-char `A-Z0-9`
+  (`mint_filament_id`) so they fit the K2/CFS namespace and are RFID-encodable
+  (`dc38d95a`).
+- Final `SanityPrint_app_gui` link: clean (exit 0). Fixes re-reviewed: all correct.
+
+**GUI walkthrough (pending — needs operator at the keyboard):** see Task 8 Step 2
+list. Plus one hardware check: confirm the K2 round-trips a 5-char tag id with a
+letter in positions 2-5 (e.g. `A7K2Q`); if firmware restricts those to digits,
+narrow the `mint_filament_id` alphabet for positions 2-5.
+
 ## Self-review notes (kept for the executor)
 
 - Spec coverage: A1→Task 2, A2→Task 1, A3→Tasks 3+4, inherits-lineage→Task 5, A4→Task 6, B→Task 7, PCTG→Task 1, testing→Task 8. Phase 2: intentionally absent.
