@@ -1764,6 +1764,11 @@ std::pair<PresetsConfigSubstitutions, std::string> PresetBundle::load_system_pre
         }
     }
 
+    if (first) {
+		// No config bundle loaded, reset.
+		this->reset(false);
+	}
+
     // SanityPrint: load the Template vendor (printer-agnostic base filaments)
     // directly from resources so template edits go live on restart, bypassing
     // the version-gated data_dir/system copy. The "Template" vendor name is
@@ -1787,11 +1792,6 @@ std::pair<PresetsConfigSubstitutions, std::string> PresetBundle::load_system_pre
             }
         }
     }
-
-    if (first) {
-		// No config bundle loaded, reset.
-		this->reset(false);
-	}
 
 	this->update_system_maps();
     //BBS: add config related logs
