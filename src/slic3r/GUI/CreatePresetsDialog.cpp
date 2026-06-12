@@ -545,6 +545,23 @@ static std::string calculate_md5(const std::string &input)
     return md5;
 }
 
+// Mint a 5-char uppercase [A-Z0-9] id from a seed string, so user filament ids
+// fit the 5-char K2/CFS material-code namespace and are RFID-encodable. Using
+// the full alphanumeric alphabet across all positions spreads mints across 36^5
+// values, avoiding the Polymaker "P####" collision that the prior "P"+md5 scheme
+// caused (it funneled every mint into Polymaker's letter namespace).
+static std::string mint_filament_id(const std::string &seed)
+{
+    static const char *kAlphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    std::string        hex       = calculate_md5(seed); // 32 lowercase hex chars
+    std::string        id;
+    for (int i = 0; i < 5; ++i) {
+        unsigned int byte = static_cast<unsigned int>(std::stoul(hex.substr(i * 2, 2), nullptr, 16));
+        id += kAlphabet[byte % 36];
+    }
+    return id;
+}
+
 static std::string get_filament_id(std::string vendor_typr_serial)
 {
     std::unordered_map<std::string, std::set<std::string>> filament_id_to_filament_name;
@@ -616,7 +633,7 @@ static std::string get_filament_id(std::string vendor_typr_serial)
         }
     }
 
-    std::string user_filament_id = "P" + calculate_md5(vendor_typr_serial).substr(0, 7);
+    std::string user_filament_id = mint_filament_id(vendor_typr_serial);
 
     while (filament_id_to_filament_name.find(user_filament_id) != filament_id_to_filament_name.end()) {//find same filament id
         bool have_same_filament_name = false;
@@ -630,7 +647,7 @@ static std::string get_filament_id(std::string vendor_typr_serial)
             break;
         }
         else { //Different names correspond to the same filament id
-            user_filament_id = "P" + calculate_md5(vendor_typr_serial + get_curr_time()).substr(0, 7);
+            user_filament_id = mint_filament_id(vendor_typr_serial + get_curr_time());
         }
     }
     BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << " filament name is: " << vendor_typr_serial << "and create filament_id is: " << user_filament_id;
@@ -1283,12 +1300,6 @@ wxBoxSizer *CreateFilamentPresetDialog::create_button_item()
                     dynamic_config.set_key_value("compatible_printers", new ConfigOptionStrings({compatible_printer_name}));
                     dynamic_config.set_key_value("filament_type", new ConfigOptionStrings({type_name}));
                     seed_material_behavior(dynamic_config, type_name);
-                    // Template seeds are globally resident system presets: keep
-                    // the parent link so lineage shows and template tuning
-                    // propagates. Concrete-preset seeds stay standalone (cleared
-                    // by clone_presets) — unchanged current behavior.
-                    if (m_template_presets.count(checked_preset->name))
-                        dynamic_config.set_key_value("inherits", new ConfigOptionString(checked_preset->name));
                     bool res = preset_bundle->filaments.clone_presets_for_filament(checked_preset, failures, filament_preset_name, user_filament_id, dynamic_config,
                                                                                    compatible_printer_name);
                     if (!res) {
@@ -1317,12 +1328,6 @@ wxBoxSizer *CreateFilamentPresetDialog::create_button_item()
                     dynamic_config.set_key_value("compatible_printers", new ConfigOptionStrings({compatible_printer_name}));
                     dynamic_config.set_key_value("filament_type", new ConfigOptionStrings({type_name}));
                     seed_material_behavior(dynamic_config, type_name);
-                    // Template seeds are globally resident system presets: keep
-                    // the parent link so lineage shows and template tuning
-                    // propagates. Concrete-preset seeds stay standalone (cleared
-                    // by clone_presets) — unchanged current behavior.
-                    if (m_template_presets.count(checked_preset->name))
-                        dynamic_config.set_key_value("inherits", new ConfigOptionString(checked_preset->name));
                     bool res = preset_bundle->filaments.clone_presets_for_filament(checked_preset, failures, filament_preset_name, user_filament_id, dynamic_config,
                                                                                    compatible_printer_name);
                     if (!res) {
