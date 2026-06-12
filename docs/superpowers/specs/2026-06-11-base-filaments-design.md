@@ -107,10 +107,10 @@ existing installs):
 - `Generic PC @Creality K1 SE 0.4 nozzle.json` — values cloned from
   `Generic PC @Creality K1C 0.4 nozzle`, with chamber-temperature control
   disabled (K1 SE has no chamber heater) and adhesion/cooling adjusted.
-- K1C: `Generic PC @Creality K1C 0.4 nozzle.json` already ships. First
-  implementation step: identify the user's installed K1C profile name. If it is
-  stock `Creality K1C 0.4 nozzle`, diagnose why the existing preset is not
-  offered; if it is a variant (e.g. K1C 2025 / CFS), add the matching file.
+- K1C: deliberately not pursued. A `Generic PC @Creality K1C 0.4 nozzle.json`
+  already ships; if it isn't offered for the user's installed K1C variant, the
+  template flow creates a PC filament for that printer directly — no system
+  preset needed.
 
 Each new leaf: `inherits: fdm_filament_pc`, `compatible_printers` bound to its
 printer, unique `filament_id`/`setting_id` following the existing Generic PC

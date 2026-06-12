@@ -623,16 +623,10 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
 - Create: `resources/profiles/Creality/filament/Generic PC @Creality K1 SE 0.4 nozzle.json`
 - Modify: `resources/profiles/Creality.json` (two `filament_list` entries near `:3292`; version bump at `:3`)
 
-- [ ] **Step 1: K1C diagnosis (do this FIRST — it may add a third file)**
+(K1C is deliberately out of scope — the template flow covers whatever variant
+the user's K1C profile is, per the spec.)
 
-```powershell
-Get-ChildItem "$env:APPDATA\Sanity\system\Creality\machine" -Filter '*K1C*' | Select-Object Name
-(Get-Content 'resources\profiles\Creality\filament\Generic PC @Creality K1C 0.4 nozzle.json' | ConvertFrom-Json).compatible_printers
-```
-
-Decision rule: if the user's installed K1C machine profile name appears in `compatible_printers` → the preset should be offered; the gap is elsewhere (report findings, stop and ask). If the installed profile is a variant name (e.g. contains `2025` or `CFS`) → create `Generic PC @Creality <variant> 0.4 nozzle.json` by the same clone recipe as Step 3, with `compatible_printers` set to the exact variant name, and register it like Step 4.
-
-- [ ] **Step 2: Verify the shared-id convention before reusing it**
+- [ ] **Step 1: Verify the shared-id convention before reusing it**
 
 ```powershell
 foreach ($f in 'K2 Pro','K1C') { (Get-Content "resources\profiles\Creality\filament\Generic PC @Creality $f 0.4 nozzle.json" | ConvertFrom-Json) | Select-Object name, filament_id, setting_id }
@@ -640,7 +634,7 @@ foreach ($f in 'K2 Pro','K1C') { (Get-Content "resources\profiles\Creality\filam
 
 Expected: both show the same `filament_id` (K2 Pro's is `00021`). If they differ, use the donor's id for each new file (per-machine-family convention) — do not invent new ids.
 
-- [ ] **Step 3: Create the two files by donor-clone**
+- [ ] **Step 2: Create the two files by donor-clone**
 
 ```powershell
 Copy-Item 'resources\profiles\Creality\filament\Generic PC @Creality K2 Pro 0.4 nozzle.json' 'resources\profiles\Creality\filament\Generic PC @Creality K2 0.4 nozzle.json'
@@ -658,7 +652,7 @@ Edit `Generic PC @Creality K1 SE 0.4 nozzle.json`:
 
 Both files keep `"inherits": "fdm_filament_pc"`, `"instantiation": "true"`, donor `filament_id`/`setting_id` (per Step 2), and all tuning values otherwise.
 
-- [ ] **Step 4: Register in `Creality.json` and bump its version**
+- [ ] **Step 3: Register in `Creality.json` and bump its version**
 
 Insert two entries in `filament_list` adjacent to the existing Generic PC block (`:3292` area), matching the existing format exactly:
 
@@ -675,7 +669,7 @@ Insert two entries in `filament_list` adjacent to the existing Generic PC block 
 
 Bump line 3: `"version": "25.12.26.17"` → `"version": "25.12.26.18"` (required so existing installs refresh their `%APPDATA%\Sanity\system\` copy).
 
-- [ ] **Step 5: Validate**
+- [ ] **Step 4: Validate**
 
 ```powershell
 Get-Content 'resources\profiles\Creality.json' | ConvertFrom-Json | Out-Null
@@ -684,7 +678,7 @@ foreach ($n in 'K2','K1 SE') { Get-Content "resources\profiles\Creality\filament
 
 Expected: parses clean; names/compatible_printers correct.
 
-- [ ] **Step 6: Commit**
+- [ ] **Step 5: Commit**
 
 ```powershell
 git add resources/profiles; git commit -m @'
