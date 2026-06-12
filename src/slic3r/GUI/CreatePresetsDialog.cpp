@@ -1305,6 +1305,12 @@ wxBoxSizer *CreateFilamentPresetDialog::create_button_item()
                     dynamic_config.set_key_value("compatible_printers", new ConfigOptionStrings({compatible_printer_name}));
                     dynamic_config.set_key_value("filament_type", new ConfigOptionStrings({type_name}));
                     seed_material_behavior(dynamic_config, type_name);
+                    // Template seeds are globally resident system presets: keep
+                    // the parent link so lineage shows and template tuning
+                    // propagates. Concrete-preset seeds stay standalone (cleared
+                    // by clone_presets) — unchanged current behavior.
+                    if (m_template_presets.count(checked_preset->name))
+                        dynamic_config.set_key_value("inherits", new ConfigOptionString(checked_preset->name));
                     bool res = preset_bundle->filaments.clone_presets_for_filament(checked_preset, failures, filament_preset_name, user_filament_id, dynamic_config,
                                                                                    compatible_printer_name);
                     if (!res) {
@@ -1333,6 +1339,12 @@ wxBoxSizer *CreateFilamentPresetDialog::create_button_item()
                     dynamic_config.set_key_value("compatible_printers", new ConfigOptionStrings({compatible_printer_name}));
                     dynamic_config.set_key_value("filament_type", new ConfigOptionStrings({type_name}));
                     seed_material_behavior(dynamic_config, type_name);
+                    // Template seeds are globally resident system presets: keep
+                    // the parent link so lineage shows and template tuning
+                    // propagates. Concrete-preset seeds stay standalone (cleared
+                    // by clone_presets) — unchanged current behavior.
+                    if (m_template_presets.count(checked_preset->name))
+                        dynamic_config.set_key_value("inherits", new ConfigOptionString(checked_preset->name));
                     bool res = preset_bundle->filaments.clone_presets_for_filament(checked_preset, failures, filament_preset_name, user_filament_id, dynamic_config,
                                                                                    compatible_printer_name);
                     if (!res) {
