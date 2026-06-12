@@ -1764,6 +1764,30 @@ std::pair<PresetsConfigSubstitutions, std::string> PresetBundle::load_system_pre
         }
     }
 
+    // SanityPrint: load the Template vendor (printer-agnostic base filaments)
+    // directly from resources so template edits go live on restart, bypassing
+    // the version-gated data_dir/system copy. The "Template" vendor name is
+    // exempted from the instantiation and filament_id gates below, so its
+    // non-instantiated bases load as real (hidden) presets that user filament
+    // presets can inherit from.
+    {
+        boost::filesystem::path template_dir =
+            (boost::filesystem::path(resources_dir()) / PRESET_PROFILES_TEMOLATE_DIR).make_preferred();
+        if (boost::filesystem::exists(template_dir / (std::string(PRESET_TEMPLATE_DIR) + ".json"))) {
+            try {
+                PresetBundle other;
+                append(substitutions,
+                       other.load_vendor_configs_from_json(template_dir.string(), PRESET_TEMPLATE_DIR,
+                                                           PresetBundle::LoadSystem, compatibility_rule).first);
+                std::vector<std::string> duplicates = this->merge_presets(std::move(other));
+                for (const std::string &dup : duplicates)
+                    BOOST_LOG_TRIVIAL(error) << "Template vendor preset duplicates existing preset: " << dup;
+            } catch (const std::exception &err) {
+                BOOST_LOG_TRIVIAL(error) << "Failed loading Template vendor: " << err.what();
+            }
+        }
+    }
+
     if (first) {
 		// No config bundle loaded, reset.
 		this->reset(false);
