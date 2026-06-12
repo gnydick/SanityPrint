@@ -369,6 +369,8 @@ static std::string get_machine_model(const std::string &preset_model)
  static wxBoxSizer *create_select_filament_preset_checkbox(wxWindow *                                    parent,
                                                            std::string &                                 compatible_printer,
                                                            std::vector<Preset *>                         presets,
+                                                           std::vector<Preset *>                         template_presets,
+                                                           const std::string &                           selected_filament_type,
                                                            std::unordered_map<::CheckBox *, std::pair<std::string, Preset *>> &machine_filament_preset)
  {
 
@@ -399,19 +401,19 @@ static std::string get_machine_model(const std::string &preset_model)
      std::string sModel = get_machine_model(compatible_printer);
      wxStaticText *machine_name_str = new wxStaticText(parent, wxID_ANY, wxString::FromUTF8(sModel));
      ComboBox *    combobox        = new ComboBox(parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(200, 20), 0, nullptr, wxCB_READONLY);
+     // Parallel to the combobox rows; nullptr marks an unselectable section delimiter.
+     auto row_presets    = std::make_shared<std::vector<Preset *>>();
+     auto last_valid_row = std::make_shared<int>(0);
      ::CheckBox* checkbox = new ::CheckBox(parent);
-     checkbox->Bind(wxEVT_TOGGLEBUTTON, [checkbox, combobox, presets, &machine_filament_preset, compatible_printer](wxCommandEvent& event){
+     checkbox->Bind(wxEVT_TOGGLEBUTTON, [checkbox, combobox, row_presets, &machine_filament_preset, compatible_printer](wxCommandEvent& event){
          bool value = checkbox->GetValue();
          if (value)
          {
              checkbox->SetValue(true);
-             wxString preset_name = combobox->GetStringSelection();
-             for (Preset* preset : presets)
+             int row = combobox->GetSelection();
+             if (row >= 0 && row < (int) row_presets->size() && (*row_presets)[row] != nullptr)
              {
-                 if (preset_name == wxString::FromUTF8(preset->name))
-                 {
-                     machine_filament_preset[checkbox] = std::make_pair(compatible_printer, preset);
-                 }
+                 machine_filament_preset[checkbox] = std::make_pair(compatible_printer, (*row_presets)[row]);
              }
          }
          else
@@ -427,39 +429,64 @@ static std::string get_machine_model(const std::string &preset_model)
      combobox->SetBackgroundColor(*wxWHITE);
      combobox->SetBorderColor(PRINTER_LIST_COLOUR);
      combobox->SetLabel(_L("Select filament preset"));
-     combobox->Bind(wxEVT_COMBOBOX, [combobox, checkbox, presets, &machine_filament_preset, compatible_printer](wxCommandEvent& e) {
-         combobox->SetLabelColor(*wxBLACK);
-         wxString preset_name = combobox->GetStringSelection();
-         checkbox->SetValue(true);
-         for (Preset *preset : presets) {
-             if (preset_name == wxString::FromUTF8(preset->name)) {
-                 machine_filament_preset[checkbox] = std::make_pair(compatible_printer, preset);
-             }
+     combobox->Bind(wxEVT_COMBOBOX, [combobox, checkbox, row_presets, last_valid_row, &machine_filament_preset, compatible_printer](wxCommandEvent& e) {
+         int row = combobox->GetSelection();
+         if (row < 0 || row >= (int) row_presets->size() || (*row_presets)[row] == nullptr) {
+             combobox->SetSelection(*last_valid_row); // delimiter rows are not selectable
+             return;
          }
+         *last_valid_row = row;
+         combobox->SetLabelColor(*wxBLACK);
+         checkbox->SetValue(true);
+         machine_filament_preset[checkbox] = std::make_pair(compatible_printer, (*row_presets)[row]);
          e.Skip();
      });
      combobox_sizer->Add(filament_name_str, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxLEFT, 20);
      combobox_sizer->Add(combobox, 0, wxEXPAND | wxLEFT, 5);
 
      wxArrayString choices;
-
+     auto add_row = [&choices, &row_presets](const wxString &label, Preset *preset) {
+         choices.Add(label);
+         row_presets->push_back(preset);
+     };
+     add_row(_L("------- Templates -------"), nullptr);
+     for (Preset *preset : template_presets)
+         add_row(wxString::FromUTF8(preset->name), preset);
+     add_row(_L("------- Existing presets -------"), nullptr);
      //将用户预设置前
      for (Preset* preset : presets)
      {
          if (preset->is_user())
          {
-             choices.Add(wxString::FromUTF8(preset->name));
+             add_row(wxString::FromUTF8(preset->name), preset);
          }
      }
      for (Preset* preset : presets)
      {
          if (!preset->is_user())
          {
-             choices.Add(wxString::FromUTF8(preset->name));
+             add_row(wxString::FromUTF8(preset->name), preset);
          }
      }
      combobox->Set(choices);
-     combobox->SetSelection(0);
+
+     // Default: first existing preset matching the selected filament type, then a
+     // matching template, then the first selectable row.
+     auto type_of = [](Preset *preset) -> std::string {
+         auto *types = dynamic_cast<const ConfigOptionStrings *>(preset->config.option("filament_type"));
+         return (types && !types->values.empty()) ? types->values[0] : std::string();
+     };
+     int default_row = -1;
+     for (int i = (int) template_presets.size() + 2; i < (int) row_presets->size(); ++i)
+         if ((*row_presets)[i] && type_of((*row_presets)[i]) == selected_filament_type) { default_row = i; break; }
+     if (default_row < 0)
+         for (int i = 1; i <= (int) template_presets.size(); ++i)
+             if (type_of((*row_presets)[i]) == selected_filament_type) { default_row = i; break; }
+     if (default_row < 0)
+         for (int i = 0; i < (int) row_presets->size(); ++i)
+             if ((*row_presets)[i]) { default_row = i; break; }
+     combobox->SetSelection(default_row);
+     *last_valid_row = default_row;
 
      //wxPanel* panel = new wxPanel(parent, wxID_ANY,wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL|wxBORDER_SIMPLE);
      wxPanel* panel = new wxPanel(parent, wxID_ANY,wxDefaultPosition, wxDefaultSize);
@@ -1535,11 +1562,24 @@ void CreateFilamentPresetDialog::get_filament_presets_by_machine()
         printer_name_to_filament_presets.push_back(machine_filament_presets);
     }
     sort_printer_by_nozzle(printer_name_to_filament_presets);
+
+    // Templates: same list for every printer, sorted by filament type A->Z, then name.
+    std::vector<Preset *> sorted_templates;
+    for (auto &template_entry : m_template_presets) sorted_templates.push_back(template_entry.second);
+    auto template_type = [](Preset *preset) -> std::string {
+        auto *types = dynamic_cast<const ConfigOptionStrings *>(preset->config.option("filament_type"));
+        return (types && !types->values.empty()) ? types->values[0] : std::string();
+    };
+    std::sort(sorted_templates.begin(), sorted_templates.end(), [&template_type](Preset *a, Preset *b) {
+        std::string ta = template_type(a), tb = template_type(b);
+        return ta != tb ? ta < tb : a->name < b->name;
+    });
+
     m_filament_preset_panel->Freeze();
     for (std::pair<std::string, std::vector<Preset *>> machine_filament_presets : printer_name_to_filament_presets) {
         std::string            compatible_printer = machine_filament_presets.first;
         std::vector<Preset *> &presets      = machine_filament_presets.second;
-        m_filament_presets_sizer->Add(create_select_filament_preset_checkbox(m_filament_preset_panel, compatible_printer, presets, m_machint_filament_preset), 0, wxEXPAND | wxALL, FromDIP(5));
+        m_filament_presets_sizer->Add(create_select_filament_preset_checkbox(m_filament_preset_panel, compatible_printer, presets, sorted_templates, type_name, m_machint_filament_preset), 0, wxEXPAND | wxALL, FromDIP(5));
     }
     m_filament_preset_panel->Thaw();
 }
