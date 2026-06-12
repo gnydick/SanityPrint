@@ -1,6 +1,8 @@
 # Default ignored files
 /shelf/
 /workspace.xml
+# Local SFTP deployment config (machine-specific)
+/deployment.xml
 # Editor-based HTTP Client requests
 /httpRequests/
 # Ignored default folder with query files
