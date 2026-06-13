@@ -12,3 +12,7 @@
 /dataSources.local.xml
 # Zeppelin ignored files
 /ZeppelinRemoteNotebooks/
+# IntelliJ IDEA module files — this project builds with CLion/CMake, not IDEA
+/*.iml
+/modules.xml
+/codeStyles/
