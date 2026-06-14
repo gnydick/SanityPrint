@@ -1,6 +1,9 @@
 $ErrorActionPreference = 'Continue'
-$log  = 'D:\cpbuild\install.log'
-$done = 'D:\cpbuild\install.done'
+# Build root: $env:CPBUILD_ROOT, else D:\cpbuild when a D: drive exists, else C:\cpbuild.
+$CpbuildRoot = if ($env:CPBUILD_ROOT) { $env:CPBUILD_ROOT } elseif (Test-Path 'D:\') { 'D:\cpbuild' } else { 'C:\cpbuild' }
+New-Item -ItemType Directory -Force $CpbuildRoot | Out-Null
+$log  = "$CpbuildRoot\install.log"
+$done = "$CpbuildRoot\install.done"
 Remove-Item $done -ErrorAction SilentlyContinue
 
 function Log($m){

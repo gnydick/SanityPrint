@@ -16,7 +16,10 @@ build process** for this machine, including every non-obvious gotcha discovered 
 way. Read the **Gotchas** section first — most build failures map to one of them.
 
 Helper scripts live in `scripts/` next to this file. They encode the exact steps below.
-They assume this machine's layout (see *Layout*); adjust paths if yours differs.
+They auto-adapt to the machine: the repo root is derived from each script's own location, and
+the build root is `$env:CPBUILD_ROOT` if set, else `D:\cpbuild` when a D: drive exists, else
+`C:\cpbuild`. So they run unchanged here and on a single-drive (C:-only) machine — see
+*Moving to another machine*.
 
 ## Source & what's already in-tree
 
@@ -40,13 +43,34 @@ configuration, reproduced here via `BUILD_ID` + `-DPROJECT_VERSION_EXTRA=Release
 
 | Thing | Path |
 |---|---|
-| Source repo | `I:\IdeaProjects\SanityPrint` |
-| Build outputs | `D:\cpbuild\` (source is on a small drive; builds go on D:) |
+| Source repo | `I:\IdeaProjects\CrealityPrint` |
+| Build outputs | `D:\cpbuild\` (source is on a small drive; builds go on D:) — overridable via `$env:CPBUILD_ROOT` |
 | Pinned CMake 3.31.12 | `D:\cpbuild\tools\cmake-3.31.12-windows-x86_64\bin\cmake.exe` |
 | Deps build dir | `D:\cpbuild\deps` |
 | Deps install prefix | `D:\cpbuild\OrcaSlicer_dep\usr\local` (→ `CMAKE_PREFIX_PATH`) |
 | App build dir | `D:\cpbuild\app` |
 | Built exe | `D:\cpbuild\app\src\Release\SanityPrint.exe` (thin launcher; logic in `SanityPrint_Slicer.dll`) |
+
+## Moving to another machine (e.g. everything on C:)
+
+The scripts and run config are path-parameterized, so a fresh machine needs almost no edits:
+
+- **Build root** auto-resolves: `$env:CPBUILD_ROOT` → `D:\cpbuild` (if a D: drive exists) →
+  `C:\cpbuild`. On a C:-only box it picks `C:\cpbuild` with nothing to set; override anytime
+  with `setx CPBUILD_ROOT <path>`.
+- **Repo root** is derived from each script's location, so the source can live anywhere.
+- **`DEP_CROSS_DRIVE_BUILD` auto-derives** from whether source and build share a drive — `OFF`
+  on a single-drive machine (Gotcha 2 doesn't apply), `ON` here (I: source, D: build).
+- **`.run/SanityPrint.run.xml`** uses the `$PROJECT_DIR$\resources` macro — machine-independent.
+- **One residual manual edit:** `.idea/cmake.xml` is static CLion config that can't read the
+  env var, so point its two paths at your build root — `GENERATION_DIR` (`…\clion-build`) and
+  `-DCMAKE_PREFIX_PATH=…/OrcaSlicer_dep/usr/local`.
+- **Don't copy the built deps across drives** — their generated `*Config.cmake` files bake
+  absolute install paths; rebuild deps on the new machine instead.
+
+New-machine order: clone your fork → `install_tools.ps1` + `install_atl.ps1` → download pinned
+CMake 3.31.12 into `<build root>\tools` → `build_deps.ps1` → `build_app.ps1` → fix the two
+`.idea/cmake.xml` paths for CLion.
 
 ## Gotchas (read this first)
 

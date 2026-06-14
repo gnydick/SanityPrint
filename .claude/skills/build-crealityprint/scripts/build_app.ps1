@@ -1,6 +1,11 @@
 $ErrorActionPreference = 'Continue'
-$log  = 'D:\cpbuild\app_build.log'
-$done = 'D:\cpbuild\app.done'
+# Portable roots: repo derived from this script's path; build root from $env:CPBUILD_ROOT,
+# else D:\cpbuild when a D: drive exists, else C:\cpbuild (single-drive machine).
+$RepoRoot    = (Resolve-Path (Join-Path $PSScriptRoot '..\..\..\..')).Path
+$CpbuildRoot = if ($env:CPBUILD_ROOT) { $env:CPBUILD_ROOT } elseif (Test-Path 'D:\') { 'D:\cpbuild' } else { 'C:\cpbuild' }
+New-Item -ItemType Directory -Force $CpbuildRoot | Out-Null
+$log  = "$CpbuildRoot\app_build.log"
+$done = "$CpbuildRoot\app.done"
 Remove-Item $done -ErrorAction SilentlyContinue
 function Log($m){ $ts=(Get-Date).ToString('HH:mm:ss'); Add-Content -Path $log -Value "$ts  $m" }
 
@@ -12,13 +17,13 @@ foreach($d in @('C:\Strawberry\perl\bin','C:\Strawberry\c\bin','C:\Program Files
   if((Test-Path $d) -and ($env:Path -notlike "*$d*")){ $env:Path = "$d;" + $env:Path }
 }
 # Pin CMake 3.31.x (avoid CMake 4.x removals against this legacy tree)
-$cmakeBin = 'D:\cpbuild\tools\cmake-3.31.12-windows-x86_64\bin'
+$cmakeBin = "$CpbuildRoot\tools\cmake-3.31.12-windows-x86_64\bin"
 $env:Path = "$cmakeBin;" + $env:Path
 $cmake = Join-Path $cmakeBin 'cmake.exe'
 
 # 2. Import VS developer environment
 $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
-if(-not (Test-Path $vswhere)){ $vswhere = 'I:\IdeaProjects\CrealityPrint\tools\vswhere.exe' }
+if(-not (Test-Path $vswhere)){ $vswhere = Join-Path $RepoRoot 'tools\vswhere.exe' }
 $vsPath = & $vswhere -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
 $vcvars = Join-Path $vsPath 'VC\Auxiliary\Build\vcvars64.bat'
 cmd /c "`"$vcvars`" && set" | ForEach-Object { if($_ -match '^(.*?)=(.*)$'){ [Environment]::SetEnvironmentVariable($matches[1],$matches[2]) } }
@@ -31,11 +36,11 @@ $env:BUILD_ID = '4472'
 Log "BUILD_ID=$env:BUILD_ID"
 
 # 3. Sanity: deps must be present
-$deps = 'D:\cpbuild\OrcaSlicer_dep\usr\local'
+$deps = "$CpbuildRoot\OrcaSlicer_dep\usr\local"
 if(-not (Test-Path $deps)){ Log "FATAL: deps prefix missing: $deps"; Set-Content $done 'fail-no-deps'; exit 1 }
 
 # 4. Configure app
-$src='I:\IdeaProjects\CrealityPrint'; $bld='D:\cpbuild\app'
+$src = $RepoRoot; $bld = "$CpbuildRoot\app"
 Log "CONFIGURE -> $bld  PREFIX=$deps"
 & $cmake -S $src -B $bld -G "Visual Studio 17 2022" -A x64 `
     -U SANITYPRINT_VERSION `
