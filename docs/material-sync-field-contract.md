@@ -90,3 +90,15 @@ normalized to `#RRGGBB` on either side.
 2. Two-tier upsert key: `id` first (update in place, rename allowed), then `name` (update, return existing id — never overwrite a row's id), else insert (mint `U####` or honor explicit unused id).
 3. Response shape on POST: `{"result":{"action":"register|update","brand":...,"id":...,"name":...,"count":N}}` — `id` must always be the row's canonical id. (Informational for SanityPrint, which ignores it; ids are printer-local.)
 4. On GET, every `kvParam` key the printer stores can be applied generically by pull-capable API clients (keys are literal slicer config names). SanityPrint does not pull.
+
+## Delete (remove a material)
+
+`DELETE /server/material?id=<id>` — removal is **by id only** (the precise key; no
+name/brand bulk delete), non-destructive to every other row, and a timestamped
+backup is kept. Symmetric with the `UNREGISTER_MATERIAL ID=…` gcode macro.
+
+SanityPrint's pushes are id-less, so its remove flow first `GET`s the catalog,
+matches the target row by `(vendor=brand, name)` to learn its `id`, then `DELETE`s
+that id. The slicer only lists/removes rows it registered — those carrying a
+non-empty `userMaterial` marker; factory/official rows have no marker and are never
+deletable from the slicer.
