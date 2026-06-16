@@ -34,11 +34,15 @@ public:
 
 private:
     void start_sync(const std::vector<SyncDevice> &targets);
+    // Fetch the selected printers' tool-registered materials, let the user pick
+    // some, and delete them by id. Returns true if a removal was started.
+    bool run_remove(const std::vector<SyncDevice> &targets);
     std::vector<SyncDevice> selected_targets(bool require_any);
 
     std::vector<std::pair<CheckBox *, SyncDevice>> m_device_rows;
-    CheckBox *m_select_all  = nullptr;
-    Button   *m_sync_button = nullptr;
+    CheckBox *m_select_all    = nullptr;
+    Button   *m_sync_button   = nullptr;
+    Button   *m_remove_button = nullptr;
     size_t    m_filament_count = 0;
 };
 

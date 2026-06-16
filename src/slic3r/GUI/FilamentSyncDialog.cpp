@@ -14,16 +14,21 @@
 #include "libslic3r/Preset.hpp"
 #include "libslic3r/PresetBundle.hpp"
 
+#include "nlohmann/json.hpp"
+
 #include <boost/log/trivial.hpp>
 #include <boost/thread.hpp>
 
 #include <algorithm>
 #include <map>
+#include <memory>
+#include <regex>
 #include <set>
 
 #include <wx/scrolwin.h>
 #include <wx/sizer.h>
 #include <wx/stattext.h>
+#include <wx/utils.h>
 
 namespace Slic3r { namespace GUI {
 
@@ -96,22 +101,13 @@ static void add_bool_param(const DynamicPrintConfig &cfg, std::vector<std::pair<
         out.emplace_back(param, opt->values.front() ? "1" : "0");
 }
 
-static MaterialPayload payload_from_preset(const Preset &preset)
+// Nozzle-INDEPENDENT material fields: identity + temps + physical + flags +
+// behavior extensions. Shared by every nozzle variant of a material, so they go
+// to flat kvParam exactly once (taken from the group's representative preset).
+// NOTE: flow / pressure advance are deliberately NOT here -- they are per-nozzle
+// (see add_per_nozzle_params).
+static void add_shared_params(const DynamicPrintConfig &cfg, std::vector<std::pair<std::string, std::string>> &p)
 {
-    MaterialPayload payload;
-    payload.preset_name = preset.name;
-    const DynamicPrintConfig &cfg = preset.config;
-    auto &p = payload.params;
-
-    // vendor is the only REQUIRED field of the upsert.
-    {
-        const auto *vendor = cfg.option<ConfigOptionStrings>("filament_vendor");
-        p.emplace_back("vendor", (vendor && !vendor->values.empty() && !vendor->values.front().empty())
-                                     ? vendor->values.front()
-                                     : std::string("Custom"));
-    }
-    p.emplace_back("name", preset.name); // upsert identity key
-
     add_string_param(cfg, p, "type", "filament_type");
     add_string_param(cfg, p, "color", "default_filament_colour");
     add_int_param(cfg, p, "mintemp", "nozzle_temperature_range_low");
@@ -132,7 +128,6 @@ static MaterialPayload payload_from_preset(const Preset &preset)
     add_float_param(cfg, p, "diameter", "filament_diameter");
     add_float_param(cfg, p, "cost", "filament_cost");
     add_percent_param(cfg, p, "shrink", "filament_shrink");
-    add_float_param(cfg, p, "flow", "filament_flow_ratio");
     add_float_param(cfg, p, "maxspeed", "filament_max_volumetric_speed");
     add_bool_param(cfg, p, "soluble", "filament_soluble");
     add_bool_param(cfg, p, "support", "filament_is_support");
@@ -148,19 +143,110 @@ static MaterialPayload payload_from_preset(const Preset &preset)
     add_float_param(cfg, p, "filament_small_island_threshold", "filament_small_island_threshold");
     add_int_param(cfg, p, "filament_chamber_temp_limit", "filament_chamber_temp_limit");
     add_bool_param(cfg, p, "filament_is_flexible", "filament_is_flexible");
-
-    return payload;
 }
 
+// Per-nozzle CALIBRATION (pressure advance + flow): emitted as '<key>@<nozzle>'
+// so the printer files them under one material's nozzleParam[<nozzle>] instead
+// of overwriting a single flat value. Keys are the literal slicer config names.
+static void add_per_nozzle_params(const DynamicPrintConfig &cfg, const std::string &nozzle,
+                                  std::vector<std::pair<std::string, std::string>> &p)
+{
+    add_float_param(cfg, p, ("pressure_advance@" + nozzle).c_str(), "pressure_advance");
+    add_bool_param(cfg, p, ("enable_pressure_advance@" + nozzle).c_str(), "enable_pressure_advance");
+    add_float_param(cfg, p, ("filament_flow_ratio@" + nozzle).c_str(), "filament_flow_ratio");
+}
+
+// "CR-ABS @Creality K2 Plus 0.4 nozzle" -> "CR-ABS": the nozzle/printer-
+// independent material name (the printer dedupes on brand+name).
+static std::string series_name(const std::string &preset_name)
+{
+    const auto pos = preset_name.find(" @");
+    return pos == std::string::npos ? preset_name : preset_name.substr(0, pos);
+}
+
+static std::string parse_nozzle_token(const std::string &s)
+{
+    static const std::regex re(R"(([0-9]*\.?[0-9]+)\s*nozzle)", std::regex::icase);
+    std::smatch m;
+    if (std::regex_search(s, m, re))
+        return m[1].str();
+    return std::string();
+}
+
+// The nozzle a filament preset is tuned for: authoritatively the printer_variant
+// of its compatible printer; falls back to parsing the "<n> nozzle" token, then
+// to the OEM default 0.4.
+static std::string nozzle_for_preset(const Preset &preset)
+{
+    PresetBundle *bundle = wxGetApp().preset_bundle;
+    const auto *comp = preset.config.option<ConfigOptionStrings>("compatible_printers");
+    if (comp) {
+        for (const std::string &pname : comp->values) {
+            const Preset *pp = bundle ? bundle->printers.find_preset(pname, false) : nullptr;
+            if (pp) {
+                const auto *pv = pp->config.option<ConfigOptionString>("printer_variant");
+                if (pv && !pv->value.empty())
+                    return pv->value;
+            }
+        }
+        if (!comp->values.empty()) {
+            const std::string parsed = parse_nozzle_token(comp->values.front());
+            if (!parsed.empty())
+                return parsed;
+        }
+    }
+    const std::string parsed = parse_nozzle_token(preset.name);
+    return parsed.empty() ? std::string("0.4") : parsed;
+}
+
+// One material per filament_id (the nozzle-independent identity), NOT one per
+// preset: the per-nozzle variants collapse into a single upsert whose per-nozzle
+// calibration rides along as '<key>@<nozzle>' params.
 static std::vector<MaterialPayload> collect_custom_filament_payloads()
 {
     std::vector<MaterialPayload> payloads;
     const PresetBundle *bundle = wxGetApp().preset_bundle;
     if (!bundle)
         return payloads;
+
+    std::vector<std::string>                          order; // group keys, stable order
+    std::map<std::string, std::vector<const Preset *>> groups;
     for (const Preset &preset : bundle->filaments) {
-        if (preset.is_user())
-            payloads.push_back(payload_from_preset(preset));
+        if (!preset.is_user())
+            continue;
+        // filament_id is shared across a material's nozzle variants; fall back to
+        // the series name when a hand-rolled preset carries no id.
+        std::string key = !preset.filament_id.empty() ? preset.filament_id : series_name(preset.name);
+        if (groups.find(key) == groups.end())
+            order.push_back(key);
+        groups[key].push_back(&preset);
+    }
+
+    for (const std::string &key : order) {
+        const std::vector<const Preset *> &presets = groups[key];
+        const Preset &                     rep     = *presets.front();
+        MaterialPayload                    payload;
+        payload.preset_name = series_name(rep.name);
+        auto &p             = payload.params;
+
+        // vendor is the only REQUIRED field of the upsert.
+        {
+            const auto *vendor = rep.config.option<ConfigOptionStrings>("filament_vendor");
+            p.emplace_back("vendor", (vendor && !vendor->values.empty() && !vendor->values.front().empty())
+                                         ? vendor->values.front()
+                                         : std::string("Custom"));
+        }
+        p.emplace_back("name", payload.preset_name); // nozzle-independent upsert identity
+        add_shared_params(rep.config, p);
+
+        std::set<std::string> seen_nozzles;
+        for (const Preset *pp : presets) {
+            const std::string nz = nozzle_for_preset(*pp);
+            if (!seen_nozzles.insert(nz).second) // one bucket per nozzle
+                continue;
+            add_per_nozzle_params(pp->config, nz, p);
+        }
+        payloads.push_back(std::move(payload));
     }
     return payloads;
 }
@@ -220,6 +306,162 @@ std::vector<SyncDevice> FilamentSyncDialog::collect_devices()
     }
     return devices;
 }
+
+// ---------------------------------------------------------------------------
+// Removal: pull the printer's catalog, keep only the materials THIS tool put
+// there (a non-empty userMaterial marker -- factory rows have none and stay
+// invisible/protected), and delete the chosen ones. DELETE is by id only, so
+// ids are resolved from the GET rather than guessed.
+// ---------------------------------------------------------------------------
+namespace {
+
+struct RemoteMaterial
+{
+    std::string id;
+    std::string name;
+    std::string brand;
+    SyncDevice  dev;
+};
+
+// GET one device's catalog; append its tool-registered rows to `out`.
+static bool fetch_removable_materials(const SyncDevice &dev, std::vector<RemoteMaterial> &out)
+{
+    const std::string url = "http://" + dev.address + ":" + std::to_string(MATERIAL_API_PORT) + "/server/material";
+    bool              ok  = false;
+    Http::get(url)
+        .timeout_connect(5)
+        .timeout_max(15)
+        .on_complete([&](std::string body, unsigned status) {
+            if (status != 200)
+                return;
+            try {
+                const auto j = nlohmann::json::parse(body);
+                if (!j.contains("result") || !j["result"].contains("materials"))
+                    return;
+                for (const auto &m : j["result"]["materials"]) {
+                    // userMaterial marker present == registered by this tool; an
+                    // official Creality/Generic row has none -> never deletable here.
+                    if (!m.is_object() || m.value("userMaterial", std::string()).empty() || !m.contains("base"))
+                        continue;
+                    const auto &  base = m["base"];
+                    RemoteMaterial rm;
+                    rm.id    = base.value("id", std::string());
+                    rm.name  = base.value("name", std::string());
+                    rm.brand = base.value("brand", std::string());
+                    if (rm.id.empty())
+                        continue;
+                    rm.dev = dev;
+                    out.push_back(std::move(rm));
+                }
+                ok = true;
+            } catch (const std::exception &e) {
+                BOOST_LOG_TRIVIAL(error) << "FilamentSync: bad material list from " << dev.address << ": " << e.what();
+            }
+        })
+        .on_error([dev](std::string, std::string error, unsigned status) {
+            BOOST_LOG_TRIVIAL(error) << "FilamentSync: GET materials failed on " << dev.address << " status=" << status
+                                     << " error=" << error;
+        })
+        .perform_sync();
+    return ok;
+}
+
+// DELETE one material by id from one device. Returns true on a 200.
+static bool delete_material(const SyncDevice &dev, const std::string &id)
+{
+    const std::string url = "http://" + dev.address + ":" + std::to_string(MATERIAL_API_PORT) +
+                            "/server/material?id=" + Http::url_encode(id);
+    bool ok   = false;
+    Http http = Http::del(url);
+    http.set_del_body(std::string("{}")); // same non-empty-body quirk as POST
+    http.timeout_connect(5)
+        .timeout_max(15)
+        .on_complete([&ok](std::string, unsigned status) { ok = (status == 200); })
+        .on_error([dev, id](std::string, std::string error, unsigned status) {
+            BOOST_LOG_TRIVIAL(error) << "FilamentSync: DELETE id=" << id << " failed on " << dev.address
+                                     << " status=" << status << " error=" << error;
+        })
+        .perform_sync();
+    return ok;
+}
+
+// Modal checklist of removable materials. ShowModal()==wxID_OK -> selected().
+class RemoveListDialog : public wxDialog
+{
+public:
+    RemoveListDialog(wxWindow *parent, const std::vector<RemoteMaterial> &mats, bool multi_device)
+        : wxDialog(parent, wxID_ANY, _L("Remove Materials from Printer"), wxDefaultPosition, wxDefaultSize,
+                   wxDEFAULT_DIALOG_STYLE)
+    {
+        SetBackgroundColour(*wxWHITE);
+        wxBoxSizer *main_sizer = new wxBoxSizer(wxVERTICAL);
+        main_sizer->Add(new wxStaticText(this, wxID_ANY,
+                            _L("Select the materials to remove from the printer (only those added by "
+                               "SanityPrint are listed; factory materials are protected):")),
+                        0, wxALL, FromDIP(15));
+
+        auto *scrolled = new wxScrolledWindow(this, wxID_ANY, wxDefaultPosition,
+                                              wxSize(FromDIP(400), FromDIP(std::min<size_t>(mats.size(), 10) * 28 + 8)));
+        scrolled->SetScrollRate(0, FromDIP(16));
+        scrolled->SetBackgroundColour(*wxWHITE);
+        wxBoxSizer *list_sizer = new wxBoxSizer(wxVERTICAL);
+        for (const RemoteMaterial &rm : mats) {
+            wxBoxSizer *row = new wxBoxSizer(wxHORIZONTAL);
+            auto *      cb  = new ::CheckBox(scrolled);
+            row->Add(cb, 0, wxALIGN_CENTER_VERTICAL, 0);
+            wxString text = wxString::Format("%s  -  %s (%s)", from_u8(rm.name), from_u8(rm.brand), from_u8(rm.id));
+            if (multi_device)
+                text += wxString::Format("  @ %s", from_u8(rm.dev.name));
+            row->Add(new wxStaticText(scrolled, wxID_ANY, text), 0, wxALIGN_CENTER_VERTICAL | wxLEFT, FromDIP(6));
+            list_sizer->Add(row, 0, wxALL, FromDIP(4));
+            m_rows.push_back(cb);
+        }
+        scrolled->SetSizer(list_sizer);
+        main_sizer->Add(scrolled, 1, wxEXPAND | wxLEFT | wxRIGHT, FromDIP(15));
+
+        wxBoxSizer *btn_sizer = new wxBoxSizer(wxHORIZONTAL);
+        btn_sizer->AddStretchSpacer(1);
+        StateColor btn_bg_red(std::pair<wxColour, int>(wxColour(170, 40, 40), StateColor::Pressed),
+                              std::pair<wxColour, int>(wxColour(216, 92, 92), StateColor::Hovered),
+                              std::pair<wxColour, int>(wxColour(197, 57, 57), StateColor::Normal));
+        StateColor btn_bg_white(std::pair<wxColour, int>(wxColour(206, 206, 206), StateColor::Pressed),
+                                std::pair<wxColour, int>(wxColour(238, 238, 238), StateColor::Hovered),
+                                std::pair<wxColour, int>(*wxWHITE, StateColor::Normal));
+        auto *remove_btn = new Button(this, _L("Remove selected"));
+        remove_btn->SetBackgroundColor(btn_bg_red);
+        remove_btn->SetTextColor(wxColour("#FFFFFE"));
+        remove_btn->SetMinSize(wxSize(FromDIP(116), FromDIP(24)));
+        remove_btn->SetCornerRadius(FromDIP(12));
+        btn_sizer->Add(remove_btn, 0, wxRIGHT, FromDIP(10));
+        auto *cancel_btn = new Button(this, _L("Cancel"));
+        cancel_btn->SetBackgroundColor(btn_bg_white);
+        cancel_btn->SetMinSize(wxSize(FromDIP(58), FromDIP(24)));
+        cancel_btn->SetCornerRadius(FromDIP(12));
+        btn_sizer->Add(cancel_btn, 0, 0, 0);
+        main_sizer->Add(btn_sizer, 0, wxEXPAND | wxALL, FromDIP(15));
+
+        remove_btn->Bind(wxEVT_BUTTON, [this](wxCommandEvent &) { EndModal(wxID_OK); });
+        cancel_btn->Bind(wxEVT_BUTTON, [this](wxCommandEvent &) { EndModal(wxID_CANCEL); });
+
+        SetSizerAndFit(main_sizer);
+        CenterOnParent();
+        wxGetApp().UpdateDlgDarkUI(this);
+    }
+
+    std::vector<size_t> selected() const
+    {
+        std::vector<size_t> out;
+        for (size_t i = 0; i < m_rows.size(); ++i)
+            if (m_rows[i]->GetValue())
+                out.push_back(i);
+        return out;
+    }
+
+private:
+    std::vector<CheckBox *> m_rows;
+};
+
+} // namespace
 
 // ---------------------------------------------------------------------------
 // Dialog
@@ -303,6 +545,12 @@ FilamentSyncDialog::FilamentSyncDialog(wxWindow *parent)
     m_sync_button->SetCornerRadius(FromDIP(12));
     btn_sizer->Add(m_sync_button, 0, wxRIGHT, FromDIP(10));
 
+    m_remove_button = new Button(this, _L("Remove..."));
+    m_remove_button->SetBackgroundColor(btn_bg_white);
+    m_remove_button->SetMinSize(wxSize(FromDIP(78), FromDIP(24)));
+    m_remove_button->SetCornerRadius(FromDIP(12));
+    btn_sizer->Add(m_remove_button, 0, wxRIGHT, FromDIP(10));
+
     auto *cancel_button = new Button(this, _L("Cancel"));
     cancel_button->SetBackgroundColor(btn_bg_white);
     cancel_button->SetMinSize(wxSize(FromDIP(58), FromDIP(24)));
@@ -323,6 +571,13 @@ FilamentSyncDialog::FilamentSyncDialog(wxWindow *parent)
         }
         start_sync(targets);
         EndModal(wxID_OK);
+    });
+    m_remove_button->Bind(wxEVT_BUTTON, [this](wxCommandEvent &) {
+        std::vector<SyncDevice> targets = selected_targets(true);
+        if (targets.empty())
+            return;
+        if (run_remove(targets))
+            EndModal(wxID_OK);
     });
     cancel_button->Bind(wxEVT_BUTTON, [this](wxCommandEvent &) { EndModal(wxID_CANCEL); });
 
@@ -409,6 +664,66 @@ void FilamentSyncDialog::start_sync(const std::vector<SyncDevice> &targets)
             dlg.ShowModal();
         });
     }).detach();
+}
+
+bool FilamentSyncDialog::run_remove(const std::vector<SyncDevice> &targets)
+{
+    std::vector<RemoteMaterial> mats;
+    {
+        wxBusyCursor wait; // the GET round-trips the selected printers
+        for (const SyncDevice &dev : targets) {
+            if (!dev.online)
+                continue;
+            fetch_removable_materials(dev, mats);
+        }
+    }
+    if (mats.empty()) {
+        MessageDialog dlg(this,
+                          _L("No removable materials were found on the selected printer(s). Only materials "
+                             "added by SanityPrint can be removed here; factory materials are protected."),
+                          wxString(SLIC3R_APP_FULL_NAME) + " - " + _L("Remove Materials"), wxOK | wxCENTRE);
+        dlg.ShowModal();
+        return false;
+    }
+
+    RemoveListDialog dlg(this, mats, targets.size() > 1);
+    if (dlg.ShowModal() != wxID_OK)
+        return false;
+    const std::vector<size_t> sel = dlg.selected();
+    if (sel.empty())
+        return false;
+
+    auto chosen = std::make_shared<std::vector<RemoteMaterial>>();
+    for (size_t i : sel)
+        chosen->push_back(mats[i]);
+
+    boost::thread([chosen]() {
+        int         ok_count   = 0;
+        int         fail_count = 0;
+        std::string failures;
+        try {
+            for (const RemoteMaterial &rm : *chosen) {
+                if (delete_material(rm.dev, rm.id)) {
+                    ++ok_count;
+                } else {
+                    ++fail_count;
+                    if (failures.size() < 600)
+                        failures += "\n" + rm.name + " -> " + rm.dev.name;
+                }
+            }
+        } catch (const std::exception &e) {
+            BOOST_LOG_TRIVIAL(error) << "FilamentSync: remove thread exception: " << e.what();
+        }
+        wxGetApp().CallAfter([ok_count, fail_count, failures]() {
+            wxString msg = wxString::Format(_L("Remove finished: %d removed, %d failed."), ok_count, fail_count);
+            if (fail_count > 0)
+                msg += "\n" + from_u8(failures);
+            MessageDialog dlg(wxGetApp().mainframe, msg,
+                              wxString(SLIC3R_APP_FULL_NAME) + " - " + _L("Remove Materials"), wxOK | wxCENTRE);
+            dlg.ShowModal();
+        });
+    }).detach();
+    return true;
 }
 
 }} // namespace Slic3r::GUI

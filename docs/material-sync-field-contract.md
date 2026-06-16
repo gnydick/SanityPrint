@@ -55,6 +55,25 @@ clients; SanityPrint itself no longer reads it (sync is push-only per
 | `filament_chamber_temp_limit` | int (degC) | max safe chamber temp, 0 = no limit |
 | `filament_is_flexible` | `"0"`/`"1"` | TPU-like flexible material |
 
+## Per-nozzle calibration params (ONE material, many nozzles)
+
+A material is a single catalog row, but its calibration differs per nozzle. SanityPrint
+groups a material's per-nozzle filament presets (same `filament_id`) into ONE push: the
+nozzle-independent fields go to flat `kvParam` once, and each nozzle's calibration is sent
+as `<slicer_key>@<nozzle>` and stored in `nozzleParam[<nozzle>]` (a sibling of `kvParam`),
+with `<nozzle>` joining the row's `nozzleDiameter` array.
+
+| Query param | nozzleParam key | Format |
+|---|---|---|
+| `pressure_advance@<n>` | `pressure_advance` | float |
+| `enable_pressure_advance@<n>` | `enable_pressure_advance` | `"0"`/`"1"` |
+| `filament_flow_ratio@<n>` | `filament_flow_ratio` | float |
+
+e.g. `pressure_advance@0.4=0.04`. So flow is now sent per-nozzle (the flat `flow` param is
+still accepted for single-nozzle clients). The nozzle is resolved from the preset's
+`compatible_printers` → printer `printer_variant`. Buckets merge on partial upsert:
+re-syncing one nozzle never clobbers the others.
+
 ## Color policy
 
 Colors are authored ONLY in the slicer. The printer stores `default_filament_colour`
@@ -67,7 +86,7 @@ normalized to `#RRGGBB` on either side.
 
 ## Rules
 
-1. Any param absent from a request -> leave that kvParam untouched (partial upsert).
+1. Any param absent from a request -> leave that kvParam untouched (partial upsert). Per-nozzle buckets merge the same way: re-syncing one nozzle updates `nozzleParam[<that nozzle>]` and leaves the other nozzles untouched.
 2. Two-tier upsert key: `id` first (update in place, rename allowed), then `name` (update, return existing id — never overwrite a row's id), else insert (mint `U####` or honor explicit unused id).
 3. Response shape on POST: `{"result":{"action":"register|update","brand":...,"id":...,"name":...,"count":N}}` — `id` must always be the row's canonical id. (Informational for SanityPrint, which ignores it; ids are printer-local.)
 4. On GET, every `kvParam` key the printer stores can be applied generically by pull-capable API clients (keys are literal slicer config names). SanityPrint does not pull.
