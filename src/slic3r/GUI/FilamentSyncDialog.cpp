@@ -631,13 +631,21 @@ static bool post_material(const SyncDevice &dev, const std::vector<std::pair<std
 
 void FilamentSyncDialog::start_sync(const std::vector<SyncDevice> &targets)
 {
-    auto payloads = std::make_shared<std::vector<MaterialPayload>>(collect_custom_filament_payloads());
-    auto devices  = std::make_shared<std::vector<SyncDevice>>(targets);
+    auto      payloads = std::make_shared<std::vector<MaterialPayload>>(collect_custom_filament_payloads());
+    auto      devices  = std::make_shared<std::vector<SyncDevice>>(targets);
+    const int total    = static_cast<int>(payloads->size() * devices->size());
 
-    boost::thread([payloads, devices]() {
+    boost::thread([payloads, devices, total]() {
         int         ok_count   = 0;
         int         fail_count = 0;
+        int         done       = 0;
         std::string failures;
+
+        // Topbar push-progress bar: appears while the push runs, hides when finished.
+        wxGetApp().CallAfter([total]() {
+            if (BBLTopbar *tb = wxGetApp().mainframe ? wxGetApp().mainframe->topbar() : nullptr)
+                tb->StartSyncProgress(total);
+        });
 
         try {
             for (const MaterialPayload &payload : *payloads) {
@@ -649,6 +657,11 @@ void FilamentSyncDialog::start_sync(const std::vector<SyncDevice> &targets)
                         if (failures.size() < 600)
                             failures += "\n" + payload.preset_name + " -> " + dev.name;
                     }
+                    ++done;
+                    wxGetApp().CallAfter([done]() {
+                        if (BBLTopbar *tb = wxGetApp().mainframe ? wxGetApp().mainframe->topbar() : nullptr)
+                            tb->StepSyncProgress(done);
+                    });
                 }
             }
         } catch (const std::exception &e) {
@@ -656,6 +669,8 @@ void FilamentSyncDialog::start_sync(const std::vector<SyncDevice> &targets)
         }
 
         wxGetApp().CallAfter([ok_count, fail_count, failures]() {
+            if (BBLTopbar *tb = wxGetApp().mainframe ? wxGetApp().mainframe->topbar() : nullptr)
+                tb->FinishSyncProgress();
             wxString msg = wxString::Format(_L("Filament sync finished: %d pushed, %d failed."), ok_count, fail_count);
             if (fail_count > 0)
                 msg += "\n" + from_u8(failures);

@@ -9,6 +9,8 @@
 
 using namespace Slic3r::GUI;
 
+class ProgressBar;
+
 class BBLTopbar : public wxAuiToolBar
 {
 public:
@@ -37,6 +39,11 @@ public:
     void OnUndo(wxAuiToolBarEvent& event);
     void OnRedo(wxAuiToolBarEvent& event);
     void OnModelStoreClicked(wxAuiToolBarEvent& event);
+    void OnFilamentSync(wxAuiToolBarEvent& evt);
+    // Filament-sync push-progress bar (shown only while a sync runs).
+    void StartSyncProgress(int total);
+    void StepSyncProgress(int done);
+    void FinishSyncProgress();
     void OnPublishClicked(wxAuiToolBarEvent &event);
     void OnPreferences(wxAuiToolBarEvent& evt);
     void OnConfigRelate(wxAuiToolBarEvent& evt);
@@ -129,6 +136,8 @@ private:
     wxAuiToolBarItem* m_upload_btn;
     wxAuiToolBarItem* m_feedback_separator_item{nullptr};
     wxAuiToolBarItem* m_feedback_item;
+    ProgressBar*      m_sync_progress      = nullptr;
+    wxAuiToolBarItem* m_sync_progress_item = nullptr;
     wxControl* m_tabCtrol;
 
     wxBitmap m_publish_bitmap;

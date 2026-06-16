@@ -10,6 +10,8 @@
 #include "MainFrame.hpp"
 #include "WebViewDialog.hpp"
 #include "PartPlate.hpp"
+#include "FilamentSyncDialog.hpp"
+#include "Widgets/ProgressBar.hpp"
 
 #include <boost/log/trivial.hpp>
 #include <boost/log/core.hpp>
@@ -293,6 +295,7 @@ enum CUSTOM_ID
     ID_CONFIG_RELATE,
     ID_DOWNMANAGER,
     ID_LOGIN,
+    ID_FILAMENT_SYNC,
     ID_FEEDBACK_BTN,
     ID_TOOL_BAR = 3200,
     ID_AMS_NOTEBOOK,
@@ -686,6 +689,21 @@ void BBLTopbar::Init(wxFrame* parent)
     m_title_LabelItem->SetBackgroundColour(bgColor);
     m_title_LabelItem->Hide();
 
+    // Filament sync sits to the LEFT of the separator (away from undo/redo to avoid misclicks),
+    // with its push-progress bar right beside it (collapsed to 0 width until a sync runs).
+    {
+        wxBitmap sync_bitmap = create_scaled_bitmap(is_dark ? "topbar_sync" : "topbar_sync_light", this, (TOPBAR_ICON_SIZE));
+        this->AddTool(ID_FILAMENT_SYNC, "", sync_bitmap, _L("Sync filaments to printers"));
+
+        m_sync_progress = new ProgressBar(this, wxID_ANY, 100, wxDefaultPosition, wxSize(FromDIP(0), FromDIP(14)), false);
+        m_sync_progress->ShowNumber(true);
+        m_sync_progress->SetMinSize(wxSize(FromDIP(0), FromDIP(14)));
+        m_sync_progress->Hide();
+        // ProgressBar derives from wxWindow; AddControl wants wxControl* -- same C-cast the
+        // tab control (ButtonsCtrl) uses above. The toolbar only calls wxWindow methods on it.
+        m_sync_progress_item = this->AddControl((wxControl *) m_sync_progress);
+    }
+
     addDipSpacer(10);
     m_feedback_separator_item = this->AddSeparator();
     addDipSpacer(10);
@@ -766,6 +784,7 @@ void BBLTopbar::Init(wxFrame* parent)
     this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnUndo, this, wxID_UNDO);
     this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnModelStoreClicked, this, ID_MODEL_STORE);
     this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnPublishClicked, this, ID_PUBLISH);
+    this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnFilamentSync, this, ID_FILAMENT_SYNC);
     //this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnPreferences, this, ID_PREFERENCES);
     this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnConfigRelate, this, ID_CONFIG_RELATE);
     this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnDownMgr, this, ID_DOWNMANAGER);
@@ -1145,6 +1164,41 @@ void BBLTopbar::OnLogo(wxAuiToolBarEvent& evt)
         pCtr->SetSelection(-1);
     }
 #endif
+}
+
+void BBLTopbar::OnFilamentSync(wxAuiToolBarEvent& evt)
+{
+    // Push custom filaments to the selected printers (same dialog the slice-overlay button used).
+    wxGetApp().CallAfter([]() {
+        FilamentSyncDialog dlg(wxGetApp().mainframe);
+        dlg.ShowModal();
+    });
+}
+
+void BBLTopbar::StartSyncProgress(int total)
+{
+    if (!m_sync_progress)
+        return;
+    m_sync_progress->m_max = (total > 0) ? total : 1;
+    m_sync_progress->SetProgress(0);
+    m_sync_progress->SetMinSize(wxSize(FromDIP(150), FromDIP(14)));
+    m_sync_progress->Show();
+    this->Realize();
+}
+
+void BBLTopbar::StepSyncProgress(int done)
+{
+    if (m_sync_progress)
+        m_sync_progress->SetProgress(done);
+}
+
+void BBLTopbar::FinishSyncProgress()
+{
+    if (!m_sync_progress)
+        return;
+    m_sync_progress->Hide();
+    m_sync_progress->SetMinSize(wxSize(FromDIP(0), FromDIP(14)));
+    this->Realize();
 }
 
 void BBLTopbar::OnDownMgr(wxAuiToolBarEvent& evt) {}

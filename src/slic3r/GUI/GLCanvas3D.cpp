@@ -329,7 +329,7 @@ void GLCanvas3D::LayersEditing::render_variable_layer_height_dialog(const GLCanv
     /* line */
     ImGui::PushStyleColor(ImGuiCol_Separator, dark ? normal_color : ImVec4(214.0 / 255, 214.0 / 255, 220.0 / 255, 1.0f));
     // ImGui::SetCursorPosX(50.0f);
-    ImGui::SetCursorPosX((ImGui::GetContentRegionAvail().x - 100) * 0.5f); // 居中计算
+    ImGui::SetCursorPosX((ImGui::GetContentRegionAvail().x - 100) * 0.5f); // Center calculation
     ImGui::SetNextItemWidth(200.0f);
     ImGui::Separator();
     ImGui::PopStyleColor();
@@ -1369,7 +1369,7 @@ GLCanvas3D::GLCanvas3D(wxGLCanvas* canvas, Bed3D& bed)
 
 GLCanvas3D::~GLCanvas3D()
 {
-    // 相关的资源的重置在对象被析构后已经没有意义了，故注释
+    // Resetting the related resources is meaningless after the object has been destructed, so it is commented out
     //reset_volumes();
 
     m_sel_plate_toolbar.del_all_item();
@@ -1866,7 +1866,7 @@ void GLCanvas3D::adaptive_layer_height_profile(float quality_factor)
     m_layers_editing.state = LayersEditing::Completed;
     m_dirty                = true;
     
-    // 【新增】标记几何体修改（细节/速度应用）
+    // [Added] Mark geometry modified (detail/speed applied)
     AnalyticsDataUploadManager::ProjectModificationTracker::getInstance()
         .mark_modified(AnalyticsDataUploadManager::ModelModifyType::VARIABLE_LAYER);
 }
@@ -1878,7 +1878,7 @@ void GLCanvas3D::smooth_layer_height_profile(const HeightProfileSmoothingParams&
     m_layers_editing.state = LayersEditing::Completed;
     m_dirty                = true;
     
-    // 【新增】标记几何体修改（平滑模式应用）
+    // [Added] Mark geometry modified (smooth mode applied)
     AnalyticsDataUploadManager::ProjectModificationTracker::getInstance()
         .mark_modified(AnalyticsDataUploadManager::ModelModifyType::VARIABLE_LAYER);
 }
@@ -3053,7 +3053,7 @@ void GLCanvas3D::reload_scene(bool refresh_immediately, bool force_full_scene_re
                     current_plate_filaments_count = plate_extruders.size();
                 }
 
-                // 如果当前盘只使用了一种耗材，且没有开启需要擦料塔的延时摄影，则跳过擦料塔预览加载
+                // If the current plate uses only one filament and time-lapse requiring a wipe tower is not enabled, skip loading the wipe tower preview
                 if (!timelapse_enabled && current_plate_filaments_count < 2)
                     continue;
 
@@ -3298,14 +3298,14 @@ void GLCanvas3D::load_gcode_preview(const GCodeProcessorResult&     gcode_result
             BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(" 31 wipe_tower_y : %1%.") % wipe_y_option->get_at(0);
     }
 #endif
-// 判断gcode结果是否有效，m_gcode_viewer.load会处理事件循环，导致m_gcode_viewer的m_gcode_result被析构
+// Check whether the gcode result is valid; m_gcode_viewer.load processes the event loop, which causes m_gcode_viewer's m_gcode_result to be destructed
     if(!m_gcode_viewer.is_gcode_result_valid())
     {
         set_as_dirty();
         request_extra_frame();
         return;
     }
-    //尝试修复m_gcode_viewer被析构导致闪退的问题
+    // Attempt to fix the crash caused by m_gcode_viewer being destructed
     if(!m_gcode_viewer.get_moves_slider())
         return;
     m_gcode_viewer.get_moves_slider()->SetHigherValue(m_gcode_viewer.get_moves_slider()->GetMaxValue());
@@ -4714,10 +4714,10 @@ void GLCanvas3D::on_mouse(wxMouseEvent& evt)
         return evt.Dragging() && evt.ShiftDown() && evt.LeftIsDown();
 #else
         if (m_mouse_scheme == 0) {
-            // 方案1：左拖=框选
+            // Option 1: left drag = box select
             return evt.Dragging() && !evt.ShiftDown() && evt.LeftIsDown();
         } else {
-            // 方案2：Shift+左拖=框选
+            // Option 2: Shift + left drag = box select
             return evt.Dragging() && evt.ShiftDown() && evt.LeftIsDown();
         }
 #endif
@@ -5256,18 +5256,18 @@ bool GLCanvas3D::is_camera_pan(const wxMouseEvent& evt) const
     } else {
 #if __APPLE__
         if (m_mouse_scheme == 0) {
-            // 方案1：- control+单击：移动视角
+            // Option 1: - control + click: move the view
             return evt.Dragging() && (evt.MiddleIsDown() || evt.RawControlDown());
         } else {
-            // 方案2：鼠标右键
+            // Option 2: right mouse button
             return evt.Dragging() && (evt.MiddleIsDown() || evt.RightIsDown());
         }
 #else
         if (m_mouse_scheme == 0) {
-            // 方案1：shift+鼠标左键：移动视角
+            // Option 1: shift + left mouse button: move the view
             return evt.Dragging() && (evt.MiddleIsDown() || (evt.ShiftDown() && evt.LeftIsDown()));
         } else {
-            // 方案2：鼠标右键
+            // Option 2: right mouse button
             return evt.Dragging() && (evt.MiddleIsDown() ||evt.RightIsDown());
         }
 #endif
@@ -5846,7 +5846,7 @@ std::vector<Vec2f> GLCanvas3D::get_empty_cells(const Vec2f start_point,
             for (size_t i = 0; i < cells.size(); ++i) {
                 const auto& cell = cells[i];
 
-                // 创建以 cell 为中心点，step 为尺寸的 bounding-box
+                // Create a bounding-box centered at cell with size step
                 BoundingBox bounding_box(Point(cell.x() - bbox_size.x() / 2, cell.y() - bbox_size.y() / 2),
                                          Point(cell.x() + bbox_size.x() / 2, cell.y() + bbox_size.y() / 2));
 
@@ -6612,12 +6612,12 @@ bool GLCanvas3D::draw_input_int_v2(const std::string& label, int* v, int stride,
     const ImVec2 updown_button_size = ImVec2(15.0f * get_scale(), height / 2.0f);
     ImGui::SetNextItemWidth(size.x() - updown_button_size.x);
 
-    // 记录输入前的值
+    // Record the value before input
     int v_before = *v;
 
     bool drag_input = ImGui::InputScalar(label.c_str(), ImGuiDataType_S32, v, nullptr, nullptr, "%d");
 
-    // 实时限制输入值在范围内，并且如果超出范围，立刻回退显示
+    // Constrain the input value within range in real time, and if it exceeds the range, immediately revert the display
     bool clamped = false;
     if (p_min && *v < *p_min) {
         *v      = *p_min;
@@ -6672,7 +6672,7 @@ bool GLCanvas3D::draw_input_int_v2(const std::string& label, int* v, int stride,
         ImGui::PopStyleColor(3);
     }
 
-    // 再次确保最终值在范围内
+    // Ensure once more that the final value is within range
     if (p_min)
         *v = std::max(*v, *p_min);
     if (p_max)
@@ -7245,7 +7245,7 @@ void GLCanvas3D::triger_extra_render_event(ERenderEvent render_event)
 
     m_gizmos.reset_all_states();
 
-    // 关闭其它已注册的回调
+    // Close other already-registered callbacks
     for (size_t i = 0; i < m_extra_render_callbacks.size(); ++i) {
         if (i != index && m_extra_render_callbacks[i]) {
             if (static_cast<ERenderEvent>(i) == ERenderEvent::FillBedOptions) {
@@ -10203,37 +10203,6 @@ void GLCanvas3D::_render_slice_control() const
     config.processWindows(
         "Slice",
         [&]() {
-            // Sync row: push all custom filaments to printers picked in a dialog.
-            {
-                ImVec2 sync_pos  = ImGui::GetCursorScreenPos();
-                ImVec2 sync_size = ImVec2(bigcfg.size.x + smallcfg.size.x, bigcfg.size.y);
-                ImGui::InvisibleButton("sync_filaments_custom", sync_size);
-                bool   sync_hovered = ImGui::IsItemHovered();
-                bool   sync_active  = ImGui::IsItemActive();
-                ImVec4 sync_bg = config.getColor(bigcfg.bg);
-                ImVec4 sync_hv = ImVec4(93.f / 255.f, 173.f / 255.f, 226.f / 255.f, 1.0f);
-                ImVec4 sync_ac = config.getColor(bigcfg.fg);
-                ImVec4 sync_col = sync_active ? sync_ac : (sync_hovered ? sync_hv : sync_bg);
-                auto*  sync_dl  = ImGui::GetWindowDrawList();
-                sync_dl->AddRectFilled(sync_pos, ImVec2(sync_pos.x + sync_size.x, sync_pos.y + sync_size.y),
-                                       ImGui::GetColorU32(sync_col), 4.0f * scale);
-                std::string sync_label = _u8L("Sync filaments");
-                ImVec2 sync_tsz = ImGui::CalcTextSize(sync_label.c_str());
-                ImU32  sync_txt = (sync_hovered || sync_active)
-                                     ? IM_COL32(255, 255, 255, 255)
-                                     : ImGui::GetColorU32(config.getColor(DispConfig::e_ct_text));
-                sync_dl->AddText(ImVec2(sync_pos.x + (sync_size.x - sync_tsz.x) * 0.5f,
-                                        sync_pos.y + (sync_size.y - sync_tsz.y) * 0.5f),
-                                 sync_txt, sync_label.c_str());
-                if (ImGui::IsItemClicked()) {
-                    // Open the modal outside the render loop.
-                    wxGetApp().CallAfter([]() {
-                        FilamentSyncDialog dlg(wxGetApp().mainframe);
-                        dlg.ShowModal();
-                    });
-                }
-            }
-
             static int               s_sst = MainFrame::eSlicePlate;
             std::vector<std::string> s_slice_string{_u8L("Slice plate"), _u8L("Slice all")};
             bool                     enslice = wxGetApp().mainframe->m_slice_btn->IsEnabled();
@@ -10384,7 +10353,7 @@ void GLCanvas3D::_render_slice_control() const
     //config.processWindows("Print", [&]() {
 
         const DM::Device& current_device = DM::DataCenter::Ins().get_current_device_data();
-        if (current_device.deviceType == 1001)  //fluidd 设备
+        if (current_device.deviceType == 1001)  //fluidd device
         {
             static int s_fst = 0;
             std::vector<std::string> s_fluidd_print_string{_u8L("Send print"), _u8L("Export G-code"), _u8L("Upload to CrealityCloud")};
@@ -11775,12 +11744,12 @@ void GLCanvas3D::_render_process_toolbar() const
         return;
     }
 
-    // 侧边栏位置计算逻辑
-    // margin_top = 侧边栏垂直方向的插入位置
-    // 1.margin_top = 屏幕左上角到右边栏“工艺”的坐标 - 屏幕左上角到软件左上角的的坐标 + 安全值80
-    // 2.margin_bottom = 侧边栏底部剩余的高度
-    // 3.margin_bottom = 软件的高度 - margin_top - 按钮的高度
-    // 4.调整侧边栏底部高度，避开右下角的切片按钮。
+    // Sidebar position calculation logic
+    // margin_top = the vertical insertion position of the sidebar
+    // 1. margin_top = coordinate from screen top-left corner to the "Process" tab on the right bar - coordinate from screen top-left corner to the software's top-left corner + safety value 80
+    // 2. margin_bottom = the remaining height at the bottom of the sidebar
+    // 3. margin_bottom = software height - margin_top - button height
+    // 4. Adjust the sidebar bottom height to avoid the slice button in the bottom-right corner.
 
     ProcessBar::GLToolbar& toolbar = plater.get_process_toolbar();
 
