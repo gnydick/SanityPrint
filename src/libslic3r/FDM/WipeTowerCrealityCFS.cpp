@@ -354,7 +354,7 @@ public:
 	{
 
 
-    //creality 暂时屏蔽M220指令,固件不支持
+    //creality temporarily disable the M220 command, firmware does not support it
 #if 0
        m_gcode += "M220 S" + std::to_string(speed) + "\n";
 #endif
@@ -795,8 +795,8 @@ void WipeTowerCrealityCFS::toolchange_Change(
     writer.append("[change_filament_gcode]\n");
     //std::string z_up_for_firmware = "[z_up_for_firmware]"
  
-     //writer.z_hop(0.4f + m_z_offset, 1200.0f, "G0"); // 固件bug,临时抬升0.4,防止Z高度错误导致的移动到擦拭塔时产生剐蹭
-     writer.relative_zhop(0.4f + m_z_offset, 1200.0f, "relative_zhop_up_for_firmware G0"); // 固件bug,临时抬升0.4,防止Z高度错误导致的移动到擦拭塔时产生剐蹭
+     //writer.z_hop(0.4f + m_z_offset, 1200.0f, "G0"); // firmware bug, temporarily raise by 0.4 to prevent scraping when moving to the wipe tower due to incorrect Z height
+     writer.relative_zhop(0.4f + m_z_offset, 1200.0f, "relative_zhop_up_for_firmware G0"); // firmware bug, temporarily raise by 0.4 to prevent scraping when moving to the wipe tower due to incorrect Z height
     // Travel to where we assume we are. Custom toolchange or some special T code handling (parking extruder etc)
     // gcode could have left the extruder somewhere, we cannot just start extruding. We should also inform the
     // postprocessor that we absolutely want to have this in the gcode, even if it thought it is the same as before.

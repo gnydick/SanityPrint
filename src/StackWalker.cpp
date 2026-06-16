@@ -38,7 +38,7 @@ CStackWalker::~CStackWalker(void)
 BOOL CStackWalker::LoadSymbol()
 {
 	//USES_CONVERSION;
-	//只加载一次
+	// Load only once
 	if(m_bSymbolLoaded)
 	{
 		return m_bSymbolLoaded;
@@ -51,11 +51,11 @@ BOOL CStackWalker::LoadSymbol()
 		return m_bSymbolLoaded;
 	}
 	
-	//添加当前程序路径
+	// Add the current program path
 	TCHAR szSymbolPath[MAX_SYMBOL_PATH] = _T("");
 	StringCchCopy(szSymbolPath, MAX_SYMBOL_PATH, _T(".;"));
 
-	//添加程序所在目录
+	// Add the directory the program resides in
 	TCHAR szTemp[MAX_PATH] = _T("");
 	if (GetCurrentDirectory(MAX_PATH, szTemp) > 0)
 	{
@@ -63,7 +63,7 @@ BOOL CStackWalker::LoadSymbol()
 		StringCchCat(szSymbolPath, MAX_SYMBOL_PATH, _T(";"));
 	}
 
-	//添加程序主模块所在路径
+	// Add the path of the program's main module
 	ZeroMemory(szTemp, MAX_PATH * sizeof(TCHAR));
 	if (GetModuleFileName(NULL, szTemp, MAX_PATH) > 0)
 	{
@@ -131,7 +131,7 @@ BOOL CStackWalker::LoadSymbol()
 
 	if (NULL != m_lpszSymbolPath)
 	{
-		m_bSymbolLoaded = SymInitialize(m_hProcess, textconv_helper::T2A_(m_lpszSymbolPath), TRUE); //这里设置为TRUE，让它在初始化符号表的同时加载符号表
+		m_bSymbolLoaded = SymInitialize(m_hProcess, textconv_helper::T2A_(m_lpszSymbolPath), TRUE); // Set to TRUE so it loads the symbol tables while initializing them
 	}
 
 	DWORD symOptions = SymGetOptions();
@@ -167,7 +167,7 @@ void CStackWalker::FreeModuleInformations(LPMODULE_INFO pmi)
 
 LPMODULE_INFO CStackWalker::GetModulesTH32()
 {
-	//这里为了防止加载Toolhelp.dll 影响最终结果，所以采用动态加载的方式
+	// Use dynamic loading here to prevent loading Toolhelp.dll from affecting the final result
 	LPMODULE_INFO pHead = NULL;
 	LPMODULE_INFO pTail = pHead;
 
@@ -391,13 +391,13 @@ void CStackWalker::GetModuleInformation(LPMODULE_INFO pmi)
 LPSTACKINFO CStackWalker::StackWalker(HANDLE hThread, const CONTEXT* context)
 {
 	//USES_CONVERSION;
-	//加载符号表
+	// Load the symbol tables
 	LoadSymbol();
 
 	LPSTACKINFO pHead = NULL;
 	LPSTACKINFO pTail = pHead;
 
-	//获取当前线程的上下文环境
+	// Get the context of the current thread
 	CONTEXT c = {0};
 	if (context == NULL)
 	{
@@ -411,7 +411,7 @@ LPSTACKINFO CStackWalker::StackWalker(HANDLE hThread, const CONTEXT* context)
 		}
 		else
 		{
-			//如果不是当前线程，需要停止目标线程，以便取出正确的堆栈信息
+			// If it is not the current thread, the target thread must be suspended to retrieve correct stack information
 			SuspendThread(hThread);
 			memset(&c, 0, sizeof(CONTEXT));
 			c.ContextFlags = CONTEXT_FULL;
@@ -446,7 +446,7 @@ LPSTACKINFO CStackWalker::StackWalker(HANDLE hThread, const CONTEXT* context)
 	sf.AddrFrame.Mode = AddrModeFlat;
 	sf.AddrStack.Offset = c.Rsp;
 	sf.AddrStack.Mode = AddrModeFlat;
-	////intel Itanium(安腾)
+	////intel Itanium
 #elif _M_IA64
 	imageType = IMAGE_FILE_MACHINE_IA64;
 	sf.AddrPC.Offset = c.StIIP;
@@ -490,7 +490,7 @@ LPSTACKINFO CStackWalker::StackWalker(HANDLE hThread, const CONTEXT* context)
 				StringCchCopy(pCallStack->undName, STACKWALK_MAX_NAMELEN, textconv_helper::A2T_(szName));
 			}else
 			{
-				//调用错误一般是487(地址无效或者没有访问的权限、在符号表中未找到指定地址的相关信息)
+				// A call error is usually 487 (invalid address or no access permission, or no information for the specified address found in the symbol tables)
 				//this->OutputString(_T("Call SymGetSymFromAddr64 ,Address %08x Error:%08x\n"), sf.AddrPC.Offset, GetLastError());
 
                 StringCchCopy(pCallStack->undFullName, STACKWALK_MAX_NAMELEN, textconv_helper::A2T_("Unknown"));
@@ -508,7 +508,7 @@ LPSTACKINFO CStackWalker::StackWalker(HANDLE hThread, const CONTEXT* context)
                 pCallStack->uFileNum = -1;
 			}
 			
-			//这里为了将获取函数信息失败的情况与正常的情况一起输出，防止用户在查看时出现误解
+			// Output the failed function-info case together with the normal case here, to prevent users from being confused when reviewing it
 			this->OutputString(_T("%08llx:%s [%s][%ld]\n"), pCallStack->szFncAddr, pCallStack->undFullName, pCallStack->szFileName, pCallStack->uFileNum);
 			if (NULL == pHead)
 			{

@@ -1,10 +1,10 @@
 #include "slic3r/GUI/FileUploader.hpp"
-// 生成随机的multipart边界
+// Generate a random multipart boundary
 std::string generate_boundary() {
     static const std::string chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     std::string boundary;
-    
-    // 生成一个20字符的随机边界
+
+    // Generate a 20-character random boundary
     for (int i = 0; i < 20; ++i) {
         boundary += chars[rand() % chars.size()];
     }
@@ -12,7 +12,7 @@ std::string generate_boundary() {
     return "---------------------------" + boundary;
 }
 
-// 获取文件大小
+// Get the file size
 std::streamsize get_file_size(const std::string& filename) {
     std::ifstream file(filename, std::ios::binary | std::ios::ate);
     if (!file) {
@@ -42,15 +42,15 @@ HttpFileUploader::HttpFileUploader(asio::io_context& io_context,
           success_callback_(nullptr),
           error_callback_(nullptr),
           cancel_callback_(nullptr),
-          connect_timeout_(5000),  // 默认连接超时5秒
-          send_timeout_(60000)     // 默认发送超时30秒
+          connect_timeout_(5000),  // Default connect timeout 5 seconds
+          send_timeout_(60000)     // Default send timeout 30 seconds
         {
-        // 打开文件
+        // Open the file
         file_.open(filename, std::ios::binary);
         if (!file_.is_open()) {
-            throw std::runtime_error("无法打开文件: " + filename);
+            throw std::runtime_error("Unable to open file: " + filename);
         }
-        
-        // 获取文件大小
+
+        // Get the file size
         file_size_ = get_file_size(filename);
     }

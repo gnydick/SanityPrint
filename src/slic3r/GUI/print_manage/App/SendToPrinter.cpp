@@ -61,8 +61,8 @@ CxSentToPrinterDialog::CxSentToPrinterDialog(Plater *plater,
                 _L("Send to Lan Printer"),
                 wxDefaultPosition,
                 wxDefaultSize,
-                // Linux 下不需要最大/最小化按钮：移除可调尺寸边框
-                // 其他平台保持原行为（可调整大小）
+                // On Linux, no maximize/minimize buttons are needed: remove the resizable border
+                // Other platforms keep the original behavior (resizable)
                 #if defined(__linux__) || defined(__LINUX__) || defined(__WXGTK__)
                 wxCAPTION | wxCLOSE_BOX
                 #else
@@ -71,7 +71,7 @@ CxSentToPrinterDialog::CxSentToPrinterDialog(Plater *plater,
                 ), m_sendtype(sendtype),m_mapString(mapString)
     , m_plater(plater)
 {
-    // 双保险：即使窗口管理器默认添加，也在 Linux 下移除最小/最大化按钮
+    // Double safeguard: even if the window manager adds them by default, remove the minimize/maximize buttons on Linux
     #if defined(__linux__) || defined(__LINUX__) || defined(__WXGTK__)
     SetWindowStyleFlag(GetWindowStyleFlag() & ~(wxMINIMIZE_BOX | wxMAXIMIZE_BOX));
     #endif
@@ -81,12 +81,12 @@ CxSentToPrinterDialog::CxSentToPrinterDialog(Plater *plater,
 
     wxGetApp().UpdateDlgDarkUI(this);
 
-    wxSize minSize = wxSize(FromDIP(1170), FromDIP(500)); // 设置最小尺寸
+    wxSize minSize = wxSize(FromDIP(1170), FromDIP(500)); // set the minimum size
     wxSize initialSize = wxSize(FromDIP(1170), FromDIP(650));
 
     SetMinSize(minSize);
     SetSize(initialSize);
-    // 将窗体移动到屏幕顶部
+    // Move the window to the top of the screen
     Bind(wxEVT_SHOW, [this](wxShowEvent& event) {
         if (event.IsShown()) {
             wxPoint position = GetPosition();
@@ -555,7 +555,7 @@ void CxSentToPrinterDialog::handle_request_update_plate_thumbnail(const nlohmann
 
     m_request_color_match_plateIndex = json_data["plateIndex"];
 
-    // 遍历 matchInfo 数组，解析 extruderId 和 matchColor
+    // Iterate over the matchInfo array, parsing extruderId and matchColor
     for (const auto& matchInfo : json_data["matchInfo"])
     {
         int extruderId = matchInfo["extruderId"];
@@ -586,23 +586,23 @@ void CxSentToPrinterDialog::handle_get_webrtc_local_param(const nlohmann::json& 
 
     std::string localip = "";
     try {
-        // 提取域名部分
+        // Extract the domain portion
         std::string domain = DM::AppUtils::extractDomain(url);
-        // 创建一个 Boost.Asio 的 io_context 对象
+        // Create a Boost.Asio io_context object
         boost::asio::io_context io_context;
-        // 创建一个 UDP 套接字
+        // Create a UDP socket
         boost::asio::ip::udp::socket socket(io_context);
-        // 连接到一个公共的 UDP 地址和端口（Google 的公共 DNS 服务器）
+        // Connect to a public UDP address and port (Google's public DNS server)
         socket.connect(boost::asio::ip::udp::endpoint(boost::asio::ip::address::from_string(domain), 80));
-        // 获取本地端点信息
+        // Get the local endpoint info
         boost::asio::ip::udp::endpoint local_endpoint = socket.local_endpoint();
-        // 关闭套接字
+        // Close the socket
         socket.close();
-        // 返回本地 IP 地址的字符串表示
+        // Return the string representation of the local IP address
         localip = local_endpoint.address().to_string();
     }
     catch (const std::exception& e) {
-        // 若出现异常，输出错误信息并返回空字符串
+        // If an exception occurs, output the error message and return an empty string
         std::cerr << "Error: " << e.what() << std::endl;
     }
     if (!localip.empty())
@@ -1751,7 +1751,7 @@ std::string CxSentToPrinterDialog::get_plate_data_on_show()
     }
 
     top_level_json["preset_name"] = printer_name;
-    top_level_json["slice_type"]  = m_plater->isSliceAll() ? 2 : 1; // 1 - 切单盘 2 - 切所有盘
+    top_level_json["slice_type"]  = m_plater->isSliceAll() ? 2 : 1; // 1 - slice single plate, 2 - slice all plates
 
     std::string json_str         = top_level_json.dump(-1, ' ', true);
 

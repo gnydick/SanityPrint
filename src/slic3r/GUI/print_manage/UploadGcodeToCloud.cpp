@@ -641,7 +641,7 @@ void UploadGcodeToCloudDialog::get_current_plate_color()
             wxBoxSizer* sizer = new wxBoxSizer(wxHORIZONTAL);
             panel->SetSizer(sizer);
 
-            //  右边信息
+            //  right-side info
             wxPanel* infoPanel = new wxPanel(panel);
             
             sizer->Add(infoPanel);
@@ -649,7 +649,7 @@ void UploadGcodeToCloudDialog::get_current_plate_color()
             infoPanel->SetSizer(infoPanelSizer);
             infoPanel->SetMinSize(wxSize(FromDIP(240), -1));
 
-            //  打印机
+            //  printer
             wxBoxSizer* printerSizer = new wxBoxSizer(wxHORIZONTAL);
             infoPanelSizer->Add(printerSizer, 0, wxTOP, FromDIP(200));
             infoPanelSizer->Layout();
@@ -667,7 +667,7 @@ void UploadGcodeToCloudDialog::get_current_plate_color()
             m_stext_printer2->SetToolTip(m_stext_printer2_tip);
             printerSizer->Add(m_stext_printer2, 0, wxALL, FromDIP(5));
 
-            //  打印时间
+            //  print time
             wxBoxSizer* m_sizer_basic        = new wxBoxSizer(wxHORIZONTAL);
             wxBoxSizer* printTimeSizer   = new wxBoxSizer(wxHORIZONTAL);
             infoPanelSizer->Add(printTimeSizer, 0, wxLEFT, 0);
@@ -681,7 +681,7 @@ void UploadGcodeToCloudDialog::get_current_plate_color()
             printTimeSizer->Add(m_stext_time, 0, wxALL, FromDIP(5));
             //m_sizer_basic->Add(0, 0, 0, wxEXPAND | wxLEFT | wxRIGHT, FromDIP(30));
 
-            //  打印重量
+            //  print weight
             wxBoxSizer* printWeightSizer = new wxBoxSizer(wxHORIZONTAL);
             infoPanelSizer->Add(printWeightSizer, 0, wxLEFT, 0);
             auto weightimg = new wxStaticBitmap(infoPanel, wxID_ANY, create_scaled_bitmap("print-weight", this, 18), wxDefaultPosition,

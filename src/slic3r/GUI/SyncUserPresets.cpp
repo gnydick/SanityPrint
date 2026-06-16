@@ -51,14 +51,14 @@ void SyncUserPresets::shutdown()
     }
     BOOST_LOG_TRIVIAL(warning) << "SyncUserPresets shutdown end";
 }
-void SyncUserPresets::startSync() // 同步工作的启动
+void SyncUserPresets::startSync() // start the sync work
 {
     BOOST_LOG_TRIVIAL(warning) << "SyncUserPresets startSync";
     CXCloudDataCenter::getInstance().updateCXCloutLoginInfo(GUI::wxGetApp().app_config->get("cloud", "user_id"),
                                                             GUI::wxGetApp().app_config->get("cloud", "token"));
     m_bSync.store(true);
 }
-void SyncUserPresets::stopSync() // 同步工作的不启动
+void SyncUserPresets::stopSync() // stop the sync work
 {
     BOOST_LOG_TRIVIAL(warning) << "SyncUserPresets stopSync";
     m_bSync.store(false);
@@ -192,7 +192,7 @@ void SyncUserPresets::onRun()
                 if (CXCloudDataCenter::getInstance().isUpdateConfigFileTimeout() &&
                     CXCloudDataCenter::getInstance().getDownloadConfigToLocalState() != ENDownloadConfigState::ENDCS_NOT_DOWNLOAD) {
                     CXCloudDataCenter::getInstance().resetUpdateConfigFileTime();
-                    //  检测是否配置文件需要同步到创想云
+                    //  check whether the config file needs to be synced to CXCloud
                     doCheckNeedSyncConfigToCXCloud();
                 } else {
                     //syncConfigToCXCloud();
@@ -200,16 +200,16 @@ void SyncUserPresets::onRun()
             }
         }
 
-        //  检测是否有数据需要同步到创想云
+        //  check whether there is any data that needs to be synced to CXCloud
         if (CXCloudDataCenter::getInstance().isTokenValid()) {
             doCheckNeedSyncToCXCloud();
         }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
-    //  退出时，同步一次配置文件到创想云
+    //  on exit, sync the config file to CXCloud once
     if (m_bSync.load() && CXCloudDataCenter::getInstance().getDownloadConfigToLocalState() != ENDownloadConfigState::ENDCS_NOT_DOWNLOAD) {
-        //  检测是否配置文件需要同步到创想云
+        //  check whether the config file needs to be synced to CXCloud
         doCheckNeedSyncConfigToCXCloud();
     }
     m_bRunning.store(false);
@@ -230,7 +230,7 @@ void SyncUserPresets::reloadPresetsInUiThread()
     //app_config->set("presets", PRESET_FILAMENT_NAME, filamentName);
     //std::string processName = GUI::wxGetApp().preset_bundle->m_curProcessPresetName;
     //app_config->set("presets", PRESET_PRINT_NAME, processName);
-    //  重新加载预设文件
+    //  reload the preset files
     //GUI::wxGetApp().preset_bundle->load_presets(*app_config, ForwardCompatibilitySubstitutionRule::EnableSilentDisableSystem);
     //GUI::wxGetApp().load_current_presets();
     //GUI::wxGetApp().plater()->set_bed_shape();
@@ -280,7 +280,7 @@ int SyncUserPresets::doSyncToLocal(SyncToLocalRetInfo& syncToLocalRetInfo)
         fs::path tmp_path = fs::path(tmpPath).append(iter->zipUrl.substr(start_pos + 1));
         if(fs::exists(tmp_path)&&fs::file_size(tmp_path)>0){
             try{
-                //确保下载的文件内容完整
+                //ensure the downloaded file content is complete
                 json valid_json;
                 boost::nowide::ifstream ifs(tmp_path.string());
                 ifs >> valid_json;
@@ -298,7 +298,7 @@ int SyncUserPresets::doSyncToLocal(SyncToLocalRetInfo& syncToLocalRetInfo)
         do {
             std::string saveJsonFile = "";
             nRet = m_commWithCXCloud.downloadUserPreset(item, saveJsonFile);
-            if (item.type == "sync_data") { //  配置文件
+            if (item.type == "sync_data") { //  config file
                 if (nRet == 0) {
                     CXCloudDataCenter::getInstance().setDownloadConfigToLocalState(ENDownloadConfigState::ENDCS_DOWNLOAD_SUCCESS);
                 } else {
@@ -368,7 +368,7 @@ int SyncUserPresets::doCheckNeedSyncPrinterToCXCloud() {
     std::vector<Preset> presets_to_sync;
     PresetBundle*       preset_bundle = GUI::wxGetApp().preset_bundle;
 
-    //  获取需要添加和更新的preset
+    //  get the presets that need to be added and updated
     int                 sync_count = 0;
     sync_count = preset_bundle->printers.get_user_presets(preset_bundle, presets_to_sync);
     if (sync_count > 0) {
@@ -441,7 +441,7 @@ int SyncUserPresets::doCheckNeedSyncPrinterToCXCloud() {
                         values_map.emplace("name", preset.name);
                         CXCloudDataCenter::getInstance().updateUserCloudPresets(preset.name, preset.setting_id, values_map);
                         nRet = 1;
-                    } else if (ret == 517) {    //  数据不存在，说明可能被删除了，则进行创建
+                    } else if (ret == 517) {    //  data does not exist, meaning it may have been deleted, so create it
                         fileInfo.type = preset.get_cloud_type_string(preset.type);
                         fileInfo.settingId = "";
 
@@ -466,7 +466,7 @@ int SyncUserPresets::doCheckNeedSyncFilamentToCXCloud()
     std::vector<Preset> presets_to_sync;
     PresetBundle*       preset_bundle = GUI::wxGetApp().preset_bundle;
 
-    //  获取需要添加和更新的preset
+    //  get the presets that need to be added and updated
     int sync_count = 0;
     sync_count     = preset_bundle->filaments.get_user_presets(preset_bundle, presets_to_sync);
     if (sync_count > 0) {
@@ -550,7 +550,7 @@ int SyncUserPresets::doCheckNeedSyncFilamentToCXCloud()
                         values_map.emplace("name", preset.name);
                         CXCloudDataCenter::getInstance().updateUserCloudPresets(preset.name, preset.setting_id, values_map);
                         nRet = 1;
-                    } else if (ret == 517) { //  数据不存在，说明可能被删除了，则进行创建
+                    } else if (ret == 517) { //  data does not exist, meaning it may have been deleted, so create it
                         fileInfo.type = preset.get_cloud_type_string(preset.type);
                         fileInfo.settingId = "";
 
@@ -576,7 +576,7 @@ int SyncUserPresets::doCheckNeedSyncProcessToCXCloud()
     std::vector<Preset> presets_to_sync;
     PresetBundle*       preset_bundle = GUI::wxGetApp().preset_bundle;
 
-    //  获取需要添加和更新的preset
+    //  get the presets that need to be added and updated
     int sync_count = 0;
     sync_count     = preset_bundle->prints.get_user_presets(preset_bundle, presets_to_sync);
     if (sync_count > 0) {
@@ -660,7 +660,7 @@ int SyncUserPresets::doCheckNeedSyncProcessToCXCloud()
                         values_map.emplace("name", preset.name);
                         CXCloudDataCenter::getInstance().updateUserCloudPresets(preset.name, preset.setting_id, values_map);
                         nRet = 1;
-                    } else if (ret == 517) { //  数据不存在，说明可能被删除了，则进行创建
+                    } else if (ret == 517) { //  data does not exist, meaning it may have been deleted, so create it
                         fileInfo.type = preset.get_cloud_type_string(preset.type);
                         fileInfo.settingId = "";
 
@@ -727,7 +727,7 @@ int SyncUserPresets::preUpdateProfile_create(const UploadFileInfo& fileInfo,
 int SyncUserPresets::doCheckNeedDeleteFromCXCloud() 
 { 
     int nRet = 0;
-    //  获取需要删除的preset
+    //  get the presets that need to be deleted
     std::vector<string> delete_cache_presets = GUI::wxGetApp().get_delete_cache_presets_lock();
     for (auto it = delete_cache_presets.begin(); it != delete_cache_presets.end(); it++) {
         if ((*it).empty())
@@ -741,7 +741,7 @@ int SyncUserPresets::doCheckNeedDeleteFromCXCloud()
         }
     }
 
-    return nRet; // 0:没有删除创想云数据, 1:删除了创想云数据
+    return nRet; // 0: no CXCloud data deleted, 1: CXCloud data deleted
 }
 
 int SyncUserPresets::doCheckNeedSyncConfigToCXCloud()
@@ -802,7 +802,7 @@ int SyncUserPresets::getSyncDataToFile(std::string& outJsonFile)
         if (fs::exists(path)) {
             boost::nowide::ifstream ifs(path.string());
             if (!ifs.is_open()) {
-                // 获取错误码
+                // get the error code
                 std::error_code error_code = std::make_error_code(std::errc::no_such_file_or_directory);
                 // setLastError(std::to_string(error_code.value()), error_code.message());
             } else {

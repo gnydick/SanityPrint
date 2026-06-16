@@ -221,7 +221,7 @@ public:
     // Has this profile been loaded?
     bool                loaded      = false;
 
-    bool m_is_user_printer_hidden = true;   //true-显示  false-隐藏
+    bool m_is_user_printer_hidden = true;   //true-show  false-hide
 
     bool m_is_non_standard_printer = false; 
     // Configuration data, loaded from a file, or set from the defaults.

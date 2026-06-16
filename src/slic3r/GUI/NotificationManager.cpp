@@ -1581,8 +1581,8 @@ void NotificationManager::PrintHostUploadNotification::render_bar(ImGuiWrapper& 
         ImVec2 ws = ImGui::GetWindowSize();
         const float parent_win_size_x = ws.x;
         const float parent_win_size_y = ws.y;
-        const float parent_win_pos_x  = wp.x + ws.x; // 右边界
-        const float parent_win_pos_y  = wp.y;        // 顶部
+        const float parent_win_pos_x  = wp.x + ws.x; // right edge
+        const float parent_win_pos_y  = wp.y;        // top
 
         ProgressBarNotification::render_bar(imgui, parent_win_size_x,parent_win_size_y,parent_win_pos_x, parent_win_pos_y);
 

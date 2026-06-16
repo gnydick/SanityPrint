@@ -112,7 +112,7 @@ std::string AutomationMgr::getCurrentTime()
     return oss.str();
 }
 
-// 导出文件名称（避免重名）
+// Generate an export file name (avoiding duplicate names)
 std::string AutomationMgr::generateUniqueFilename(const std::string& basePath, const std::string& baseName, const std::string& extension)
 {
     std::string filename = baseName + extension;
@@ -127,7 +127,7 @@ std::string AutomationMgr::generateUniqueFilename(const std::string& basePath, c
     return filename;
 }
 
-// 导出参数json配置
+// Export the parameter configuration to JSON
 void AutomationMgr::exportPrintConfigToJson(const Model& model, const DynamicPrintConfig& config)
 {
     using namespace Slic3r;
@@ -235,7 +235,7 @@ std::string AutomationMgr::getTimeStamp()
 void AutomationMgr::endFunction()
 {
     if (g_automationType == AutomationType::GCode) {
-        _sleep(2000); // 防止程序关闭太快，导致线程被强制关闭文件未写进去
+        _sleep(2000); // Prevent the program from closing too quickly, which would force the thread to close before the file is written
         HANDLE hprocess = GetCurrentProcess();
         TerminateProcess(hprocess, 1);
     }

@@ -150,9 +150,9 @@ void update_unselected_items_inflation(ArrangePolygons& unselected, const Dynami
     }
     // For occulusion regions, inflation should be larger to prevent genrating brim on them.
     // However, extrusion cali regions are exceptional, since we can allow brim overlaps them.
-    // 屏蔽区域只需要膨胀brim宽度，防止brim长过去；挤出标定区域不需要膨胀，brim可以长过去。
-    // 以前我们认为还需要膨胀clearance_radius/2，这其实是不需要的，因为这些区域并不会真的摆放物体，
-    // 其他物体的膨胀轮廓是可以跟它们重叠的。
+    // Occlusion regions only need to be inflated by the brim width, to prevent the brim from growing into them; extrusion cali regions don't need inflation, since the brim can grow over them.
+    // We used to think we also needed to inflate by clearance_radius/2, but that is actually unnecessary, because no object is ever really placed in these regions,
+    // so the inflated outlines of other objects are allowed to overlap them.
     std::for_each(unselected.begin(), unselected.end(),
         [&](auto& ap) { ap.inflation = !ap.is_virt_object ? (params.min_obj_distance == 0 ? scaled(ap.brim_width) : params.min_obj_distance / 2)
         : (ap.is_extrusion_cali_object ? 0 : scale_(exclusion_gap)); });
@@ -411,7 +411,7 @@ protected:
         // 1) Y distance of item corner to bed corner. Must be put above bed corner. (high weight)
         // 2) X distance of item corner to bed corner (low weight)
         // 3) item row occupancy (useful when rotation is enabled)
-        // 4）需要允许往屏蔽区域的左边或下边去一点，不然很多物体可能认为摆不进去，实际上我们最后是可以做平移的
+        // 4) We need to allow items to extend a bit to the left or below the occlusion region, otherwise many objects might be considered impossible to place, when in fact we can translate them afterwards
     double dist_for_BOTTOM_LEFT(Box ibb, const ClipperLib::IntPoint& origin_pack)
     {
         double dist_corner_y = ibb.minCorner().y() - origin_pack.y();
@@ -653,7 +653,7 @@ protected:
                 Item& p = m_items[i];
                 if (!p.is_virt_object) {
                     valid_items_cnt++;
-                    // 高度接近的件尽量摆到一起
+                    // Try to place items of similar height together
                     height_score += (1- std::abs(item.height - p.height) / params.printable_height)
                         * norm(pl::distance(ibb.center(), p.boundingBox().center()));
                     //score += LARGE_COST_TO_REJECT * (item.bed_temp - p.bed_temp != 0);
@@ -708,7 +708,7 @@ public:
     {
         m_bin_area = abs(sl::area(bin));  // due to clockwise or anti-clockwise, the result of sl::area may be negative
         m_norm = std::sqrt(m_bin_area);
-        fill_config(m_pconf, params);//填充排版参数  主要是参数pcfg.alignment = PConf::Alignment::DONT_ALIGN
+        fill_config(m_pconf, params);//fill in the arrangement parameters, mainly pcfg.alignment = PConf::Alignment::DONT_ALIGN
         this->params = params;
 
         // if best object center is not bed center, specify starting point here
@@ -1080,7 +1080,7 @@ static void process_arrangeable(const ArrangePolygon& arrpoly, std::vector<Item>
     item.height = arrpoly.height;
     item.name = arrpoly.name;
     //BBS: add virtual object logic
-    item.is_virt_object = arrpoly.is_virt_object;//虚拟对象（打印床之外的对象）
+    item.is_virt_object = arrpoly.is_virt_object;//virtual object (an object outside the print bed)
     item.is_wipe_tower = arrpoly.is_wipe_tower;
     item.bed_temp = arrpoly.first_bed_temp;
     item.print_temp = arrpoly.print_temp;

@@ -3392,7 +3392,7 @@ bool FillRectilinear::fill_surface_by_lines(const Surface *surface, const FillPa
             // 
 			if (is_vaild_flag)
 			{
-                // 使用 std::move
+                // Use std::move
                 
                 
                 

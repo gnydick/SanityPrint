@@ -1135,13 +1135,13 @@ bool GLGizmoPainterBase::gizmo_event(SLAGizmoEventType action, const Vec2d& mous
         Plater::TakeSnapshot snapshot(wxGetApp().plater(), std::string(action_name.ToUTF8().data()), UndoRedo::SnapshotType::GizmoAction);
         update_model_object();
         
-        // 【新增】标记几何体修改（根据当前gizmo类型判断是支撑还是Z缝）
+        // [Added] Mark geometry as modified (determine whether it is support or Z-seam based on the current gizmo type)
         if (dynamic_cast<GLGizmoSeam*>(this)) {
-            // Z缝绘制
+            // Z-seam painting
             AnalyticsDataUploadManager::ProjectModificationTracker::getInstance()
                 .mark_modified(AnalyticsDataUploadManager::ModelModifyType::ZSEAM_PAINT);
         } else {
-            // 支撑绘制（默认）
+            // Support painting (default)
             AnalyticsDataUploadManager::ProjectModificationTracker::getInstance()
                 .mark_modified(AnalyticsDataUploadManager::ModelModifyType::SUPPORT_PAINT);
         }

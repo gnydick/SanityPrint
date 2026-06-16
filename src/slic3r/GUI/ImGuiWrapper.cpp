@@ -2844,32 +2844,32 @@ bool HasUnsupportedCharacters(const std::string& str, ImFont* font) {
     const char* p = str.c_str();
     while (*p) {
         unsigned int codepoint;
-        // 手动处理 UTF - 8 字符到 Unicode 码点的转换
+        // manually convert UTF-8 characters to Unicode code points
         if (*p < 0x80) {
-            // 单字节字符
+            // single-byte character
             codepoint = *p;
             p += 1;
         } else if ((*p & 0xE0) == 0xC0) {
-            // 双字节字符
+            // two-byte character
             if (p[1] == '\0') break;
             codepoint = ((p[0] & 0x1F) << 6) | (p[1] & 0x3F);
             p += 2;
         } else if ((*p & 0xF0) == 0xE0) {
-            // 三字节字符
+            // three-byte character
             if (p[1] == '\0' || p[2] == '\0') break;
             codepoint = ((p[0] & 0x0F) << 12) | ((p[1] & 0x3F) << 6) | (p[2] & 0x3F);
             p += 3;
         } else if ((*p & 0xF8) == 0xF0) {
-            // 四字节字符
+            // four-byte character
             if (p[1] == '\0' || p[2] == '\0' || p[3] == '\0') break;
             codepoint = ((p[0] & 0x07) << 18) | ((p[1] & 0x3F) << 12) | ((p[2] & 0x3F) << 6) | (p[3] & 0x3F);
             p += 4;
         } else {
-            // 无效的 UTF - 8 序列
+            // invalid UTF-8 sequence
             break;
         }
 
-        // 使用 FindGlyph 检查字符是否在字体中
+        // use FindGlyph to check whether the character is present in the font
         const ImFontGlyph* glyph = font->FindGlyph(static_cast<ImWchar>(codepoint));
         if (!glyph) {
             return true;

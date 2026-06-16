@@ -385,12 +385,12 @@ Model Model::read_from_archive(const std::string& input_file, DynamicPrintConfig
         else
             throw Slic3r::RuntimeError(_L("Unknown file format. Input file must have .3mf or .zip.amf extension."));
 
-        prom.set_value(); // 通知完成
+        prom.set_value(); // notify completion
     }).detach();
 
     while (fut.wait_for(std::chrono::milliseconds(50)) != std::future_status::ready) {
         if (proFn) {
-            proFn(IMPORT_STAGE_READ_FILES, 0, 3, cb_cancel); // 不处理cancel
+            proFn(IMPORT_STAGE_READ_FILES, 0, 3, cb_cancel); // do not handle cancel
         }
     }
 
@@ -864,7 +864,7 @@ void Model::convert_from_creality5(Vec2d bed_size,Vec2d new_bed_size,int plate_s
     {
             if (obj != nullptr)
             {
-                //判断对象属于哪一行
+                //determine which row the object belongs to
                 float posx = obj->bounding_box_exact().center().x();
                 float posy = obj->bounding_box_exact().center().y();
                 int lrow = posx / (bed_size.x() + 50);

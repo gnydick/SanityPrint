@@ -479,39 +479,39 @@ static double compute_length_mm(const Motion& m)
     return m.length_mm;
 }
 
-// 为一个检测到的 ROI 对象（Trigger + Defect）构建 AUE 缓冲计划（Plan）。
+// Build the AUE buffer plan (Plan) for a detected ROI object (Trigger + Defect).
 //
-// span 语义：
-// - span.* 是 motions[] 的下标，均为闭区间 [begin, end]（两端都包含）。
+// span semantics:
+// - span.* are indices into motions[], all closed intervals [begin, end] (both ends inclusive).
 //
-// 关键速度/加速度：
-// - v_low  ：Trigger 末端 motion 的进给（trigger_last.feedrate_mm_s）。
-// - v_safe ：用户设定的安全速度上限（params.velocity_safe_mm_s）。
-// - a_safe ：用户设定的安全加速度上限（params.accel_safe）。
-// - v_rec  ：Defect 末端“真实要恢复到的速度”（defect_last.feedrate_mm_s），即该段最后一次生效的设速。
-//           注意：standalone 的 "G1 F..." 不会生成 Motion，但会更新解析 state.feedrate，
-//           因此会影响后续 motion 的 feedrate，并最终反映到 defect_last.feedrate_mm_s。
-// - accel_recovered：恢复点要恢复的加速度，优先 defect_first.accel_mm_s2，失败则回退 trigger_last.accel_mm_s2。
+// Key velocities/accelerations:
+// - v_low  : feedrate of the Trigger's last motion (trigger_last.feedrate_mm_s).
+// - v_safe : the user-set safe upper speed limit (params.velocity_safe_mm_s).
+// - a_safe : the user-set safe upper acceleration limit (params.accel_safe).
+// - v_rec  : the Defect's "real speed to recover to" (defect_last.feedrate_mm_s), i.e. the last effective speed setting in that segment.
+//           Note: a standalone "G1 F..." does not generate a Motion, but it updates the parser state.feedrate,
+//           so it affects the feedrate of subsequent motions and is ultimately reflected in defect_last.feedrate_mm_s.
+// - accel_recovered: the acceleration to restore at the recovery point; prefer defect_first.accel_mm_s2, falling back to trigger_last.accel_mm_s2 on failure.
 //
-// safe 段长度模型：
-// - L_transition：在 defect_begin 后先保持 v_low 的过渡距离（params.L_safe_transition_mm）。
-//   目的：稍微延长拐角/降速后的低速段，避免太早触发加速/提速。
-// - L_accel：在常加速度 a_safe 下，从 v_low 加速到 v_safe 的理论距离：
-//     L_accel = (v_safe^2 - v_low^2) / (2*a_safe)（仅 v_safe > v_low 时）
-//   该值只用于确定“理想需要多长距离”，并不会把 safe 段拆成独立的 accel/cruise 两相；
-//   固件 planner 是否能在 safe 段内真正达到 v_safe，取决于 defect 段实际可用路径长度。
-// - L_total = L_transition + L_accel + L_safe_cruise_mm：希望在 Defect 路径上维持 safe 限制的总长度。
+// safe-segment length model:
+// - L_transition: the transition distance over which v_low is held after defect_begin (params.L_safe_transition_mm).
+//   Purpose: slightly extend the low-speed segment after a corner/deceleration, to avoid triggering acceleration/speed-up too early.
+// - L_accel: under constant acceleration a_safe, the theoretical distance to accelerate from v_low to v_safe:
+//     L_accel = (v_safe^2 - v_low^2) / (2*a_safe) (only when v_safe > v_low)
+//   This value is only used to determine "how much distance is ideally needed"; it does not split the safe segment into separate accel/cruise phases;
+//   whether the firmware planner can actually reach v_safe within the safe segment depends on the Defect segment's real available path length.
+// - L_total = L_transition + L_accel + L_safe_cruise_mm: the total length over which we want to maintain the safe limits along the Defect path.
 //
-// boundary（恢复点）的确定：
-// - 沿 defect span 累积 motions 的几何长度，第一次达到 L_total 的位置即为恢复边界：
-//   - boundary_motion   ：包含恢复边界的那条 Motion（motions[] 下标）
-//   - boundary_fraction ：边界在该 Motion 内的位置比例 (0,1]，1.0 表示落在 motion 末端（无需 split）
-// - 若 Defect 总长度 < L_total，则 boundary 会被夹到 defect_end（fraction=1.0），safe 段提前结束并在 defect 末端恢复。
-//   这包含三类距离不足：
-//   - Defect 总长度 < L_transition：连 transition 都跑不完，不会插入 v_safe（整段保持 v_low），并在 defect_end recover。
-//   - L_transition <= Defect 总长度 < L_transition + L_accel：理论加速距离不够，planner 可能达不到 v_safe（不存在 cruise）
-//   - L_transition + L_accel <= Defect 总长度 < L_total：能达到 v_safe，但 cruise 长度达不到设定值
-//   当前实现不区分后两者，统一在 defect_end 处 recover。
+// Determining the boundary (recovery point):
+// - Accumulate the geometric length of motions along the defect span; the first position that reaches L_total is the recovery boundary:
+//   - boundary_motion   : the Motion containing the recovery boundary (index into motions[])
+//   - boundary_fraction : the boundary's position ratio within that Motion (0,1]; 1.0 means it falls at the motion's end (no split needed)
+// - If the Defect's total length < L_total, the boundary is clamped to defect_end (fraction=1.0); the safe segment ends early and recovery happens at the Defect's end.
+//   This covers three kinds of insufficient distance:
+//   - Defect total length < L_transition: even the transition cannot complete; v_safe is not inserted (the whole segment stays at v_low), and recovery happens at defect_end.
+//   - L_transition <= Defect total length < L_transition + L_accel: the theoretical acceleration distance is insufficient; the planner may not reach v_safe (no cruise exists).
+//   - L_transition + L_accel <= Defect total length < L_total: v_safe can be reached, but the cruise length does not reach the configured value.
+//   The current implementation does not distinguish the latter two cases; both recover at defect_end.
 
 static std::optional<Plan> build_plan(const ObjectSpan& span, const std::vector<Motion>& motions, const AppearanceUnderExtrusionAccelRecoveryConfig& params)
 {
@@ -721,69 +721,69 @@ LayerResult AppearanceUnderExtrusionAccelRecoveryFilter::process_layer(LayerResu
     return std::move(input);
 }
 
-// AUE（Appearance Under-Extrusion）加速度/速度恢复缓冲（单层 G-code 重写）。
+// AUE (Appearance Under-Extrusion) acceleration/velocity recovery buffer (single-layer G-code rewrite).
 //
-// 背景问题：
-// - 典型场景是悬垂/过桥：悬垂段触发冷却/悬垂降速，连续低速打印一段时间；
-// - 当恢复到正常（相对更高）速度时，常见外观缺料（under-extrusion appearance）。
-//   这类缺料更像“速度/加速度瞬态不匹配导致的挤出跟不上”，而不是持续的流量上限不足。
+// Background problem:
+// - The typical scenario is overhangs/bridges: the overhang segment triggers cooling/overhang slowdown, printing at low speed continuously for a while;
+// - When speed recovers to normal (relatively higher), an under-extrusion appearance is commonly seen.
+//   This kind of under-extrusion is more like "extrusion can't keep up due to a velocity/acceleration transient mismatch" rather than a sustained flow-rate ceiling shortfall.
 //
-// 本函数做的事情（核心思路）：
-// - 先在 layer 内定位一段“Trigger（低速触发段）”以及其后的“Defect（疑似缺料段）”，统称 ROI；
-// - 然后在 Trigger/Defect 周围插入一组 Klipper 命令，短距离内把加速度/速度限制在“安全值”，
-//   再在 Defect 段的某个边界处恢复为“真实的目标速度/加速度”，从而缓解低速→高速切换瞬态。
+// What this function does (core idea):
+// - First locate within the layer a "Trigger (low-speed trigger segment)" and the following "Defect (suspected under-extrusion segment)", together called the ROI;
+// - Then insert a set of Klipper commands around the Trigger/Defect to limit acceleration/velocity to "safe values" over a short distance,
+//   and then recover to the "real target velocity/acceleration" at some boundary within the Defect segment, thereby mitigating the low->high speed switching transient.
 //
-// 1) 解析阶段：从原始 layer gcode 构建 Motion 列表（用于距离、速度、E 分割等）
-// - 逐行解析 G0/G1/G2/G3，跟踪：
-//   - XYZ/E 位置（用于计算 move 长度、以及在边界处 split move 时拆分 E）
-//   - 当前生效的进给 feedrate（F，mm/min）与 accel（来自 SET_VELOCITY_LIMIT ACCEL=...）
-//   - extrusion role（来自注释标记，如 ";_EXTERNAL_PERIMETER"），用于 ROI 的角色筛选
-// - 注意：像 "G1 F..." 这种“纯设速指令”不记为 Motion，但会更新 state.feedrate_mm_min，
-//   这样后续 defect_last.feedrate_mm_s 才能代表“末端真实速度（最后一次设置过的进给）”。
+// 1) Parsing phase: build the Motion list from the raw layer gcode (used for distance, velocity, E splitting, etc.)
+// - Parse G0/G1/G2/G3 line by line, tracking:
+//   - XYZ/E position (used to compute move length, and to split E when splitting a move at a boundary)
+//   - the currently effective feedrate (F, mm/min) and accel (from SET_VELOCITY_LIMIT ACCEL=...)
+//   - extrusion role (from comment markers, e.g. ";_EXTERNAL_PERIMETER"), used for ROI role filtering
+// - Note: a "pure speed-setting command" like "G1 F..." is not recorded as a Motion, but it updates state.feedrate_mm_min,
+//   so that the later defect_last.feedrate_mm_s can represent the "real terminal speed (the last feedrate that was set)".
 //
-// 2) ROI 检测：直接在 motions[] 上复用 InterestRegion 的检测逻辑（不再二次跑 GCodeProcessor）
-// - ROI 检测参数取自 InterestRegion::AppearanceUnderExtrusionDefinition 的默认值（与 GUI 预览缓存一致），避免两处默认值漂移。
-// - InterestRegion::detect_appearance_under_extrusion_interest_region(motions, ...) 会产出
-//   "AppearanceUnderExtrusion" 对象，包含两段 span：
-//   - Trigger：持续低速挤出段（速度 <= max_trigger_speed_mm_s 且持续时间 >= min_trigger_time_s）
-//   - Defect：Trigger 之后、满足 defect_roles（默认外墙 + 悬垂外墙）的挤出段
-// - SegmentSpan 使用 end-ssid 索引（表示“从 end_ssid-1 到 end_ssid 的那条段”）。对于 motions[] 视图：
-//   end_ssid = N 直接对应 motions[N-1]，因此 span → motion 索引的映射是 O(1) 的减一操作。
+// 2) ROI detection: reuse InterestRegion's detection logic directly on motions[] (no second GCodeProcessor run)
+// - The ROI detection parameters come from the defaults of InterestRegion::AppearanceUnderExtrusionDefinition (consistent with the GUI preview cache), to avoid the two default sets drifting apart.
+// - InterestRegion::detect_appearance_under_extrusion_interest_region(motions, ...) produces an
+//   "AppearanceUnderExtrusion" object containing two spans:
+//   - Trigger: a sustained low-speed extrusion segment (speed <= max_trigger_speed_mm_s and duration >= min_trigger_time_s)
+//   - Defect: the extrusion segment after the Trigger that satisfies defect_roles (default: external perimeter + overhang external perimeter)
+// - SegmentSpan uses end-ssid indexing (meaning "the segment from end_ssid-1 to end_ssid"). For the motions[] view:
+//   end_ssid = N corresponds directly to motions[N-1], so the span -> motion index mapping is an O(1) subtract-one operation.
 //
-// 3) 计划（Plan）生成：把“安全缓冲”的边界落到 Defect 路径上的某个位置
-// - v_low：Trigger 末端 motion 的速度（trigger_last.feedrate_mm_s）
-// - v_safe/a_safe：用户参数（velocity_safe_mm_s / accel_safe）
-// - v_recovered：Defect 末端 motion 的“真实速度”（defect_last.feedrate_mm_s，即最近一次设置过的进给）
-// - L_safe_transition_mm：在 defect_begin 后先保持 v_low 的过渡距离（默认 1mm），用于稍微延长拐角/降速后的低速段。
-// - 计算理论加速距离（从 v_low 加到 v_safe，常加速度 a_safe）：
-//     L_safe_accel = (v_safe^2 - v_low^2) / (2*a_safe)  (当 v_safe > v_low)
-//   然后定义总安全长度：
+// 3) Plan generation: place the "safe buffer" boundary at some position along the Defect path
+// - v_low: the speed of the Trigger's last motion (trigger_last.feedrate_mm_s)
+// - v_safe/a_safe: user parameters (velocity_safe_mm_s / accel_safe)
+// - v_recovered: the Defect's last motion "real speed" (defect_last.feedrate_mm_s, i.e. the most recently set feedrate)
+// - L_safe_transition_mm: the transition distance over which v_low is held after defect_begin (default 1mm), used to slightly extend the low-speed segment after a corner/deceleration.
+// - Compute the theoretical acceleration distance (from v_low up to v_safe, constant acceleration a_safe):
+//     L_safe_accel = (v_safe^2 - v_low^2) / (2*a_safe)  (when v_safe > v_low)
+//   then define the total safe length:
 //     L_safe_total = L_safe_transition_mm + L_safe_accel + L_safe_cruise_mm
-// - 在 Defect span 内累积 motions 的几何长度，找到首次达到 L_safe_total 的位置作为 boundary：
-//   - 若 boundary 落在某条 motion 内部，则记录 boundary_fraction（后面会 split 该 motion）
-//   - 若 Defect 的总可用长度 < L_safe_total，则 boundary 会被“夹到 defect_end”，意味着 safe 段提前结束
-//     （此时固件 planner 可能根本加不到 v_safe，表现为 L_safe_accel 被距离不足“截断”）
+// - Accumulate the geometric length of motions within the Defect span and find the first position reaching L_safe_total as the boundary:
+//   - If the boundary falls inside some motion, record boundary_fraction (that motion will be split later)
+//   - If the Defect's total available length < L_safe_total, the boundary is "clamped to defect_end", meaning the safe segment ends early
+//     (in this case the firmware planner may not be able to reach v_safe at all, manifesting as L_safe_accel being "truncated" by insufficient distance)
 //
-// 4) G-code 重写：插入 safe/recover，并保证 L_safe 只受 accel_safe 与 velocity_safe 影响
-// - 在 trigger_begin 行前插入：SET_VELOCITY_LIMIT ACCEL=accel_safe
-// - 在 transition_end 处插入：G1 F(v_safe)   （只设置进给，不带 XYZ/E）
-// - 对处于 L_safe 段内的所有行：
-//   - 移除任何遗留/上游注入的 F token（包括 "G1 X.. F.."、"G1F.."、以及独立的 "G1 F.."）
-//   - 目的：保证 L_safe 这一段只由我们插入的 accel_safe 与 v_safe 控制，避免 CoolingBuffer 等模块
-//     在同一区间内插入额外设速指令导致“safe 段不纯粹”
-//   - 额外处理：Cooling 有时会在 safe 段第一条运动指令之前插入独立的 "G1 F..."，
-//     因此 safe 段起点会向前扩展，连同紧邻的纯设速/空行/注释行一起清理
-// - 在 boundary 处插入恢复指令：
+// 4) G-code rewrite: insert safe/recover, and ensure L_safe is affected only by accel_safe and velocity_safe
+// - Before the trigger_begin line, insert: SET_VELOCITY_LIMIT ACCEL=accel_safe
+// - At transition_end, insert: G1 F(v_safe)   (sets feedrate only, no XYZ/E)
+// - For all lines within the L_safe segment:
+//   - Remove any leftover/upstream-injected F token (including "G1 X.. F..", "G1F..", and a standalone "G1 F..")
+//   - Purpose: ensure the L_safe segment is controlled only by the accel_safe and v_safe we inserted, avoiding modules like CoolingBuffer
+//     inserting additional speed-setting commands in the same interval and making the "safe segment impure"
+//   - Extra handling: Cooling sometimes inserts a standalone "G1 F..." before the first motion command of the safe segment,
+//     so the start of the safe segment is extended backward, cleaning up the immediately adjacent pure-speed-setting/blank/comment lines as well
+// - At the boundary, insert recovery commands:
 //     SET_VELOCITY_LIMIT ACCEL=accel_recovered
 //     G1 F(v_recovered)
-//   - 若 transition_end / boundary 在 motion 中间：split 该 G1/G2/G3（可能两次 split：transition_end + boundary），
-//     并在 split 点插入 v_safe / recover；输出的分段 move 均不带 F。
+//   - If transition_end / boundary is in the middle of a motion: split that G1/G2/G3 (possibly two splits: transition_end + boundary),
+//     and insert v_safe / recover at the split points; the emitted segmented moves carry no F.
 //
-// 注意事项：
-// - 当前实现只对 Klipper 生效（依赖 SET_VELOCITY_LIMIT）。
-// - 本模块是“文本重写 + 插入控制命令”，实际的加减速曲线由固件 planner 决定。
-// - 之所以推荐把该 filter 放在 write_gcode 之后、fan_mover 之前，是为了避免后续模块再次注入 F/限速指令，
-//   破坏 L_safe 段“只受 accel_safe/velocity_safe 控制”的约束。
+// Notes:
+// - The current implementation only takes effect for Klipper (relies on SET_VELOCITY_LIMIT).
+// - This module is "text rewrite + inserting control commands"; the actual accel/decel curve is decided by the firmware planner.
+// - The reason this filter is recommended to be placed after write_gcode and before fan_mover is to prevent later modules from re-injecting F/speed-limit commands,
+//   which would break the L_safe segment's constraint of "being controlled only by accel_safe/velocity_safe".
 std::string AppearanceUnderExtrusionAccelRecoveryFilter::apply_to_gcode_layer(std::string&& gcode,
                                                                               const AppearanceUnderExtrusionAccelRecoveryConfig& params,
                                                                               const GCodeConfig& config,
@@ -1077,7 +1077,7 @@ std::string AppearanceUnderExtrusionAccelRecoveryFilter::apply_to_gcode_layer(st
         return std::move(gcode);
 
     // Drop overlapping plans to avoid nested state.
-    // 这一段好像可以优化，因为我已经调整过不会overlap了，TODO
+    // This part could probably be optimized, since I've already adjusted things so they won't overlap, TODO
     std::sort(plans.begin(), plans.end(), [&](const Plan& a, const Plan& b) { return motions[a.span.trigger_begin].line_idx < motions[b.span.trigger_begin].line_idx; });
     std::vector<Plan> non_overlapping;
     non_overlapping.reserve(plans.size());

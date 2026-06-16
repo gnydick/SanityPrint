@@ -596,7 +596,7 @@ static std::vector<Vec2d> get_path_of_change_filament(const Print& print)
 
     void cal_flush_list(float src_length, std::vector<float>& cal_length, const FlushConfig& cfg)
     {
-        cal_length.clear(); // 确保是空的
+        cal_length.clear(); // make sure it is empty
         int remain_length = src_length;
 
         int first_len = cfg.box_first_clean_length;
@@ -666,7 +666,7 @@ static std::vector<Vec2d> get_path_of_change_filament(const Print& print)
             if (std::regex_search(text, match, pattern)) {
                 return {std::stof(match[1].str()), std::stof(match[2].str())};
             }
-            return {0.f, 0.f}; // 没找到则返回默认点
+            return {0.f, 0.f}; // return the default point if not found
         };
 
         /* if (new_extruder_id != -1 && new_extruder_id != tcr.new_tool)
@@ -713,7 +713,7 @@ static std::vector<Vec2d> get_path_of_change_filament(const Print& print)
         std::string wipe_path_before_change_tool;
         Vec2f       end_wipe_pos;
 
-        //block_type == 1 代表擦拭塔格子
+        //block_type == 1 represents a wipe tower cell
         int block_type = -1;
         std::string tcr_rotated_gcode = post_process_wipe_tower_moves_wipe_head(gcodegen, tcr, wipe_tower_offset, end_wipe_pos,
                                                                                 wipe_path_before_change_tool, block_type,
@@ -749,7 +749,7 @@ static std::vector<Vec2d> get_path_of_change_filament(const Print& print)
        {
            gcode += gcodegen.travel_to(wipe_tower_point_to_object_point(gcodegen, start_pos + plate_origin_2d), erMixed, "Travel to a Wipe Tower");
 
-           //模型到擦拭塔格子/擦拭塔填充到擦拭塔格子 这两种情形有一个装填，所以这里排除他
+           //model-to-wipe-tower-cell / wipe-tower-infill-to-wipe-tower-cell: one of these two cases involves a load, so exclude it here
            if (!gcodegen.writer().is_object_start_str_empty() || block_type < 0) 
            {
                if (!gcodegen.config().wipe_tower_no_sparse_layers) 
@@ -1117,7 +1117,7 @@ static std::vector<Vec2d> get_path_of_change_filament(const Print& print)
             gcode += gcodegen.writer().set_pressure_advance(gcodegen.config().pressure_advance.get_at(new_extruder_id));
         }
   
-        //抬升
+        //lift up
         const bool auto_travel_acceleration_was_suppressed = gcodegen.writer().auto_travel_acceleration_suppressed();
         gcodegen.writer().set_auto_travel_acceleration_suppressed(true);
         if (!gcodegen.config().wipe_tower_no_sparse_layers && !is_approx(z, current_z))
@@ -1131,7 +1131,7 @@ static std::vector<Vec2d> get_path_of_change_filament(const Print& print)
         gcodegen.writer().travel_to_xy((end_pos2d_ + plate_origin_2d).cast<double>());
         gcodegen.set_last_pos(wipe_tower_point_to_object_point(gcodegen, end_pos2d_ + plate_origin_2d));
 
-        //下降
+        //lower down
         if (!gcodegen.config().wipe_tower_no_sparse_layers && !is_approx(z, current_z))
         /*gcode += */gcodegen.writer().travel_to_z(current_z, "Travel back up to the topmost object layer.");
 
@@ -1174,7 +1174,7 @@ static std::vector<Vec2d> get_path_of_change_filament(const Print& print)
             if (std::regex_search(text, match, pattern)) {
                 return {std::stof(match[1].str()), std::stof(match[2].str())};
             }
-            return {0.f, 0.f}; // 没找到则返回默认点
+            return {0.f, 0.f}; // return the default point if not found
         };
 
         if (new_extruder_id != -1 && new_extruder_id != tcr.new_tool)
@@ -2087,21 +2087,21 @@ static std::vector<Vec2d> get_path_of_change_filament(const Print& print)
         // std::string keyword = "relative_zhop_up_for_firmware ";
         size_t pos = input.find(keyword);
 
-        // 提取 G-code 指令部分
+        // extract the G-code instruction part
         std::string gcode = (pos != std::string::npos) ? input.substr(pos + keyword.length()) : input;
 
-        // 使用正则表达式提取 Z 值
+        // use a regular expression to extract the Z value
         std::regex  zRegex(R"(Z([-+]?\d*\.\d+|\d+))");
         std::smatch match;
 
         if (std::regex_search(gcode, match, zRegex)) {
-            double zValue    = std::stod(match[1]); // 提取原始 Z 值
-            double newZValue = zValue + z;          // 计算新的 Z 值
+            double zValue    = std::stod(match[1]); // extract the original Z value
+            double newZValue = zValue + z;          // compute the new Z value
 
-            // 构造新的 Z 命令
+            // build the new Z command
             std::string newZCmd = "Z" + Slic3r::float_to_string_decimal_point(newZValue, 3); // std::to_string(newZValue);
 
-            // 替换 G-code 中的 Z 值
+            // replace the Z value in the G-code
             gcode = std::regex_replace(gcode, zRegex, newZCmd);
         }
 
@@ -2285,7 +2285,7 @@ static std::vector<Vec2d> get_path_of_change_filament(const Print& print)
                 if (change_m) {
                     continue;
                 } else {
-                    line = line.substr(prefix.length()); // 去掉前缀
+                    line = line.substr(prefix.length()); // strip the prefix
                 }
             }
             // All G1 commands should be translated and rotated. X and Y coords are
@@ -2380,7 +2380,7 @@ static std::vector<Vec2d> get_path_of_change_filament(const Print& print)
                 if (change_m) {
                     continue;
                 } else {
-                    line = line.substr(prefix.length()); // 去掉前缀
+                    line = line.substr(prefix.length()); // strip the prefix
 
                 }
             }
@@ -3697,7 +3697,7 @@ void GCode::_do_export(Print& print, GCodeOutputStream &file, ThumbnailsGenerato
                 _bbox.merge(inst.get_bounding_box());
             }
         }
-        // _bbox 范围包括擦拭塔
+        // the _bbox range includes the wipe tower
         
         Vec3d plate_origin = print.get_plate_origin();
         if (print.has_wipe_tower())
@@ -4104,7 +4104,7 @@ void GCode::_do_export(Print& print, GCodeOutputStream &file, ThumbnailsGenerato
     for (const auto& extruder : m_writer.extruders()) {
         activate_chamber_temp_control |= m_config.activate_chamber_temp_control.get_at(extruder.id());
         int current_value = m_config.chamber_temperature.get_at(extruder.id());
-        // 如果当前值大于记录的最大值，更新最大值和对应的ID
+        // if the current value is greater than the recorded maximum, update the maximum and its corresponding ID
         if (current_value > max_chamber_temp) {
             max_chamber_temp = current_value;
             max_extruder_id  = extruder.id();
@@ -4192,7 +4192,7 @@ void GCode::_do_export(Print& print, GCodeOutputStream &file, ThumbnailsGenerato
     }
     std::string machine_start_template = print.config().machine_start_gcode.value;
     if (print.calib_mode() == CalibMode::Calib_Vol_speed_Tower) {
-        // 体积流速校准时，固定进给速度，避免占位符被200替换后过快。
+        // during volumetric flow rate calibration, fix the feed rate to avoid it becoming too fast after the placeholder is replaced by 200.
         boost::replace_all(machine_start_template, "{filament_max_volumetric_speed[initial_extruder]/0.360}", "6000");
         boost::replace_all(machine_start_template, "{filament_max_volumetric_speed[initial_extruder]/0.3*60}", "6000");
     }
@@ -4312,7 +4312,7 @@ void GCode::_do_export(Print& print, GCodeOutputStream &file, ThumbnailsGenerato
             double value = m_config.initial_layer_travel_acceleration.values[i];
             first_layer_travel_accelerations.emplace_back((unsigned int) floor(value + 0.5));
         } else {
-            first_layer_travel_accelerations.emplace_back(0); // nil 值填 0
+            first_layer_travel_accelerations.emplace_back(0); // fill nil values with 0
         }
     }
     m_writer.set_first_layer_travel_acceleration(first_layer_travel_accelerations);
@@ -6074,7 +6074,7 @@ LayerResult GCode::process_layer(
     int max_extruder_id            = -1;
     for (const auto& extruder : m_writer.extruders()) {
         int current_value = m_config.chamber_temperature.get_at(extruder.id());
-        // 如果当前值大于记录的最大值，更新最大值和对应的ID
+        // if the current value is greater than the recorded maximum, update the maximum and its corresponding ID
         if (current_value > max_chamber_temp) {
             max_chamber_temp = current_value;
             max_extruder_id            = extruder.id();
@@ -7067,7 +7067,7 @@ void GCode::append_full_config(const Print &print, std::string &str)
                         [](const std::string& str) { 
                             return !str.empty(); 
                         });
-                //多色才写入擦拭塔位置
+                //only write the wipe tower position for multi-color
                 if(color_count>1)
                     ss << std::fixed << std::setprecision(3) << "; " << key << " = " << dynamic_cast<const ConfigOptionFloats*>(cfg.option(key))->get_at(print.get_plate_index()) << "\n";
                 else
@@ -9181,7 +9181,7 @@ int get_random_unique_0_80()
 {
     static std::vector<int> numbers;
     static size_t           index = 0;
-    static std::mt19937     g(std::random_device{}()); // 随机数引擎
+    static std::mt19937     g(std::random_device{}()); // random number engine
 
     if (numbers.empty()) {
         numbers.reserve(81);
@@ -9191,7 +9191,7 @@ int get_random_unique_0_80()
         std::shuffle(numbers.begin(), numbers.end(), g);
     }
 
-    // 每次返回洗好序列中的一个数，循环使用
+    // return one number from the shuffled sequence each time, cycling through it
     int value = numbers[index % numbers.size()];
     ++index;
     return value;
@@ -9820,10 +9820,10 @@ std::string GCode::set_extruder(unsigned int extruder_id, double print_z, bool b
 
 void reducePolygonPoints(Polygon& poly, int maxPoints, float tolerance)
 {
-    while (poly.size() > maxPoints && tolerance < 100000) { // 防止无限循环
+    while (poly.size() > maxPoints && tolerance < 100000) { // prevent an infinite loop
         Polygons pls;
         pls = poly.simplify(tolerance);
-        tolerance *= 1.2; // 增加简化程度
+        tolerance *= 1.2; // increase the degree of simplification
         if (pls.size() == 1)
         {
             poly = pls[0];
@@ -9840,7 +9840,7 @@ inline std::string polygon_to_string(const Polygon &polygon, Print* print, bool 
     Polygon simply_poly = polygon;
     if (is_convex_hull)
     {
-        reducePolygonPoints(simply_poly, 100, 1.0); // 简化输出多边形凸包 控制少于100个点 
+        reducePolygonPoints(simply_poly, 100, 1.0); // simplify the output polygon convex hull, keeping it under 100 points 
     }
    
     std::ostringstream gcode;

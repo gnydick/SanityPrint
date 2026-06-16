@@ -59,7 +59,7 @@ WeightLimitItem::WeightLimitItem(AccelerationAndSpeedLimitPanel* limitPanel, wxW
     auto main_sizer = new wxBoxSizer(wxVERTICAL);
     SetSizer(main_sizer);
     
-    //  重量区间
+    //  Weight range
     wxPanel* panel = new wxPanel(this, wxID_ANY);
     panel->Hide();
     m_weightPanel = panel;
@@ -177,7 +177,7 @@ WeightLimitItem::WeightLimitItem(AccelerationAndSpeedLimitPanel* limitPanel, wxW
 
     main_sizer->Add(panel, 1, wxEXPAND);
 
-    //  打印速度 
+    //  Print speed
     panel = new wxPanel(this, wxID_ANY);
     m_speedPanel = panel;
     panel->Hide();
@@ -229,7 +229,7 @@ WeightLimitItem::WeightLimitItem(AccelerationAndSpeedLimitPanel* limitPanel, wxW
     
     main_sizer->Add(panel, 1, wxEXPAND);
 
-    //  加速度
+    //  Acceleration
     panel           = new wxPanel(this, wxID_ANY);
     panel->Hide();
     m_AccelerationPanel = panel;
@@ -441,7 +441,7 @@ HeightLimitItem::HeightLimitItem(AccelerationAndSpeedLimitPanel* limitPanel, wxW
     auto main_sizer = new wxBoxSizer(wxVERTICAL);
     SetSizer(main_sizer);
 
-    //  重量区间
+    //  Weight range
     wxPanel* panel = new wxPanel(this, wxID_ANY);
     panel->Hide();
     m_heightPanel = panel;
@@ -542,7 +542,7 @@ HeightLimitItem::HeightLimitItem(AccelerationAndSpeedLimitPanel* limitPanel, wxW
 
     main_sizer->Add(panel, 1, wxEXPAND);
 
-    //  打印速度
+    //  Print speed
     panel = new wxPanel(this, wxID_ANY);
     m_speedPanel = panel;
     panel->Hide();
@@ -594,7 +594,7 @@ HeightLimitItem::HeightLimitItem(AccelerationAndSpeedLimitPanel* limitPanel, wxW
 
     main_sizer->Add(panel, 1, wxEXPAND);
 
-    //  加速度
+    //  Acceleration
     panel = new wxPanel(this, wxID_ANY);
     panel->Hide();
     m_AccelerationPanel = panel;
@@ -809,7 +809,7 @@ AccelerationAndSpeedLimitPanel::AccelerationAndSpeedLimitPanel(const std::string
 
     m_scrolled_window_sizer = new wxBoxSizer(wxVERTICAL);
 
-    //  列表头
+    //  List header
     auto panel = new wxPanel(m_scrolled_window, wxID_ANY);
     panel->SetMinSize(wxSize(FromDIP(728), FromDIP(48)));
     panel->SetMaxSize(wxSize(FromDIP(728), FromDIP(48)));

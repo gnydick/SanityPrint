@@ -1741,7 +1741,7 @@ void GLGizmoMeshBoolean::fire_boolean_analytics_event(MeshBooleanOperation mode,
     payload.data = evtData;
     AnalyticsDataUploadManager::getInstance().triggerUploadTasksWithPayload(payload);
     
-    // 【新增】标记几何体修改（仅成功时）
+    // [Added] Mark geometry as modified (only on success)
     if (success) {
         AnalyticsDataUploadManager::ProjectModificationTracker::getInstance()
             .mark_modified(AnalyticsDataUploadManager::ModelModifyType::BOOLEAN);

@@ -544,15 +544,15 @@ ChoosePresetDlg::ChoosePresetDlg(wxWindow* parent, const std::string& printerSet
         leftSelectedPresetName = m_vtComboText[idx];
     }
 
-    //if (defaultPrinterSettingId != -1) {//如果找到3mf文件中的预设，则选择该预设
+    //if (defaultPrinterSettingId != -1) {//if the preset from the 3mf file is found, select that preset
     //    m_comboLastSelected = defaultPrinterSettingId;
     //} else {
     //    auto preset = wxGetApp().preset_bundle->printers.find_preset(leftSelectedPresetName);
     //    if (preset != nullptr && preset->is_system &&
-    //        preset->name.find("Creality") != std::string::npos) { // 如果找到3mf文件中的预设，则判断当前选择中的是创想的系统预设
+    //        preset->name.find("Creality") != std::string::npos) { // if the preset from the 3mf file is found, check whether the currently selected one is a Creality system preset
     //        m_comboLastSelected = idx;
     //    } else {
-    //        if (firstCrealityPresetIdx != -1) {//如果没有找到3mf文件中的预设，且当前选中的不是创想的系统预设，则选择第一个创想的系统预设
+    //        if (firstCrealityPresetIdx != -1) {//if no preset from the 3mf file is found and the current selection is not a Creality system preset, select the first Creality system preset
     //            m_comboLastSelected = firstCrealityPresetIdx;
     //        } else { 
     //            if (idx >= 0 && idx < m_vtComboText.size()){

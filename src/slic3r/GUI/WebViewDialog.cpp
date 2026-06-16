@@ -242,19 +242,19 @@ wxString WebViewPanel::GetURL()
     // hidden home tab stays blank.
     return wxString("about:blank");
 
-    // alpha/beta/dev 对社区的影响：社区使用不同的创想云服务环境
-    // alpha：预发布环境（pre）+ cpp 启动的本地 http 服务
-    // beta：生产环境 + c++ 启动的本地 http 服务
-    // dev：根据开发需求决定用哪个环境 + 前端开发启动的局域网 http 服务
+    // How alpha/beta/dev affect the community: the community uses different Creality Cloud service environments
+    // alpha: pre-release environment (pre) + local http service started by cpp
+    // beta: production environment + local http service started by c++
+    // dev: which environment to use depends on the development needs + a LAN http service started by front-end development
 
-    // alpha & beta: c++ 启动了一个 http server
-    // 原因：file 协议加载 html 跨域问题难以处理，尤其是大文件（font 文件，10M+）
-    // http server 信息：
-    // 1. 运行在 http://127.0.0.1:%d（端口动态获取）
-    // 2. 将 resources_dir 的 web/homepage 作为静态目录，社区的 html 等打包放在这里
-    // 3. c++ webview 加载 http://127.0.0.1:%d/#/；添加 # 是因为使用了 hash 路由
-    // wxString url     = wxString::Format("http://127.0.0.1:%d/#/",wxGetApp().get_server_port()); // 127.0.0.1 访问创想云 cdn 图片会
-    // 403，因此使用 localhost
+    // alpha & beta: c++ starts an http server
+    // Reason: cross-origin issues when loading html via the file protocol are hard to handle, especially for large files (font files, 10M+)
+    // http server info:
+    // 1. runs at http://127.0.0.1:%d (port obtained dynamically)
+    // 2. uses web/homepage under resources_dir as the static directory, where the community's html and so on are packaged
+    // 3. c++ webview loads http://127.0.0.1:%d/#/; the # is added because hash routing is used
+    // wxString url     = wxString::Format("http://127.0.0.1:%d/#/",wxGetApp().get_server_port()); // accessing Creality Cloud cdn images via 127.0.0.1 returns
+    // 403, so use localhost instead
     wxString lang = wxGetApp().app_config->get("language") != "" ? wxGetApp().app_config->get("language") : "en_GB";
 
     std::string type = std::string(PROJECT_VERSION_EXTRA);
@@ -273,12 +273,12 @@ wxString WebViewPanel::GetURL()
                 region = "North America";
             }
     }
-    //替换region中的空格为下划线
+    // replace spaces in region with underscores
     std::replace(region.begin(), region.end(), ' ', '_');
     std::string use_inches = wxGetApp().app_config->get("use_inches");
 
     int port = wxGetApp().get_server_port();
-    wxGetApp().check_creality_privacy_version(false); // 检查隐私政策版本
+    wxGetApp().check_creality_privacy_version(false); // check privacy policy version
 
     std::string os_description = Slic3r::Http::url_encode(wxGetOsDescription().ToStdString());
 
@@ -296,7 +296,7 @@ wxString WebViewPanel::GetURL()
         port,
         lang, version, type, region, use_inches, std::time(0), wxGetApp().is_privacy_checked(), os_description);
     #ifdef _DEBUG1
-    // for dev: 使用局域网地址：可以找【刘明，或其他前端开发同事】，按要求启动一个 http 服务，用于调试
+    // for dev: use a LAN address: ask [Liu Ming, or another front-end development colleague] to start an http service as required, for debugging
     port = 9090;
 
     //
@@ -545,10 +545,10 @@ void WebViewPanel::SendRecentList(int images)
     std::wostringstream oss;
     pt::write_json(oss, req, false);
 
-    // 通过WebSocket发送消息
+    // send the message over WebSocket
 
 
-    // 保留原有的RunScript调用作为备用
+    // keep the original RunScript call as a fallback
     RunScript(wxString::Format("window.handleStudioCmd(%s)", oss.str()));
 }
 

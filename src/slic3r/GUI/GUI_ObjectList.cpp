@@ -2082,7 +2082,7 @@ void ObjectList::load_subobject(ModelVolumeType type, bool from_galery /* = fals
     // BBS: notify partplate the modify
     notify_instance_updated(obj_idx);
     
-    // 【新增】标记几何体修改（添加部件成功）
+    // [New] Mark geometry as modified (part added successfully)
     if (type == ModelVolumeType::MODEL_PART) {
         AnalyticsDataUploadManager::ProjectModificationTracker::getInstance()
             .mark_modified(AnalyticsDataUploadManager::ModelModifyType::ADD_PART);
@@ -2766,7 +2766,7 @@ bool ObjectList::del_subobject_from_object(const int obj_idx, const int idx, con
         // BBS: notify partplate the modify
         notify_instance_updated(obj_idx);
         
-        // 【新增】标记几何体修改（删除部件成功）
+        // [New] Mark geometry as modified (part deleted successfully)
         if (volume->is_model_part()) {
             AnalyticsDataUploadManager::ProjectModificationTracker::getInstance()
                 .mark_modified(AnalyticsDataUploadManager::ModelModifyType::DELETE_PART);
@@ -2842,7 +2842,7 @@ void ObjectList::split()
     // BBS: notify partplate the modify
     notify_instance_updated(obj_idx);
     
-    // 【新增】标记几何体修改（拆分到部件成功）
+    // [New] Mark geometry as modified (split into parts successfully)
     AnalyticsDataUploadManager::ProjectModificationTracker::getInstance()
         .mark_modified(AnalyticsDataUploadManager::ModelModifyType::SPLIT_PARTS);
     
@@ -3735,7 +3735,7 @@ void ObjectList::update_info_items(size_t obj_idx, wxDataViewItemArray* selectio
     wxDataViewItem     item_obj     = m_objects_model->GetItemById(obj_idx);
    // assert(item_obj.IsOk());
     if (!item_obj.IsOk()) {
-        // Boolean / rebuild 后 UI 尚未同步，跳过本次 info 更新
+        // After Boolean / rebuild the UI is not yet synced, skip this info update
         return;
     }
 
@@ -4495,7 +4495,7 @@ bool ObjectList::edit_layer_range(const t_layer_height_range& range, const t_lay
 
     changed_object(obj_idx);
     
-    // 【新增】标记几何体修改（高度范围修改完成）
+    // [New] Mark geometry as modified (height range modification completed)
     AnalyticsDataUploadManager::ProjectModificationTracker::getInstance()
         .mark_modified(AnalyticsDataUploadManager::ModelModifyType::HEIGHT_RANGE);
 
@@ -5699,7 +5699,7 @@ void ObjectList::fix_through_netfabb()
                                                           NotificationManager::NotificationLevel::PrintInfoShortNotificationLevel,
                                                           boost::nowide::narrow(msg));
     
-    // 【新增】标记几何体修改（有成功的模型就标记）
+    // [New] Mark geometry as modified (mark if there is any successful model)
     if (!succes_models.empty()) {
         AnalyticsDataUploadManager::ProjectModificationTracker::getInstance()
             .mark_modified(AnalyticsDataUploadManager::ModelModifyType::REPAIR);
@@ -7945,8 +7945,8 @@ void ObjectList::render_printer_preset_by_ImGui(bool folded_view)
             // Pass in the preview value visible before opening the combo (it could technically be different contents or not pulled
             // from items[])
             const char* combo_preview_value = "";
-            void*       original_data_ptr   = bed_types.data();     // 记录原始数据指针
-            size_t      original_capacity   = bed_types.capacity(); // 记录原始容量
+            void*       original_data_ptr   = bed_types.data();     // record the original data pointer
+            size_t      original_capacity   = bed_types.capacity(); // record the original capacity
             if (0 <= bed_type_selected_idx && bed_type_selected_idx < bed_types.size()) {
                 combo_preview_value = bed_types[bed_type_selected_idx].c_str();
             } else {
@@ -8447,7 +8447,7 @@ void ObjectList::update_other_printer_device_list_data(bool bForce)
             // model img
             //auto printer_model = vendor + " " + device.modelName;
 
-            if (device.deviceType != 1001) // fluidd机型
+            if (device.deviceType != 1001) // fluidd model
             {
                 continue;
             }
@@ -8599,8 +8599,8 @@ void ObjectList::draw_device_list_content()
         const char* label         = label_str.c_str();
         std::vector<std::string> lines;
         if (!isCrealityVendor) {
-            //lines.push_back("*绑定Other设备后,可将Gcode文件发送到打印机");
-            //lines.push_back("注:Other设备不可进行耗材同步和耗材映射");
+            //lines.push_back("*After binding an Other device, you can send Gcode files to the printer");
+            //lines.push_back("Note: Other devices do not support filament sync or filament mapping");
             lines.push_back( _u8L("*After binding an \"Other\" device, you can send G-code files to the printer"));
             lines.push_back( _u8L("Note: \"Other\" devices do not support filament sync or mapping"));
         } else {
@@ -8638,7 +8638,7 @@ void ObjectList::draw_device_list_content()
                 ImGui::PopStyleColor(1);
             }
 
-            // 更新下一行的Y轴位置（加上当前行的高度）
+            // Update the Y position of the next line (add the current line's height)
             ImVec2 line_size  = ImGui::CalcTextSize(line.c_str());
             int    line_count = 1 + (int) (line_size.x / wrap_width);
             current_y += line_count * line_height;
@@ -8939,7 +8939,7 @@ void ObjectList::consume_scroll_request_imgui(ObjectDataViewModelNode* node, flo
     if (!m_scroll_req_imgui || m_scroll_target_imgui != node)
         return;
 
-    // 必须在该 node 的“主 item”绘制完成之后调用
+    // Must be called after this node's "main item" has finished drawing
     ImGui::SetScrollHereY(center);
 
     m_scroll_req_imgui = false;

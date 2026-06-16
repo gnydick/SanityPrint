@@ -2338,7 +2338,7 @@ void TreeSupport::draw_circles(const std::vector<std::vector<Node*>>& contact_no
                             if (node.overhang->contour.size() > 100 || node.overhang->holes.size()>1)
                                 overhang_expanded.emplace_back(*node.overhang);
                             else {
-                                // 对于有缺陷的模型，overhang膨胀以后可能是空的！
+                                // for defective models, the overhang may be empty after expansion!
                                 overhang_expanded = offset_ex({ *node.overhang }, scale_(m_ts_data->m_xy_distance));
                             }
                             append(area, overhang_expanded);
@@ -3076,7 +3076,7 @@ void TreeSupport::drop_nodes(std::vector<std::vector<Node*>>& contact_nodes)
                         if (to_delete.find(neighbour_node) != to_delete.end()) continue; 
 
                         Point direction = neighbour - node.position;
-                        // do not move to neighbor that's too far away (即使以最大速度移动，在接触热床之前都无法汇聚)
+                        // do not move to neighbor that's too far away (even moving at maximum speed, it cannot converge before reaching the heated bed)
                         float dist2_to_neighbor = vsize2_with_unscale(direction);
 
                         coordf_t branch_bottom_radius = calc_branch_radius(branch_radius, node.dist_mm_to_top + node.print_z, diameter_angle_scale_factor);

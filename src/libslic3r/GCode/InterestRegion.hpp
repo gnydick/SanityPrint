@@ -422,7 +422,7 @@ inline InterestRegion detect_appearance_under_extrusion_interest_region_impl(con
         const float v_effect = segments.speed_mm_s(effect_first_end);
         // Do not start the defect span if speed is still in the "slow" regime.
         // So defect span will not overlap with trigger span.
-        // 这里有优化的空间：TODO
+        // There is room for optimization here: TODO
         if (!(v_effect > 0.0f) || v_effect < def.max_trigger_speed_mm_s)
             continue;
         if (!defect_roles_contains(def.defect_roles, segments.role(effect_first_end)))

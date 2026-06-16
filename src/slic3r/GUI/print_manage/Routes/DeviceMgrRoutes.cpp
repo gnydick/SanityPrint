@@ -73,7 +73,7 @@ namespace DM {
         this->Handler({ "update_devices" }, [this](wxWebView* browse, const std::string& data, nlohmann::json& json_data, const std::string cmd) {
             DM::DataCenter::Ins().update_data(json_data);
             
-            // 7.1.0版本先屏蔽此事件上报
+            // for version 7.1.0, suppress this event reporting for now
             //check_and_send_print_failure_events(json_data);
             
             if (DM::DataCenter::Ins().is_current_device_changed()) {
@@ -167,26 +167,26 @@ namespace DM {
 
                 std::string localip = "";
                 try {
-                    // 提取域名部分
+                    // extract the domain part
                     std::string domain = DM::AppUtils::extractDomain(url);
-                    // 创建一个 Boost.Asio 的 io_context 对象
+                    // create a Boost.Asio io_context object
                     boost::asio::io_context io_context;
-                    // 创建一个 UDP 套接字
+                    // create a UDP socket
                     boost::asio::ip::udp::socket socket(io_context);
-                    //socket.non_blocking(true); 
-                    // 连接到一个公共的 UDP 地址和端口（Google 的公共 DNS 服务器）
+                    //socket.non_blocking(true);
+                    // connect to a public UDP address and port (Google's public DNS server)
                     //boost::system::error_code ec;
                     socket.connect(boost::asio::ip::udp::endpoint(boost::asio::ip::address::from_string(domain), 80));
-                   
-                    // 获取本地端点信息
+
+                    // get the local endpoint information
                     boost::asio::ip::udp::endpoint local_endpoint = socket.local_endpoint();
-                    // 关闭套接字
+                    // close the socket
                     socket.close();
-                    // 返回本地 IP 地址的字符串表示
+                    // return the string representation of the local IP address
                     localip = local_endpoint.address().to_string();
                 }
                 catch (const std::exception& e) {
-                    // 若出现异常，输出错误信息并返回空字符串
+                    // if an exception occurs, output the error message and return an empty string
                     std::cerr << "Error: " << e.what() << std::endl;
                 }
                 if (!localip.empty())
@@ -250,8 +250,8 @@ namespace DM {
                             .header("Content-Type", "plain/text")
                             .set_post_body(e)
                             .ca_file(Slic3r::resources_dir() + "/cert/ca.crt")
-                            .ssl_verify_peer(true)   //校验证书链
-                            .ssl_verify_host(false)  //不校验域名
+                            .ssl_verify_peer(true)   //verify the certificate chain
+                            .ssl_verify_host(false)  //do not verify the domain name
                             .on_complete([post_result, url, videoEncryption](std::string body, unsigned http_status) {
                                 nlohmann::json out_data;
                                 out_data["sdp"] = std::move(body);

@@ -162,7 +162,7 @@ OneBoxFilamentColorItem::OneBoxFilamentColorItem(wxWindow* parent, const wxSize&
 
     m_bk_color = wxColour(75, 75, 77);
 
-    // SetBackgroundStyle(wxBG_STYLE_PAINT); // 使得双缓冲绘图生效
+    // SetBackgroundStyle(wxBG_STYLE_PAINT); // make double-buffered drawing take effect
     Bind(wxEVT_PAINT, &OneBoxFilamentColorItem::OnPaint, this);
 }
 
@@ -268,7 +268,7 @@ void OneBoxFilamentColorItem::update_ui_item_info_by_material_box_info(const DM:
             filament_item->set_is_ext(true);
             filament_item->update_item_info_by_material(material_box_info.box_id, material);
 
-            // 检查 m_cfs_index_info 的值，并设置背景色
+            // check the value of m_cfs_index_info and set the background color
             if(material.color.empty()) {
                 filament_item->SetColor(wxNullColour);
             }
@@ -325,7 +325,7 @@ void OneBoxFilamentColorItem::update_ui_item_info_by_material_box_info(const DM:
         m_box_sizer->Layout();
     }
 
-    // 重新布局面板
+    // re-layout the panel
     Layout();
     Refresh();
 }
@@ -456,7 +456,7 @@ void PrinterBoxFilamentPanel::update_device_data(const DM::Device& device_data)
 
 void PrinterBoxFilamentPanel::update_box_filament_items()
 {
-    // 清空现有的 OneBoxFilamentColorItem 和 OneFilamentColorItem
+    // clear the existing OneBoxFilamentColorItem and OneFilamentColorItem
     for (auto& item : m_filament_box_items) {
         item->Destroy();
     }
@@ -530,7 +530,7 @@ void PrinterBoxFilamentPanel::OnTimer(wxTimerEvent& event)
             auto& materialBoxs = printer["boxsInfo"]["materialBoxs"];
 
 
-            // 比较 device_data 的 materialBoxes 与 m_device_data 的 materialBoxes
+            // compare device_data's materialBoxes with m_device_data's materialBoxes
             bool materialBoxesEqual = true;
             try {
                 if (device_data.materialBoxes.size() == m_device_data.materialBoxes.size()) {

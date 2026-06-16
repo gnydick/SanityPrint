@@ -1020,7 +1020,7 @@ int ConfigBase::load_from_json(const std::string &file, ConfigSubstitutionContex
 
                             if (use_comma)
                             {
-                                //非字符串类型的值不能有空字符串
+                                //non-string-type values cannot have empty strings
                                 std::string tvalue = iter.value();
                                 if(tvalue.empty())
                                 {

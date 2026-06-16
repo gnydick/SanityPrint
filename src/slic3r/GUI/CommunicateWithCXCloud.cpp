@@ -271,7 +271,7 @@ int CommunicateWithCXCloud::getUserProfileList(std::vector<UserProfileListItem>&
                 } else {
                     CXCloudDataCenter::getInstance().setTokenInvalid(true);
                 }
-                nRet = 1;       // 请求失败
+                nRet = 1;       // request failed
                 setLastError(std::to_string(j["code"].get<int>()), "");
                 BOOST_LOG_TRIVIAL(error) << "SyncUserPresets CommunicateWithCXCloud getUserProfileList fail.code=" << j["code"];
                 return;
@@ -539,7 +539,7 @@ int CommunicateWithCXCloud::downloadUserPreset(const UserProfileListItem& userPr
                 //c.close();
                 //saveJsonFile = outJsonFile;
 
-                ////  保存info文件
+                ////  save the info file
                 //if (userInfo.bLogin) {
 
                 //    if (fs::exists(outInfoFile)) {
@@ -686,7 +686,7 @@ int CommunicateWithCXCloud::preUpdateProfile_update(const UploadFileInfo& fileIn
                 if (j["code"].get<int>() == 4) {
                     CXCloudDataCenter::getInstance().setTokenInvalid();
                     BOOST_LOG_TRIVIAL(error) << "SyncUserPresets CommunicateWithCXCloud preUpdateProfile_update fail.code=" << j["code"];
-                } else if (j["code"].get<int>() == 517) {   //  数据不存在
+                } else if (j["code"].get<int>() == 517) {   //  data does not exist
                     nRet = 517;
                 }
                 BOOST_LOG_TRIVIAL(error) << "SyncUserPresets CommunicateWithCXCloud preUpdateProfile_update fail.code=" << j["code"]
@@ -738,7 +738,7 @@ int CommunicateWithCXCloud::preUpdateProfile_update(const UploadFileInfo& fileIn
     return nRet;
 }
 
-//  删除用户预设
+//  delete user preset
 int CommunicateWithCXCloud::deleteProfile(const std::string& ssDeleteSettingId)
 {
     int nRet = -1;
@@ -836,7 +836,7 @@ int CommunicateWithCXCloud::saveSyncDataToLocal(const UserInfo&            userI
         fs::last_write_time(outJsonFile, userProfileListItem.lastModifyTime);
         saveJsonFile = outJsonFile;
 
-        //  保存info文件
+        //  save the info file
         {
             if (fs::exists(outInfoFile)) {
                 fs::remove(outInfoFile);

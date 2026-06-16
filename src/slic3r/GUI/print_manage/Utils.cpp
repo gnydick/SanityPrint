@@ -28,11 +28,11 @@ std::string Utils::url_encode(const std::string& value)
     escaped << std::hex << std::uppercase;
 
     for (unsigned char c : value) {
-        // 保持字母数字和其他安全字符不变
+        // keep alphanumeric and other safe characters unchanged
         if (isalnum(c) || c == '-' || c == '_' || c == '.' || c == '~') {
             escaped << c;
         } else {
-            // 其他字符进行百分比编码
+            // percent-encode any other characters
             escaped << '%' << std::setw(2) << std::setfill('0') << static_cast<int>(c);
         }
     }

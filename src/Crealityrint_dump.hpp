@@ -27,51 +27,51 @@ struct SystemInfo {
 };
 class ErrorReportDialog : public wxDialog {
 public:
-    // 构造函数，接收父窗口指针和对话框标题
+    // Constructor that takes the parent window pointer and the dialog title
     ErrorReportDialog(wxWindow* parent, const wxString& title) : wxDialog(parent, wxID_ANY, title) {
-        // 创建垂直方向的布局管理器
+        // Create a vertical layout manager
         wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 
-        // 创建水平方向的布局管理器，用于放置标题
+        // Create a horizontal layout manager to hold the title
         wxBoxSizer* titleSizer = new wxBoxSizer(wxHORIZONTAL);
         //std::filesystem::path imagePath = "resources\\images\\warning.png";
         wxIcon warningIcon = wxArtProvider::GetIcon(wxART_WARNING, wxART_MESSAGE_BOX);
 
-    // 将图标转换为位图
+    // Convert the icon to a bitmap
         wxBitmap bitmap(warningIcon);
-        // 创建 wxStaticBitmap 控件并添加到窗口
+        // Create a wxStaticBitmap control and add it to the window
         wxStaticBitmap* staticBitmap = new wxStaticBitmap(this, wxID_ANY, bitmap, wxPoint(50, 50));
         wxStaticText* text = new wxStaticText(this, wxID_ANY, "A serious error has occurred in Some App. Please send this error report to us to fix the problem.\nPlease click the \"Send Report\" button to automatically publish the error report to our server.", wxPoint(20, 20));
         titleSizer->Add(staticBitmap, 0, wxALIGN_CENTER | wxALL, 10);
         titleSizer->Add(text, 0, wxALIGN_CENTER | wxALL, 10);
         sizer->Add(titleSizer, 0, wxALIGN_CENTER | wxALL, 10);
-        // 分割线
+        // Divider line
         wxStaticLine* line = new wxStaticLine(this, wxID_ANY);
         sizer->Add(line, 0, wxALL | wxEXPAND, 5);
         
         
         GetErrorReport();
         wxString formattedString = wxString::Format(wxT("OS: %s\nGraphicsCard: %s\nOpenGLVersion: %s\nVersion: %s\nUid: %s\n"), m_info.osDescription, m_info.graphicsCardVendor, m_info.openGLVersion, m_info.build,m_info.uuid);
-        // 创建水平方向的布局管理器，用于放置文本框
+        // Create a horizontal layout manager to hold the text box
         wxStaticText* vtext = new wxStaticText(this, wxID_ANY, formattedString, wxPoint(20, 20));
         sizer->Add(vtext, 0, wxALIGN_LEFT | wxALL, 10);
 
-        // 创建发送按钮
+        // Create the send button
         wxButton* sendButton = new wxButton(this, wxID_OK, "SendReport");
-        // 创建取消按钮
+        // Create the cancel button
         wxButton* cancelButton = new wxButton(this, wxID_CANCEL, "Cancel");
 
-        // 创建水平方向的布局管理器，用于放置按钮
+        // Create a horizontal layout manager to hold the buttons
         wxBoxSizer* buttonSizer = new wxBoxSizer(wxHORIZONTAL);
         buttonSizer->Add(sendButton, 0, wxALL, 5);
         buttonSizer->Add(cancelButton, 0, wxALL, 5);
 
-        // 将按钮布局管理器添加到主布局管理器
+        // Add the button layout manager to the main layout manager
         sizer->Add(buttonSizer, 0, wxALIGN_CENTER | wxALL, 10);
 
-        // 设置对话框的布局管理器
+        // Set the dialog's layout manager
         SetSizer(sizer);
-        // 调整对话框大小以适应内容
+        // Resize the dialog to fit its content
         sizer->Fit(this);
     }
     wxString getSystemInfo() {
@@ -82,15 +82,15 @@ public:
         j["build"] = m_info.build.ToStdString();
         j["uuid"] = m_info.uuid.ToStdString();
          try {
-            // 获取临时目录路径
+            // Get the temporary directory path
             std::filesystem::path tempDir(wxFileName::GetTempDir().ToStdString());
-            // 生成一个唯一的临时文件名
+            // Generate a unique temporary file name
             std::filesystem::path tempFilePath = tempDir / "system_info.json";
 
-            // 打开临时文件以写入 JSON 数据
+            // Open the temporary file to write JSON data
             std::ofstream tempFile(tempFilePath);
             if (tempFile.is_open()) {
-                // 将 JSON 对象写入文件，使用 dump(4) 进行格式化输出
+                // Write the JSON object to the file, using dump(4) for formatted output
                 tempFile << j.dump(4);
                 tempFile.close();
                 return tempFilePath.wstring();
@@ -116,18 +116,18 @@ public:
         wxString m_systemInfoFilePath;
         void sendEmail(wxString zipFilePath);
         void GetErrorReport() {
-            // 获取错误报告
+            // Get the error report
             wxString osDescription = wxGetOsDescription();
             m_info.osDescription = osDescription;
             m_info.build = wxString(SANITYPRINT_VERSION, wxConvUTF8);
             m_info.uuid = wxDateTime::Now().Format("%Y%m%d%H%M%S");
-            // 获取显卡信息
+            // Get graphics card information
            if (!glfwInit()) {
                 std::cerr << "Failed to initialize GLFW!" << std::endl;
                 return ;
             }
 
-            // 创建隐藏（不可见）窗口
+            // Create a hidden (invisible) window
             glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
             GLFWwindow* window = glfwCreateWindow(1, 1, "", nullptr, nullptr);
 
@@ -139,13 +139,13 @@ public:
 
             glfwMakeContextCurrent(window);
 
-            // 初始化GLEW
+            // Initialize GLEW
             if (glewInit() != GLEW_OK) {
                 std::cerr << "Failed to initialize GLEW!" << std::endl;
                 return ;
             }
 
-            // 获取显卡信息
+            // Get graphics card information
             const GLubyte* renderer = glGetString(GL_RENDERER);
             const GLubyte* version = glGetString(GL_VERSION);
 
@@ -153,7 +153,7 @@ public:
             std::cout << "OpenGL version: " << version << std::endl;
             m_info.graphicsCardVendor = wxString(reinterpret_cast<char*>(const_cast<GLubyte*>(renderer)), wxConvUTF8);
             m_info.openGLVersion = wxString(reinterpret_cast<char*>(const_cast<GLubyte*>(version)), wxConvUTF8);
-            // 销毁窗口和清理
+            // Destroy the window and clean up
             glfwDestroyWindow(window);
             glfwTerminate();
             

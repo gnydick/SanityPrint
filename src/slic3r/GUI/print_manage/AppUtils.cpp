@@ -69,19 +69,19 @@ namespace DM{
         std::string domain;
         size_t start = 0;
 
-        // 检查是否有协议头（如 http:// 或 https://）
+        // Check whether there is a protocol prefix (such as http:// or https://)
         if (url.find("://") != std::string::npos) {
             start = url.find("://") + 3;
         }
 
-        // 找到域名结束的位置，即第一个 /、? 或 # 字符的位置
+        // Find where the domain ends, i.e. the position of the first /, ? or # character
         size_t end = url.find_first_of("/?#:", start);
         if (end == std::string::npos) {
-            // 如果没有找到结束字符，说明域名一直到字符串末尾
+            // If no terminating character is found, the domain runs to the end of the string
             domain = url.substr(start);
         }
         else {
-            // 提取域名部分
+            // Extract the domain portion
             domain = url.substr(start, end - start);
         }
 
@@ -91,8 +91,8 @@ namespace DM{
         int attempt = 0;
 
         while (attempt < retries) {
-            if (ctrl.isStopRequested()) return false;  // 中断点1：执行前检查[3](@ref)
-            // 构建 Ping 命令
+            if (ctrl.isStopRequested()) return false;  // Interruption point 1: check before execution[3](@ref)
+            // Build the ping command
 #ifdef _WIN32
             std::string command = "ping -n 4 -w 2000 " + ip;            //ping ip
 #else
@@ -100,7 +100,7 @@ namespace DM{
 #endif
 
 #ifdef _WIN32
-            // 配置进程启动信息
+            // Configure the process startup information
             STARTUPINFOA si{};
             PROCESS_INFORMATION pi{};
             si.cb = sizeof(si);
@@ -110,7 +110,7 @@ namespace DM{
             if (CreateProcessA(NULL, const_cast<char*>(command.c_str()),
                 NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi))
             {
-                // 非阻塞等待并检查中断
+                // Non-blocking wait while checking for interruption
                 while (WaitForSingleObject(pi.hProcess, 50) == WAIT_TIMEOUT) {
                     if (ctrl.isStopRequested()) {
                         TerminateProcess(pi.hProcess, 1);
@@ -126,28 +126,28 @@ namespace DM{
                 if (exitCode == 0) return true;
             }
 #else
-            // Linux/macOS 实现
+            // Linux/macOS implementation
             if (system(cmd.c_str()) == 0) {
-                return true; // Ping 成功
+                return true; // Ping succeeded
             }
 #endif
 
-            // 重试前等待
-            // 重试前等待并检查中断
+            // Wait before retrying
+            // Wait before retrying while checking for interruption
             if (ctrl.waitForStop(std::chrono::milliseconds(delay_ms)))
                 return false;
 
             attempt++;
 
-            // 下次尝试增加等待时间（指数退避）
+            // Increase the wait time for the next attempt (exponential backoff)
             if (attempt < retries) {
-                delay_ms *= 2; // 增加等待时间
+                delay_ms *= 2; // Increase the wait time
             }
         }
         int x = 0;
-        return false; // 所有尝试均失败
+        return false; // All attempts failed
     }
-    // 使用 Boost.Asio 检查端口
+    // Use Boost.Asio to check the port
     bool LANConnectCheck::isPortOpen(const std::string& ip, int port, ThreadController& ctrl) {
         using boost::asio::deadline_timer;
         using boost::asio::ip::tcp;
@@ -156,7 +156,7 @@ namespace DM{
             tcp::socket socket(io_service);
             tcp::endpoint endpoint(boost::asio::ip::address::from_string(ip), port);
 
-            // 异步连接+超时控制
+            // Asynchronous connect with timeout control
             bool connected = false;
             boost::system::error_code ec;
             socket.async_connect(endpoint, [&](const boost::system::error_code& error) {
@@ -164,7 +164,7 @@ namespace DM{
                 io_service.stop();
                 });
 
-            // 可中断的IO等待
+            // Interruptible IO wait
             std::thread io_thread([&] { io_service.run(); });
             while (io_service.run_one()) {
                 if (ctrl.waitForStop(std::chrono::milliseconds(100))) {
@@ -189,7 +189,7 @@ namespace DM{
     float getWinPingLatency(const std::string& ip, ThreadController& ctrl) {
         std::string cmd = "ping -n 5 " + ip;
 
-        // 使用 STARTUPINFO 结构隐藏窗口
+        // Use the STARTUPINFO structure to hide the window
         STARTUPINFOA si;
         PROCESS_INFORMATION pi;
         SECURITY_ATTRIBUTES sa;
@@ -197,7 +197,7 @@ namespace DM{
         ZeroMemory(&si, sizeof(si));
         si.cb = sizeof(si);
         si.dwFlags = STARTF_USESHOWWINDOW;
-        si.wShowWindow = SW_HIDE;  // 隐藏窗口
+        si.wShowWindow = SW_HIDE;  // Hide the window
 
         ZeroMemory(&pi, sizeof(pi));
 
@@ -205,7 +205,7 @@ namespace DM{
         sa.bInheritHandle = TRUE;
         sa.lpSecurityDescriptor = NULL;
 
-        // 创建管道捕获输出
+        // Create a pipe to capture the output
         HANDLE hReadPipe, hWritePipe;
         if (!CreatePipe(&hReadPipe, &hWritePipe, &sa, 0)) {
             return -1.0f;
@@ -213,12 +213,12 @@ namespace DM{
 
         SetHandleInformation(hReadPipe, HANDLE_FLAG_INHERIT, 0);
 
-        // 重定向输出
+        // Redirect the output
         si.hStdOutput = hWritePipe;
         si.hStdError = hWritePipe;
         si.dwFlags |= STARTF_USESTDHANDLES;
 
-        // 创建进程
+        // Create the process
         char command[256];
         sprintf_s(command, "cmd /C \"%s\"", cmd.c_str());
 
@@ -239,10 +239,10 @@ namespace DM{
             return -1.0f;
         }
 
-        // 关闭写入端
+        // Close the write end
         CloseHandle(hWritePipe);
 
-        // 读取输出
+        // Read the output
         char buffer[1024];
         DWORD bytesRead;
         std::string output;
@@ -266,18 +266,18 @@ namespace DM{
             output += buffer;
         }
         BOOST_LOG_TRIVIAL(error) << "getWinPingLatency output : " << output;
-        // 关闭读取端
+        // Close the read end
         CloseHandle(hReadPipe);
 
-        // 等待进程结束
+        // Wait for the process to finish
         WaitForSingleObject(pi.hProcess, INFINITE);
 
-        // 关闭进程句柄
+        // Close the process handles
         CloseHandle(pi.hProcess);
         CloseHandle(pi.hThread);
 
-        // 解析输出
-        size_t pos = output.find(encode_path(std::string("平均 =").c_str()));
+        // Parse the output
+        size_t pos = output.find(encode_path(std::string("Average =").c_str()));
         
         if (pos == std::string::npos) {
             pos = output.find("Average =");
@@ -286,7 +286,7 @@ namespace DM{
         if (pos != std::string::npos) {
             std::string avgStr;
 
-            // 查找等号后的数字部分
+            // Find the numeric portion after the equals sign
             size_t eqPos = output.find('=', pos);
             if (eqPos != std::string::npos) {
                 for (size_t i = eqPos + 1; i < output.length(); i++) {
@@ -295,7 +295,7 @@ namespace DM{
                         avgStr += c;
                     }
                     else if (!avgStr.empty()) {
-                        // 遇到非数字字符且已有数字，停止
+                        // Stop once a non-numeric character is hit after digits have been collected
                         break;
                     }
                 }
@@ -314,9 +314,9 @@ namespace DM{
         return avgLatency;
     } 
 #else
-    // 使用原来的Linux方式获取平均延迟
+    // Use the original Linux approach to get the average latency
     float getLinuxPingLatency(const std::string& ip) {
-        // 第三阶段：网络质量检测（5次ping平均延迟）
+        // Stage three: network quality check (average latency of 5 pings)
         std::string cmd = "ping -c 5 -i 0.2 " + ip + " | tail -1 | awk -F '/' '{print $5}'";
         FILE* pipe = popen(cmd.c_str(), "r");
         if (!pipe) return -1;
@@ -337,23 +337,23 @@ namespace DM{
 #include <cstdlib>
     int LANConnectCheck::checkLan(const std::string& ip, ThreadController& ctrl)
     {
-        std::string deviceIP = ip; // 替换为目标设备IP
+        std::string deviceIP = ip; // Replace with the target device IP
         std::string msg = "";
         int errorcode = 0;
-        // 第一阶段：检查设备是否在线（ping测试）
+        // Stage one: check whether the device is online (ping test)
         if (!pingHostWithRetry(deviceIP, ctrl)) {
-            if (ctrl.isStopRequested()) return -1;  // 中断代码
+            if (ctrl.isStopRequested()) return -1;  // Interruption code
             errorcode = 1;
             return errorcode;
             //return msg;
         }
-        // 第二阶段：端口连通性检查
+        // Stage two: port connectivity check
         const int ports_to_check[] = { 80, 9999 };
         bool allPortsOpen = true;
         for (int port : ports_to_check) {
             if (!isPortOpen(deviceIP, port,ctrl)) {
-                if (ctrl.isStopRequested()) return -1;  // 
-                return 2;  // 端口不通
+                if (ctrl.isStopRequested()) return -1;  //
+                return 2;  // Port not reachable
             }
         }
         if (!allPortsOpen) {
@@ -361,7 +361,7 @@ namespace DM{
             return errorcode;
         }
 
-        // 第三阶段：网络质量检测（5次ping平均延迟）
+        // Stage three: network quality check (average latency of 5 pings)
 #ifdef _WIN32
         float avgLatency = getWinPingLatency(deviceIP,ctrl);
 #else 

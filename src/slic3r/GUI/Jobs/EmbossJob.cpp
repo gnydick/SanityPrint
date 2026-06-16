@@ -1205,14 +1205,14 @@ void create_volume(TriangleMesh                    &&mesh,
     // update model and redraw scene
     //canvas->reload_scene(true);
     
-    // 添加空指针检查和配置项访问保护
+    // add null-pointer check and config-option access protection
     if (!obj) {
         BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << " ModelObject pointer is null, cannot access extruder config";
         boost::log::core::get()->flush();
         return;
     }
     
-    int modelExtruder = 1; // 默认值
+    int modelExtruder = 1; // default value
     try {
         if (obj->config.has("extruder")) {
             modelExtruder = obj->config.extruder();

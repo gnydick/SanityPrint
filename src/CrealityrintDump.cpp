@@ -39,17 +39,17 @@ ErrorReportDialog::ErrorReportDialog(wxWindow* parent, const wxString& title)
     wxColour color = is_dark ? wxColor("#4b4b4d") : wxColour(255, 255, 255);
     SetBackgroundColour(color);
 
-    // 创建垂直方向的布局管理器
+    // Create a vertical layout manager
     wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 
-    // 创建水平方向的布局管理器，用于放置标题
+    // Create a horizontal layout manager to hold the title
     wxBoxSizer* titleSizer = new wxBoxSizer(wxHORIZONTAL);
     // std::filesystem::path imagePath = "resources\\images\\warning.png";
     wxIcon warningIcon = wxArtProvider::GetIcon(wxART_WARNING, wxART_MESSAGE_BOX);
 
-    // 将图标转换为位图
+    // Convert the icon to a bitmap
     wxBitmap bitmap(warningIcon);
-    // 创建 wxStaticBitmap 控件并添加到窗口
+    // Create a wxStaticBitmap control and add it to the window
     wxStaticBitmap* staticBitmap = new wxStaticBitmap(this, wxID_ANY, bitmap, wxPoint(FromDIP(50), FromDIP(50)));
     wxBoxSizer*     titleSizer1  = new wxBoxSizer(wxVERTICAL);
     wxStaticText*   text =
@@ -86,7 +86,7 @@ ErrorReportDialog::ErrorReportDialog(wxWindow* parent, const wxString& title)
         m_info.openGLVersion,
         m_info.build,
         m_info.uuid);
-    // 创建水平方向的布局管理器，用于放置文本框
+    // Create a horizontal layout manager to hold the text box
     wxStaticText* vtext = new wxStaticText(tabCtrPanel, wxID_ANY, formattedString, wxPoint(20, 20));
     vtext->SetFont(::Label::Body_12);
     //vtext->SetForegroundColour(is_dark ? *wxWHITE : *wxBLACK);
@@ -111,7 +111,7 @@ ErrorReportDialog::ErrorReportDialog(wxWindow* parent, const wxString& title)
     m_InfoInput->SetSize(wxSize(FromDIP(360), FromDIP(24)));
     m_InfoInput->SetMaxLength(100);
 
-    // 创建发送按钮
+    // Create the send button
     // wxButton* sendButton = new wxButton(this, wxID_OK, "SendReport");
     StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(52, 152, 219), StateColor::Pressed),
                             std::pair<wxColour, int>(wxColour(52, 152, 219), StateColor::Hovered),
@@ -131,7 +131,7 @@ ErrorReportDialog::ErrorReportDialog(wxWindow* parent, const wxString& title)
         EndModal(wxID_OK);
     });
 
-    // 创建取消按钮
+    // Create the cancel button
     // wxButton* cancelButton = new wxButton(this, wxID_CANCEL, "Cancel");
     Button* cancelButton = new Button(this, _L("Cancel"));
     cancelButton->SetBackgroundColor(btn_bg_green);
@@ -145,21 +145,21 @@ ErrorReportDialog::ErrorReportDialog(wxWindow* parent, const wxString& title)
         EndModal(wxID_CANCEL);
     });
 
-    // 创建水平方向的布局管理器，用于放置按钮
+    // Create a horizontal layout manager to hold the buttons
     wxBoxSizer* buttonSizer = new wxBoxSizer(wxHORIZONTAL);
     buttonSizer->Add(sendButton, 0, wxALL, 5);
     buttonSizer->Add(cancelButton, 0, wxALL, 5);
 
-    // 将按钮布局管理器添加到主布局管理器
+    // Add the button layout manager to the main layout manager
     sizer->Add(tipsText, 0, wxLEFT, FromDIP(10));
     sizer->Add(m_InfoInput, 0, wxLEFT | wxUP, FromDIP(10));
     sizer->Add(buttonSizer, 0, wxALIGN_CENTER | wxALL, 10);
 
     //SetMinSize(wxSize(FromDIP(600), FromDIP(350)));
     //SetMaxSize(wxSize(FromDIP(600), FromDIP(350)));
-    // 设置对话框的布局管理器
+    // Set the dialog's layout manager
     SetSizer(sizer);
-    // 调整对话框大小以适应内容
+    // Resize the dialog to fit its content
     sizer->Fit(this);
     Slic3r::GUI::wxGetApp().UpdateDlgDarkUI(this);
 
@@ -173,7 +173,7 @@ wxString ErrorReportDialog::getSystemInfo()
         return std::string(buffer_utf8.data());
     };
 
-    // 获取系统架构信息的函数
+    // Function to get system architecture information
     auto get_system_architecture = []() -> std::string {
         Slic3r::PlatformFlavor flavor = Slic3r::platform_flavor();
         switch (flavor) {
@@ -182,7 +182,7 @@ wxString ErrorReportDialog::getSystemInfo()
             case Slic3r::PlatformFlavor::OSXOnArm:
                 return "arm64";
             default:
-                // 对于其他平台，使用编译时检测
+                // For other platforms, use compile-time detection
 #if defined(__x86_64__) || defined(_M_X64) || defined(__amd64)
                 return "x86_64";
 #elif defined(__aarch64__) || defined(_M_ARM64)
@@ -208,7 +208,7 @@ wxString ErrorReportDialog::getSystemInfo()
     j["userEmail"]          = intoU8(m_InfoInput->GetTextCtrl()->GetValue()); // m_InfoInput->GetTextCtrl()->GetValue().ToStdString();
     j["systemArchitecture"] = get_system_architecture();
 
-    // 附加调试字段：原始 OS 描述和 Windows 版本号
+    // Additional debug fields: raw OS description and Windows version number
     j["osDescriptionRaw"] = wxGetOsDescription().ToStdString();
 #ifdef _WIN32
     {
@@ -233,15 +233,15 @@ wxString ErrorReportDialog::getSystemInfo()
     }
 #endif
     try {
-        // 获取临时目录路径
+        // Get the temporary directory path
         std::filesystem::path tempDir(wxFileName::GetTempDir().ToStdString());
-        // 生成一个唯一的临时文件名
+        // Generate a unique temporary file name
         std::filesystem::path tempFilePath = tempDir / "system_info.json";
 
-        // 打开临时文件以写入 JSON 数据
+        // Open the temporary file to write JSON data
         std::ofstream tempFile(tempFilePath);
         if (tempFile.is_open()) {
-            // 将 JSON 对象写入文件，使用 dump(4) 进行格式化输出
+            // Write the JSON object to the file, using dump(4) for formatted output
             tempFile << j.dump(4);
             tempFile.close();
             return tempFilePath.wstring();
@@ -275,7 +275,7 @@ void ErrorReportDialog::on_dpi_changed(const wxRect& suggested_rect)
 void ErrorReportDialog::sendEmail(wxString zipFilePath)
 {
         BOOST_LOG_TRIVIAL(warning) <<__FUNCTION__ <<  " start";     
-        // 发送邮件
+        // Send the email
         CURL *curl;
         CURLcode res = CURLE_OK;
         struct curl_slist *recipients = NULL;
@@ -310,17 +310,17 @@ void ErrorReportDialog::sendEmail(wxString zipFilePath)
          if(curl) {
              curl_mime* mime = curl_mime_init(curl);
 
-             // 设置正文部分
+             // Set up the body part
              curl_mimepart* part = curl_mime_addpart(mime);
              curl_mime_data(part, "This is an error report.", CURL_ZERO_TERMINATED);
              curl_mime_type(part, "text/plain");
 
 
-             // 设置附件部分
+             // Set up the attachment part
              part = curl_mime_addpart(mime);
-             curl_mime_filedata(part, zipFilePath.ToStdString().c_str()); // 替换为你的文件路径
-             curl_mime_name(part, "dumpinfo.zip");               // 设置附件名称
-             curl_mime_filename(part, "dumpinfo.zip");           // 设置附件在邮件中的显示名称
+             curl_mime_filedata(part, zipFilePath.ToStdString().c_str()); // Replace with your file path
+             curl_mime_name(part, "dumpinfo.zip");               // Set the attachment name
+             curl_mime_filename(part, "dumpinfo.zip");           // Set the attachment's display name in the email
              
              headerlist = curl_slist_append(headerlist, payload_text);
              curl_easy_setopt(curl, CURLOPT_MAIL_FROM, from);
@@ -341,10 +341,10 @@ void ErrorReportDialog::sendEmail(wxString zipFilePath)
                                     << ", pass empty: " << pass_empty
                                     << ", to empty: " << to_empty;
 
-            // 打印 CURL 错误详情（不输出敏感内容）
+            // Print CURL error details (without outputting sensitive content)
             BOOST_LOG_TRIVIAL(error) << "CURL error: " << curl_easy_strerror(res) << " (code: " << res << ")";
 
-            // 仅记录是否解析到 IP，而不输出具体地址
+            // Only record whether an IP was resolved, without outputting the actual address
             char* ip = nullptr;
             curl_easy_getinfo(curl, CURLINFO_PRIMARY_IP, &ip);
             BOOST_LOG_TRIVIAL(warning) << "Resolved IP available: " << (ip != nullptr);
@@ -357,7 +357,7 @@ void ErrorReportDialog::sendEmail(wxString zipFilePath)
             res = curl_easy_perform(curl);
 
             char* effective_url = nullptr;
-            curl_easy_getinfo(curl, CURLINFO_EFFECTIVE_URL, &effective_url); // 获取最终解析的URL
+            curl_easy_getinfo(curl, CURLINFO_EFFECTIVE_URL, &effective_url); // Get the final resolved URL
             BOOST_LOG_TRIVIAL(warning) << "Effective URL available: " << (effective_url != nullptr);
             if (res != CURLE_OK) {
                 BOOST_LOG_TRIVIAL(error) << "Error sending email: " << curl_easy_strerror(res);
@@ -381,9 +381,9 @@ void ErrorReportDialog::sendEmail(wxString zipFilePath)
 
     wxString ErrorReportDialog::zipFiles() {
         BOOST_LOG_TRIVIAL(warning) << __FUNCTION__ << " start";
-        // 创建一个zip文件
+        // Create a zip file
         wxString format1 = "%Y%m%d%H%M%S";
-        // 使用wxFileName构建跨平台兼容的文件路径
+        // Use wxFileName to build a cross-platform compatible file path
         wxFileName zipFileName(wxFileName::GetTempDir(), wxString::Format("SanityPrint_%s_%s", SANITYPRINT_VERSION, wxDateTime::Now().Format(format1)), "zip");
         wxString zipFilePath = zipFileName.GetFullPath();
         BOOST_LOG_TRIVIAL(warning) << "Creating zip file: " << zipFilePath.ToStdString();
@@ -397,7 +397,7 @@ void ErrorReportDialog::sendEmail(wxString zipFilePath)
             return "";
         }
         BOOST_LOG_TRIVIAL(warning) << "Zip file created successfully";
-        // 添加文件到zip文件
+        // Add files to the zip file
         wxFileName fileName(m_dumpFilePath);
         wxString nameWithExt = fileName.GetFullName();
         BOOST_LOG_TRIVIAL(warning) << "Adding dump file: " << m_dumpFilePath.ToStdString() << " as " << nameWithExt.ToStdString();
@@ -420,7 +420,7 @@ void ErrorReportDialog::sendEmail(wxString zipFilePath)
         }
         BOOST_LOG_TRIVIAL(warning) << "System info file added successfully";
         
-		 //添加日志文件
+		 //Add log files
         BOOST_LOG_TRIVIAL(warning) << "Adding log files to zip";
         if (!addLogFiles(archive)) {
             BOOST_LOG_TRIVIAL(error) << "Failed to add log files to zip";
@@ -438,7 +438,7 @@ void ErrorReportDialog::sendEmail(wxString zipFilePath)
             return "";
         }
         BOOST_LOG_TRIVIAL(warning) << "Zip archive finalized successfully";
-        // 关闭zip文件
+        // Close the zip file
         mz_zip_writer_end(&archive);
         BOOST_LOG_TRIVIAL(warning) << __FUNCTION__ << " completed successfully, zip file: " << zipFilePath.ToStdString();
         return zipFilePath;
@@ -473,18 +473,18 @@ void ErrorReportDialog::sendEmail(wxString zipFilePath)
 
 void ErrorReportDialog::GetErrorReport()
     {
-        // 获取错误报告
+        // Get the error report
         wxString osDescription = wxGetOsDescription();
-        // 记录原始系统描述，便于定位误判（提升为warning级别）
+        // Log the raw system description to help diagnose misdetection (raised to warning level)
         BOOST_LOG_TRIVIAL(warning) << __FUNCTION__ << " wxGetOsDescription(raw)=" << osDescription.ToStdString();
-        
-        // 改进的Windows 11检测逻辑
+
+        // Improved Windows 11 detection logic
         #ifdef _WIN32
-        // 检查是否为Windows 11
+        // Check whether this is Windows 11
         OSVERSIONINFOEXW osvi = {};
         osvi.dwOSVersionInfoSize = sizeof(osvi);
-        
-        // 使用RtlGetVersion获取真实版本信息
+
+        // Use RtlGetVersion to get the real version information
         typedef NTSTATUS(WINAPI* RtlGetVersionPtr)(PRTL_OSVERSIONINFOW);
         HMODULE hMod = GetModuleHandleW(L"ntdll.dll");
         if (hMod) {
@@ -494,17 +494,17 @@ void ErrorReportDialog::GetErrorReport()
                 rovi.dwOSVersionInfoSize = sizeof(rovi);
                 if (fxPtr(&rovi) == 0) {
                     const bool is_win11 = (rovi.dwMajorVersion == 10 && rovi.dwMinorVersion == 0 && rovi.dwBuildNumber >= 22000);
-                    // 记录RtlGetVersion结果（提升为warning级别）
+                    // Log the RtlGetVersion result (raised to warning level)
                     BOOST_LOG_TRIVIAL(warning) << __FUNCTION__
                         << " RtlGetVersion: major=" << rovi.dwMajorVersion
                         << " minor=" << rovi.dwMinorVersion
                         << " build=" << rovi.dwBuildNumber
                         << " is_win11=" << (is_win11 ? "true" : "false");
-                    // Windows 11的判断条件：版本10.0且构建号>=22000
+                    // Windows 11 criteria: version 10.0 and build number >= 22000
                     if (is_win11) {
-                        // 替换操作系统描述中的"Windows 10"为"Windows 11"
+                        // Replace "Windows 10" with "Windows 11" in the OS description
                         osDescription.Replace("Windows 10", "Windows 11");
-                        // 如果没有找到"Windows 10"，但确实是Windows 11，则添加构建号信息
+                        // If "Windows 10" was not found but this really is Windows 11, append the build number info
                         if (!osDescription.Contains("Windows 11")) {
                             osDescription += wxString::Format(" (Build %lu - Windows 11)", rovi.dwBuildNumber);
                         }
@@ -528,16 +528,16 @@ void ErrorReportDialog::GetErrorReport()
         m_info.build           = wxString(SANITYPRINT_VERSION, wxConvUTF8);
         m_info.uuid = Slic3r::GUI::wxGetApp().app_config->get("language") + wxDateTime::Now().Format("%Y%m%d%H%M%S") +
                       wxString::Format("%03lu", wxDateTime::UNow().GetMillisecond());
-        // 记录最终展示的系统描述（提升为warning级别）
+        // Log the final system description being displayed (raised to warning level)
         BOOST_LOG_TRIVIAL(warning) << __FUNCTION__ << " osDescription(final)=" << m_info.osDescription.ToStdString();
         BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << " uuid:" << m_info.uuid.ToStdString().c_str();
-        // 获取显卡信息
+        // Get graphics card information
         if (!glfwInit()) {
             std::cerr << "Failed to initialize GLFW!" << std::endl;
             return;
         }
 
-        // 创建隐藏（不可见）窗口
+        // Create a hidden (invisible) window
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         GLFWwindow* window = glfwCreateWindow(1, 1, "", nullptr, nullptr);
 
@@ -549,13 +549,13 @@ void ErrorReportDialog::GetErrorReport()
 
         glfwMakeContextCurrent(window);
 
-        // 初始化GLEW
+        // Initialize GLEW
         if (glewInit() != GLEW_OK) {
             std::cerr << "Failed to initialize GLEW!" << std::endl;
             return;
         }
 
-        // 获取显卡信息
+        // Get graphics card information
         const GLubyte* renderer = glGetString(GL_RENDERER);
         const GLubyte* version  = glGetString(GL_VERSION);
 
@@ -563,7 +563,7 @@ void ErrorReportDialog::GetErrorReport()
         std::cout << "OpenGL version: " << version << std::endl;
         m_info.graphicsCardVendor = wxString(reinterpret_cast<char*>(const_cast<GLubyte*>(renderer)), wxConvUTF8);
         m_info.openGLVersion      = wxString(reinterpret_cast<char*>(const_cast<GLubyte*>(version)), wxConvUTF8);
-        // 销毁窗口和清理
+        // Destroy the window and clean up
         glfwDestroyWindow(window);
         glfwTerminate();
 
@@ -573,37 +573,37 @@ void ErrorReportDialog::GetErrorReport()
 bool ErrorReportDialog::addLogFiles(mz_zip_archive& archive)
 {
     try {
-        // 获取日志目录路径
+        // Get the log directory path
         std::string           log_dir = Slic3r::data_dir() + "/log";
         std::filesystem::path log_path(log_dir);
 
         BOOST_LOG_TRIVIAL(warning) << __FUNCTION__ << " start";
 
-        // 检查目录是否存在
+        // Check whether the directory exists
         if (!std::filesystem::exists(log_path)) {
             BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << " Log directory does not exist: " << log_dir;
             return false;
         }
 
-        // 收集所有日志文件
+        // Collect all log files
         std::vector<std::filesystem::path> log_files = collectLogFiles(log_path);
         if (log_files.empty()) {
-            return true; // 没有日志文件，但这不是错误
+            return true; // No log files, but this is not an error
         }
 
-        // 创建临时子压缩包
+        // Create a temporary sub-archive
         wxString logZipPath = createLogZipPath();
 
-        // 压缩日志文件
+        // Compress the log files
         bool success = compressLogFiles(log_files, logZipPath);
         if (!success) {
-            return true; // 返回true因为这不是致命错误
+            return true; // Return true because this is not a fatal error
         }
 
-        // 将日志压缩包添加到主压缩包
+        // Add the log archive to the main archive
         bool added = addLogZipToMainArchive(archive, logZipPath);
 
-        // 清理临时文件
+        // Clean up temporary files
         wxRemoveFile(logZipPath);
 
         return added;
@@ -619,19 +619,19 @@ std::vector<std::filesystem::path> ErrorReportDialog::collectLogFiles(const std:
     std::vector<std::filesystem::path> log_files;
 
     try {
-        // 收集所有.log.0文件
+        // Collect all .log.0 files
         for (const auto& entry : std::filesystem::directory_iterator(log_path)) {
             if (entry.path().extension() == ".0" && entry.path().stem().extension() == ".log") {
                 log_files.push_back(entry.path());
             }
         }
 
-        // 按最后修改时间排序
+        // Sort by last modification time
         std::sort(log_files.begin(), log_files.end(), [](const std::filesystem::path& a, const std::filesystem::path& b) {
             return std::filesystem::last_write_time(a) > std::filesystem::last_write_time(b);
         });
 
-        // 限制文件数量
+        // Limit the number of files
         if (log_files.size() > 4) {
             log_files.resize(4);
         }
@@ -651,7 +651,7 @@ wxString ErrorReportDialog::createLogZipPath()
 
 bool ErrorReportDialog::compressLogFiles(const std::vector<std::filesystem::path>& log_files, const wxString& logZipPath)
 {
-    // 创建子压缩包
+    // Create the sub-archive
     mz_zip_archive log_archive;
     mz_zip_zero_struct(&log_archive);
     mz_bool status = mz_zip_writer_init_file(&log_archive, logZipPath.mb_str(), 0);
@@ -660,17 +660,17 @@ bool ErrorReportDialog::compressLogFiles(const std::vector<std::filesystem::path
         return false;
     }
 
-    // 用于跟踪是否添加了至少一个日志文件
+    // Used to track whether at least one log file was added
     bool added_any_log = false;
 
-    // 处理所有候选日志文件
+    // Process all candidate log files
     for (const auto& log_file : log_files) {
         if (tryAddLogFileToArchive(log_file, log_archive)) {
             added_any_log = true;
         }
     }
 
-    // 检查是否至少添加了一个日志文件
+    // Check whether at least one log file was added
     if (!added_any_log) {
         BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << " Could not add any log files to archive";
         mz_zip_writer_end(&log_archive);
@@ -678,7 +678,7 @@ bool ErrorReportDialog::compressLogFiles(const std::vector<std::filesystem::path
         return false;
     }
 
-    // 完成子压缩包
+    // Finalize the sub-archive
     status = mz_zip_writer_finalize_archive(&log_archive);
     if (MZ_FALSE == status) {
         BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << " Failed to finalize log archive";
@@ -695,7 +695,7 @@ bool ErrorReportDialog::tryAddLogFileToArchive(const std::filesystem::path& log_
 {
     std::string filename = log_file.filename().string();
 
-    // 尝试直接复制添加文件
+    // Try to add the file by copying it directly
     if (tryCopyAndAddFile(log_file, archive, filename.c_str())) {
         return true;
     }
@@ -707,20 +707,20 @@ bool ErrorReportDialog::tryAddLogFileToArchive(const std::filesystem::path& log_
 bool ErrorReportDialog::tryCopyAndAddFile(const std::filesystem::path& srcPath, mz_zip_archive& zip, const char* entryName)
 {
     try {
-        // 创建临时文件
+        // Create a temporary file
         wxString tempFile = wxFileName::CreateTempFileName("log_copy_");
 
-        // 尝试复制文件
+        // Try to copy the file
         if (!wxCopyFile(srcPath.string(), tempFile)) {
             BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << " Failed to copy log file: " << srcPath.string();
             wxRemoveFile(tempFile);
             return false;
         }
 
-        // 添加到压缩包
+        // Add to the archive
         mz_bool result = mz_zip_writer_add_file(&zip, entryName, tempFile.mb_str(), "", 0, MZ_BEST_COMPRESSION);
 
-        // 删除临时文件
+        // Delete the temporary file
         wxRemoveFile(tempFile);
 
         if (result != MZ_TRUE) {
@@ -741,7 +741,7 @@ bool ErrorReportDialog::addLogZipToMainArchive(mz_zip_archive& archive, const wx
     wxString   logZipName = zipFile.GetFullName();
 
     mz_bool status = mz_zip_writer_add_file(&archive, logZipName.mb_str(), logZipPath.mb_str(), "", 0,
-                                            MZ_NO_COMPRESSION); // 已经压缩过，不需要再次压缩
+                                            MZ_NO_COMPRESSION); // Already compressed, no need to compress again
 
     if (!status) {
         BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << " Failed to add log zip to main zip!";

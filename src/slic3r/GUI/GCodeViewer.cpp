@@ -889,8 +889,8 @@ void GCodeViewer::GCodeWindow::renderGcode(uint64_t curr_line_id, int canvas_wid
             const size_t start = id == 1 ? 0 : m_lines_ends[id - 2];
             const size_t original_len = m_lines_ends[id - 1] - start;
 
-            // fix bug[10385] task[2520] : 超长，不截断，改为另起一行
-            std::string  gline(m_file.data() + start, original_len); 
+            // fix bug[10385] task[2520] : too long; do not truncate, wrap to a new line instead
+            std::string  gline(m_file.data() + start, original_len);
 
             std::string command, parameters, comment;
             // extract comment
@@ -962,7 +962,7 @@ void GCodeViewer::GCodeWindow::renderGcode(uint64_t curr_line_id, int canvas_wid
         // spacer to right align text
         ImGui::Dummy({ id_width - ImGui::CalcTextSize(id_str.c_str()).x* zoom, text_height });
         ImGui::SameLine(0.0f, 0.0f);
-        float id_start_x = ImGui::GetCursorPosX() + id_width; // 行号右边界
+        float id_start_x = ImGui::GetCursorPosX() + id_width; // right edge of the line number
 
         ImGui::PushStyleColor(ImGuiCol_Text, LINE_NUMBER_COLOR);
         DispConfig().boldText(id_str, zoom);
@@ -983,7 +983,7 @@ void GCodeViewer::GCodeWindow::renderGcode(uint64_t curr_line_id, int canvas_wid
         if (!line.parameters.empty()) {
             ImGui::PushStyleColor(ImGuiCol_Text, PARAMETERS_COLOR);
 
-            // 计算行号和 command 的宽度
+            // compute the width of the line number and the command
             float id_width_actual  = ImGui::CalcTextSize(std::to_string(id).c_str()).x * zoom;
             float command_width    = ImGui::CalcTextSize(line.command.c_str()).x * zoom;
             float parameters_width = ImGui::CalcTextSize(line.parameters.c_str()).x * zoom;
@@ -991,17 +991,17 @@ void GCodeViewer::GCodeWindow::renderGcode(uint64_t curr_line_id, int canvas_wid
             float total_width  = id_width_actual + command_width + parameters_width + 3 * style.ItemSpacing.x;
             float window_width = ImGui::GetContentRegionAvail().x;
 
-            // fix bug[10385] task[2520] : 超长，不截断，改为另起一行
+            // fix bug[10385] task[2520] : too long; do not truncate, wrap to a new line instead
             if (total_width < window_width) {
                 ImGui::SameLine(0.0f, 0.0f);
                 DispConfig().boldText(line.parameters, zoom);
             } else {
-                // 设置光标位置对齐行号
+                // set the cursor position to align with the line number
                 std:string s_param = line.parameters;
                 if (!s_param.empty() && s_param.front() == ' ') {
-                    s_param.erase(0, 1); // 去掉第一个空格
+                    s_param.erase(0, 1); // remove the first space
                 }
-                ImGui::SetCursorPosX(id_start_x ); // 对齐行号右边界
+                ImGui::SetCursorPosX(id_start_x ); // align with the right edge of the line number
                 float wrap_x = ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x ;
                 DispConfig().boldTextWrapped(s_param, zoom, wrap_x);
             }
@@ -3071,11 +3071,11 @@ void GCodeViewer::load_toolpaths(const GCodeProcessorResult& gcode_result, const
         // BBS: get the point number and then judge whether the remaining buffer is enough
         size_t points_num = curr.is_arc_move_with_interpolation_points() ? curr.interpolation_points.size() + 1 : 1;
         size_t vertices_size_to_add = (t_buffer.render_primitive_type == TBuffer::ERenderPrimitiveType::BatchedModel) ? t_buffer.model.data.vertices_size_bytes() : points_num * t_buffer.max_vertices_per_segment_size_bytes();
-        if (v_multibuffer.empty()) { // <--- 只在这里添加日志逻辑
-            // --- 检测到致命错误：即将访问空 vector 的 back() ---
+        if (v_multibuffer.empty()) { // <--- only add the logging logic here
+            // --- fatal error detected: about to call back() on an empty vector ---
             std::ostringstream error_msg;
-            // 获取尽可能多的相关上下文信息
-            const GCodeProcessorResult::MoveVertex& prev = gcode_result.moves[i - 1]; // 确保 i > 0
+            // gather as much relevant context as possible
+            const GCodeProcessorResult::MoveVertex& prev = gcode_result.moves[i - 1]; // ensure i > 0
             error_msg << "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n"
                       << __FUNCTION__ << ": IMMINENT CRASH DETECTED!"<< ")\n"
                       << "Reason: v_multibuffer is unexpectedly EMPTY right before accessing back().size()!\n"
@@ -3085,13 +3085,13 @@ void GCodeViewer::load_toolpaths(const GCodeProcessorResult& gcode_result, const
                       << "---------------- Context Information -----------------\n"
                       << "Loop Index (i): " << i
                       << "\n"
-                      // << "Move ID (move_id): " << move_id << "\n" // 如果 move_id 在此作用域可用
+                      // << "Move ID (move_id): " << move_id << "\n" // if move_id is available in this scope
                       << "Buffer ID (id): " << (int) id << "\n"
                       << "Overall State: vertices.size()=" << vertices.size() << ", m_buffers.size()=" << m_buffers.size()
                       << "\n"
                       // << "Target TBuffer Info: render_primitive_type=" << static_cast<int>(t_buffer.render_primitive_type) << "\n" //
-                      // 如果 t_buffer 可用
-                      // << "Calculated vertices_size_to_add: " << vertices_size_to_add << "\n" // 如果 vertices_size_to_add 可用
+                      // if t_buffer is available
+                      // << "Calculated vertices_size_to_add: " << vertices_size_to_add << "\n" // if vertices_size_to_add is available
                       << "--- Current Move (curr) ---\n"
                       << "  Type: " << static_cast<int>(curr.type) << " (" << buffer_id(curr.type) << ")\n"
                       << "  Position: (" << curr.position.x() << ", " << curr.position.y() << ", " << curr.position.z() << ")\n"
@@ -3101,10 +3101,10 @@ void GCodeViewer::load_toolpaths(const GCodeProcessorResult& gcode_result, const
                       << "  Position: (" << prev.position.x() << ", " << prev.position.y() << ", " << prev.position.z() << ")\n"
                       << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n";
 
-            // 1. 使用日志库记录错误 (FATAL 级别)
+            // 1. log the error via the logging library (FATAL level)
             BOOST_LOG_TRIVIAL(error) << error_msg.str();
 
-            // 2. 强制刷新日志库缓冲区 (关键步骤)
+            // 2. force-flush the logging library buffer (critical step)
             BOOST_LOG_TRIVIAL(warning) << "Attempting to flush logs before expected crash...";
             try {
                 boost::log::core::get()->flush();
@@ -3115,7 +3115,7 @@ void GCodeViewer::load_toolpaths(const GCodeProcessorResult& gcode_result, const
                 BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << ": FAILED TO INITIATE LOG FLUSH! Unknown exception.";
             }
 
-            // 3. 短暂延迟，给日志写入留出时间 (不阻塞后台日志线程)
+            // 3. brief delay to give the log time to write (does not block the background log thread)
             const int delay_ms = 1000;
             BOOST_LOG_TRIVIAL(info) << "Introducing " << delay_ms << "ms delay to aid log writing...";
             std::this_thread::sleep_for(std::chrono::milliseconds(delay_ms));
@@ -3131,7 +3131,7 @@ void GCodeViewer::load_toolpaths(const GCodeProcessorResult& gcode_result, const
                 BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << ": FAILED TO INITIATE LOG FLUSH! Unknown exception.";
             }
 
-            // 4. 不做任何阻止，让代码自然执行到下一行导致崩溃
+            // 4. do nothing to prevent it; let the code run naturally to the next line and crash
             BOOST_LOG_TRIVIAL(error) << ">>> Now executing the line expected to crash <<<";
 
         }   
@@ -6359,7 +6359,7 @@ public:
                 title_columns.push_back({ _u8L("Total"), total_filaments });
             }
 
-            //checkbox 占位
+            //checkbox placeholder
             title_columns.push_back({ _u8L(""), total_filaments });
 
             auto offsets_ = calculate_offsets(title_columns, icon_size);
@@ -7042,7 +7042,7 @@ void GCodeViewer::render(int canvas_width, int canvas_height)
 
     bool empty_roles = m_roles.empty();
     bool ban_shells_render = false;
-    if (wxGetApp().preset_bundle->machine_is_belt() && empty_roles) // 路径没渲染完成时，cr30禁止显示半透明轮廓
+    if (wxGetApp().preset_bundle->machine_is_belt() && empty_roles) // when the paths are not fully rendered, the cr30 must not show the semi-transparent outline
         ban_shells_render = true;
 
     if (!ban_shells_render)

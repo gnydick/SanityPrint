@@ -527,10 +527,10 @@ PrinterMgrView::PrinterMgrView(wxWindow *parent)
     //initMqtt();
  }
 inline int get_current_milliseconds(void) {
-    // 获取当前时间点
+    // get the current time point
     auto now = std::chrono::system_clock::now();
   
-   // 将当前时间点转换为毫秒时间戳
+   // convert the current time point to a millisecond timestamp
    auto duration = now.time_since_epoch();
    auto timestamp_milliseconds =
        std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
@@ -585,13 +585,13 @@ void PrinterMgrView::initMqtt()
                 std::cout << "Connection status: " << (connected ? "Connected" : "Disconnected") << std::endl;
             });
             
-            // 连接到服务器
+            // connect to the server
             if (!client->connect(username,password)) {
                 std::cerr << "Failed to connect to MQTT server" << std::endl;
                 return ;
             }
             
-             // 订阅主题并设置回调
+             // subscribe to the topic and set the callback
             const std::string publishTopic = "v1/devices/me/rpc/request/";
             bool ret =client->subscribe(publishTopic+std::string("+"), 0, [&](const std::string& topic, const std::string& payload) {
                 std::cout << "Received message on topic '" << topic << "': " << payload << std::endl;
@@ -1003,10 +1003,10 @@ void PrinterMgrView::OnScriptMessage(wxWebViewEvent& evt)
             bool oldPrinter = j["oldPrinter"];
             int  moonrakerPort = j["moonrakerPort"];
 
-            // 清除对应 IP 的旧触发标志，允许重新触发
+            // clear the old trigger flag for this IP so it can be triggered again
             m_print_send_fired_ips.erase(ipAddress);
 
-            // 根据文件扩展名判断格式
+            // determine the format from the file extension
             if (uploadName.find(".3mf") != std::string::npos || uploadName.find(".3MF") != std::string::npos) {
                 m_last_send_format = "3MF";
             } else {
@@ -1059,7 +1059,7 @@ void PrinterMgrView::OnScriptMessage(wxWebViewEvent& evt)
 
                     RemotePrint::RemotePrinterManager::getInstance().pushUploadMultTasks(ipAddress, uploadName, gcodeFilePath,
                     [this, j](std::string ip, float progress, double speed) {
-                        // 缓存所有设备的上传进度与速度，并批量上报给前端（限频）
+                        // cache upload progress and speed for all devices, and report them to the frontend in batches (rate-limited)
                         {
                             std::lock_guard<std::mutex> lk(m_uploadProgressMutex);
                             m_uploadProgressMap[ip] = ProgressInfo{progress, speed};
@@ -1142,12 +1142,12 @@ void PrinterMgrView::OnScriptMessage(wxWebViewEvent& evt)
                             {
                             }
                         });
-                        // 上传完成后，移除对应 IP 的进度缓存
+                        // after the upload completes, remove the progress cache for this IP
                         {
                             std::lock_guard<std::mutex> lk(m_uploadProgressMutex);
                             m_uploadProgressMap.erase(ip);
                         }
-                        // 清除对应 IP 的触发标志，允许下次重新触发
+                        // clear the trigger flag for this IP so it can be triggered again next time
                         m_print_send_fired_ips.erase(ip);
 
               });
@@ -1470,7 +1470,7 @@ std::string PrinterMgrView::get_plate_data_on_show()
             }
 
             auto size = mem_stream.GetSize();
-            // 使用智能指针/容器管理内存，避免泄漏
+            // use a smart pointer/container to manage memory and avoid leaks
             std::vector<unsigned char> imgdata(size);
             if (size > 0) {
                 mem_stream.CopyTo(imgdata.data(), size);
@@ -1512,7 +1512,7 @@ std::string PrinterMgrView::get_plate_data_on_show()
                     plate_print_statistics.modes[static_cast<size_t>(PrintEstimatedStatistics::ETimeMode::Normal)];
 
                 if (plate_extruders.size() > 0) {
-                    // 边界安全检查：防止 plate_extruders[0]-1 越界访问 filament_types
+                    // bounds-safety check: prevent plate_extruders[0]-1 from indexing filament_types out of range
                     int extruder_index = plate_extruders[0] - 1;
                     if (extruder_index >= 0 && extruder_index < static_cast<int>(filament_types.size())) {
                         default_gcode_name = obj0_name + "_" + filament_types[extruder_index] + "_" +
@@ -1885,7 +1885,7 @@ void PrinterMgrView::scan_device()
                         string strMoonrakerPort = matches[2];
                         if (strMachineType == "00")
                         {
-                            //音速屏
+                            //Sonic Pad screen
                             vtKlipperIp.push_back(item.machineIp + ":"+strMoonrakerPort);
                         }
                     }
@@ -2635,8 +2635,8 @@ int PrinterMgrView::getFileListFromLanDevice(const std::string strIp)
         // Write FTP response into file
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, fwrite);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, fd);
-        curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 5L);  // 连接超时5秒
-        curl_easy_setopt(curl, CURLOPT_TIMEOUT, 15L);       // 数据传输超时15秒
+        curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 5L);  // connection timeout 5 seconds
+        curl_easy_setopt(curl, CURLOPT_TIMEOUT, 15L);       // data transfer timeout 15 seconds
 
         // Execute request synchronously
         CURLcode res = curl_easy_perform(curl);
@@ -2715,8 +2715,8 @@ int PrinterMgrView::deleteFileListFromLanDevice(const std::string strIp, const s
     struct curl_slist *CMDlist = nullptr;
     CMDlist = curl_slist_append(CMDlist, deleteCmd.c_str()); 
     curl_easy_setopt(curl, CURLOPT_POSTQUOTE, CMDlist);
-    curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 5L);  // 连接超时5秒
-    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 15L);       // 数据传输超时15秒
+    curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 5L);  // connection timeout 5 seconds
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 15L);       // data transfer timeout 15 seconds
 
     // Execute FTP delete command synchronously
     CURLcode res = curl_easy_perform(curl);

@@ -1,6 +1,6 @@
 #include "slic3r/GUI/FileDownloader.hpp"
 #include <exception>
-// 实现部分
+// Implementation
 CurlConnectionPool::CurlConnectionPool(int max_connections)
     : multi_handle_(curl_multi_init()),
       still_running_(0),
@@ -11,13 +11,13 @@ CurlConnectionPool::CurlConnectionPool(int max_connections)
 }
 
 CurlConnectionPool::~CurlConnectionPool() {
-    // 清理所有easy handles
+    // Clean up all easy handles
     for (auto handle : easy_handles_) {
         curl_multi_remove_handle(multi_handle_, handle);
         curl_easy_cleanup(handle);
     }
     
-    // 清理multi handle
+    // Clean up the multi handle
     if (multi_handle_) {
         curl_multi_cleanup(multi_handle_);
     }
@@ -25,7 +25,7 @@ CurlConnectionPool::~CurlConnectionPool() {
 
 bool CurlConnectionPool::addDownload(const std::string url, const std::string filename) {
     try {
-        // 创建下载项
+        // Create the download item
         std::shared_ptr<DownloadItem> item(new DownloadItem(url, filename));
         download_items_.emplace_back(item);
         
@@ -35,14 +35,14 @@ bool CurlConnectionPool::addDownload(const std::string url, const std::string fi
             return false;
         }
         
-        // 创建easy handle
+        // Create the easy handle
         CURL* handle = curl_easy_init();
         if (!handle) {
             download_items_.pop_back();
             return false;
         }
         
-        // 设置easy handle选项
+        // Set easy handle options
         curl_easy_setopt(handle, CURLOPT_URL, item->url.c_str());
         curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, writeDataCallback);
         curl_easy_setopt(handle, CURLOPT_WRITEDATA, &item->stream);
@@ -51,11 +51,11 @@ bool CurlConnectionPool::addDownload(const std::string url, const std::string fi
         curl_easy_setopt(handle, CURLOPT_SSL_VERIFYPEER, 0L);
         curl_easy_setopt(handle, CURLOPT_SSL_VERIFYHOST, 0L);
         
-        // 启用连接复用
+        // Enable connection reuse
         curl_easy_setopt(handle, CURLOPT_FRESH_CONNECT, 0L);
         curl_easy_setopt(handle, CURLOPT_FORBID_REUSE, 0L);
         
-        // 添加到multi handle
+        // Add to the multi handle
         curl_multi_add_handle(multi_handle_, handle);
         easy_handles_.push_back(handle);
         
@@ -67,10 +67,10 @@ bool CurlConnectionPool::addDownload(const std::string url, const std::string fi
 }
 
 void CurlConnectionPool::performDownloads() {
-    // 初始执行
+    // Initial perform
     curl_multi_perform(multi_handle_, &still_running_);
     
-    // 主下载循环
+    // Main download loop
     while (still_running_) {
         fd_set fdread, fdwrite, fdexcep;
         int maxfd = -1;
@@ -84,7 +84,7 @@ void CurlConnectionPool::performDownloads() {
         timeout.tv_sec = 10;
         timeout.tv_usec = 0;
         
-        // 获取超时设置
+        // Get the timeout setting
         curl_multi_timeout(multi_handle_, &curl_timeo);
         if (curl_timeo >= 0) {
             timeout.tv_sec = curl_timeo / 1000;
@@ -95,22 +95,22 @@ void CurlConnectionPool::performDownloads() {
             }
         }
         
-        // 获取文件描述符集
+        // Get the file descriptor sets
         curl_multi_fdset(multi_handle_, &fdread, &fdwrite, &fdexcep, &maxfd);
         
-        // 等待活动或超时
+        // Wait for activity or timeout
         if (maxfd == -1) {
-            // 没有文件描述符，等待一段时间
+            // No file descriptors, wait for a while
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
         } else {
-            // 使用select等待I/O活动
+            // Use select to wait for I/O activity
             select(maxfd + 1, &fdread, &fdwrite, &fdexcep, &timeout);
         }
         
-        // 执行传输
+        // Perform the transfers
         curl_multi_perform(multi_handle_, &still_running_);
         
-        // 清理完成的下载
+        // Clean up completed downloads
         cleanupCompletedDownloads();
     }
     download_items_.clear();
@@ -140,10 +140,10 @@ void CurlConnectionPool::cleanupCompletedDownloads() {
             CURL* handle = msg->easy_handle;
             char* filename = nullptr;
             
-            // 获取文件名
+            // Get the file name
             curl_easy_getinfo(handle, CURLINFO_PRIVATE, &filename);
             
-            // 输出下载结果
+            // Output the download result
             if (msg->data.result == CURLE_OK) {
                 std::cout << "Download completed: " << filename << std::endl;
             } else {
@@ -151,10 +151,10 @@ void CurlConnectionPool::cleanupCompletedDownloads() {
                           << " - " << curl_easy_strerror(msg->data.result) << std::endl;
             }
             
-            // 从multi handle中移除并清理
+            // Remove from the multi handle and clean up
             curl_multi_remove_handle(multi_handle_, handle);
             
-            // 从easy_handles_中移除
+            // Remove from easy_handles_
             auto it = std::find(easy_handles_.begin(), easy_handles_.end(), handle);
             if (it != easy_handles_.end()) {
                 easy_handles_.erase(it);

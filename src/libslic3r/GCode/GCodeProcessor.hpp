@@ -557,7 +557,7 @@ class Print;
             float min_move_t = 0.0f;
             float deceleration{0.0f}; // mm/s^2
             float junction_deviation = 0.05f;
-            Vec3f axes_r             = {1.0f, 0.0f, 0.0f}; // 归一化运动方向向量
+            Vec3f axes_r             = {1.0f, 0.0f, 0.0f}; // normalized motion direction vector
             bool  is_kinematic_move  = true;
             float instant_corner_v   = 10;
             void  prepare();

@@ -163,9 +163,9 @@ public:
                     if (dc.GetHDC() == nullptr) {
                         BOOST_LOG_TRIVIAL(error) << (caller ? caller : "") << " - Null HDC [text=" << logText << "]";
                         try {
-                            // 获取系统错误码
+                            // Get the system error code
                             DWORD err = ::GetLastError();
-                            // 获取进程 GDI/User 对象数
+                            // Get the process's GDI/User object counts
                             DWORD gdiCount  = ::GetGuiResources(::GetCurrentProcess(), GR_GDIOBJECTS);
                             DWORD userCount = ::GetGuiResources(::GetCurrentProcess(), GR_USEROBJECTS);
                           

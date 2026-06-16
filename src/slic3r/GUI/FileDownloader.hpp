@@ -8,24 +8,24 @@
 
 class CurlConnectionPool {
 public:
-    // 构造函数，指定最大并发连接数
+    // Constructor, specifies the maximum number of concurrent connections
     explicit CurlConnectionPool(int max_connections = 5);
-    
-    // 析构函数
+
+    // Destructor
     ~CurlConnectionPool();
-    
-    // 添加下载任务
+
+    // Add a download task
     bool addDownload(const std::string url, const std::string filename);
-    
-    // 执行所有下载任务
+
+    // Execute all download tasks
     void performDownloads();
-    
-    // 禁止拷贝和赋值
+
+    // Disable copy and assignment
     CurlConnectionPool(const CurlConnectionPool&) = delete;
     CurlConnectionPool& operator=(const CurlConnectionPool&) = delete;
 
 private:
-    // 下载项结构
+    // Download item structure
     struct DownloadItem {
         std::string url;
         std::string filename;
@@ -34,35 +34,35 @@ private:
         DownloadItem(const std::string& u, const std::string& f) 
             : url(u), filename(f), stream(f,boost::nowide::ofstream::binary) {}
         
-        // 移动构造函数
+        // Move constructor
         DownloadItem(DownloadItem&& other) noexcept
             : url(std::move(other.url)),
               filename(std::move(other.filename)){}
-        
-        // 禁止拷贝
+
+        // Disable copy
         DownloadItem(const DownloadItem&) = delete;
         DownloadItem& operator=(const DownloadItem&) = delete;
     };
-    
-    // 静态回调函数
+
+    // Static callback function
     static size_t writeDataCallback(void* ptr, size_t size, size_t nmemb, void* userdata);
-    
-    // 清理完成的下载项
+
+    // Clean up completed download items
     void cleanupCompletedDownloads();
-    
+
     // libcurl multi handle
     CURLM* multi_handle_;
-    
-    // 当前运行的下载数
+
+    // Number of downloads currently running
     int still_running_;
-    
-    // 最大并发连接数
+
+    // Maximum number of concurrent connections
     int max_connections_;
-    
-    // 所有下载项
+
+    // All download items
     std::vector<std::shared_ptr<DownloadItem>> download_items_;
-    
-    // 所有easy handles
+
+    // All easy handles
     std::vector<CURL*> easy_handles_;
 };
 #endif

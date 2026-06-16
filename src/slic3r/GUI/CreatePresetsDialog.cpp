@@ -375,7 +375,7 @@ static std::string get_machine_model(const std::string &preset_model)
                                                            std::unordered_map<::CheckBox *, std::pair<std::string, Preset *>> &machine_filament_preset)
  {
 
-     //获取继承此打印机的所有机型
+     // Get all models that inherit from this printer
      std::vector<std::string> vecPrinterInherits;
      vecPrinterInherits.push_back(compatible_printer);
      PresetCollection* presetColl = &wxGetApp().preset_bundle->printers;
@@ -454,7 +454,7 @@ static std::string get_machine_model(const std::string &preset_model)
      for (Preset *preset : template_presets)
          add_row(wxString::FromUTF8(preset->name), preset);
      add_row(_L("------- Existing presets -------"), nullptr);
-     //将用户预设置前
+     // Place user presets first
      for (Preset* preset : presets)
      {
          if (preset->is_user())
@@ -1831,7 +1831,7 @@ void CreatePrinterPresetDialog::create_printer_page1(wxWindow *parent)
     m_page1_sizer = new wxBoxSizer(wxVERTICAL); 
 
     {   
-        //隐藏勾选打印机和喷嘴的checkbox
+        // Hide the printer and nozzle selection checkboxes
         wxPanel* panelTmp = new wxPanel(parent);
         wxBoxSizer* boxSizerTmp = new wxBoxSizer(wxVERTICAL);
         boxSizerTmp->Add(create_type_item(panelTmp), 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, FromDIP(5));
@@ -1925,7 +1925,7 @@ void CreatePrinterPresetDialog::update_printer_other_data_new()
         return;
 
     double dNozzle =m_printer_preset->config.option<ConfigOptionFloats>("nozzle_diameter")->get_at(0);
-    int count = m_nozzle_diameter->GetCount(); // 获取选项的数量
+    int count = m_nozzle_diameter->GetCount(); // Get the number of options
     for (int i = 0; i < count; i++) 
     {
         double diameter = std::stod(m_nozzle_diameter->GetString(i).ToStdString());
@@ -2089,7 +2089,7 @@ wxBoxSizer *CreatePrinterPresetDialog::create_printer_item(wxWindow *parent)
     m_select_printer->Bind(wxEVT_COMBOBOX, [this](wxCommandEvent e) {
         m_select_printer->SetLabelColor(*wxBLACK);
         
-        //鏇存柊鏁版嵁 娣诲姞鐨勬暟鎹?
+        // Update data; the added data
         update_nozzle_data_new();
 
         e.Skip();
@@ -3576,7 +3576,7 @@ bool CreatePrinterPresetDialog::data_init_vendor_and_model()
             m_printer_model_page2->Set(printer_preset_model);
             m_printer_model_page2->SetStringSelection(curr_selected_model);
 
-            //刷新列表
+            // Refresh the list
             wxCommandEvent e;
             on_preset_model_page2_value_change(e);
         }
@@ -3675,7 +3675,7 @@ void CreatePrinterPresetDialog::set_current_visible_printer_new()
 
     m_select_printer->Set(printer_choice);
 
-    //鑾峰彇鎵撳嵃鏈哄搴旂殑鍠峰槾淇℃伅  鏍规嵁json鏁版嵁
+    // Get the nozzle info corresponding to the printer, based on JSON data
     load_nozzle_info_form_json();
 }
 
@@ -4028,7 +4028,7 @@ bool CreatePrinterPresetDialog::save_printable_area_config(Preset *preset)
     } 
     else if(m_create_type.create_nozzle)
     {
-        //应产品要求
+        // Per product requirements
         //std::string selected_printer_preset_name = into_u8(m_select_printer->GetStringSelection());
         //std::unordered_map<std::string, std::shared_ptr<Preset>>::iterator itor = m_printer_name_to_preset.find(selected_printer_preset_name);
         //assert(m_printer_name_to_preset.end() != itor);
@@ -4373,7 +4373,7 @@ class HoveableCheckbox : public wxPanel
 {
     bool                     m_bHoved     = false;
     bool                     m_bSelected  = false;
-    int                      m_state      = 0; // 0-未选中，1-选中，2-半选中
+    int                      m_state      = 0; // 0 = unchecked, 1 = checked, 2 = partially checked
     bool                     m_bClicked   = false;
     wxPoint                  m_clickedPos = wxPoint();
     wxRect                   m_rtCheckbox = wxRect(FromDIP(5), FromDIP(5), FromDIP(16), FromDIP(16));
@@ -4461,7 +4461,7 @@ public:
                 memDC.SetPen(wxPen(wxColour("#3498DB"), 1, wxTRANSPARENT));
             memDC.DrawRectangle(wxRect(0, 0, width, height));
 
-            // 画checkbox
+            // Draw checkbox
             if (m_round > 0) {
                 wxGraphicsContext* gc = wxGraphicsContext::Create(memDC);
                 if (gc) {
@@ -4528,7 +4528,7 @@ ExportMidPanel::ExportMidPanel(wxWindow* parent)
 {
     this->SetMinSize(wxSize(FromDIP(218), FromDIP(585)));
     this->SetBackgroundColour(wxColour("#4B4B4D"));
-    //  创建头
+    //  Create header
     wxBoxSizer* bkBoxSizer = new wxBoxSizer(wxVERTICAL);
     m_bkBoxSizer           = bkBoxSizer;
     this->SetSizer(bkBoxSizer);
@@ -4798,7 +4798,7 @@ void ExportMidPanel::getCheckedPrinterPresets(std::list<std::shared_ptr<ExportMi
                 if (item3->checkbox->GetValue()) {
                     spSTLineDataNode->lstPrinterPresetParam.push_back(item3->preset);
                     hasChecked = true;
-                } else if (hasChecked && item3->preset->is_system) { // 如果是系统预设，则不显示，但进行导出
+                } else if (hasChecked && item3->preset->is_system) { // If it is a system preset, do not display it but still export it
                     spSTLineDataNode->lstPrinterPresetParam.push_back(item3->preset);
                     hasChecked = true;
                 }
@@ -5067,7 +5067,7 @@ ExportMidPanel::STTreeDataNode* ExportMidPanel::createTreeNode(wxString nodeName
     panel->SetMinSize(wxSize(FromDIP(216), FromDIP(28)));
     panel->SetBackgroundColour(wxColour("#3E3E40"));
     bk->Add(panel, 1, wxEXPAND | wxALL, FromDIP(0));
-    //  创建头
+    //  Create header
     wxBoxSizer* sizer = new wxBoxSizer(wxHORIZONTAL);
     panel->SetSizer(sizer);
     panel->Bind(wxEVT_LEFT_DOWN, [panel](wxMouseEvent&) {
@@ -5283,11 +5283,11 @@ ExportRightPanel::ExportRightPanel(wxWindow* parent, wxString titleName)
     this->SetMinSize(wxSize(FromDIP(534), FromDIP(585)));
     this->SetMaxSize(wxSize(FromDIP(534), FromDIP(585)));
     this->SetBackgroundColour(wxColour("#474749"));
-    //  创建头
+    //  Create header
     wxBoxSizer* bkBoxSizer = new wxBoxSizer(wxVERTICAL);
     m_mainBoxSizer         = bkBoxSizer;
     this->SetSizer(bkBoxSizer);
-    //  添加标题
+    //  Add title
     wxBoxSizer* pSttSizer = new wxBoxSizer(wxHORIZONTAL);
     pSttSizer->SetMinSize(wxSize(FromDIP(124), FromDIP(48)));
 
@@ -5308,7 +5308,7 @@ ExportRightPanel::ExportRightPanel(wxWindow* parent, wxString titleName)
     wxBoxSizer* sizer_body = new wxBoxSizer(wxVERTICAL);
     m_midDataBoxSizer      = sizer_body;
 
-    //  创建打印机预设参数
+    //  Create printer preset parameters
     {
         wxPanel*    panel = new wxPanel(m_scrolledWindow, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | wxBORDER_SIMPLE);
         m_stPrinterPresetParam.panel       = panel;
@@ -5331,7 +5331,7 @@ ExportRightPanel::ExportRightPanel(wxWindow* parent, wxString titleName)
         m_stPrinterPresetParam.mainBoxSize->Add(m_stPrinterPresetParam.contentBoxSize);
         m_midDataBoxSizer->Add(panel, 0, wxEXPAND | wxALL | wxALIGN_CENTER_VERTICAL, FromDIP(5));
     }
-    //  创建耗材预设参数
+    //  Create filament preset parameters
     {
         wxPanel* panel = new wxPanel(m_scrolledWindow, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | wxBORDER_SIMPLE);
         m_stFilamentPresetParam.panel = panel;
@@ -5354,7 +5354,7 @@ ExportRightPanel::ExportRightPanel(wxWindow* parent, wxString titleName)
         m_stFilamentPresetParam.mainBoxSize->Add(m_stFilamentPresetParam.contentBoxSize);
         m_midDataBoxSizer->Add(panel, 0, wxEXPAND | wxALL | wxALIGN_CENTER_VERTICAL, FromDIP(5));
     }
-    //  创建工艺预设参数
+    //  Create process preset parameters
     {
         wxPanel* panel = new wxPanel(m_scrolledWindow, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | wxBORDER_SIMPLE);
         m_stProcessPresetParam.panel = panel;
@@ -5381,7 +5381,7 @@ ExportRightPanel::ExportRightPanel(wxWindow* parent, wxString titleName)
     scrolledWindow->SetSizer(sizer_body);
     bkBoxSizer->Add(scrolledWindow);
 
-    //  添加底部按钮
+    //  Add bottom buttons
     wxBoxSizer* pBottomBox = new wxBoxSizer(wxHORIZONTAL);
     pBottomBox->Add(0, 0, 1, wxEXPAND, 5);
     wxButton*   pBtnExport = new wxButton(this, wxID_ANY, _L("Export"), wxDefaultPosition, wxDefaultSize, wxLeft | wxBORDER_NONE);
@@ -5456,7 +5456,7 @@ void ExportRightPanel::updatePresets(ExportMidPanel::STTreeLineDataNode* pLineDa
     int index = 0;
     for (auto item : pLineDataNode->lstPrinterPresetParam) {
         m_stPrinterPresetParam.contentBoxSize->Add(item);
-        if (item->preset->is_system) {// 如果是系统预设，则不显示，但进行导出
+        if (item->preset->is_system) {// If it is a system preset, do not display it but still export it
             m_stPrinterPresetParam.contentBoxSize->Hide(size_t(index));
             m_stPrinterPresetParam.contentBoxSize->Detach(index);
             continue;
@@ -6329,7 +6329,7 @@ wxBoxSizer* ExportConfigsDialog::create_left_navigation(wxWindow* parent)
     pSttSizer->Add(pSttText, 0, wxLeft | wxALIGN_CENTER_VERTICAL, FromDIP(0));
     vertical_sizer->Add(pSttSizer, 0, wxEXPAND | wxALL | wxALIGN_CENTER_VERTICAL, FromDIP(0));
 
-    //  打印机预设集
+    //  Printer preset collection
     wxButton* pBtnPrinterPresets          = new wxButton(panel, wxID_ANY, _L("Printer Presets"), wxDefaultPosition, wxDefaultSize,
                                                 wxLEFT | wxBORDER_NONE);
     m_stPrinterPresets.pBtnPresets = pBtnPrinterPresets;
@@ -6357,7 +6357,7 @@ wxBoxSizer* ExportConfigsDialog::create_left_navigation(wxWindow* parent)
     });
     vertical_sizer->Add(pBtnPrinterPresets, 0, wxEXPAND | wxALL | wxALIGN_CENTER_VERTICAL, FromDIP(1));
 
-    //  耗材预设集
+    //  Filament preset collection
     wxButton* pBtnFilamentPresets           = new wxButton(panel, wxID_ANY, _L("Filament Presets"), wxDefaultPosition, wxDefaultSize,
                                                  wxLEFT | wxBORDER_NONE);
     m_stFilamentPresets.pBtnPresets = pBtnFilamentPresets;
@@ -6385,7 +6385,7 @@ wxBoxSizer* ExportConfigsDialog::create_left_navigation(wxWindow* parent)
     });
     vertical_sizer->Add(pBtnFilamentPresets, 0, wxEXPAND | wxALL | wxALIGN_CENTER_VERTICAL, FromDIP(1));
 
-    //  工艺预设集
+    //  Process preset collection
     wxButton* pBtnProcessPresets          = new wxButton(panel, wxID_ANY, _L("Process Presets"), wxDefaultPosition, wxDefaultSize,
                                                 wxLEFT | wxBORDER_NONE);
     m_stProcessPresets.pBtnPresets = pBtnProcessPresets;
@@ -6487,7 +6487,7 @@ void ExportConfigsDialog::onBtnPrinterClicked()
             if (preset.second->is_system) {
                 if (hasFoundFilamentOrProcess) {
                     lstSystemPresets.push_back(pLineDataNode);
-                } else {//如果系统打印机没有自定义耗材和工艺，则不显示导出
+                } else {// If the system printer has no custom filament or process, do not show it for export
                     delete pLineDataNode;
                     pLineDataNode = nullptr;
                 }
@@ -6522,7 +6522,7 @@ void ExportConfigsDialog::onBtnFilamentClicked()
                 lstLineDataNode = &iter->second;
 
                 ExportMidPanel::STLineDataNode* pLineDataNode = nullptr;
-                {// 判断是否已经有同名的节点
+                {// Check whether a node with the same name already exists
                     for (auto item3 : *lstLineDataNode) {
                         if (item3->name == item.first) {
                             pLineDataNode = item3;
@@ -6802,7 +6802,7 @@ ExportConfigsDialog::ExportCase ExportConfigsDialog::archivePresetToFile() {
             js["type_code"] = "slice810";
             js["client_id"] = wxGetApp().get_client_id();
 
-            js["function_item"] = 7 ;  // 7 -- 导出预设; 
+            js["function_item"] = 7 ;  // 7 -- export presets; 
                 
             js["file_format"] = export_file_format;
             js["operation_date"] = Slic3r::Utils::utc_timestamp(Slic3r::Utils::get_current_time_utc());

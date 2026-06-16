@@ -1159,7 +1159,7 @@ void generate_initial_areas(
     const size_t  num_support_roof_layers = mesh_group_settings.support_roof_layers;
     const bool    roof_enabled        = num_support_roof_layers > 0;
 
-    //这里config.min_radius乘与0.1 是为了解决bug11332。可能会引发支撑面比较细小的情况，需要找到案例验证
+    //here config.min_radius is multiplied by 0.1 to fix bug11332. It may lead to fairly thin support interfaces; a case needs to be found to verify this
     const bool    force_tip_to_roof   = roof_enabled && (interface_placer.support_parameters.soluble_interface || sqr<double>(config.min_radius * 0.1) * M_PI > mesh_group_settings.minimum_roof_area);
     // cap for how much layer below the overhang a new support point may be added, as other than with regular support every new inserted point
     // may cause extra material and time cost.  Could also be an user setting or differently calculated. Idea is that if an overhang
@@ -1704,8 +1704,8 @@ static void increase_areas_one_layer(
                 (elem.use_min_xy_dist ? config.xy_min_distance : config.xy_distance) +
                 (std::min(config.z_distance_top_layers, config.z_distance_bottom_layers) > 0 ? config.min_feature_size : 0);
 
-            //有时候用户会设置xy距离为0，顶部距离为0，这时候safe_movement_distance=0，下面的代码就会发生除0错误
-            //见bug https://zentao.creality.com/zentao/bug-view-15207.html
+            //sometimes the user sets the xy distance to 0 and the top distance to 0, in which case safe_movement_distance=0 and the code below would cause a divide-by-zero error
+            //see bug https://zentao.creality.com/zentao/bug-view-15207.html
             if (safe_movement_distance == 0)
             {
                 safe_movement_distance = config.min_feature_size;

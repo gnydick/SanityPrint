@@ -287,7 +287,7 @@ wxPoint OG_CustomCtrl::get_pos(const Line& line, Field* field_in/* = nullptr*/)
         wxClientDC dc(this);
         dc.SetFont(m_font);
         auto checkDCstate = [this](const wxDC& dc, const wxString& label, const char* caller = nullptr) -> bool {
-            bool ok = true; // 整体状态：默认通过
+            bool ok = true; // overall status: pass by default
 
             // ===== 1. DC State Check =====
             if (!dc.IsOk()) {
@@ -307,13 +307,13 @@ wxPoint OG_CustomCtrl::get_pos(const Line& line, Field* field_in/* = nullptr*/)
 #ifdef __WXMSW__
             if (dc.GetHDC() == nullptr) {
                 ok             = false;
-                DWORD winError = ::GetLastError(); // 必须先取错误码
+                DWORD winError = ::GetLastError(); // must capture the error code first
                 try {
-                    // 核心错误码
+                    // core error code
                     BOOST_LOG_TRIVIAL(error) << (caller ? caller : "") << " - HDC_NULL | WinErr: " << winError << " | Label: \"" << label
                                              << "\"";
 
-                    // Self 窗口状态
+                    // Self window state
                     if (HWND selfHwnd = (HWND) GetHandle(); selfHwnd != nullptr) {
                         BOOST_LOG_TRIVIAL(error)
                             << (caller ? caller : "") << " - Self: hwnd=0x" << std::hex << selfHwnd << std::dec
@@ -323,7 +323,7 @@ wxPoint OG_CustomCtrl::get_pos(const Line& line, Field* field_in/* = nullptr*/)
                         BOOST_LOG_TRIVIAL(error) << (caller ? caller : "") << " - Self: NULL_HANDLE | Label: \"" << label << "\"";
                     }
 
-                    // 资源状态
+                    // resource state
                     try {
                         DWORD gdiCount  = GetGuiResources(GetCurrentProcess(), GR_GDIOBJECTS);
                         DWORD userCount = GetGuiResources(GetCurrentProcess(), GR_USEROBJECTS);
@@ -333,13 +333,13 @@ wxPoint OG_CustomCtrl::get_pos(const Line& line, Field* field_in/* = nullptr*/)
                         BOOST_LOG_TRIVIAL(error) << (caller ? caller : "") << " - ResourceCheckFailed | Label: \"" << label << "\"";
                     }
 
-                    // 线程验证
+                    // thread validation
                     BOOST_LOG_TRIVIAL(error) << (caller ? caller : "") << " - Thread: current=" << GetCurrentThreadId()
                                              << " | main=" << wxThread::GetMainId() << " | Label: \"" << label << "\"";
 
                     boost::log::core::get()->flush();
 
-                    // 父窗口状态
+                    // parent window state
                     if (wxWindow* parent = GetParent()) {
                         if (HWND parentHwnd = (HWND) parent->GetHandle(); parentHwnd != nullptr) {
                             BOOST_LOG_TRIVIAL(error)
@@ -354,7 +354,7 @@ wxPoint OG_CustomCtrl::get_pos(const Line& line, Field* field_in/* = nullptr*/)
                     }
                     boost::log::core::get()->flush();
 
-                    // 错误描述
+                    // error description
                     if (winError != 0) {
                         char  errBuf[256] = {0};
                         DWORD fmtRet      = ::FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, winError, 0,
@@ -383,7 +383,7 @@ wxPoint OG_CustomCtrl::get_pos(const Line& line, Field* field_in/* = nullptr*/)
 #endif
 
             boost::log::core::get()->flush();
-            return ok; // 全部流程完成后统一返回状态
+            return ok; // return the unified status after all steps complete
         };
 
         checkDCstate(dc, label, __FUNCTION__);
@@ -569,7 +569,7 @@ void OG_CustomCtrl::OnPaint(wxPaintEvent&)
     wxPaintDC dc(this);
 
     auto checkDCstate = [this](const wxDC& dc, const char* caller = nullptr) -> bool {
-        bool ok = true; // 整体状态：默认通过
+        bool ok = true; // overall status: pass by default
 
         // ===== 1. DC State Check =====
         if (!dc.IsOk()) {
@@ -589,12 +589,12 @@ void OG_CustomCtrl::OnPaint(wxPaintEvent&)
 #ifdef __WXMSW__
         if (dc.GetHDC() == nullptr) {
             ok             = false;
-            DWORD winError = ::GetLastError(); // 必须先取错误码
+            DWORD winError = ::GetLastError(); // must capture the error code first
             try {
-                // 核心错误码
+                // core error code
                 BOOST_LOG_TRIVIAL(error) << (caller ? caller : "") << " - HDC_NULL | WinErr: " << winError;
 
-                // Self 窗口状态
+                // Self window state
                 if (HWND selfHwnd = (HWND) GetHandle(); selfHwnd != nullptr) {
                     BOOST_LOG_TRIVIAL(error) << (caller ? caller : "") << " - Self: hwnd=0x" << std::hex << selfHwnd << std::dec
                                              << " | IsWindow=" << (::IsWindow(selfHwnd) ? 1 : 0)
@@ -603,7 +603,7 @@ void OG_CustomCtrl::OnPaint(wxPaintEvent&)
                     BOOST_LOG_TRIVIAL(error) << (caller ? caller : "") << " - Self: NULL_HANDLE";
                 }
 
-                // 资源状态
+                // resource state
                 try {
                     DWORD gdiCount  = GetGuiResources(GetCurrentProcess(), GR_GDIOBJECTS);
                     DWORD userCount = GetGuiResources(GetCurrentProcess(), GR_USEROBJECTS);
@@ -612,13 +612,13 @@ void OG_CustomCtrl::OnPaint(wxPaintEvent&)
                     BOOST_LOG_TRIVIAL(error) << (caller ? caller : "") << " - ResourceCheckFailed";
                 }
 
-                // 线程验证
+                // thread validation
                 BOOST_LOG_TRIVIAL(error) << (caller ? caller : "") << " - Thread: current=" << GetCurrentThreadId()
                                          << " | main=" << wxThread::GetMainId();
 
                 boost::log::core::get()->flush();
 
-                                // 父窗口状态
+                                // parent window state
                 if (wxWindow* parent = GetParent()) {
                     if (HWND parentHwnd = (HWND) parent->GetHandle(); parentHwnd != nullptr) {
                         BOOST_LOG_TRIVIAL(error) << (caller ? caller : "") << " - Parent: hwnd=0x" << std::hex << parentHwnd << std::dec
@@ -633,7 +633,7 @@ void OG_CustomCtrl::OnPaint(wxPaintEvent&)
                 boost::log::core::get()->flush();
 
 
-                // 错误描述
+                // error description
                 if (winError != 0) {
                     char  errBuf[256] = {0};
                     DWORD fmtRet = ::FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, winError, 0, errBuf,
@@ -659,12 +659,12 @@ void OG_CustomCtrl::OnPaint(wxPaintEvent&)
 #endif
 
         boost::log::core::get()->flush();
-        return ok; // 全部流程完成后统一返回状态
+        return ok; // return the unified status after all steps complete
     };
     bool res = checkDCstate(dc, __FUNCTION__);
     if (!res) {
         if (!ctrl_lines.empty()) {
-            // 打印第一个ctrl_line的og_line信息
+            // print the og_line info of the first ctrl_line
             const Slic3r::GUI::Line& first_og_line = ctrl_lines.front().og_line;
             BOOST_LOG_TRIVIAL(error) << "First line label: " << first_og_line.get_options().front().opt_id;
             boost::log::core::get()->flush();
@@ -1002,7 +1002,7 @@ bool OG_CustomCtrl::update_visibility(ConfigOptionMode mode)
     }
     if (v_pos < label_sz.y) v_pos = label_sz.y;
 
-    //设置最小宽度
+    // set minimum width
     int type = dynamic_cast<ConfigOptionsGroup*>(opt_group)->config_type();
     h_pos    = (type == Preset::TYPE_PRINT || type == Preset::TYPE_PLATE || type == Preset::TYPE_MODEL) ? h_pos : FromDIP(700);
     this->SetMinSize(wxSize(h_pos, v_pos));

@@ -17,7 +17,7 @@ std::future<void> LanPrinterInterface::sendFileToDevice(const std::string&      
                                                         std::function<void(int)>   errorCallback, std::function<void(std::string)> onCompleteCallback)
 {
     return std::async(std::launch::async, [=]() {
-        // 1. 初始化CURL
+        // 1. initialize CURL
 
         CURL* curl = curl_easy_init();
         if (!curl)
@@ -27,7 +27,7 @@ std::future<void> LanPrinterInterface::sendFileToDevice(const std::string&      
             return;
         }
 
-        // 2. RAII保护CURL句柄
+        // 2. RAII guard for the CURL handle
         struct CurlGuard
         {
             CURL* handle;
@@ -71,14 +71,14 @@ std::future<void> LanPrinterInterface::sendFileToDevice(const std::string&      
 
         std::string sFileName = fileName;
         sFileName = std::regex_replace(sFileName, std::regex("[\\\\/:*?\"'<>|#&=+]"), "");
-        // 4. 配置基础FTP选项
+        // 4. configure basic FTP options
         const std::string url = "ftp://" + strIp + "/mmcblk0p1/creality/gztemp/" + sFileName;
         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
         curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
         curl_easy_setopt(curl, CURLOPT_READDATA, fd);
         curl_easy_setopt(curl, CURLOPT_INFILESIZE_LARGE, fileSize);
 
-        // 5. 设置读取回调
+        // 5. set the read callback
         //curl_easy_setopt(curl, CURLOPT_READFUNCTION, [](void* ptr, size_t size, size_t nmemb, void* stream) {
         //    int n;
         //    FILE* f = (FILE*)stream;
@@ -91,10 +91,10 @@ std::future<void> LanPrinterInterface::sendFileToDevice(const std::string&      
         //    return n;
         //    });
 
-        //设置超时
+        // set timeout
         curl_easy_setopt(curl, CURLOPT_FTP_RESPONSE_TIMEOUT, 30L);
 
-        // 6. 执行传输
+        // 6. perform the transfer
         CURLcode res = curl_easy_perform(curl);
 
 

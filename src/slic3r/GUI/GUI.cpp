@@ -625,7 +625,7 @@ std::string get_vertion_type()
 	//｝
 	//else if(version == "Beta" || version == "beta")
 
-    // 当 PROJECT_VERSION_EXTRA 为 Dev 时，除社区与云端交互外，其它逻辑按 Alpha 处理
+    // When PROJECT_VERSION_EXTRA is Dev, all logic except community and cloud interactions is handled as Alpha
     bool is_alpha = boost::algorithm::icontains(version, "alpha") || boost::algorithm::icontains(version, "dev");
     //bool is_beta = false;
     bool is_beta =	boost::algorithm::icontains(version, "beta");
@@ -637,7 +637,7 @@ std::string get_cloud_api_url()
     std::string url;
     std::string version_type = get_vertion_type();
     std::string country_code = wxGetApp().app_config->get_country_code();
-    // 当 PROJECT_VERSION_EXTRA 为 Dev 时，云端交互统一指向 Dev 接口
+    // When PROJECT_VERSION_EXTRA is Dev, cloud interactions all point to the Dev endpoint
     {
         std::string extra = std::string(PROJECT_VERSION_EXTRA);
         if (boost::algorithm::iequals(extra, std::string("Dev"))) {

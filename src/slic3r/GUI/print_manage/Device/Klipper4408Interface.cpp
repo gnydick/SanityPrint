@@ -15,9 +15,9 @@ Klipper4408Interface::~Klipper4408Interface() {
     curl_global_cleanup();
 }
 bool isGCodeFile(const boost::filesystem::path& filePath) {
-    // 获取文件扩展名
+    // get the file extension
     boost::filesystem::path extension = filePath.extension();
-    // 将扩展名转换为小写并检查是否为 .gcode
+    // convert the extension to lowercase and check whether it is .gcode
     std::string extStr = extension.string();
     for (char& c : extStr) {
         c = std::tolower(c);
@@ -90,7 +90,7 @@ std::future<void> Klipper4408Interface::sendFileToDevice(const std::string& serv
                 if(now != last_time) {
                     curl_off_t bytes_sent = progress.ulnow;
                     double time_elapsed = difftime(now, last_time);
-                    speed = bytes_sent / time_elapsed / 1024; // 字节/秒
+                    speed = bytes_sent / time_elapsed / 1024; // bytes/second
                 }
                 if(progress.ultotal > 0) {
                     float tpercent = static_cast<float>(progress.ulnow) / progress.ultotal * 100.0f;
@@ -107,7 +107,7 @@ std::future<void> Klipper4408Interface::sendFileToDevice(const std::string& serv
         mapHttp.erase(serverIp);
         if (!res && uploadStatusCallback) {
             if (http.is_cancelled()) {
-                uploadStatusCallback(601); // 601 表示取消成功
+                uploadStatusCallback(601); // 601 indicates cancellation succeeded
             } else {
                 //uploadStatusCallback(CURLE_HTTP_RETURNED_ERROR);
             }

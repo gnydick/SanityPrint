@@ -192,7 +192,7 @@ float HybridVertexVector::front() const
 float& HybridVertexVector::front()
 {
     if (m_use_short_type) {
-        // 如果在short类型模式下调用非const front()方法，返回静态float的引用
+        // when the non-const front() method is called in short-type mode, return a reference to a static float
         static float dummy = 0.0f;
         dummy = m_vector_s.front();
         return dummy;
@@ -213,7 +213,7 @@ float HybridVertexVector::back() const
 float& HybridVertexVector::back()
 {
     if (m_use_short_type) {
-        // 如果在short类型模式下调用非const back()方法，返回静态float的引用
+        // when the non-const back() method is called in short-type mode, return a reference to a static float
         static float dummy = 0.0f;
         dummy = m_vector_s.back();
         return dummy;

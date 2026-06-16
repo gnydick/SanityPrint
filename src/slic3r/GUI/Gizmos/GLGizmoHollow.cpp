@@ -279,7 +279,7 @@ bool GLGizmoHollow::gizmo_event(SLAGizmoEventType action, const Vec2d& mouse_pos
                 m_parent.set_as_dirty();
                 m_wait_for_up_event = true;
                 
-                // 【新增】标记几何体修改（添加孔洞成功）
+                // [Added] Mark geometry modification (hole added successfully)
                 AnalyticsDataUploadManager::ProjectModificationTracker::getInstance()
                     .mark_modified(AnalyticsDataUploadManager::ModelModifyType::ADD_HOLE);
             }
@@ -704,7 +704,7 @@ void GLGizmoHollow::on_render_input_window(float x, float y, float bottom_limit)
            return sel_item;
        });
        
-       // 【新增】标记几何体修改（抽壳操作完成即标记）
+       // [Added] Mark geometry modification (marked as soon as the hollowing operation completes)
        AnalyticsDataUploadManager::ProjectModificationTracker::getInstance()
            .mark_modified(AnalyticsDataUploadManager::ModelModifyType::HOLLOW);
 

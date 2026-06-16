@@ -150,7 +150,7 @@ private:
     GLModel   m_center_mark_buffer;
     GLTexture m_center_mark_texture;
     PickingModel m_action_icon[e_at_count];
-    GLModel      m_plate_idx_icon; //序号
+    GLModel      m_plate_idx_icon; //index number
 
     std::string  m_name;
     GLModel      m_plate_name_icon;

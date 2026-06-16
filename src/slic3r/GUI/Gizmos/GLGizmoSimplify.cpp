@@ -556,7 +556,7 @@ void GLGizmoSimplify::apply_simplify() {
     wxGetApp().obj_list()->update_item_error_icon(object_idx, -1);
     close();
     
-    // 【新增】标记几何体修改（操作完成即标记）
+    // [Added] Mark geometry as modified (marked as soon as the operation completes)
     AnalyticsDataUploadManager::ProjectModificationTracker::getInstance()
         .mark_modified(AnalyticsDataUploadManager::ModelModifyType::SIMPLIFY);
 }

@@ -72,7 +72,7 @@ TODO:
 static int panelWidth = 316;
 static int paddignWidth = 8;
 static int contentWidth = 300;
-// 为中文文本手动添加换行符
+// Manually add line breaks for Chinese text
 void SplitAndAddWord(const wxString& word, wxString& result, 
                     int maxWidth, wxDC& dc)
 {
@@ -112,15 +112,15 @@ void ProcessWord(const wxString& word, wxString& currentLine,
         currentLine = testLine;
     } else {
         if (currentLine.IsEmpty()) {
-            // 单词本身太长，需要分割
+            // The word itself is too long and needs to be split
             SplitAndAddWord(word, result, maxWidth, dc);
         } else {
-            // 换行后再放单词
+            // Place the word on a new line
             if (!result.IsEmpty()) result += "\n";
             result += currentLine;
             currentLine = word;
-            
-            // 检查单词在新行是否仍然太长
+
+            // Check whether the word is still too long on the new line
             dc.GetTextExtent(currentLine, &width, &height);
             if (width > maxWidth) {
                 SplitAndAddWord(word, result, maxWidth, dc);
@@ -163,11 +163,11 @@ wxString ChineseWrap(const wxString& text, int maxWidth, wxWindow* window)
     
     for (size_t i = 0; i < text.length(); i++) {
         wxChar ch = text[i];
-        // 统一处理 CRLF：跳过 '\r'
+        // Handle CRLF uniformly: skip '\r'
         if (ch == '\r')
             continue;
 
-        // 遇到 '\n' 立即刷出当前行，插入换行，再清空行缓冲
+        // On '\n', immediately flush the current line, insert a line break, then clear the line buffer
         if (ch == '\n') {
             if (!currentWord.IsEmpty()) {
                 ProcessWord(currentWord, currentLine, result, maxWidth, dc);
@@ -180,37 +180,37 @@ wxString ChineseWrap(const wxString& text, int maxWidth, wxWindow* window)
             continue;
         }
 
-        // 正常字符分类
+        // Classify a normal character
         bool isChinese = (ch >= 0x4E00 && ch <= 0x9FFF);
-        bool isSpace   = (ch == ' ' || ch == '\t'); // 不包含 '\n'
+        bool isSpace   = (ch == ' ' || ch == '\t'); // Does not include '\n'
 
         if (isSpace) {
-            // 遇到空格，处理当前单词
+            // On a space, process the current word
             if (!currentWord.IsEmpty()) {
                 ProcessWord(currentWord, currentLine, result, maxWidth, dc);
                 currentWord.clear();
             }
-            // 添加空格到当前行
+            // Add the space to the current line
             AddCharacter(ch, currentLine, result, maxWidth, dc);
         } else if (isChinese) {
-            // 中文字符立即处理
+            // Process Chinese characters immediately
             if (!currentWord.IsEmpty()) {
                 ProcessWord(currentWord, currentLine, result, maxWidth, dc);
                 currentWord.clear();
             }
             AddCharacter(ch, currentLine, result, maxWidth, dc);
         } else {
-            // 英文字符添加到当前单词
+            // Add English characters to the current word
             currentWord += ch;
         }
     }
-    
-    // 处理最后一个单词
+
+    // Process the last word
     if (!currentWord.IsEmpty()) {
         ProcessWord(currentWord, currentLine, result, maxWidth, dc);
     }
-    
-    // 添加最后一行
+
+    // Add the last line
     if (!currentLine.IsEmpty()) {
         if (!result.IsEmpty()) result += "\n";
         result += currentLine;
@@ -354,10 +354,10 @@ void    ProcessTip::closeTip()
      processTip(false);
 }
 
- // 重写鼠标事件处理
+ // Override mouse event handling
 void ProcessTip::OnMouseEvent(wxMouseEvent& event)
     {
-        // 如果需要，可以将事件传递给父窗口
+        // If needed, the event can be passed on to the parent window
         wxWindow* parent = GetParent();
         if (parent)
         {
@@ -451,17 +451,17 @@ ProcessTip::ProcessTip()
     m_Url_text->SetMaxSize({226, -1});
     m_Url_text->Wrap(FromDIP(226));
     m_Url_text->SetFont(Label::Body_10);
-    // 设置超链接样式
+    // Set the hyperlink style
     //wxColour linkColor(19, 91, 204);
     m_Url_text->SetForegroundColour(fontColor);
     wxFont tfont = m_Url_text->GetFont();
     tfont.SetUnderlined(true);
     m_Url_text->SetFont(tfont);
-    m_Url_text->SetCursor(wxCursor(wxCURSOR_HAND)); // 设置手型光标
+    m_Url_text->SetCursor(wxCursor(wxCURSOR_HAND)); // Set the hand-shaped cursor
     m_Url_text->Wrap(FromDIP(226));
     m_Url_text->Bind(wxEVT_LEFT_DOWN, [this](wxMouseEvent& event) {
         wxLaunchDefaultBrowser(m_Content.CS_UrlText);
-        // 立即关闭弹窗，避免在 UOS 上跨窗口保留显示
+        // Close the popup immediately to avoid it lingering across windows on UOS
         this->Dismiss();
         event.Skip(false);
     });

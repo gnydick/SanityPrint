@@ -362,7 +362,7 @@ void GLGizmoEmboss::on_shortcut_key() {
         // GLGizmoEmboss will be opened
         bool success = create_volume(ModelVolumeType::MODEL_PART);
         
-        // 【新增】标记几何体修改（创建浮雕成功）
+        // [Added] Mark geometry as modified (emboss created successfully)
         if (success) {
             AnalyticsDataUploadManager::ProjectModificationTracker::getInstance()
                 .mark_modified(AnalyticsDataUploadManager::ModelModifyType::EMBOSS);
@@ -2025,8 +2025,8 @@ void GLGizmoEmboss::draw_style_rename_button()
     }
 
     ImVec4 bg_color = m_is_dark_mode ? 
-        ImVec4(0.08f, 0.08f, 0.08f, 0.95f) : // 深色模式
-        ImVec4(0.92f, 0.92f, 0.92f, 0.95f);  // 浅色模式
+        ImVec4(0.08f, 0.08f, 0.08f, 0.95f) : // dark mode
+        ImVec4(0.92f, 0.92f, 0.92f, 0.95f);  // light mode
     ImGui::PushStyleColor(ImGuiCol_PopupBg, bg_color);
 
     if (ImGui::BeginPopupModal(popup_id, NULL, ImGuiWindowFlags_AlwaysAutoResize)) {

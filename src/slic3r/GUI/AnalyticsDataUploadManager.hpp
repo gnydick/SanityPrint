@@ -14,7 +14,7 @@
 namespace Slic3r {
 namespace GUI {
 
-class PartPlate;  // 前置声明
+class PartPlate;  // forward declaration
 
 // when to upload analytics data
 enum class AnalyticsUploadTiming {
@@ -147,133 +147,133 @@ public:
     static void uploadSlice822ClickEvent(const std::string& module, int id=1);
 
     // ============================================================
-    // 创想云神策埋点上报接口（新系统 - 独立区域）
-    // 与原有的 Firebase Analytics 上报到不同的服务器地址
+    // Creality Cloud Sensors analytics reporting interface (new system - independent area)
+    // Reports to a different server address than the existing Firebase Analytics
     // ============================================================
-    
+
     /**
-     * @brief 测试与服务器的连接性
-     * 
-     * @return true 如果连接成功
-     * @note 仅用于调试，检查是否能连接到创想云服务器
+     * @brief Test connectivity to the server
+     *
+     * @return true if the connection succeeds
+     * @note For debugging only; checks whether the Creality Cloud server can be reached
      */
     static bool test_sensors_connection();
-    
+
     /**
-     * @brief 发送打印开始事件（print_001）到创想云
-     * 
-     * @param data 业务数据 JSON 对象（包含 task_id, model_id, plate_idx 等）
-     * @note 自动获取所有必需参数并转换为神策 SDK 格式发送到对应服务器
+     * @brief Send the print-begin event (print_001) to Creality Cloud
+     *
+     * @param data Business data JSON object (contains task_id, model_id, plate_idx, etc.)
+     * @note Automatically gathers all required parameters and converts them to Sensors SDK format before sending to the corresponding server
      */
     void send_print_begin_event(const nlohmann::json& data = nlohmann::json());
-    
+
     /**
-     * @brief 发送神策埋点数据到创想云服务器（通用接口）
-     * 
-     * @param payload 完整的埋点数据 JSON 对象（由调用方封装好）
-     * @note 会自动根据版本和地区选择正确的上报地址
+     * @brief Send Sensors analytics data to the Creality Cloud server (general-purpose interface)
+     *
+     * @param payload Complete analytics data JSON object (prepared by the caller)
+     * @note Automatically selects the correct reporting address based on version and region
      */
     void send_sensors_payload_to_creality(const nlohmann::json& payload);
 
     // ============================================================
-    // 3MF文件指纹管理
+    // 3MF file fingerprint management
     // ============================================================
-    
+
     /**
-     * @brief 计算3MF文件指纹（同步）
-     * @param file_path 3MF文件路径
-     * @return MD5指纹字符串（32位十六进制）
+     * @brief Compute the 3MF file fingerprint (synchronous)
+     * @param file_path 3MF file path
+     * @return MD5 fingerprint string (32-character hexadecimal)
      */
     std::string computeModelFingerprint(const std::string& file_path);
 
     /**
-     * @brief 计算3MF文件指纹（异步）
-     * @param file_path 3MF文件路径
-     * @return future，可用于获取计算结果
+     * @brief Compute the 3MF file fingerprint (asynchronous)
+     * @param file_path 3MF file path
+     * @return future, usable to obtain the computation result
      */
     std::future<std::string> computeModelFingerprintAsync(const std::string& file_path);
 
     /**
-     * @brief 获取已缓存的指纹
-     * @param file_path 3MF文件路径
-     * @return 指纹字符串，如果未计算过返回空字符串
+     * @brief Get the cached fingerprint
+     * @param file_path 3MF file path
+     * @return Fingerprint string; returns an empty string if not yet computed
      */
     std::string getCachedFingerprint(const std::string& file_path);
 
     /**
-     * @brief 清除所有指纹缓存
+     * @brief Clear all fingerprint caches
      */
     void clearFingerprintCache();
 
     // ============================================================
-    // 项目几何体修改追踪（黑名单法）
+    // Project geometry modification tracking (blacklist method)
     // ============================================================
-    
+
     /**
-     * @brief 几何体修改类型枚举（黑名单操作）
+     * @brief Geometry modification type enum (blacklisted operations)
      */
     enum class ModelModifyType {
-        REPAIR,              // 修复模型
-        SIMPLIFY,            // 简化模型
-        HOLLOW,              // 抽壳
-        ADD_HOLE,            // 打洞
-        CUT,                 // 剪切
-        BOOLEAN,             // 布尔操作
-        EMBOSS,              // 浮雕
-        VARIABLE_LAYER,      // 可变层高
-        SUPPORT_PAINT,       // 支撑绘制
-        ZSEAM_PAINT,         // Z缝绘制
-        SPLIT_OBJECTS,       // 分割为对象
-        SPLIT_PARTS,         // 分割为部件
-        ADD_PART,            // 添加部件
-        DELETE_PART,         // 删除部件
-        HEIGHT_RANGE         // 高度范围修改
+        REPAIR,              // repair model
+        SIMPLIFY,            // simplify model
+        HOLLOW,              // hollow out
+        ADD_HOLE,            // drill hole
+        CUT,                 // cut
+        BOOLEAN,             // boolean operation
+        EMBOSS,              // emboss
+        VARIABLE_LAYER,      // variable layer height
+        SUPPORT_PAINT,       // support painting
+        ZSEAM_PAINT,         // Z-seam painting
+        SPLIT_OBJECTS,       // split into objects
+        SPLIT_PARTS,         // split into parts
+        ADD_PART,            // add part
+        DELETE_PART,         // delete part
+        HEIGHT_RANGE         // height range modification
     };
 
     /**
-     * @brief 项目几何体修改追踪器（全局单例）
-     * 
-     * 功能：
-     * - 追踪项目是否被本质修改（几何体改变）
-     * - 使用黑名单法：只有黑名单操作才会标记
-     * - 每次导入新3MF时自动复位
-     * - 阶段3：缓存切片信息（printer_info, slice_param）
-     * - 按盘索引存储，每个盘独立缓存
-     * - 包含切片参数采集功能（低侵入式设计）
+     * @brief Project geometry modification tracker (global singleton)
+     *
+     * Features:
+     * - Tracks whether the project has been essentially modified (geometry changed)
+     * - Uses the blacklist method: only blacklisted operations are marked
+     * - Automatically resets every time a new 3MF is imported
+     * - Phase 3: caches slice info (printer_info, slice_param)
+     * - Stored by plate index, each plate cached independently
+     * - Includes slice parameter collection (low-intrusion design)
      */
     class ProjectModificationTracker {
     public:
         // ============================================================
-        // 参数采集功能
+        // Parameter collection feature
         // ============================================================
-        
-        // 参数类型枚举
+
+        // parameter type enum
         enum class ParamType {
             Float, FloatFirst, Int, IntFirst, Bool, BoolFirst,
             String, StringFirst, StringMulti, Percent, PercentFirst,
             FloatOrPercent, FloatOrPercentFirst, Enum
         };
 
-        // 参数定义结构
+        // parameter definition struct
         struct ParamDef {
             const char* config_key;
             const char* output_key;
             ParamType type;
         };
 
-        // 采集参数（静态方法，供外部调用）
-        // @param config DynamicPrintConfig引用
-        // @return 采集到的参数JSON
+        // collect parameters (static method, for external callers)
+        // @param config DynamicPrintConfig reference
+        // @return collected parameters JSON
         static nlohmann::json collect_params(const DynamicPrintConfig& config);
 
-        // 采集对象/部件修改参数（阶段4新增）
-        // @param plate PartPlate指针（用于获取当前盘的对象）
-        // @param plate_idx 盘索引（用于日志）
-        // @return obj_list JSON数组
+        // collect object/part modification parameters (added in phase 4)
+        // @param plate PartPlate pointer (used to get objects on the current plate)
+        // @param plate_idx plate index (used for logging)
+        // @return obj_list JSON array
         static nlohmann::json collect_obj_params(PartPlate* plate, int plate_idx);
 
     private:
-        // 内部辅助函数
+        // internal helper functions
         static void add_param(const DynamicPrintConfig& config,
                               nlohmann::json& output,
                               const char* config_key, 
@@ -283,7 +283,7 @@ public:
         static void collect_filament_params(const DynamicPrintConfig& config, nlohmann::json& output);
         static void collect_process_params(const DynamicPrintConfig& config, nlohmann::json& output);
 
-        // 参数定义表
+        // parameter definition tables
         static const ParamDef s_printer_params[];
         static constexpr size_t s_printer_params_count = 5;
         static const ParamDef s_filament_params[];
@@ -296,33 +296,33 @@ public:
         std::vector<ModelModifyType> m_modify_history;
         mutable std::mutex m_mutex;
         
-        // 阶段3：切片信息缓存（按盘索引存储）
-        std::map<int, std::string> m_printer_info;   // key=盘索引, value=JSON字符串
-        std::map<int, std::string> m_slice_param;    // key=盘索引, value=JSON字符串
-        std::map<int, std::string> m_filament_info;  // key=盘索引, value=JSON字符串
-        
+        // Phase 3: slice info cache (stored by plate index)
+        std::map<int, std::string> m_printer_info;   // key=plate index, value=JSON string
+        std::map<int, std::string> m_slice_param;    // key=plate index, value=JSON string
+        std::map<int, std::string> m_filament_info;  // key=plate index, value=JSON string
+
     public:
         static ProjectModificationTracker& getInstance();
-        
-        // 阶段2：标记修改（操作成功后调用）
+
+        // Phase 2: mark as modified (called after an operation succeeds)
         void mark_modified(ModelModifyType type);
-        
-        // 阶段2：查询是否被修改
+
+        // Phase 2: query whether it has been modified
         bool is_essentially_modified() const;
-        
-        // 阶段2+3：复位（导入新3MF时调用，清除所有状态）
+
+        // Phase 2+3: reset (called when importing a new 3MF, clears all state)
         void reset();
-        
-        // 阶段2：获取修改历史（调试用）
+
+        // Phase 2: get the modification history (for debugging)
         const std::vector<ModelModifyType>& get_history() const;
-        
-        // 阶段3：缓存切片信息（按盘索引）
-        void cache_slice_info(int plate_idx, 
+
+        // Phase 3: cache slice info (by plate index)
+        void cache_slice_info(int plate_idx,
                               const std::string& printer_info,
                               const std::string& slice_param,
                               const std::string& filament_info);
-        
-        // 阶段3：获取已缓存的切片信息
+
+        // Phase 3: get cached slice info
         std::string get_printer_info(int plate_idx) const;
         std::string get_slice_param(int plate_idx) const;
         std::string get_filament_info(int plate_idx) const;
@@ -334,10 +334,10 @@ private:
     AnalyticsDataUploadManager(const AnalyticsDataUploadManager&)            = delete;
     AnalyticsDataUploadManager& operator=(const AnalyticsDataUploadManager&) = delete;
     
-    // 初始化环境和地区配置（仅在首次调用时执行一次）
+    // Initialize environment and region configuration (executed only once, on first call)
     void init_sensors_config_if_needed();
-    
-    // 缓存的配置信息
+
+    // cached configuration info
     bool m_sensors_config_initialized = false;
     std::string m_sensors_upload_url;
 
@@ -397,11 +397,11 @@ private:
 private:
     AnalyticsProjectInfo m_analytics_project_info;
 
-    // 指纹缓存：文件路径 -> 指纹
+    // fingerprint cache: file path -> fingerprint
     std::unordered_map<std::string, std::string> m_fingerprint_cache;
     mutable std::mutex m_fingerprint_mutex;
 
-    // 底层MD5计算函数
+    // low-level MD5 computation function
     std::string computeMD5(const std::string& file_path, size_t chunk_size = 1024 * 1024);
 
 };

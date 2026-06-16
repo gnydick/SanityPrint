@@ -108,7 +108,7 @@ protected:
 	wxString m_sync_filament_label = "cfs";
 	bool m_sync_box_filament = false;
 
-	// Linux/GTK 下在 wxButton 上做自绘不可靠，改为 wxPanel 做 owner-draw
+	// Owner-drawing on a wxButton is unreliable under Linux/GTK, so use a wxPanel for owner-draw instead
 	wxPanel* m_child_button {nullptr};
 	wxBitmap m_bitmap;
 
@@ -289,7 +289,7 @@ public:
     void SetColor(const wxColour& color);
     wxColour GetColor();
 
-    void update_item_info_by_material(int box_id, const DM::Material& material_info,int box_type = 0);  //0=多色盒子 1=外置料架 2=cfsMini
+    void update_item_info_by_material(int box_id, const DM::Material& material_info,int box_type = 0);  //0=multi-color box 1=external spool holder 2=cfsMini
     void set_sync_state(bool bSync);
 	bool get_sync_state();
     void set_is_ext(bool is_ext);
@@ -349,7 +349,7 @@ private:
 
 };
 
-// 弹出窗口管理器（单例）
+// Popup window manager (singleton)
 class PopupWindowManager
 {
 public:
@@ -365,23 +365,23 @@ public:
 
         m_popups.push_back(popup);
 
-        // 绑定事件
+        // Bind events
         popup->Bind(wxEVT_DESTROY, &PopupWindowManager::OnPopupDestroyed, this);
     }
 
     void CloseLast()
     {
-        // 创建副本避免迭代器失效
+        // Make a copy to avoid iterator invalidation
         std::vector<PopupWindow*> popupsCopy = m_popups;
-        //m_popups.clear();  // 立即清空原列表，防止重复处理
+        //m_popups.clear();  // Clear the original list immediately to prevent duplicate processing
         m_popups.erase(m_popups.end() - 1);
         PopupWindow* popup = popupsCopy.back();
         //for (PopupWindow* popup : popupsCopy) {
             if (popup) {
-                // 确保先解除事件绑定
+                // Make sure to unbind the event first
                 popup->Unbind(wxEVT_DESTROY, &PopupWindowManager::OnPopupDestroyed, this);
 
-                // 关闭并销毁弹窗
+                // Close and destroy the popup
                 popup->Dismiss();
                 popup->Destroy();
             }
@@ -389,16 +389,16 @@ public:
     }
     void CloseAll()
     {
-        // 创建副本避免迭代器失效
+        // Make a copy to avoid iterator invalidation
         std::vector<PopupWindow*> popupsCopy = m_popups;
-        m_popups.clear();  // 立即清空原列表，防止重复处理
+        m_popups.clear();  // Clear the original list immediately to prevent duplicate processing
 
         for (PopupWindow* popup : popupsCopy) {
             if (popup) {
-                // 确保先解除事件绑定
+                // Make sure to unbind the event first
                 popup->Unbind(wxEVT_DESTROY, &PopupWindowManager::OnPopupDestroyed, this);
 
-                // 关闭并销毁弹窗
+                // Close and destroy the popup
                 popup->Dismiss();
                 popup->Destroy();
             }
@@ -406,46 +406,46 @@ public:
     }
 private:
     std::vector<PopupWindow*> m_popups;
-    // 弹窗销毁事件处理
+    // Popup destruction event handler
     void OnPopupDestroyed(wxWindowDestroyEvent& event) {
         PopupWindow* popup = static_cast<PopupWindow*>(event.GetEventObject());
         auto it = std::find(m_popups.begin(), m_popups.end(), popup);
         if (it != m_popups.end()) {
             m_popups.erase(it);
         }
-        event.Skip();  // 允许其他处理
+        event.Skip();  // Allow other handlers to process
     }
 };
 
-// 增强型弹出窗口基类
+// Enhanced popup window base class
 class ManagedPopupWindow : public PopupWindow
 {
 public:
     ManagedPopupWindow(wxWindow* parent) : PopupWindow(parent, wxBORDER_NONE) { 
-        SetBackgroundStyle(wxBG_STYLE_PAINT); // 启用自定义绘制
-        SetDoubleBuffered(true); // 启用双缓冲防止闪烁
+        SetBackgroundStyle(wxBG_STYLE_PAINT); // Enable custom drawing
+        SetDoubleBuffered(true); // Enable double buffering to prevent flicker
         Bind(wxEVT_PAINT, &ManagedPopupWindow::OnPaint, this);
         init();
     }
     void init();
     void Popup(wxWindow* focus = NULL) override
     {
-        // 先关闭所有已有弹窗
+        // Close all existing popups first
         PopupWindowManager::Get().CloseAll();
 
-        // 注册新弹窗
+        // Register the new popup
         PopupWindowManager::Get().RegisterPopup(this);
 
         PopupWindow::Popup(focus);
     }
-    //直接自定义一个
+    //Just customize one directly
     void Cus_Popup(bool needshow_parent = false, wxWindow* focus = NULL)
     {
-        // 先关闭所有已有弹窗
+        // Close all existing popups first
         if (!needshow_parent)
             PopupWindowManager::Get().CloseAll();
 
-        // 注册新弹窗
+        // Register the new popup
         PopupWindowManager::Get().RegisterPopup(this);
 #ifdef __APPLE__
     PopupWindow::Show();
@@ -471,7 +471,7 @@ public:
     ~MaterialSubMenuItem() = default;
 	void setParentIndex(int index) { m_parentindex = index; }
 private:
-	int      m_parentindex = -1; // 父菜单索引
+	int      m_parentindex = -1; // Parent menu index
     int      m_num = 0;
     wxString m_label;
     wxColour m_color;
@@ -488,7 +488,7 @@ private:
     void OnMouseLeave(wxMouseEvent&);
 };
 
-// 自定义按钮类实现状态管理
+// Custom button class implementing state management
 class HoverButton : public wxButton
 {
 public:
@@ -525,7 +525,7 @@ private:
     int m_type = 0;    //0:del,1:merge
 };
 
-// 子菜单窗口
+// Submenu window
 class MaterialSubMenu : public ManagedPopupWindow
 {
 public:
@@ -538,13 +538,13 @@ private:
     ManagedPopupWindow* m_menuPop = nullptr;
     void Dismiss() override {
         wxPoint mousePos = ::wxGetMousePosition();
-        // 判断点击位置是否在弹窗外
+        // Determine whether the click position is outside the popup
         if (m_menuPop && !m_menuPop->GetScreenRect().Contains(mousePos)) {
             PopupWindowManager::Get().CloseAll();
         }
     }
 };
-// 自定义右键菜单窗口
+// Custom right-click context menu window
 class MaterialContextMenu : public ManagedPopupWindow
 {
 public:

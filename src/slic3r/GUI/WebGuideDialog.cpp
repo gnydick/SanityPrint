@@ -215,7 +215,7 @@ void GuideFrame::OnShow(wxShowEvent& event)
         if (event.IsShown()) {
            SetStartPage(m_page,true);
         }
-        event.Skip(); // 不要忘记调用 Skip，以允许其他处理程序运行
+        event.Skip(); // don't forget to call Skip, to allow other handlers to run
     }
 GuideFrame::~GuideFrame()
 {
@@ -295,14 +295,14 @@ wxString GuideFrame::SetStartPage(GuidePage startpage, bool load)
     if (startpage == BBL_FILAMENT_ONLY) {
         wxString url = wxString::Format("http://localhost:%d/homepage/index.html?lang=%s&isScale=false#/Guide/createFilament", port, strlang);
          TargetUrl    = url;
-        // 本地调试
+        // local debugging
       //   TargetUrl    = "http://localhost:9090/#/Guide/createFilament?lang=zh_CN&isScale=false";
     } else if (startpage == BBL_MODELS_ONLY) {
         wxString url = wxString::Format(
             "http://localhost:%d/homepage/index.html?lang=%s&isScale=false&customized=%d&customer_name=%s#/Guide/addPrinter", port, strlang,
             customized, customer_name);
          TargetUrl    = url;
-        // 本地调试
+        // local debugging
         // TargetUrl    = "http://localhost:9090/index.html?lang=zh_CN&isScale=false&debug=false&customized=1&customer_name=Creality#/Guide/addPrinter";
     }
     else {
@@ -475,7 +475,7 @@ void GuideFrame::OnScriptMessage(wxWebViewEvent &evt)
         }
         else if (strCmd == "request_userguide_profile") {
 
-            //添加/移除耗材
+            //add/remove filament
             json m_Res = json::object();
             m_Res["command"] = "response_userguide_profile";
             m_Res["sequence_id"] = "10001";
@@ -512,7 +512,7 @@ void GuideFrame::OnScriptMessage(wxWebViewEvent &evt)
         }
         else if (strCmd == "request_userguide_profile_printer") 
         {
-            //添加/移除打印机
+            //add/remove printer
             json m_Res = json::object();
             m_Res["command"] = "response_userguide_profile";
             m_Res["sequence_id"] = "10001";
@@ -526,7 +526,7 @@ void GuideFrame::OnScriptMessage(wxWebViewEvent &evt)
             string strColorMode = GUI::wxGetApp().app_config->get("dark_color_mode");
             m_Res["color_mode"] = strColorMode; 
 
-            //用户预设所需信息
+            //information needed for user presets
             PresetCollection* presetColl = &wxGetApp().preset_bundle->printers;
             if (presetColl) 
             {
@@ -667,7 +667,7 @@ void GuideFrame::OnScriptMessage(wxWebViewEvent &evt)
                            bool bFindDefault = false;
                            if (m_ProfileJson["filament"].contains(material))
                            {
-                                //判断耗材是否支持当前的喷嘴
+                                //check whether the filament supports the current nozzle
                                for (int i = 0; i < nozzle.diameters.size(); ++i)
                                 {
                                     if(nozzle.selected[i] > 0)
@@ -747,14 +747,14 @@ void GuideFrame::OnScriptMessage(wxWebViewEvent &evt)
             }
 
              
-            //处理打印机用户预设
+            //process printer user presets
             m_appconfig_new.set_userPresets("",true);
             PresetCollection* presetColl = &wxGetApp().preset_bundle->printers;
             if (presetColl)
             {
                 for (int i = 0; i < presetColl->get_presets().size(); i++)
                 {
-                    Preset& preset = presetColl->preset(i,true);  //true 返回  false 当前的copy
+                    Preset& preset = presetColl->preset(i,true);  //true returns; false the current copy
                     if ((preset.is_visible) && (preset.is_user()))
                     {
                         preset.m_is_user_printer_hidden = true;
@@ -1337,7 +1337,7 @@ bool GuideFrame::run()
     //    result = this->ShowModal();
     //}
 
-    //不要标题栏
+    //no title bar
     //this->SetWindowStyle(wxFRAME_NO_TASKBAR | wxFRAME_TOOL_WINDOW);
 
     int result = this->ShowModal();

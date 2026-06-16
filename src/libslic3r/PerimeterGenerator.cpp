@@ -2678,8 +2678,8 @@ void PerimeterGenerator::process_arachne()
     // BBS: don't simplify too much which influence arc fitting when export gcode if arc_fitting is enabled
     double surface_simplify_resolution = (print_config->enable_arc_fitting && !this->has_fuzzy_skin) ? 0.2 * m_scaled_resolution : m_scaled_resolution;
 
-    //增加这个将使得一些案例且不过，见bug  https://zentao.creality.com/zentao/bug-view-6047.html
-    //添加这几行代码，设置上面bug的案例的墙为A墙，将切不过去
+    //Adding this causes some cases to fail to slice, see bug  https://zentao.creality.com/zentao/bug-view-6047.html
+    //Adding these few lines of code sets the wall in the above bug case as an A wall, which fails to slice through
     //coord_t allowed_distance            = Slic3r::Arachne::meshfix_maximum_deviation(); 
     //if (surface_simplify_resolution < allowed_distance)
     //{

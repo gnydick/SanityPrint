@@ -408,7 +408,7 @@ void start_ping_test()
     }
 }
 #if __linux__
-// 检测是否在Flatpak环境中运行
+// Detect whether running inside a Flatpak environment
 inline bool isRunningInFlatpak() {
     const char* flatpakInfo = std::getenv("FLATPAK_ID");
     return flatpakInfo != nullptr;
@@ -1358,18 +1358,18 @@ void GUI_App::reload_region_sensitive_views()
     auto mlv = mf->get_modellibrary_view();
     if (!mlv) return;
 
-    // 在线模型库切换区域需要切换到对应域名；
-    // 切换地区会改变环境，不同环境配置的模型标签数据不同，
-    // 因此需要导航到模型库首页，避免黑屏问题。
+    // Switching regions in the online model library requires switching to the corresponding domain;
+    // changing the region changes the environment, and the model tag data configured for different environments differs,
+    // so we need to navigate to the model library home page to avoid a black-screen problem.
     wxString new_base = wxString::FromUTF8(Slic3r::GUI::get_cloud_webaddress());
 
-    // 规范化拼接，避免出现双斜杠
+    // Normalize the concatenation to avoid double slashes
     if (!new_base.EndsWith("/")) new_base += "/";
 
-    // 导航到模型库首页
+    // Navigate to the model library home page
     wxString target = new_base + "model-category/3d-print-all";
 
-    // 在导航到新的域名前刷新 Cookies（UA 仅在初始化设置）
+    // Refresh Cookies before navigating to the new domain (UA is only set during initialization)
     mlv->UpdateUserAgent();
     mlv->load_url(target);
 }
@@ -1474,15 +1474,15 @@ void GUI_App::post_login_status_cmd(bool isSuccess, UserInfo user)
     GUI::wxGetApp().run_script(strJS);
     
 
-    // 关闭LoginDialog窗口
+    // Close the LoginDialog window
     if (m_login_dialog) {
         m_login_dialog->EndModal(isSuccess ? wxID_OK : wxID_CANCEL);
     }
 }
 
-// param_set 参数集合页
+// param_set parameter collection page
 
-// 启动监听 user_info.json 的文件变更，用于跨进程同步登录状态到当前实例
+// Start watching user_info.json for file changes, used to sync login state across processes to the current instance
 void GUI_App::start_user_info_watcher()
 {
     try {
@@ -1498,7 +1498,7 @@ void GUI_App::start_user_info_watcher()
     }
 }
 
-// 文件系统事件：当 user_info.json 被创建、修改、重命名或删除时触发
+// Filesystem event: triggered when user_info.json is created, modified, renamed, or deleted
 void GUI_App::on_user_info_file_event(wxFileSystemWatcherEvent& evt)
 {
     const int change = evt.GetChangeType();
@@ -1555,7 +1555,7 @@ void GUI_App::on_user_info_file_event(wxFileSystemWatcherEvent& evt)
             const bool uid_unchanged   = (old_uid   == m_user.userId);
 
             if (login_unchanged && token_unchanged && uid_unchanged)
-                return; // 无变化，不触发更新
+                return; // No change, do not trigger an update
 
             CallAfter([this, user] {
                 post_login_status_cmd(!user.token.empty(), user);
@@ -1570,8 +1570,8 @@ void GUI_App::on_user_info_file_event(wxFileSystemWatcherEvent& evt)
         apply_logout();
     }
 }
-// token_expired token过期
-// login 登录
+// token_expired token expired
+// login log in
 void GUI_App::swith_community_sub_page(const std::string& pageName)
 {
     json m_Res       = json::object();
@@ -1581,8 +1581,8 @@ void GUI_App::swith_community_sub_page(const std::string& pageName)
     GUI::wxGetApp().run_script(strJS);
 }
 
-//  参数值：
-//  tpHome - 社区页面
+//  Parameter values:
+//  tpHome - community page
 void GUI_App::switch_to_tab(const std::string& tabName)
 {
     if (mainframe == nullptr)
@@ -1654,10 +1654,10 @@ void GUI_App::post_init()
                 //(1) 3mf-to-3mf, format like this: SanityPrint.exe convert_3mf "input_file.3mf" "printer_name" "output_file"
                 //(2) stl-to-3mf, format like this: SanityPrint.exe convert_3mf "stl_dir" "printer_name" "output_file"
 
-                // 检查第2个参数是否是目录
+                // Check whether the second argument is a directory
                 wxString firstArg = from_u8(this->init_params->input_files[1]);
                 if (wxDirExists(firstArg)) {
-                    // 是目录，遍历目录中的所有 STL 文件
+                    // It is a directory, iterate over all STL files in the directory
                     wxDir    dir(firstArg);
                     wxString filename;
                     bool     cont = dir.GetFirst(&filename, "*.stl", wxDIR_FILES);
@@ -1666,7 +1666,7 @@ void GUI_App::post_init()
                         cont = dir.GetNext(&filename);
                     }
                 } else {
-                    // 不是目录，按原方式处理
+                    // Not a directory, handle it the original way
                     for (int i = 0; i < this->init_params->input_files.size() - 1; i++) {
                         input_files.push_back(wxString::FromUTF8(this->init_params->input_files[i]));
                     }
@@ -1853,14 +1853,14 @@ void GUI_App::post_init()
               request_user_handle(0);
             }
 
-            //  检测是否有5.x的配置需要加载
+            //  Check whether there is a 5.x configuration that needs to be loaded
             // mainframe->checkHaveOldPresetsNeedLoad();
-            //  检查是否有参数需要更新
+            //  Check whether there are parameters that need updating
             //UpdateParams::getInstance().checkParamsNeedUpdate();
 #endif
-            //  设置应用启动完成
+            //  Mark application startup as complete
             SyncUserPresets::getInstance().setAppHasStartuped();
-            //  检测token是否过期
+            //  Check whether the token has expired
             
             // Removed startup update ready dialog logic to avoid confusion with version checking
             // Update ready dialog will be shown only when pending version matches detected new version
@@ -3202,10 +3202,10 @@ std::string GetMACAddress()
 }
 #endif
 inline auto I18nToLangaugeIndex(const std::string& i18n) -> std::string {
-      // 归一化：
-      // - 小写
-      // - 将 '-' 转为 '_'
-      // - 去掉 ".utf8"、".utf-8"、区域后缀（如 ".UTF-8"、"@latin" 等）
+      // Normalize:
+      // - lowercase
+      // - convert '-' to '_'
+      // - strip ".utf8", ".utf-8", locale suffixes (e.g. ".UTF-8", "@latin", etc.)
       auto normalize = [](std::string s) {
           // to lower
           std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c) { return (char)std::tolower(c); });
@@ -3221,60 +3221,60 @@ inline auto I18nToLangaugeIndex(const std::string& i18n) -> std::string {
           return s;
       };
       const std::string key = normalize(i18n);
-      // 语言到索引映射（标注对应国家/地区）
+      // Language-to-index map (annotated with the corresponding country/region)
       static const auto I18N_INDEX_MAP = std::map<std::string, std::string>{
-        { std::string("en")   , std::string("0")  },   // 英语（通用）
-        { std::string("en_us"), std::string("0")  },   // 英语（美国）
-        { std::string("en_uk"), std::string("0")  },   // 英语（英国）
-        { std::string("en_gb"), std::string("0")  },   // 英语（英国，Linux 常见）
+        { std::string("en")   , std::string("0")  },   // English (generic)
+        { std::string("en_us"), std::string("0")  },   // English (United States)
+        { std::string("en_uk"), std::string("0")  },   // English (United Kingdom)
+        { std::string("en_gb"), std::string("0")  },   // English (United Kingdom, common on Linux)
 
-        { std::string("zh")   , std::string("1")  },   // 中文（通用）
-        { std::string("zh_cn"), std::string("1")  },   // 中文（中国大陆）
-        { std::string("zh_tw"), std::string("2")  },   // 中文（中国台湾）
-        { std::string("zh_hk"), std::string("3")  },   // 中文（中国香港）
+        { std::string("zh")   , std::string("1")  },   // Chinese (generic)
+        { std::string("zh_cn"), std::string("1")  },   // Chinese (mainland China)
+        { std::string("zh_tw"), std::string("2")  },   // Chinese (Taiwan, China)
+        { std::string("zh_hk"), std::string("3")  },   // Chinese (Hong Kong, China)
 
-        { std::string("ko")   , std::string("5")  },   // 韩语（韩国）
-        { std::string("ko_kr"), std::string("5")  },   // 韩语（韩国）
+        { std::string("ko")   , std::string("5")  },   // Korean (South Korea)
+        { std::string("ko_kr"), std::string("5")  },   // Korean (South Korea)
 
-        { std::string("ja")   , std::string("10") },   // 日语（日本）
-        { std::string("ja_jp"), std::string("10") },   // 日语（日本）
+        { std::string("ja")   , std::string("10") },   // Japanese (Japan)
+        { std::string("ja_jp"), std::string("10") },   // Japanese (Japan)
 
-        { std::string("pt")   , std::string("11") },   // 葡萄牙语（葡萄牙）
-        { std::string("pt_pt"), std::string("11") },   // 葡萄牙语（葡萄牙）
-        { std::string("pt_br"), std::string("15") },   // 葡萄牙语（巴西）
+        { std::string("pt")   , std::string("11") },   // Portuguese (Portugal)
+        { std::string("pt_pt"), std::string("11") },   // Portuguese (Portugal)
+        { std::string("pt_br"), std::string("15") },   // Portuguese (Brazil)
 
-        { std::string("ru")   , std::string("4")  },   // 俄语（俄罗斯）
-        { std::string("ru_ru"), std::string("4")  },   // 俄语（俄罗斯）
+        { std::string("ru")   , std::string("4")  },   // Russian (Russia)
+        { std::string("ru_ru"), std::string("4")  },   // Russian (Russia)
         { std::string("uk_ua"), std::string("4")  },
-        { std::string("xa")   , std::string("6")  },   // 未知/保留（请根据后续规范映射）
-        { std::string("es")   , std::string("7")  },   // 西班牙语（西班牙/拉美）
-        { std::string("ca_es"), std::string("7")  },   // 加泰罗尼亚语（西班牙）
-        { std::string("de")   , std::string("8")  },   // 德语（德国）
-        { std::string("de_de"), std::string("8")  },   // 德语（德国）
-        { std::string("fr")   , std::string("9")  },   // 法语（法国）
-        { std::string("fr_fr"), std::string("9")  },   // 法语（法国）
-        { std::string("th")   , std::string("12") },   // 泰语（泰国）
-        { std::string("th_th"), std::string("12") },   // 泰语（泰国）
-        { std::string("nl")   , std::string("13") },   // 荷兰语（荷兰）
-        { std::string("nl_nl"), std::string("13") },   // 荷兰语（荷兰）
-        { std::string("it")   , std::string("14") },   // 意大利语（意大利）
-        { std::string("it_it"), std::string("14") },   // 意大利语（意大利）
-        { std::string("tr")   , std::string("16") },   // 土耳其语（土耳其）
-        { std::string("ro")   , std::string("17") },   // 罗马尼亚语（罗马尼亚）
-        { std::string("he")   , std::string("18") },   // 希伯来语（以色列）
-        { std::string("pl")   , std::string("19") },   // 波兰语（波兰）
-        { std::string("pl_pl"), std::string("19") },   // 波兰语（波兰）
-        { std::string("in")   , std::string("20") },   // 印度尼西亚语（印度尼西亚）
-        { std::string("in_in"), std::string("20") },   // 印度尼西亚语（印度尼西亚）
-        { std::string("hu")   , std::string("21") },   // 匈牙利语（匈牙利）
-        { std::string("hu_hu"), std::string("21") },   // 匈牙利语（匈牙利）
+        { std::string("xa")   , std::string("6")  },   // Unknown/reserved (map according to a later spec)
+        { std::string("es")   , std::string("7")  },   // Spanish (Spain/Latin America)
+        { std::string("ca_es"), std::string("7")  },   // Catalan (Spain)
+        { std::string("de")   , std::string("8")  },   // German (Germany)
+        { std::string("de_de"), std::string("8")  },   // German (Germany)
+        { std::string("fr")   , std::string("9")  },   // French (France)
+        { std::string("fr_fr"), std::string("9")  },   // French (France)
+        { std::string("th")   , std::string("12") },   // Thai (Thailand)
+        { std::string("th_th"), std::string("12") },   // Thai (Thailand)
+        { std::string("nl")   , std::string("13") },   // Dutch (Netherlands)
+        { std::string("nl_nl"), std::string("13") },   // Dutch (Netherlands)
+        { std::string("it")   , std::string("14") },   // Italian (Italy)
+        { std::string("it_it"), std::string("14") },   // Italian (Italy)
+        { std::string("tr")   , std::string("16") },   // Turkish (Turkey)
+        { std::string("ro")   , std::string("17") },   // Romanian (Romania)
+        { std::string("he")   , std::string("18") },   // Hebrew (Israel)
+        { std::string("pl")   , std::string("19") },   // Polish (Poland)
+        { std::string("pl_pl"), std::string("19") },   // Polish (Poland)
+        { std::string("in")   , std::string("20") },   // Indonesian (Indonesia)
+        { std::string("in_in"), std::string("20") },   // Indonesian (Indonesia)
+        { std::string("hu")   , std::string("21") },   // Hungarian (Hungary)
+        { std::string("hu_hu"), std::string("21") },   // Hungarian (Hungary)
       };
       //uk_ua,sv_se,cs   no map
-      // 精确匹配（已归一化）
+      // Exact match (already normalized)
       if (auto iter = I18N_INDEX_MAP.find(key); iter != I18N_INDEX_MAP.cend())
         return iter->second;
 
-      // 基于主语言的回退（如 en_US -> en）
+      // Fallback based on the primary language (e.g. en_US -> en)
       size_t under = key.find('_');
       if (under != std::string::npos) {
           const std::string base = key.substr(0, under);
@@ -3282,7 +3282,7 @@ inline auto I18nToLangaugeIndex(const std::string& i18n) -> std::string {
               return iter->second;
       }
 
-      // 未命中时，按地区进行回退：CN -> "1"，其它 -> "0"
+      // On a miss, fall back by region: CN -> "1", others -> "0"
       const std::string country_code = wxGetApp().app_config->get_country_code();
       return country_code == std::string("CN") ? std::string("1") : std::string("0");
 }
@@ -3327,7 +3327,7 @@ std::map<std::string, std::string> GUI_App::get_modellibrary_header()
     extra_headers.emplace("__CXY_TOKEN_", app_config->get("cloud", "token"));
     extra_headers.emplace("__CXY_UID_", app_config->get("cloud", "user_id"));
     extra_headers.emplace("__CXY_OS_LANG_", I18nToLangaugeIndex(language.Lower().ToStdString()));
-    // 供前端环境识别：应用版本与 WebView 类型（跨平台一致）
+    // For front-end environment detection: application version and WebView type (consistent across platforms)
     extra_headers.emplace("__CXY_APP_VER_", SANITYPRINT_VERSION);
     extra_headers.emplace("__CXY_WEBVIEW_TYPE_", "sanity_print_slice");
     extra_headers.emplace("__CXY_PLATFORM_", "11");
@@ -3394,7 +3394,7 @@ void GUI_App::mark_app_close_time()
 
 std::string GUI_App::get_client_id()
 {
-    // 尝试获取 MAC 地址作为客户端 ID
+    // Try to get the MAC address as the client ID
     std::string client_id = "";
     
     try {
@@ -3411,7 +3411,7 @@ std::string GUI_App::get_client_id()
         return client_id;
     }
 
-    // 回退到从配置数据获取 UUID
+    // Fall back to getting the UUID from configuration data
     try {
         if (auto it = m_app_first_launch_data.find("uuid");
             it != m_app_first_launch_data.end() && it->is_string()) {
@@ -3425,7 +3425,7 @@ std::string GUI_App::get_client_id()
         BOOST_LOG_TRIVIAL(info) << "Unknown exception during UUID retrieval";
     }
 
-    // 所有尝试都失败时返回空字符串
+    // Return an empty string when all attempts fail
     return "";
 }
 
@@ -3697,24 +3697,24 @@ bool GUI_App::OnInit()
         if (this->init_params->argc >= 2 && this->init_params->argv != nullptr) {
             std::string _arg1 = this->init_params->argv[1];
             if (_arg1 == "version") {
-                // 分配控制台
+                // Allocate a console
                 AllocConsole();
 
-                // 重定向标准输出到控制台
+                // Redirect standard output to the console
                 HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
                 if (hStdOut != INVALID_HANDLE_VALUE) {
-                    // 设置控制台标题
+                    // Set the console title
                     SetConsoleTitleA("Sanity Print Version");
 
-                    // 输出版本信息
+                    // Output version information
                     std::string versionMsg = "Sanity Print Version: " + std::string(SANITYPRINT_VERSION) + "\n";
                     DWORD       bytesWritten;
                     WriteConsoleA(hStdOut, versionMsg.c_str(), versionMsg.length(), &bytesWritten, NULL);
 
-                    // 等待用户按键
+                    // Wait for the user to press a key
                     WriteConsoleA(hStdOut, "Press any key to exit...\n", 25, &bytesWritten, NULL);
 
-                    // 等待按键
+                    // Wait for a keypress
                     HANDLE hStdIn = GetStdHandle(STD_INPUT_HANDLE);
                     if (hStdIn != INVALID_HANDLE_VALUE) {
                         INPUT_RECORD ir;
@@ -3994,7 +3994,7 @@ bool GUI_App::on_init_inner(bool isdump_launcher)
                         app_config->get("language").empty();
 #ifdef __APPLE__
     if (is_first_run) {
-        // 首次运行时使用系统语言
+        // Use the system language on first run
         std::string system_lang = get_system_language();
         app_config->set("language", system_lang);
         app_config->save();
@@ -4105,7 +4105,7 @@ bool GUI_App::on_init_inner(bool isdump_launcher)
           /*  wxRect size = this->mainframe->GetRect();
             wDialog->SetSize(size.width, size.height);
             wDialog->Show();*/
-            // 创建UI Tour
+            // Create the UI Tour
             //startTour();
             evt.Skip();
         });   
@@ -4534,7 +4534,7 @@ bool GUI_App::on_init_inner(bool isdump_launcher)
     mainframe->Show(true);
     BOOST_LOG_TRIVIAL(info) << "main frame firstly shown";
 
-    // 启动用户信息文件监听，确保跨实例同步在线模型库登录状态
+    // Start watching the user info file to ensure the online model library login state syncs across instances
     start_user_info_watcher();
 
 //#if BBL_HAS_FIRST_PAGE
@@ -4648,7 +4648,7 @@ bool GUI_App::on_init_inner(bool isdump_launcher)
     }
 
 #if !AUTO_CONVERT_3MF
-    //  启动同步预设线程
+    //  Start the preset-syncing thread
     SyncUserPresets::getInstance().startup();
 #endif
     return true;
@@ -5138,7 +5138,7 @@ void GUI_App::Update_dark_mode_flag()
     m_is_dark_mode = dark_mode();
     BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(": switch the current dark mode status to %1% ")%m_is_dark_mode;
 
-    // 当主题偏好被切换时，仅刷新 Cookies（UA 仅在初始化设置）
+    // When the theme preference is toggled, only refresh Cookies (UA is only set during initialization)
     if (mainframe && mainframe->get_modellibrary_view()) {
         mainframe->get_modellibrary_view()->UpdateUserAgent();
     }
@@ -5640,7 +5640,7 @@ void GUI_App::ShowUserLogin(bool show,const wxString& loginUrl)
     //// CP: User Login Dialog
     if (show) {
         try {
-            // 使用CallAfter避免WebView2重入问题
+            // Use CallAfter to avoid WebView2 reentrancy issues
             CallAfter([this, loginUrl]() {
                 if (m_login_dialog) {
                     m_login_dialog->Destroy();
@@ -5649,10 +5649,10 @@ void GUI_App::ShowUserLogin(bool show,const wxString& loginUrl)
                 m_login_dialog = new LoginDialog(mainframe, _("Login"));
                 m_login_dialog->ShowLoginDialog(loginUrl);
                 if (m_login_dialog->ShowModal() == wxID_OK) {
-                    // 登录成功后更新登录信息
+                    // Update login info after a successful login
                     //get_login_info();
                 }
-                // 对话框关闭后清理指针
+                // Clean up the pointer after the dialog is closed
                 if (m_login_dialog) {
                     m_login_dialog->Destroy();
                     m_login_dialog = nullptr;
@@ -5663,7 +5663,7 @@ void GUI_App::ShowUserLogin(bool show,const wxString& loginUrl)
         }
     }
 #endif
-    // 注意：show=false的情况不再需要处理，因为LoginDialog是模态对话框
+    // Note: the show=false case no longer needs handling, because LoginDialog is a modal dialog
 }
 
 
@@ -5812,8 +5812,8 @@ bool GUI_App::discard_all_current_preset_changes()
         if (tab->supports_printer_technology(printer_technology) && tab->current_preset_is_dirty())
             tab->m_presets->discard_current_changes();
     }
-    // 和确认弹框里“Discard”分支一致
-    // 这样进入 load_project() 时已经没有脏改动，弹框自然不会出现。
+    // Consistent with the "Discard" branch in the confirmation dialog
+    // This way, by the time we enter load_project() there are no dirty changes left, so the dialog naturally won't appear.
     load_current_presets(false);
     return true;
 }
@@ -6072,7 +6072,7 @@ bool GUI_App::check_machine_list()
                                         return false;
                                     }
                                 }).perform_sync();
-    //检测是否有需要自己更新参数包
+    //Check whether there are parameter packages that need to update themselves
     std::vector<json> printer_version_list;
     
     if(!boost::filesystem::exists(printer_list_file)||!boost::filesystem::exists(material_list_file))
@@ -6629,15 +6629,15 @@ void  GUI_App::init_user_profile()
 std::string escapeForJS(const std::string& input)
 {
     std::string output;
-    output.reserve(input.size() * 2); // 预留空间，减少扩容
+    output.reserve(input.size() * 2); // Reserve space to reduce reallocations
 
     for (char c : input) {
         switch (c) {
-        case '\"': output += "\\\""; break; // 双引号
-        case '\'': output += "\\\'"; break; // 单引号
-        case '\\': output += "\\\\"; break; // 反斜杠
-        case '\n': output += "\\n"; break;  // 换行
-        case '\r': output += "\\r"; break;  // 回车
+        case '\"': output += "\\\""; break; // double quote
+        case '\'': output += "\\\'"; break; // single quote
+        case '\\': output += "\\\\"; break; // backslash
+        case '\n': output += "\\n"; break;  // newline
+        case '\r': output += "\\r"; break;  // carriage return
         case '\t': output += "\\t"; break;  // Tab
         default: output += c; break;
         }
@@ -6781,9 +6781,9 @@ std::string GUI_App::handle_web_request(std::string cmd)
                     boost::property_tree::write_json(oss, data_node, true);
                     boost::nowide::ofstream outFile(user_file.string(), std::ios::out | std::ios::trunc);
                     if (outFile.is_open()) {
-                            // 将 std::ostringstream 中的内容写入文件
+                            // Write the contents of the std::ostringstream to the file
                             outFile << oss.str();
-                            // 关闭文件
+                            // Close the file
                             outFile.close();
                             //std::cout << "write sucessfull" << std::endl;
                         } 
@@ -6822,7 +6822,7 @@ std::string GUI_App::handle_web_request(std::string cmd)
                 app_config->set("cloud", "user_id", m_user.userId);
                 app_config->set("cloud", "token", m_user.token);
 
-                // 仅在登录状态发生变化时刷新模型库视图（避免不必要的刷新）。
+                // Only refresh the model library view when the login state changes (to avoid unnecessary refreshes).
                  const bool login_unchanged = (old_login == m_user.bLogin);
                 const bool token_unchanged = (old_token == m_user.token);
                 const bool uid_unchanged   = (old_uid   == m_user.userId);
@@ -6831,7 +6831,7 @@ std::string GUI_App::handle_web_request(std::string cmd)
                 if (mainframe && mainframe->get_modellibrary_view()) {
                     mainframe->get_modellibrary_view()->UpdateUserAgent();
                 }
-                // 统一刷新社区主页与在线模型库视图，并广播跨实例消息
+                // Uniformly refresh the community home page and online model library view, and broadcast a cross-instance message
                 //this->reload_homepage();
                 this->reload_region_sensitive_views();
                 send_app_message("CP_LOGIN_STATUS_CHANGED", true);
@@ -7054,7 +7054,7 @@ std::string GUI_App::handle_web_request(std::string cmd)
                     //wxGetApp().request_model_download(wxUrl);
                     AnalyticsDataUploadManager::getInstance().mark_analytics_project_info(url, modelId, fileId, fileFormat, name);
                     model_downloaders_[userId]->start_download_3mf_group(url, modelId, fileId, fileFormat, name);
-                    // 始终显示 3MF 下载进度窗口；若存在遗留的同类窗口，先结束它。
+                    // Always show the 3MF download progress window; if a leftover window of the same kind exists, close it first.
                     wxGetApp().CallAfter([userId, fileId]() {
                         for (auto dialog : dialogStack) {
                             if (auto *cdp = dynamic_cast<Slic3r::GUI::CloudDownloadProgressDialog *>(dialog)) {
@@ -7377,7 +7377,7 @@ std::string GUI_App::handle_web_request(std::string cmd)
                     }else{
                         return "";
                     }
-                //下载机器参数包               
+                //Download the machine parameter package
                 try{
                     CurlConnectionPool pool(3);
                     for(auto &v:data_node)
@@ -7402,7 +7402,7 @@ std::string GUI_App::handle_web_request(std::string cmd)
                 
                 
 
-                // 等待所有线程完成
+                // Wait for all threads to finish
                 //for (auto& thread : threads) {
                 //    thread.join();
                 //}
@@ -7522,13 +7522,13 @@ std::string GUI_App::handle_web_request(std::string cmd)
                     if(OneSelect.contains("vendor"))
                     {
                         auto vendor = OneSelect["vendor"];
-                        //通过内部型号添加机器
+                        //Add the machine by its internal model name
                         if(vendor == "")
                         {
                             OneSelect["vendor"] = "Creality";
-                            //获取机器内部型号
+                            //Get the machine's internal model name
                             auto model = OneSelect["model"].get<std::string>();
-                            //K1 and K1 Max内部型号需要转换
+                            //The K1 and K1 Max internal model names need to be converted
                             if(model=="K1 Max")
                             {
                                 model = "CR-K1 Max";
@@ -7675,7 +7675,7 @@ std::string GUI_App::handle_web_request(std::string cmd)
                             for (auto& material : materials) {
                                 bool bFindDefault = false;
                                 if (m_ProfileJson["filament"].contains(material)) {
-                                    // 判断耗材是否支持当前的喷嘴
+                                    // Determine whether the filament supports the current nozzle
                                     for (int i = 0; i < nozzle.diameters.size(); ++i) {
                                         if (nozzle.selected[i] > 0) {
                                             std::string new_models = nozzle.model + "++" + nozzle.diameters[i];
@@ -7739,12 +7739,12 @@ std::string GUI_App::handle_web_request(std::string cmd)
                     }
                 }
 
-                // 处理打印机用户预设
+                // Process printer user presets
                 wxGetApp().app_config->set_userPresets("", true);
                 PresetCollection* presetColl = &wxGetApp().preset_bundle->printers;
                 if (presetColl) {
                     for (int i = 0; i < presetColl->get_presets().size(); i++) {
-                        Preset& preset = presetColl->preset(i, true); // true 返回  false 当前的copy
+                        Preset& preset = presetColl->preset(i, true); // true returns a copy, false returns the current one
                         if ((preset.is_visible) && (preset.is_user())) {
                             preset.m_is_user_printer_hidden = true;
                             string strModelName             = preset.name;
@@ -8165,7 +8165,7 @@ void GUI_App::check_update(bool show_tips, int by_user)
 void GUI_App::check_new_version_local(bool show_tips, int by_user)
 {
 #ifdef __WXMSW__
-    // 从配置文件读取updater_server_ip，如果没有配置则使用localhost:9000
+    // Read updater_server_ip from the config file; if not configured, use localhost:9000
     std::string updater_server_ip = app_config->get("updater_server_ip");
     std::string base_url = updater_server_ip.empty() ? std::string("http://localhost:9000") : 
                           (updater_server_ip.find("http") == 0 ? updater_server_ip : "http://" + updater_server_ip);
@@ -12767,8 +12767,8 @@ int GUI_App::load_machine_preset_data()
 //mouse scheme
 void GUI_App::on_interinstance_message(const std::string& msg)
 {
-    // 登录状态变更：优先同步本实例的账号信息（从 user_info.json 读取），
-    // 再刷新社区与模型库视图，确保多实例的 token/cookies 一致。
+    // Login state change: first sync this instance's account info (read from user_info.json),
+    // then refresh the community and model library views to ensure token/cookies are consistent across instances.
     if (msg == std::string("CP_LOGIN_STATUS_CHANGED")) {
         try {
             auto user_file = fs::path(data_dir()).append("user_info.json");
@@ -12792,7 +12792,7 @@ void GUI_App::on_interinstance_message(const std::string& msg)
                 app_config->set("cloud", "user_id", m_user.userId);
                 app_config->set("cloud", "token", m_user.token);
             } else {
-                // 文件不存在表示登出，清空本实例的账号信息
+                // A missing file means logged out; clear this instance's account info
                 m_user.token.clear();
                 m_user.nickName.clear();
                 m_user.avatar.clear();
@@ -12802,18 +12802,18 @@ void GUI_App::on_interinstance_message(const std::string& msg)
                 app_config->set("cloud", "token", m_user.token);
             }
         } catch (...) {
-            // 解析失败时不中断流程，仅继续刷新以尽量保持一致
+            // On a parse failure, do not interrupt the flow; just continue refreshing to stay as consistent as possible
         }
 
-        // 刷新模型库 UA 与 Cookies（依赖 app_config 的最新 token/uid）
+        // Refresh the model library UA and Cookies (depends on app_config's latest token/uid)
         if (mainframe && mainframe->get_modellibrary_view()) {
             mainframe->get_modellibrary_view()->UpdateUserAgent();
         }
-        // 刷新社区与模型库视图，避免手动 F5
+        // Refresh the community and model library views to avoid a manual F5
         this->reload_homepage();
         this->reload_region_sensitive_views();
 
-        // 同步刷新设备管理页，确保云设备组在多实例登录变更后立即更新
+        // Also refresh the device management page to ensure the cloud device group updates immediately after a multi-instance login change
         if (mainframe && mainframe->get_printer_mgr_view()) {
             wxGetApp().CallAfter([this] {
                 if (mainframe) mainframe->refresh_device_page();

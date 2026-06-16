@@ -343,7 +343,7 @@ void TipsDialog::on_ok(wxCommandEvent &event)
  CustomTreeCtrl::CustomTreeCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxTreeCtrl(parent, id, pos, size, style)
 {
-    // 绑定绘制事件
+    // bind the paint event
     Bind(wxEVT_PAINT, &CustomTreeCtrl::OnPaint, this);
 }
 
@@ -357,24 +357,24 @@ void CustomTreeCtrl::OnPaint(wxPaintEvent& event)
     //while (item.IsOk()) {
     //    wxRect rect;
     //    if (GetBoundingRect(item, rect, true)) {
-    //        // 绘制悬停状态
+    //        // draw the hover state
     //        if (item == hoverItem) {
     //            dc.SetPen(*wxTRANSPARENT_PEN);
-    //            dc.SetBrush(wxBrush(wxColour(200, 200, 200))); // 设置悬停背景色
+    //            dc.SetBrush(wxBrush(wxColour(200, 200, 200))); // set the hover background color
     //            dc.DrawRectangle(rect);
     //        }
 
-    //        // 绘制选中状态
+    //        // draw the selected state
     //        if (IsSelected(item)) {
     //            dc.SetPen(*wxTRANSPARENT_PEN);
-    //            dc.SetBrush(wxBrush(wxColour(52, 152, 219))); // 设置选中背景色
+    //            dc.SetBrush(wxBrush(wxColour(52, 152, 219))); // set the selected background color
     //            dc.DrawRectangle(rect);
     //        }
     //    }
     //    item = GetNextVisible(item);
     //}
 
-    event.Skip(); // 继续默认绘制
+    event.Skip(); // continue with the default drawing
 }
 
 void ParamsPanel::Highlighter::set_timer_owner(wxEvtHandler *owner, int timerid /* = wxID_ANY*/)
@@ -727,10 +727,10 @@ void ParamsPanel::create_layout_printerAndFilament()
         m_preset_listBox  = new CustomTreeCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
                                                wxTR_HIDE_ROOT | wxTR_FULL_ROW_HIGHLIGHT | wxTR_HAS_BUTTONS | wxTR_NO_LINES | wxBORDER_NONE);
 
-        // 添加根节点
+        // add the root node
         wxTreeItemId rootId = m_preset_listBox->AddRoot("Root");
 
-        // 绑定 ToolTip 事件
+        // bind the ToolTip event
         m_preset_listBox->Bind(wxEVT_TREE_ITEM_GETTOOLTIP, [this](wxTreeEvent& event) {
             wxTreeItemId item = event.GetItem();
             if (item.IsOk()) {
@@ -738,7 +738,7 @@ void ParamsPanel::create_layout_printerAndFilament()
                 if (!data)
                     return;
                 wxString        itemText = data->GetData();
-                event.SetToolTip(itemText); // 设置 ToolTip 为节点的完整内容
+                event.SetToolTip(itemText); // set the ToolTip to the node's full content
             }
         });
 
@@ -874,7 +874,7 @@ void ParamsPanel::create_layout_printerAndFilament()
         StateColor text_color = StateColor(std::pair{is_dark ? wxColour(254, 254, 254) : wxColour(255, 255, 255), (int) StateColor::Hovered},
                                            std::pair{is_dark ? wxColour(254, 254, 254) : wxColour(0, 0, 0), (int) StateColor::Normal});
 
-        wxFont font(12, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, wxT("微软雅黑"));
+        wxFont font(12, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, wxT("Microsoft YaHei"));
 
         m_btn_system = new Button(m_btnsPanel, _L("System"), "", wxNO_BORDER, 0, 0);
         //m_btn_system->SetValue(StateHandler::Hovered);
@@ -1666,11 +1666,11 @@ bool ParamsPanel::get_switch_of_object()
 
 void ParamsPanel::refreshCurTreeItem(bool isDirty)
 {
-    // 获取前两个字符
+    // get the first two characters
     wxString str = m_curPreset.Mid(0, 2);
     wxString str1 = str == "* " ? m_curPreset.Mid(2, -1) : m_curPreset;
     std::string presetName = std::string(str1.ToUTF8().data());
-    // 查找 Preset
+    // find the Preset
     Preset* p = nullptr;
     if (m_ws == WS_PRINTER) {
         p = wxGetApp().preset_bundle->printers.find_preset(presetName);
@@ -1679,15 +1679,15 @@ void ParamsPanel::refreshCurTreeItem(bool isDirty)
         p = wxGetApp().preset_bundle->filaments.find_preset(presetName);
     }
 
-    // 检查 Preset 是否有效
+    // check whether the Preset is valid
     if (!p) {
         return;
     }
 
-    // 获取 Preset 的标签
+    // get the Preset's label
     wxString itemName = from_u8(p->label(true));
 
-    // 更新 itemName 根据 isDirty 状态
+    // update itemName based on the isDirty state
     if (isDirty) {
         if (itemName.Mid(0, 2) != "* ") {
             itemName = "* " + itemName;
@@ -1699,12 +1699,12 @@ void ParamsPanel::refreshCurTreeItem(bool isDirty)
         }
     }
 
-    // 检查 itemName 是否为空
+    // check whether itemName is empty
     if (itemName.IsEmpty()) {
         return;
     }
 
-    // 检查 m_preset_listBox 和 m_curItem 是否有效
+    // check whether m_preset_listBox and m_curItem are valid
     wxTreeItemId curItem = getItemIdByName(m_curPreset);
     if (m_preset_listBox && curItem.IsOk()) {
         wxString ellipsizedText = wxControl::Ellipsize(itemName, wxClientDC(this), wxELLIPSIZE_MIDDLE, FromDIP(200));
@@ -1720,10 +1720,10 @@ void ParamsPanel::refreshCurTreeItem(bool isDirty)
         m_preset_listBox->UpdateWindowUI();
     }
 
-    // 更新 m_curPreset
+    // update m_curPreset
     m_curPreset = itemName;
 
-    // 刷新当前窗口
+    // refresh the current window
     Refresh();
 }
 
@@ -2036,20 +2036,20 @@ public:
 
     virtual bool GetValueAsString(wxString* value) const
     {
-        // 这里需要从数据模型中获取当前项的值
-        // 假设我们有一个简单的数据模型，直接返回一个固定的值
-        *value = "Normal"; // 你可以根据实际情况从数据模型中获取值
+        // here we need to get the current item's value from the data model
+        // assuming we have a simple data model, just return a fixed value
+        *value = "Normal"; // you can get the value from the data model as needed
         return true;
     }
     virtual bool SetValue(const wxVariant& value) override
     {
-        // 如果需要支持设置值，可以在这里实现
+        // if setting the value needs to be supported, it can be implemented here
         return true;
     }
 
     virtual wxSize GetSize() const override
     {
-        return wxSize(100, 20); // 返回渲染器的大小
+        return wxSize(100, 20); // return the renderer's size
     }
 
     virtual bool GetValue(wxVariant& value) const
@@ -2060,7 +2060,7 @@ public:
 
     virtual bool SetValueFromString(const wxString& value)
     {
-        // 如果需要支持设置值，可以在这里实现
+        // if setting the value needs to be supported, it can be implemented here
         return true;
     }
 };
@@ -2296,7 +2296,7 @@ void ParamsPanel::updateItemState()
             setUserType();
     }
 
-    //选中状态
+    // selected state
     Layout();
 }
 
@@ -2711,7 +2711,7 @@ void ParamsPanel::updatePresetsList(const std::vector<wxString>& systemList, con
         wxTreeItemId child1 = m_preset_listBox->AppendItem(m_preset_listBox->GetRootItem(), _L("Project presets"), -1, -1,
                                                            new MyTreeItemData(_L("Project presets")));
         for (auto& projectName : projectList) {
-            // 添加节点时处理文本
+            // process the text when adding the node
             wxString ellipsizedText = wxControl::Ellipsize(projectName, wxClientDC(this), wxELLIPSIZE_MIDDLE, FromDIP(200));
             m_preset_listBox->AppendItem(child1, ellipsizedText, -1, -1, new MyTreeItemData(projectName));
         }
@@ -2796,7 +2796,7 @@ std::string ParamsPanel::getPresetType(Preset preset)
 }
 wxTreeItemId ParamsPanel::getItemIdByName(const wxString& name)
 {
-    // 从根节点开始遍历
+    // traverse starting from the root node
     wxTreeItemId      rootItem = m_preset_listBox->GetRootItem();
     wxTreeItemIdValue cookie;
     wxTreeItemId      child = m_preset_listBox->GetFirstChild(rootItem, cookie);
@@ -2816,7 +2816,7 @@ wxTreeItemId ParamsPanel::getItemIdByName(const wxString& name)
 
 wxTreeItemId ParamsPanel::SelectRowRecursive(const wxTreeItemId& item, const wxString& text)
 {
-    // 获取当前节点的文本
+    // get the current node's text
     MyTreeItemData* data = dynamic_cast<MyTreeItemData*>(m_preset_listBox->GetItemData(item));
     if (!data)
         return wxTreeItemId();
@@ -2826,7 +2826,7 @@ wxTreeItemId ParamsPanel::SelectRowRecursive(const wxTreeItemId& item, const wxS
         return item;
     }
 
-    // 遍历子节点
+    // traverse the child nodes
     wxTreeItemIdValue cookie;
     wxTreeItemId      child = m_preset_listBox->GetFirstChild(item, cookie);
 

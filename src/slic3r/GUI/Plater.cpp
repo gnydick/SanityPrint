@@ -315,7 +315,7 @@ static RestorePolicy get_forced_policy_from_env()
         if (s == "discard")
             return RestorePolicy::Discard;
     }
-    // 其它值视为 ask，也就说保持原来的逻辑
+    // treat any other value as ask, i.e. keep the original logic
     return RestorePolicy::Ask;
 }
 
@@ -997,14 +997,14 @@ Sidebar::Sidebar(Plater* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, 
             }
             m_scrolled_sizer->Layout();
         });
-        // 添加鼠标悬停事件
+        // add mouse hover events
         p->m_panel_filament_title->Bind(wxEVT_ENTER_WINDOW, [this](wxMouseEvent& e) {
-            SetCursor(wxCURSOR_HAND); // 悬停时鼠标变为手型
+            SetCursor(wxCURSOR_HAND); // cursor becomes a hand on hover
             e.Skip();
         });
 
         p->m_panel_filament_title->Bind(wxEVT_LEAVE_WINDOW, [this](wxMouseEvent& e) {
-            SetCursor(wxCURSOR_ARROW); // 离开时鼠标恢复为箭头
+            SetCursor(wxCURSOR_ARROW); // cursor returns to an arrow on leave
             e.Skip();
         });
 
@@ -1843,14 +1843,14 @@ void Sidebar::update_filament_panel() { p->m_cx_panel_filament_content->update()
 void Sidebar::show_flushDialog()
 {
     if (p->m_flushing_volume_btn) {
-        // 获取目标按钮的位置和大小
+        // get the target button's position and size
         wxPoint pos  = p->m_flushing_volume_btn->GetPosition();
         wxSize  size = p->m_flushing_volume_btn->GetSize();
-        // 计算按钮中心位置
+        // calculate the button's center position
         int x = pos.x + size.GetWidth() / 2;
         int y = pos.y + size.GetHeight() / 2;
 
-        // 创建 wxMouseEvent 对象
+        // create a wxMouseEvent object
         wxMouseEvent event(wxEVT_LEFT_DOWN);
         event.m_x        = x;
         event.m_y        = y;
@@ -1903,7 +1903,7 @@ void Sidebar::delete_filament(size_t filament_id, int replace_filament_id)
     wxGetApp().preset_bundle->update_filament_presets = true;
     wxGetApp().get_tab(Preset::TYPE_PRINT)->update();
     wxGetApp().preset_bundle->export_selections(*wxGetApp().app_config);
-    //更新一下平台的显示
+    // refresh the platform display
     wxGetApp().plater()->update();
 }
 void Sidebar::delete_filament_bbl(size_t filament_id, int replace_filament_id)
@@ -3038,7 +3038,7 @@ struct Plater::priv
     void on_export_began(wxCommandEvent&);
     void on_export_finished(wxCommandEvent&);
     void on_slicing_began();
-    // 【新增】阶段3：采集当前盘的切片信息并缓存
+    // [NEW] Stage 3: collect and cache the current plate's slicing info
     void cache_slice_info_for_current_plate();
     void restore_belt_transformation();
 
@@ -3264,7 +3264,7 @@ private:
     // record print preset
     void record_start_print_preset(std::string action);
 
-    // 判断3mf文件中的机型是否为标准机型
+    // determine whether the printer model in the 3mf file is a standard model
     json m_PrinterJson;
     void check_printer_standard_status();
     int  LoadPrinter(std::string strVendor);
@@ -3863,20 +3863,20 @@ Plater::priv::priv(Plater* q, MainFrame* main_frame)
             std::string last_backup = last;
             std::string originfile;
 
-            // [NEW] 读取强制策略
+            // [NEW] read the forced policy
             RestorePolicy policy = get_forced_policy_from_env();
 
             if (Slic3r::has_restore_data(last_backup, originfile)) {
                 bool restore = false;
 
                 if (policy == RestorePolicy::Restore) {
-                    // [NEW] 策略：强制恢复 → 不弹框
+                    // [NEW] policy: force restore -> no dialog
                     restore = true;
                 } else if (policy == RestorePolicy::Discard) {
-                    // [NEW] 策略：强制丢弃 → 不弹框
+                    // [NEW] policy: force discard -> no dialog
                     restore = false;
                 } else {
-                    // 原路径：弹框询问
+                    // original path: ask via dialog
                     wxFont        defaultFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
                     wxFont        customFont(8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
                     MessageDialog dialog = MessageDialog(this->q, _L("Previous unsaved project detected, do you want to restore it?"),
@@ -3900,10 +3900,10 @@ Plater::priv::priv(Plater* q, MainFrame* main_frame)
                     boost::filesystem::remove_all(last);
             } catch (...) {}
 
-            // [NEW] 若策略是“丢弃”，则强制跳过保存确认（=1），否则沿用原事件参数
+            // [NEW] if the policy is "discard", force skipping the save confirmation (=1), otherwise use the original event parameter
             int skip_confirm = (policy == RestorePolicy::Discard) ? 1 : e.GetInt();
 
-            // 保持原 silent=true
+            // keep the original silent=true
 #ifdef __APPLE__
             // Skip new_project if models were already loaded via URL scheme
             // On macOS, URL scheme launch causes race condition where model is loaded
@@ -4779,7 +4779,7 @@ std::vector<size_t> Plater::priv::load_files(const std::vector<fs::path>& input_
 
                         config.apply(static_cast<const ConfigBase&>(FullPrintConfig::defaults()));
 
-                        // 判断是否为创想的软件生成的3mf文件
+                        // determine whether the 3mf file was generated by Creality software
                         //std::string printerSettingId = "";
                         //ConfigOptionString* opt = config.option<ConfigOptionString>("printer_settings_id", false);
                         //if (opt != nullptr) {
@@ -5227,7 +5227,7 @@ std::vector<size_t> Plater::priv::load_files(const std::vector<fs::path>& input_
                             }
                         }
 
-                        // 判断3mf中的打印机是否为系统机型
+                        // determine whether the printer in the 3mf is a system model
                         check_printer_standard_status();
                     }
                     if (!silence)
@@ -5352,10 +5352,10 @@ std::vector<size_t> Plater::priv::load_files(const std::vector<fs::path>& input_
                         nullptr, 0, obj_color_fun);
                 }
                 auto end = std::chrono::high_resolution_clock::now();
-                // 计算耗时
+                // calculate the elapsed time
                 auto duration   = std::chrono::duration_cast<std::chrono::seconds>(end - start);
                 int  spend_time = duration.count();
-                // 输出耗时
+                // output the elapsed time
                 std::cout << "Function took " << spend_time << " seconds to execute." << std::endl;
 
                 if (designer_model_id.empty() && boost::algorithm::iends_with(path.string(), ".stl")) {
@@ -5577,10 +5577,10 @@ std::vector<size_t> Plater::priv::load_files(const std::vector<fs::path>& input_
 
             auto loaded_idxs = load_model_objects(model.objects, is_project_file);
             auto end         = std::chrono::high_resolution_clock::now();
-            // 计算耗时
+            // calculate the elapsed time
             auto duration   = std::chrono::duration_cast<std::chrono::seconds>(end - start);
             int  spend_time = duration.count();
-            // 输出耗时
+            // output the elapsed time
             std::cout << "Function took " << spend_time << " seconds to execute." << std::endl;
             obj_idxs.insert(obj_idxs.end(), loaded_idxs.begin(), loaded_idxs.end());
 
@@ -5764,7 +5764,7 @@ std::vector<size_t> Plater::priv::load_files(const std::vector<fs::path>& input_
             for (const auto& path : input_files) {
                 std::string ext = path.extension().string();
                 if (!ext.empty() && ext[0] == '.')
-                    ext = ext.substr(1); // 去掉前面的点
+                    ext = ext.substr(1); // strip the leading dot
                 file_formats += ext;
                 file_formats += ";";
                 file_paths += path.string();
@@ -5773,10 +5773,10 @@ std::vector<size_t> Plater::priv::load_files(const std::vector<fs::path>& input_
                 std::uintmax_t size_bytes = 0;
                 size_bytes = boost::filesystem::file_size(path);
                 double size_kb = size_bytes / 1024.0f;
-                file_sizes += std::to_string(static_cast<int>(size_kb + 0.5)); // 四舍五入
+                file_sizes += std::to_string(static_cast<int>(size_kb + 0.5)); // round to nearest
                 file_sizes += ";";
             }
-            // 去掉最后一个分号
+            // remove the last semicolon
             if (!file_formats.empty()) file_formats.pop_back();
             if (!file_paths.empty()) file_paths.pop_back();
             if (!file_sizes.empty()) file_sizes.pop_back();
@@ -5967,7 +5967,7 @@ std::vector<size_t> Plater::priv::load_model_objects(const ModelObjectPtrs& mode
     //}
 
     string sArrage = wxGetApp().app_config->get("is_arrange");
-    if ("1" == sArrage || wxGetApp().preset_bundle->machine_is_belt()) {// cr30总是使用自动布局
+    if ("1" == sArrage || wxGetApp().preset_bundle->machine_is_belt()) {// the cr30 always uses auto layout
         int idx = 0;
         for (ModelInstance* inst : new_instances) {
             // if multiple instances(multiple stl files) loaded at the same time, when process the first instance, make sure the fixed_ap
@@ -6635,7 +6635,7 @@ void Plater::priv::split_object()
             get_selection().add_object((unsigned int) idx, false);
         }
         
-        // 【新增】标记几何体修改（拆分到对象成功）
+        // [NEW] mark geometry modification (split into objects succeeded)
         AnalyticsDataUploadManager::ProjectModificationTracker::getInstance()
             .mark_modified(AnalyticsDataUploadManager::ModelModifyType::SPLIT_OBJECTS);
     }
@@ -6702,7 +6702,7 @@ void Plater::priv::process_validation_warning(StringObjectException const& warni
 
 #if AUTOMATION_TOOL
 
-#ifdef _WIN32 // 记录警告信息
+#ifdef _WIN32 // record warning info
         if (AutomationMgr::enabled()) {
             AutomationMgr::outputLog(text, 3);
         }
@@ -8199,7 +8199,7 @@ void Plater::priv::on_select_preset(wxCommandEvent& evt)
         return;
     }
 
-    //验证fluidd设备的测试代码
+    // test code for verifying fluidd devices
     //if (PresetComboBox::LabelItemType::LABEL_ITEM_WIZARD_OTHER_PRINTER == marker) {
     //    sidebar->add_other_printer();
     //    return;
@@ -8451,7 +8451,7 @@ void Plater::priv::on_slicing_completed(wxCommandEvent& evt)
 {
     BOOST_LOG_TRIVIAL(debug) << __FUNCTION__ << boost::format(": event_type %1%, string %2%") % evt.GetEventType() % evt.GetString();
     
-    // 【新增】阶段3：采集切片信息并缓存
+    // [NEW] Stage 3: collect and cache the slicing info
     cache_slice_info_for_current_plate();
     
     // BBS: add slice project logic
@@ -8494,24 +8494,24 @@ void Plater::priv::on_export_finished(wxCommandEvent& evt)
 }
 
 // ============================================================
-// 阶段3：采集当前盘的切片信息并缓存
+// Stage 3: collect and cache the current plate's slicing info
 // ============================================================
 void Plater::priv::cache_slice_info_for_current_plate()
 {
     if (this->printer_technology != ptFFF) {
-        // SLA 打印机暂不处理
+        // SLA printers are not handled for now
         return;
     }
-    
+
     int plate_idx = partplate_list.get_curr_plate()->get_index();
-    
-    // 1. 构建 printer_info JSON（使用 collect_params 的打印机参数部分）
+
+    // 1. build the printer_info JSON (using the printer-parameter portion of collect_params)
     nlohmann::json printer_info;
-    
-    // 获取完整的打印配置（包含所有默认值）
+
+    // get the full print config (including all default values)
     const Print& print = partplate_list.get_plate(plate_idx)->get_print();
     const DynamicPrintConfig& full_config = print.full_print_config();
-    
+
     nlohmann::json printer_params = AnalyticsDataUploadManager::ProjectModificationTracker::collect_params(full_config);
     if (printer_params.contains("device_model")) {
         printer_info["device_model"] = printer_params["device_model"];
@@ -8519,25 +8519,25 @@ void Plater::priv::cache_slice_info_for_current_plate()
     if (printer_params.contains("nozzle_diameter")) {
         printer_info["nozzle_diameter"] = printer_params["nozzle_diameter"];
     }
-    // firmware_version - 固件版本（暂不采集，需要连接打印机后从硬件获取）
-    // printer_info["firmware_version"] = "";  // 留空
-    
-    // 2. 构建 slice_param JSON（使用 full_config 采集所有参数，包括默认值）
+    // firmware_version - firmware version (not collected for now; requires connecting to the printer and reading from hardware)
+    // printer_info["firmware_version"] = "";  // leave empty
+
+    // 2. build the slice_param JSON (use full_config to collect all parameters, including defaults)
     nlohmann::json slice_param;
-    nlohmann::json global_param = printer_params;  // 已经是全量参数
-    
-    // 注意：参数采集已重构到 AnalyticsDataUploadManager::ProjectModificationTracker::collect_params()
-    // global_param 由 collect_params() 统一采集，无需重复代码
-    
-    // 阶段4：采集对象/部件修改参数（只采集当前盘的对象）
+    nlohmann::json global_param = printer_params;  // already the full set of parameters
+
+    // note: parameter collection has been refactored into AnalyticsDataUploadManager::ProjectModificationTracker::collect_params()
+    // global_param is collected uniformly by collect_params(), no need to duplicate the code
+
+    // Stage 4: collect object/part modification parameters (only objects on the current plate)
     PartPlate* current_plate = partplate_list.get_plate(plate_idx);
     nlohmann::json obj_list = AnalyticsDataUploadManager::ProjectModificationTracker::collect_obj_params(current_plate, plate_idx);
-    
-    // 组装 slice_param
+
+    // assemble slice_param
     slice_param["global_param"] = global_param;
-    slice_param["obj_list"] = obj_list;  // 阶段4实现
-    
-    // 3. 构建 filament_info JSON（从 global_param 提取）
+    slice_param["obj_list"] = obj_list;  // implemented in Stage 4
+
+    // 3. build the filament_info JSON (extracted from global_param)
     nlohmann::json filament_info;
     if (global_param.contains("filament_type")) {
         filament_info["filament_type"] = global_param["filament_type"];
@@ -8545,8 +8545,8 @@ void Plater::priv::cache_slice_info_for_current_plate()
     if (global_param.contains("filament_vendor")) {
         filament_info["filament_brand"] = global_param["filament_vendor"];
     }
-    
-    // 4. 缓存到 Tracker（包含 filament_info）
+
+    // 4. cache into the Tracker (includes filament_info)
     AnalyticsDataUploadManager::ProjectModificationTracker::getInstance().cache_slice_info(
         plate_idx,
         printer_info.dump(),
@@ -8554,13 +8554,13 @@ void Plater::priv::cache_slice_info_for_current_plate()
         filament_info.dump()
     );
     
-    // 【调试日志】打印完整的 slice_param（WARNING级别，方便对比测试）
+    // [Debug log] print the full slice_param (WARNING level, convenient for comparison testing)
     BOOST_LOG_TRIVIAL(warning) << "[SliceInfo-Debug] ========== Plate " << plate_idx << " ==========";
     BOOST_LOG_TRIVIAL(warning) << "[SliceInfo-Debug] printer_info: " << printer_info.dump(2);
     BOOST_LOG_TRIVIAL(warning) << "[SliceInfo-Debug] slice_param (full): " << slice_param.dump(2);
     BOOST_LOG_TRIVIAL(warning) << "[SliceInfo-Debug] obj_list count: " << obj_list.size();
     
-    // 打印 obj_list 摘要
+    // print the obj_list summary
     if (!obj_list.empty()) {
         for (size_t i = 0; i < obj_list.size(); ++i) {
             const auto& obj = obj_list[i];
@@ -8632,7 +8632,7 @@ void Plater::priv::clear_warnings(int plate_index)
     if(plate_index < 0) {
         this->current_warnings.clear();
     }else {
-        // 只移除指定盘的 warning
+        // only remove warnings for the specified plate
         auto& warnings = this->current_warnings;
         warnings.erase(
             std::remove_if(warnings.begin(), warnings.end(),
@@ -8781,7 +8781,7 @@ void Plater::priv::on_process_completed(SlicingProcessCompletedEvent& evt)
         }
         has_error   = true;
         is_finished = true;
-        // 记录错误信息
+        // record error info
 #if AUTOMATION_TOOL
 
 #ifdef _WIN32
@@ -8826,7 +8826,7 @@ void Plater::priv::on_process_completed(SlicingProcessCompletedEvent& evt)
         if(this->background_process.m_fff_print->print_statistics().total_cost==0)
             this->background_process.m_fff_print->print_statistics().total_cost = current_result->print_statistics.total_filament_cost;
     }else{
-        // 还原矩阵
+        // restore the matrix
         this->restore_belt_transformation();
     }
     // refresh preview
@@ -9002,11 +9002,11 @@ void Plater::priv::on_process_completed(SlicingProcessCompletedEvent& evt)
 #if AUTOMATION_TOOL
 
 #ifdef _WIN32
-    // 切片一个盘之后，判断下一个盘是否为空
+    // after slicing one plate, check whether the next plate is empty
     if (AutomationMgr::enabled()) {
         PartPlateList& plate_list = wxGetApp().plater()->get_partplate_list();
         if (!plate_list.get_plate(m_cur_slice_plate)->can_slice()) {
-            std::string logContent = "盘" + std::to_string(m_cur_slice_plate + 1) + "不能切片";
+            std::string logContent = "Plate " + std::to_string(m_cur_slice_plate + 1) + " cannot be sliced";
             AutomationMgr::outputLog(logContent, 1);
             AutomationMgr::endFunction();
         }
@@ -9049,10 +9049,10 @@ void Plater::priv::on_action_add(SimpleEvent&)
         auto start = std::chrono::high_resolution_clock::now();
         q->add_file();
         auto end = std::chrono::high_resolution_clock::now();
-        // 计算耗时
+        // calculate the elapsed time
         auto duration   = std::chrono::duration_cast<std::chrono::seconds>(end - start);
         int  spend_time = duration.count();
-        // 输出耗时
+        // output the elapsed time
         std::cout << "Function took " << spend_time << " seconds to execute." << std::endl;
         if (q->model().objects.size() > objects_before) {
             AnalyticsEventPayload payload;
@@ -9119,7 +9119,7 @@ void Plater::priv::on_action_slice_plate(SimpleEvent&)
         Model::setExtruderParams(config, numExtruders);
         Model::setPrintSpeedTable(config, print_config);
         m_slice_all = false;
-            	// CR30机型,屏蔽裙边生成
+            	// CR30 model: disable skirt generation
         
         q->reslice();
         q->select_view_3D("Preview");
@@ -9209,7 +9209,7 @@ void Plater::priv::on_action_send_to_multi_machine(SimpleEvent&)
     //m_send_multi_dlg->prepare(partplate_list.get_curr_plate_index());
     //m_send_multi_dlg->ShowModal();
 
-    //F022机型不支持多机发送
+    //the F022 model does not support multi-machine sending
     PresetCollection* presetColl = &wxGetApp().preset_bundle->printers;
     if (presetColl)
     {
@@ -11208,10 +11208,10 @@ void Plater::priv::check_printer_standard_status()
 
     bool isSystemPrinter = false;
     if (wxGetApp().app_config->get_variant(sVendor, strPrinterModel, strPrinterVariant)) {
-        // 所添加的机型中已存在
+        // already exists among the added printer models
         isSystemPrinter = true;
     } else {
-        // 需要判断是否系统机型
+        // need to determine whether it is a system model
         LoadPrinter(sVendor);
         for (auto it = m_PrinterJson["model"].begin(); it != m_PrinterJson["model"].end(); ++it) {
             string sJsonModel   = it.value()["model"];
@@ -11686,7 +11686,7 @@ void Plater::load_project(wxString const& filename2, wxString const& originfile)
                 AutomationMgr::endFunction();
             }
             // this->select_view_3D("Preview", false);
-            //  切所有盘
+            //  slice all plates
             if (AutomationMgr::g_automationType == 1) {
                 SimpleEvent evt = SimpleEvent(EVT_GLTOOLBAR_SLICE_ALL);
                 this->p->on_action_slice_all(evt);
@@ -11911,21 +11911,21 @@ wxString SanitizeFilename(const wxString& filename)
 {
     wxString sanitized = filename;
     
-    // 定义非法字符的正则表达式模式
-    // 这些字符在Windows和Unix系统中通常都是非法的
+    // define a regex pattern for illegal characters
+    // these characters are typically illegal on both Windows and Unix systems
     wxRegEx invalidChars("[<>:\"/\\|?*]");
-    
-    // 替换所有非法字符为下划线或其他安全字符
+
+    // replace all illegal characters with an underscore or other safe character
     invalidChars.ReplaceAll(&sanitized, "_");
-    
-    // 还可以移除控制字符（ASCII 0-31）
+
+    // also remove control characters (ASCII 0-31)
     for (size_t i = 0; i < sanitized.length(); i++) {
         if (sanitized[i] < 32) {
             sanitized[i] = '_';
         }
     }
-    
-    // 移除开头和结尾的点（在某些系统中有问题）
+
+    // remove leading and trailing dots (problematic on some systems)
     sanitized.Trim(true).Trim(false);
     while (sanitized.StartsWith(".")) {
         sanitized = sanitized.Mid(1);
@@ -11933,8 +11933,8 @@ wxString SanitizeFilename(const wxString& filename)
     while (sanitized.EndsWith(".")) {
         sanitized = sanitized.RemoveLast();
     }
-    
-    // 确保文件名不为空
+
+    // ensure the filename is not empty
     if (sanitized.IsEmpty()) {
         sanitized = "unnamed";
     }
@@ -12225,13 +12225,13 @@ void Plater::import_model_id(wxString download_info)
             p->set_project_filename(target_path.wstring());
             p->notification_manager->push_import_finished_notification(target_path.string(), target_path.parent_path().string(), false);
             
-            // 计算并设置 model_id（使用文件 MD5 指纹）
+            // compute and set model_id (using the file's MD5 fingerprint)
             auto& analytics_mgr = GUI::AnalyticsDataUploadManager::getInstance();
             std::string model_id = analytics_mgr.computeModelFingerprint(target_path.string());
             analytics_mgr.mark_analytics_project_info(
                 target_path.string(),  // full_url
                 model_id,              // model_id
-                "",                    // file_id (暂不使用)
+                "",                    // file_id (not used for now)
                 "3mf",                 // file_format
                 target_path.filename().string()  // name
             );
@@ -12523,7 +12523,7 @@ void Plater::_calib_pa_tower(const Calib_Params& params)
     if (!model().objects.empty()) {
         size_t pos = model().objects[0]->name.rfind(".stl");
         if (pos != std::string::npos && pos == model().objects[0]->name.length() - 4) {
-            // 如果找到并且.stl 是后缀，则删除该后缀
+            // if found and .stl is the suffix, remove that suffix
             model().objects[0]->name = model().objects[0]->name.substr(0, pos);
         }
     }
@@ -12794,7 +12794,7 @@ void Plater::calib_temp(const Calib_Params& params)
     if (!model().objects.empty()) {
         size_t pos = model().objects[0]->name.rfind(".stl");
         if (pos != std::string::npos && pos == model().objects[0]->name.length() - 4) {
-            // 如果找到并且.stl 是后缀，则删除该后缀
+            // if found and .stl is the suffix, remove that suffix
             model().objects[0]->name = model().objects[0]->name.substr(0, pos);
         }
     }
@@ -12845,14 +12845,14 @@ void Plater::calib_max_vol_speed(const Calib_Params& params)
     if (!model().objects.empty()) {
         size_t pos = model().objects[0]->name.rfind(".stl");
         if (pos != std::string::npos && pos == model().objects[0]->name.length() - 4) {
-            // 如果找到并且.stl 是后缀，则删除该后缀
+            // if found and .stl is the suffix, remove that suffix
             model().objects[0]->name = model().objects[0]->name.substr(0, pos);
         }
     }
 
     auto* preset_bundle = wxGetApp().preset_bundle;
     auto  print_config  = &preset_bundle->prints.get_edited_preset().config;
-    // 校准时强制使用界面上的第一个耗材并将其设为当前编辑对象，避免改到其它耗材
+    // during calibration, force using the first filament in the UI and set it as the current edit target, to avoid modifying other filaments
     if (!preset_bundle->filament_presets.empty())
         preset_bundle->filaments.select_preset_by_name(preset_bundle->filament_presets.front(), false);
     auto filament_config = &preset_bundle->filaments.get_edited_preset().config;
@@ -12956,7 +12956,7 @@ void Plater::calib_retraction(const Calib_Params& params)
     if (!model().objects.empty()) {
         size_t pos = model().objects[0]->name.rfind(".stl");
         if (pos != std::string::npos && pos == model().objects[0]->name.length() - 4) {
-            // 如果找到并且.stl 是后缀，则删除该后缀
+            // if found and .stl is the suffix, remove that suffix
             model().objects[0]->name = model().objects[0]->name.substr(0, pos);
         }
     }
@@ -13023,7 +13023,7 @@ void Plater::calib_retraction_speed(const Calib_Params& params)
     if (!model().objects.empty()) {
         size_t pos = model().objects[0]->name.rfind(".stl");
         if (pos != std::string::npos && pos == model().objects[0]->name.length() - 4) {
-            // 如果找到并且.stl 是后缀，则删除该后缀
+            // if found and .stl is the suffix, remove that suffix
             model().objects[0]->name = model().objects[0]->name.substr(0, pos);
         }
     }
@@ -13092,7 +13092,7 @@ void Plater::calib_limit_speed(const Calib_Params& params)
     if (!model().objects.empty()) {
         size_t pos = model().objects[0]->name.rfind(".stl");
         if (pos != std::string::npos && pos == model().objects[0]->name.length() - 4) {
-            // 如果找到并且.stl 是后缀，则删除该后缀
+            // if found and .stl is the suffix, remove that suffix
             model().objects[0]->name = model().objects[0]->name.substr(0, pos);
         }
     }
@@ -13164,7 +13164,7 @@ void Plater::calib_speed_tower(const Calib_Params& params)
     if (!model().objects.empty()) {
         size_t pos = model().objects[0]->name.rfind(".stl");
         if (pos != std::string::npos && pos == model().objects[0]->name.length() - 4) {
-            // 如果找到并且.stl 是后缀，则删除该后缀
+            // if found and .stl is the suffix, remove that suffix
             model().objects[0]->name = model().objects[0]->name.substr(0, pos);
         }
     }
@@ -13233,7 +13233,7 @@ void Plater::calib_jitter_speed(const Calib_Params& params)
     if (!model().objects.empty()) {
         size_t pos = model().objects[0]->name.rfind(".stl");
         if (pos != std::string::npos && pos == model().objects[0]->name.length() - 4) {
-            // 如果找到并且.stl 是后缀，则删除该后缀
+            // if found and .stl is the suffix, remove that suffix
             model().objects[0]->name = model().objects[0]->name.substr(0, pos);
         }
     }
@@ -13302,7 +13302,7 @@ void Plater::calib_fan_speed(const Calib_Params& params)
     if (!model().objects.empty()) {
         size_t pos = model().objects[0]->name.rfind(".stl");
         if (pos != std::string::npos && pos == model().objects[0]->name.length() - 4) {
-            // 如果找到并且.stl 是后缀，则删除该后缀
+            // if found and .stl is the suffix, remove that suffix
             model().objects[0]->name = model().objects[0]->name.substr(0, pos);
         }
     }
@@ -13368,7 +13368,7 @@ void Plater::calib_limit_acc(const Calib_Params& params)
     if (!model().objects.empty()) {
         size_t pos = model().objects[0]->name.rfind(".stl");
         if (pos != std::string::npos && pos == model().objects[0]->name.length() - 4) {
-            // 如果找到并且.stl 是后缀，则删除该后缀
+            // if found and .stl is the suffix, remove that suffix
             model().objects[0]->name = model().objects[0]->name.substr(0, pos);
         }
     }
@@ -13439,7 +13439,7 @@ void Plater::calib_acc_tower(const Calib_Params& params)
     if (!model().objects.empty()) {
         size_t pos = model().objects[0]->name.rfind(".stl");
         if (pos != std::string::npos && pos == model().objects[0]->name.length() - 4) {
-            // 如果找到并且.stl 是后缀，则删除该后缀
+            // if found and .stl is the suffix, remove that suffix
             model().objects[0]->name = model().objects[0]->name.substr(0, pos);
         }
     }
@@ -13510,7 +13510,7 @@ void Plater::calib_dec_acc(const Calib_Params& params)
     if (!model().objects.empty()) {
         size_t pos = model().objects[0]->name.rfind(".stl");
         if (pos != std::string::npos && pos == model().objects[0]->name.length() - 4) {
-            // 如果找到并且.stl 是后缀，则删除该后缀
+            // if found and .stl is the suffix, remove that suffix
             model().objects[0]->name = model().objects[0]->name.substr(0, pos);
         }
     }
@@ -13580,7 +13580,7 @@ void Plater::calib_VFA(const Calib_Params& params)
     if (!model().objects.empty()) {
         size_t pos = model().objects[0]->name.rfind(".stl");
         if (pos != std::string::npos && pos == model().objects[0]->name.length() - 4) {
-            // 如果找到并且.stl 是后缀，则删除该后缀
+            // if found and .stl is the suffix, remove that suffix
             model().objects[0]->name = model().objects[0]->name.substr(0, pos);
         }
     }
@@ -13874,7 +13874,7 @@ void Plater::load_gcode(const wxString& filename)
             std::uintmax_t size_bytes = 0;
             size_bytes = boost::filesystem::file_size(filename.ToStdString());
             double size_kb = size_bytes / 1024.0f;
-            std::string file_size_str = std::to_string(static_cast<int>(size_kb + 0.5)); // 四舍五入
+            std::string file_size_str = std::to_string(static_cast<int>(size_kb + 0.5)); // round to nearest
 
             json js;
             js["type_code"] = "slice809";
@@ -13977,7 +13977,7 @@ std::vector<size_t> Plater::load_files(const std::vector<fs::path>& input_files,
     // BBS: wish to reset all plates stats item selected state when load a new file
     p->preview->get_canvas3d()->reset_select_plate_toolbar_selection();
     
-    // 【新增】加载新文件时复位几何体修改标记
+    // [NEW] reset the geometry modification flag when loading a new file
     try {
         AnalyticsDataUploadManager::ProjectModificationTracker::getInstance().reset();
         BOOST_LOG_TRIVIAL(debug) << "[Modification] Reset modification tracker for new file load";
@@ -13985,17 +13985,17 @@ std::vector<size_t> Plater::load_files(const std::vector<fs::path>& input_files,
         BOOST_LOG_TRIVIAL(warning) << "[Modification] Failed to reset modification tracker: " << e.what();
     }
     
-    // 【新增】异步计算3MF文件指纹（不阻塞UI）
+    // [NEW] asynchronously compute the 3MF file fingerprint (without blocking the UI)
     for (const auto& file_path : input_files) {
         if (file_path.extension() == ".3mf") {
             try {
-                // 【统一】所有3MF文件导入的必经之路：计算指纹并赋值
+                // [Unified] the mandatory path for all 3MF file imports: compute the fingerprint and assign it
                 auto& analytics_mgr = GUI::AnalyticsDataUploadManager::getInstance();
                 std::string model_id = analytics_mgr.computeModelFingerprint(file_path.string());
                 analytics_mgr.mark_analytics_project_info(
                     file_path.string(),                    // full_url
                     model_id,                             // model_id
-                    "",                                  // file_id (暂不使用)
+                    "",                                  // file_id (not used for now)
                     "3mf",                               // file_format
                     file_path.filename().string()        // name
                 );
@@ -15034,10 +15034,10 @@ void Plater::add_file()
     //}
 
     auto end = std::chrono::high_resolution_clock::now();
-    // 计算耗时
+    // calculate the elapsed time
     auto duration   = std::chrono::duration_cast<std::chrono::seconds>(end - start);
     int  spend_time = duration.count();
-    // 输出耗时
+    // output the elapsed time
     std::cout << "Function took " << spend_time << " seconds to execute." << std::endl;
 }
 
@@ -15513,7 +15513,7 @@ void Plater::export_gcode(bool prefer_removable)
                 js["type_code"] = "slice810";
                 js["client_id"] = wxGetApp().get_client_id();
 
-                js["function_item"] =  6;  // 6 -- 导出gcode;
+                js["function_item"] =  6;  // 6 -- export gcode;
                 
                 js["file_format"] = "gcode";
                 js["operation_date"] = Slic3r::Utils::utc_timestamp(Slic3r::Utils::get_current_time_utc());
@@ -15832,7 +15832,7 @@ void Plater::export_gcode_3mf(bool export_all)
                 js["type_code"] = "slice810";
                 js["client_id"] = wxGetApp().get_client_id();
 
-                js["function_item"] = export_all ? 5 : 4;  // 4 -- 导出单盘; 5 -- 导出所有切片文件; 
+                js["function_item"] = export_all ? 5 : 4;  // 4 -- export single plate; 5 -- export all sliced files;
                 
                 js["file_format"] = (extension == ".gcode" ? "gcode" : "3mf");
                 js["operation_date"] = Slic3r::Utils::utc_timestamp(Slic3r::Utils::get_current_time_utc());
@@ -15864,7 +15864,7 @@ void Plater::export_gcode_3mf(bool export_all)
 // Creality: for automation
 int Plater::export_gcode_3mf_headless(const fs::path& output_path_in, bool export_all, std::string& err)
 {
-    // 1) 预检
+    // 1) pre-check
     if (p->model.objects.empty()) {
         err = "model empty";
         return 1;
@@ -15876,14 +15876,14 @@ int Plater::export_gcode_3mf_headless(const fs::path& output_path_in, bool expor
 
     fs::path output_path = output_path_in;
 
-    // 2) 规范扩展名（与原函数一致）
+    // 2) normalize the extension (same as the original function)
     std::string ext = output_path.extension().string();
     if (!export_all) {
-        // 单盘 -> .gcode
+        // single plate -> .gcode
         if (ext != ".gcode")
             output_path = output_path.string() + ".gcode";
     } else {
-        // 全部 -> .gcode.3mf
+        // all -> .gcode.3mf
         delete_file_name_redundant_suffix(output_path, L".gcode.3mf");
         if (boost::iends_with(output_path.string(), ".gcode")) {
             std::wstring temp = output_path.wstring();
@@ -15898,7 +15898,7 @@ int Plater::export_gcode_3mf_headless(const fs::path& output_path_in, bool expor
         }
     }
 
-    // 3) 通知 & 目录记录（原代码一致）
+    // 3) notification & directory record (same as the original code)
     bool path_on_removable_media = false;
     p->notification_manager->new_export_began(path_on_removable_media);
     p->exporting_status     = path_on_removable_media ? ExportingStatus::EXPORTING_TO_REMOVABLE : ExportingStatus::EXPORTING_TO_LOCAL;
@@ -15909,7 +15909,7 @@ int Plater::export_gcode_3mf_headless(const fs::path& output_path_in, bool expor
     if (export_all)
         plate_idx = PLATE_ALL_IDX;
 
-    // 4) 真正导出
+    // 4) the actual export
     int ret = 0;
     if (!export_all && output_path.extension().string() == ".gcode") {
         if (p->warnings_dialog(plate_idx)) {
@@ -15930,7 +15930,7 @@ int Plater::export_gcode_3mf_headless(const fs::path& output_path_in, bool expor
         }
     }
 
-    // 5) 完成后的通知/埋点（与原代码一致）
+    // 5) post-completion notification/analytics (same as the original code)
     AppConfig&             appconfig    = *wxGetApp().app_config;
     RemovableDriveManager& rdm          = *wxGetApp().removable_drive_manager();
     bool                   on_removable = rdm.is_path_on_removable_drive(p->last_output_dir_path);
@@ -15942,7 +15942,7 @@ int Plater::export_gcode_3mf_headless(const fs::path& output_path_in, bool expor
             json js;
             js["type_code"]      = "slice810";
             js["client_id"]      = wxGetApp().get_client_id();
-            js["function_item"]  = export_all ? 5 : 4; // 4:单盘; 5:全部
+            js["function_item"]  = export_all ? 5 : 4; // 4: single plate; 5: all
             js["file_format"]    = (!export_all ? "gcode" : "3mf");
             js["operation_date"] = Slic3r::Utils::utc_timestamp(Slic3r::Utils::get_current_time_utc());
             js["app_version"]    = GUI_App::format_display_version().c_str();
@@ -16012,7 +16012,7 @@ void Plater::export_core_3mf()
                 js["type_code"] = "slice810";
                 js["client_id"] = wxGetApp().get_client_id();
 
-                js["function_item"] = 3;  // 3 -- 导出通用 3mf; 
+                js["function_item"] = 3;  // 3 -- export generic 3mf;
                 js["file_format"] = "3mf";
                 js["operation_date"] = Slic3r::Utils::utc_timestamp(Slic3r::Utils::get_current_time_utc());
                 js["app_version"] = GUI_App::format_display_version().c_str();
@@ -16337,7 +16337,7 @@ void Plater::export_stl(bool extended, bool selection_only, bool multi_stls)
             js["type_code"] = "slice810";
             js["client_id"] = wxGetApp().get_client_id();
 
-            js["function_item"] = multi_stls ? 2 : 1 ;  // 1 -- 导出所有对象为一个stl;  2 -- 导出所有对象为多个STL; 
+            js["function_item"] = multi_stls ? 2 : 1 ;  // 1 -- export all objects as a single stl;  2 -- export all objects as multiple STLs;
             js["file_format"] = "stl";
             js["operation_date"] = Slic3r::Utils::utc_timestamp(Slic3r::Utils::get_current_time_utc());
             js["app_version"] = GUI_App::format_display_version().c_str();
@@ -16956,7 +16956,7 @@ void Plater::add_belt_support()
                     vol->name.find("_support") != std::string::npos)
                     to_delete.push_back(idx);
             }
-            // 删除旧的支撑相关体积
+            // delete the old support-related volumes
             for (auto it = to_delete.rbegin(); it != to_delete.rend(); ++it)
                 _object->delete_volume(*it);
 
@@ -16969,7 +16969,7 @@ void Plater::add_belt_support()
 
 void Plater::remove_belt_support()
 {
-    // 仅在皮带机型时隐藏通过 SupportMeshCreator 添加的支撑模型显示。
+    // only on belt printers, hide the display of support models added via SupportMeshCreator.
     if (!p)
         return;
     if (model().objects.empty())
@@ -17005,7 +17005,7 @@ void Plater::restore_belt_trans()
         return;
     for (auto _object : model().objects) {
         for (ModelInstance* inst : _object->instances) {
-            // 恢复旧的变换矩阵
+            // restore the old transformation matrix
             inst->restore_belt_transformation();
         }
     }
@@ -17014,7 +17014,7 @@ void Plater::update_belt_trans()
 {
     if (model().objects.empty())
         return;
-    // 获取当前模型的y轴最大值
+    // get the maximum y-axis value of the current model
     double maxY = 0.0f;
     for (auto _object : model().objects) {
         _object->current_min_y();
@@ -17030,28 +17030,28 @@ void Plater::update_belt_trans()
     for (auto _object : model().objects) {
         for (ModelInstance* inst : _object->instances) {
             
-            // 计算新的变换矩阵
+            // compute the new transformation matrix
             const Geometry::Transformation transfor = inst->get_transformation();
             Vec3d                          xf3Data(0.0f, 0.0f, 0.0f);
             Geometry::Transformation       trans_offset;
             trans_offset.set_offset(xf3Data);
             Transform3d t = beltXForm2(Transform3d::Identity(), 45.0f);
 
-            // z方向的旋转缩放都有问题
+            // rotation and scaling in the z direction both have issues
             Vec3d                    zoffsetData(0, 0, 0);
             Geometry::Transformation ztrans_offset;
             ztrans_offset.set_offset(zoffsetData);
-            // 记录旧的变换矩阵
+            // record the old transformation matrix
             inst->set_old_transformation(inst->get_transformation());
             
             Geometry::Transformation trans = Geometry::Transformation(t * transfor.get_matrix() * ztrans_offset.get_offset_matrix());
             /*
-             * 皮带对齐（沿皮带面法向）：
-             * - 通过 instance_belt_bounding_box(*inst, true) 获取皮带坐标系下的 snug AABB；
-             *   该函数在网格级别应用 T_inst_no_offset 后再映射到皮带坐标系，能够正确处理剪切/各向缩放。
-             * - 在皮带坐标系中，皮带面法向对应 Y 轴，故将 Ymin 平移到 0 即可“贴合皮带面”。
-             * - Z 方向维持原有叠放规则（基于全局 maxY 与对象自身 max_y），但改用皮带坐标系下精确的 Zmin。
-             * 这样替代了对 raw_bbox 做线性近似变换的做法，避免剪切时 AABB 被系统性低估。
+             * Belt alignment (along the belt-plane normal):
+             * - Obtain the snug AABB in belt coordinates via instance_belt_bounding_box(*inst, true);
+             *   this function applies T_inst_no_offset at the mesh level and then maps to belt coordinates, correctly handling shear/anisotropic scaling.
+             * - In belt coordinates, the belt-plane normal corresponds to the Y axis, so translating Ymin to 0 makes it "flush with the belt plane".
+             * - The Z direction keeps the original stacking rule (based on the global maxY and the object's own max_y), but uses the precise Zmin in belt coordinates instead.
+             * This replaces the approach of applying a linear approximate transform to raw_bbox, avoiding systematic underestimation of the AABB under shear.
              */
             // Rotate the instance around X to locate the belt contact point and derive offset vectors.
             Vec3f contact_point_rotated = Vec3f::Zero();
@@ -17127,19 +17127,19 @@ void Plater::update_belt_trans()
                 //contact_point_rotated = rotate_clockwise_x(original_point);
                 //offset_z              = rotate_counterclockwise_x(contact_point_rotated);
             }
-            //使用包围盒max计算
+            //compute using the bounding box max
             BoundingBoxf3 inst_box = _object->instance_bounding_box(*inst, /*dont_translate=*/true);
             //double inst_size_y = _object->max_y() - _object->min_y();
             //double inst_size_z = _object->max_z() - _object->min_z();
             double offy = inst_box.max(1) - best_world_point.y() - inst_box.min(2) + best_world_point.z();
             // Use the belt-space snug bounding box to align the instance back onto the belt plane.
             BoundingBoxf3 belt_bbox = _object->instance_belt_bounding_box(*inst, /*dont_translate=*/true);
-            // 沿皮带面法向（在皮带坐标系中对应Y轴）对齐到Y=0
+            // align to Y=0 along the belt-plane normal (corresponding to the Y axis in belt coordinates)
             trans.set_offset(Axis::Y, -belt_bbox.min(1));
-            // Z方向保持与原有逻辑一致，但使用更准确的皮带坐标系下的最小Z
+            // keep the Z direction consistent with the original logic, but use the more accurate minimum Z in belt coordinates
             double offz = maxY - _object->max_y() - belt_bbox.min(2) + offy;
             trans.set_offset(Axis::Z, offz);
-            // 设置新的变换矩阵
+            // set the new transformation matrix
             inst->set_belt_transformation(trans);    
             inst->set_transformation(trans);    
                   
@@ -18016,11 +18016,11 @@ void Plater::on_filaments_change(size_t num_filaments)
 void Plater::on_filaments_delete(size_t num_filaments, size_t filament_id, int replace_filament_id)
 {
     // only update elements in plater
-    update_filament_colors_in_full_config(); // 这个少了，删除耗材 不会更新被删除的颜色的同色模型的颜色
-    // 
-    // 
+    update_filament_colors_in_full_config(); // this was missing; deleting a filament would not update the color of same-color models that used the deleted color
+    //
+    //
     // update fisrt print sequence and other layer sequence
-    // 盘对象,首层耗材打印顺序或者其他层打印顺序。bug:9422,9413
+    // plate object: first-layer filament print order or other-layer print order. bug:9422,9413
     Slic3r::GUI::PartPlateList &plate_list = get_partplate_list();
     for (int i = 0; i < plate_list.get_plate_count(); ++i) {
         PartPlate *part_plate = plate_list.get_plate(i);
@@ -18028,7 +18028,7 @@ void Plater::on_filaments_delete(size_t num_filaments, size_t filament_id, int r
     }
 
     // update mmu info
-    //*** update extruder ，涂色的模型的更新
+    //*** update extruder, update of color-painted models
      for (ModelObject *mo : wxGetApp().model().objects) {
         for (ModelVolume *mv : mo->volumes) {
             mv->update_extruder_count_when_delete_filament(num_filaments, filament_id + 1, replace_filament_id + 1);  // this function is
@@ -18050,7 +18050,7 @@ void Plater::on_filaments_delete(size_t num_filaments, size_t filament_id, int r
     //**** update model color
      sidebar().obj_list()->update_objects_list_filament_column_when_delete_filament(filament_id, num_filaments, replace_filament_id);
 
-     // 删除左边栏，并更新左边的对象栏
+     // delete the sidebar and update the object panel on the left
      on_filaments_change(num_filaments);
     // update customize gcode
     for (auto item = p->model.plates_custom_gcodes.begin(); item != p->model.plates_custom_gcodes.end(); ++item) {
@@ -19469,7 +19469,7 @@ const NotificationManager* Plater::get_notification_manager() const { return p->
 
 void Plater::init_notification_manager()
 {
-    // 记录程序开始时间
+    // record the program start time
     m_startTime = std::time(nullptr);
     p->init_notification_manager();
 }
@@ -19691,7 +19691,7 @@ bool Plater::selection_has_support_painted()
         if (obj_idx >= 0) {
             const Model& model = wxGetApp().model();
             
-            // 安全检查：确保对象索引在有效范围内
+            // safety check: ensure the object index is within the valid range
             if (obj_idx >= static_cast<int>(model.objects.size())) {
                 BOOST_LOG_TRIVIAL(error) << "selection_has_support_painted: Invalid object index " << obj_idx 
                                         << ", model has " << model.objects.size() << " objects";
@@ -19700,27 +19700,27 @@ bool Plater::selection_has_support_painted()
             
             const ModelObject* mo = model.objects[obj_idx];
             
-            // 安全检查：确保ModelObject指针有效
+            // safety check: ensure the ModelObject pointer is valid
             if (!mo) {
                 BOOST_LOG_TRIVIAL(error) << "selection_has_support_painted: ModelObject at index " << obj_idx << " is null";
                 return false;
             }
             
-            // 关键安全检查：验证ObjectID是否仍然有效
-            // 这可以检测到对象是否已被释放或无效化
+            // critical safety check: verify the ObjectID is still valid
+            // this can detect whether the object has been released or invalidated
             if (!mo->id().valid()) {
                 BOOST_LOG_TRIVIAL(error) << "selection_has_support_painted: ModelObject at index " << obj_idx 
                                         << " has invalid ObjectID, object may have been deleted";
                 return false;
             }
             
-            // 安全检查：确保volumes容器有效
+            // safety check: ensure the volumes container is valid
             if (mo->volumes.empty()) {
                 return false;
             }
             
-            // 再次验证对象在调用方法前仍然有效
-            // 这是双重保护，防止在检查和使用之间对象被释放
+            // verify again that the object is still valid before calling the method
+            // this is a double safeguard against the object being released between the check and use
             if (!mo->id().valid()) {
                 BOOST_LOG_TRIVIAL(error) << "selection_has_support_painted: ModelObject ObjectID became invalid during access";
                 return false;

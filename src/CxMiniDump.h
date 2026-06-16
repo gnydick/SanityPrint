@@ -21,8 +21,8 @@ private:
 	~MiniDump();
 	
 public:
-	// 程序崩溃时是否启动自动生成dump文件;
-	// 只需要在main函数开始处调用该函数即可;
+	// Whether to automatically generate a dump file when the program crashes;
+	// Just call this function at the beginning of the main function;
 	static void EnableAutoDump(bool bEnable = true);
 	static std::string dumpDir();
 private:

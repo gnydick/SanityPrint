@@ -784,7 +784,7 @@ private:
     std::string preset_type_local_device() { return "local_device"; }
     std::string get_local_device_dir();
 
-    // 跨实例登录同步：监听 user_info.json 变更
+    // cross-instance login sync: watch for user_info.json changes
     void            start_user_info_watcher();
     void            on_user_info_file_event(wxFileSystemWatcherEvent& evt);
 
@@ -857,7 +857,7 @@ private:
     EPickingEffect          m_picking_effect{ EPickingEffect::Silhouette };
     ColorRGB                m_picking_color{ 1.0f, 1.0f, 1.0f };
 
-    // 文件系统监听器：监控 user_info.json 改变以同步登录状态
+    // file system watcher: monitor user_info.json changes to sync login state
     std::unique_ptr<wxFileSystemWatcher> m_user_info_watcher;
 
 };

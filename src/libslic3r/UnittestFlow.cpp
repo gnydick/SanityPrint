@@ -23,26 +23,26 @@ namespace Slic3r
     static int m_curFuncType = 1;     //0:generate 1:compare 2:update
     static int m_cur_file_index = 0;
     
-    //static bool g_only_slice_enabled = false;   //false :基线对比   true: 完整切片流程，并保存切片数据
-    static std::vector<std::string> m_scpListFiles;  //一个scp列表文件
+    //static bool g_only_slice_enabled = false;   //false: baseline comparison   true: full slicing flow, and save the slice data
+    static std::vector<std::string> m_scpListFiles;  //a list of scp files
     static std::vector<MyJsonMessage>m_jsonVec;
     
 
     std::string getCurrentTime() {
-        // 获取当前时间点
+        // get the current time point
         auto now = std::chrono::system_clock::now();
 
-        // 转换为time_t以便使用std::localtime
+        // convert to time_t so std::localtime can be used
         std::time_t now_time_t = std::chrono::system_clock::to_time_t(now);
         std::tm now_tm = *std::localtime(&now_time_t);
 
-        // 使用stringstream格式化时间
+        // format the time using a stringstream
         std::stringstream ss;
         ss << std::put_time(&now_tm, "%d.%m.%Y %H:%M:%S");
         return ss.str();
     }
     std::string stringToUTF8(const std::string& str) {
-        // 将 std::string 转换为宽字符字符串
+        // convert the std::string to a wide-character string
         int wideCharSize = MultiByteToWideChar(CP_ACP, 0, str.c_str(), -1, NULL, 0);
         if (wideCharSize == 0) {
             return "";
@@ -50,12 +50,12 @@ namespace Slic3r
         std::wstring wideStr(wideCharSize, 0);
         MultiByteToWideChar(CP_ACP, 0, str.c_str(), -1, &wideStr[0], wideCharSize);
 
-        // 将宽字符字符串转换为 UTF-8 编码的字符串
+        // convert the wide-character string to a UTF-8 encoded string
         int utf8Size = WideCharToMultiByte(CP_UTF8, 0, wideStr.c_str(), -1, NULL, 0, NULL, NULL);
         if (utf8Size == 0) {
             return "";
         }
-        std::string utf8Str(utf8Size - 1, 0); // 减去1以排除终止符
+        std::string utf8Str(utf8Size - 1, 0); // subtract 1 to exclude the terminator
         WideCharToMultiByte(CP_UTF8, 0, wideStr.c_str(), -1, &utf8Str[0], utf8Size - 1, NULL, NULL);
 
         return utf8Str;
@@ -65,12 +65,12 @@ namespace Slic3r
         WCHAR* strSrc;
         LPSTR szRes;
 
-        //获得临时变量的大小
+        //get the size of the temporary variable
         int i = MultiByteToWideChar(CP_UTF8, 0, str, -1, NULL, 0);
         strSrc = new WCHAR[i + 1];
         MultiByteToWideChar(CP_UTF8, 0, str, -1, strSrc, i);
 
-        //获得临时变量的大小
+        //get the size of the temporary variable
         i = WideCharToMultiByte(CP_ACP, 0, strSrc, -1, NULL, 0, NULL, NULL);
         szRes = new CHAR[i + 1];
         WideCharToMultiByte(CP_ACP, 0, strSrc, -1, szRes, i, NULL, NULL);
@@ -121,11 +121,11 @@ namespace Slic3r
     std::string getRelativePath(const std::string& path) {
         size_t firstSlash = path.find('/');
         if (firstSlash == std::string::npos) {
-            return std::string(); // 如果没有斜杠，返回整个路径
+            return std::string(); // if there is no slash, return the entire path
         }
         size_t secondSlash = path.find('/', firstSlash + 1);
         if (secondSlash == std::string::npos) {
-            return std::string(); // 如果只有一个斜杠，返回空
+            return std::string(); // if there is only one slash, return empty
         }
         return path.substr(0, secondSlash);
     }
@@ -232,18 +232,18 @@ namespace Slic3r
         if (!enabled())return;
         std::string tmpBlPath = m_BlPath;
         g_relativePath = "";
-        //1.BLTEST 开始导入文件。
+        //1.BLTEST start importing files.
         //QDir dir(m_scpPath);
         //
         auto _3mfSourceDir = [=]() {
             {
-                //源码路径
+                //source path
                 const std::string sourcePath = m_3mfDir;
                 return sourcePath;
             };
         };
 
-        // 获取所有文件和目录
+        // get all files and directories
         std::vector<std::string> list = entryFileInfoList(m_scpPath);
         
         if (m_cur_file_index >= list.size())return;
@@ -443,10 +443,10 @@ namespace Slic3r
                 nlohmann::json rootObj = nlohmann::json::object();
                 rootObj.push_back({ "ResultList", result_array });
                 rootObj.push_back({ "Statistics", coun_object });
-                // 打开文件
+                // open the file
                 std::string strPath = m_resultPath + "/compare.result";
                 std::ofstream file(strPath);
-                // 把 JSON 对象写入文件
+                // write the JSON object to the file
                 file << rootObj.dump(4);
             };
         };
@@ -459,7 +459,7 @@ namespace Slic3r
         //        result_fail_array.push_back({ UTF8ToGB(path.c_str()) });
         //   }
         //    std::ofstream file(strPath);
-        //    // 把 JSON 对象写入文件
+        //    // write the JSON object to the file
         //    file << result_fail_array.dump(4);
         //};
         writeResultJson();

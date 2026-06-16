@@ -57,7 +57,7 @@ GuidePanel::GuidePanel(wxWindow* parent) : wxPanel(parent)
     m_TipContent->SetFont(Label::Body_16);
     m_TipContent->SetForegroundColour(font_fg);
 
-    // 小图片
+    // small image
     wxBitmap littleImg = create_scaled_bitmap3("wifi", m_MainPanel, 17, wxSize(24, 24));
     m_TipBitMap        = new wxStaticBitmap(m_MainPanel, wxID_ANY, littleImg);
 
@@ -69,7 +69,7 @@ GuidePanel::GuidePanel(wxWindow* parent) : wxPanel(parent)
     m_TipContent_back_extension = new wxStaticText(m_MainPanel, wxID_ANY, backText.c_str(), wxDefaultPosition, wxDefaultSize);
     m_TipContent_back_extension->SetFont(Label::Body_16);
     m_TipContent_back_extension->SetForegroundColour(font_fg);
-    m_TipContent_back_extension->Wrap(FromDIP(450)); // 设置自动换行宽度
+    m_TipContent_back_extension->Wrap(FromDIP(450)); // set the auto word-wrap width
 
     tipSizerH->Add(m_TipContent, 0, wxALIGN_CENTRE_VERTICAL | wxLEFT, FromDIP(12));
     tipSizerH->Add(m_TipBitMap, 0, wxALIGN_CENTRE_VERTICAL, FromDIP(10));
@@ -151,15 +151,15 @@ GuidePanel::GuidePanel(wxWindow* parent) : wxPanel(parent)
     btns->Add(m_PreBtn, 0, wxALIGN_CENTRE_VERTICAL | wxRIGHT, FromDIP(16));
     btns->Add(m_NextBtn, 0, wxALIGN_CENTRE_VERTICAL | wxRIGHT, FromDIP(16));
     
-    // 固定宽度和默认高度
+    // fixed width and default height
     const int fixedWidth = FromDIP(480);
     const int defaultHeight = FromDIP(378);
-    
-    // 所有控件添加完成后，计算高度
+
+    // calculate the height after all controls have been added
     m_MainPanel->Layout();
     m_MainPanel->Fit();
-    
-    // 获取内容所需高度，取默认高度和内容高度的较大值
+
+    // get the height required by the content; use the larger of the default height and the content height
     int contentHeight = m_MainPanel->GetSize().GetHeight();
     int finalHeight = std::max(defaultHeight, contentHeight);
     
@@ -211,15 +211,15 @@ void GuidePanel::UpdateUI(wxRect          pos,
     scaledImg.Rescale(imgSize.GetWidth(), imgSize.GetHeight(), wxIMAGE_QUALITY_BICUBIC);
     wxBitmap scaledMap(scaledImg);
 
-    // 更新图片
+    // update the image
     m_StepBitmap->SetBitmap(scaledMap);
     m_StepBitmap->Refresh();
     m_StepBitmap->Update();
     m_StepBitmap->Layout();
-    // 更新步骤
+    // update the step
     wxString stepText = wxString::Format("%d/%d", m_CurStep + 1, m_TotalStep);
     m_CurStepStatic->SetLabelText(stepText);
-    // 更新提示内容
+    // update the tip content
     if (m_TipsBack.empty()) {
         m_TipBitMap->Hide();
     } else {
@@ -253,23 +253,23 @@ void GuidePanel::UpdateUI(wxRect          pos,
         m_TipContent_back_extension->SetLabelText("");
     }
 
-    // 重新设置换行并适应内容高度
-    // 注意：Wrap() 必须在 SetLabel 之后调用才能生效
+    // reset word wrap and fit the content height
+    // note: Wrap() must be called after SetLabel to take effect
     m_TipContent_back_extension->Wrap(FromDIP(450));
-    
-    // 固定宽度和默认高度
+
+    // fixed width and default height
     const int fixedWidth = FromDIP(480);
     const int defaultHeight = FromDIP(378);
-    
-    // 重新布局
+
+    // re-layout
     m_MainPanel->Layout();
-    
-    // 计算内容所需的高度，取默认高度和内容高度的较大值
+
+    // calculate the height required by the content; use the larger of the default height and the content height
     wxSize bestSize = m_MainPanel->GetSizer()->GetMinSize();
     int contentHeight = bestSize.GetHeight();
     int finalHeight = std::max(defaultHeight, contentHeight);
-    
-    // 设置固定宽度和高度
+
+    // set the fixed width and height
     m_MainPanel->SetSize(fixedWidth, finalHeight);
     this->SetSize(fixedWidth, finalHeight);
 
@@ -307,13 +307,13 @@ void GuidePanel::UpdateUI(wxRect          pos,
 void GuidePanel::OnPaint(wxPaintEvent& evt)
 {
     wxPaintDC dc(this);
-    // 绘制背景图片（如果有）
+    // draw the background image (if any)
 
     wxBitmap map = create_scaled_bitmap3("transparent_ams_item", this, 17, wxSize(478, 378));
     if (map.IsOk()) {
         dc.DrawBitmap(map, 0, 0, true);
     } else {
-        // 如果没有背景图片，绘制默认背景
+        // if there is no background image, draw the default background
         dc.SetBackground(*wxTRANSPARENT_BRUSH);
         dc.Clear();
     }
@@ -321,17 +321,17 @@ void GuidePanel::OnPaint(wxPaintEvent& evt)
 
 void GuidePanel::DrawArrow(wxGraphicsContext* gc, const wxPoint& start, const wxPoint& end)
 {
-    // 计算箭头方向向量
+    // calculate the arrow direction vector
     wxPoint dir    = end - start;
     double  length = sqrt(dir.x * dir.x + dir.y * dir.y);
-    dir.x          = dir.x / length * 20; // 标准化并缩放
+    dir.x          = dir.x / length * 20; // normalize and scale
     dir.y          = dir.y / length * 20;
 
-    // 绘制箭头线
+    // draw the arrow line
     gc->SetPen(wxPen(*wxRED, 3));
     gc->StrokeLine(start.x, start.y, end.x, end.y);
 
-    // 绘制箭头头部（三角形）
+    // draw the arrowhead (triangle)
     wxGraphicsPath path = gc->CreatePath();
     path.MoveToPoint(end.x, end.y);
     path.AddLineToPoint(end.x - dir.x + dir.y * 0.3, end.y - dir.y - dir.x * 0.3);
@@ -436,7 +436,7 @@ void UITour::OnPaint(wxPaintEvent& evt)
         wxRect   rect      = stepValue.rect;
         path.AddRectangle(rect.x, rect.y, rect.width, rect.height);
 
-        // 设置填充规则为奇偶规则
+        // set the fill rule to even-odd
         gc->SetBrush(gc->CreateBrush(wxColour(0, 0, 0, 180)));
         gc->FillPath(path, wxODDEVEN_RULE);
 
@@ -591,29 +591,29 @@ void UITour::getScreenShotCut()
     memDC.Blit(0, 0, parentSize.GetWidth(), parentSize.GetHeight(), &clientDC, 0, 0);
     m_backgroundMap = bitmap;
 
-    //int borderSize       = wxSystemSettings::GetMetric(wxSYS_BORDER_X);    // 获取水平边框大小
-    //int captionSize      = wxSystemSettings::GetMetric(wxSYS_CAPTION_Y);   // 获取标题栏高度
-    //int frameBorderSize  = wxSystemSettings::GetMetric(wxSYS_FRAMESIZE_X); // 获取框架边缘大小（包括标题栏和边框）
-    //int frameBorderSizeY = wxSystemSettings::GetMetric(wxSYS_FRAMESIZE_Y); // 获取框架边缘大小（包括标题栏和边框）
-    //                                                                       // 获取窗口位置和大小
-    //wxRect rect = GetParent()->GetScreenRect();                            // 使用GetScreenRect获取屏幕坐标
+    //int borderSize       = wxSystemSettings::GetMetric(wxSYS_BORDER_X);    // get the horizontal border size
+    //int captionSize      = wxSystemSettings::GetMetric(wxSYS_CAPTION_Y);   // get the title bar height
+    //int frameBorderSize  = wxSystemSettings::GetMetric(wxSYS_FRAMESIZE_X); // get the frame edge size (including title bar and border)
+    //int frameBorderSizeY = wxSystemSettings::GetMetric(wxSYS_FRAMESIZE_Y); // get the frame edge size (including title bar and border)
+    //                                                                       // get the window position and size
+    //wxRect rect = GetParent()->GetScreenRect();                            // use GetScreenRect to get screen coordinates
 
     //auto parentSize = GetParent()->GetSize();
     //#ifdef WIN32
     //SetForegroundWindow(GetParent()->GetHWND());
     //#endif
-    //// 创建屏幕DC
+    //// create the screen DC
     //wxScreenDC screenDC;
     //wxBitmap   screenshot(rect.width - frameBorderSize * 2, rect.height - frameBorderSizeY * 2);
 
 
-    //// 创建内存DC并截图
+    //// create a memory DC and capture the screenshot
     //wxMemoryDC memDC;
     //memDC.SelectObject(screenshot);
     //memDC.Blit(0, 0, parentSize.GetWidth(), rect.height, &screenDC, rect.x + frameBorderSize, rect.y + frameBorderSizeY);
-    //memDC.SelectObject(wxNullBitmap); // 必须取消选择
+    //memDC.SelectObject(wxNullBitmap); // must deselect
 
-    //// 保存截图
+    //// save the screenshot
     //screenshot.SaveFile("screenshot.png", wxBITMAP_TYPE_PNG);
     //m_backgroundMap = screenshot;
 }

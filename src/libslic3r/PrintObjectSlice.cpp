@@ -780,7 +780,7 @@ std::string fix_slicing_errors(PrintObject* object, LayerPtrs &layers, const std
     if(is_replaced)
         error_msg = L("Empty layers around bottom are replaced by nearest normal layers.");
 
-    //修复bug  https://zentao.creality.com/zentao/bug-view-13060.html
+    //fix bug  https://zentao.creality.com/zentao/bug-view-13060.html
     if (object->config().enable_support/* && object->belt()*/) {
         //if CR30 used support Do not remove empty layers 
     } else {
@@ -991,7 +991,7 @@ static inline void apply_mm_segmentation(PrintObject &print_object, ThrowOnCance
                                     self_extruder_id = extruder_id;
                                     continue;
                                 }
-                                //// 尝试修复,切片在这里崩溃问题
+                                //// Attempt to fix the slicing crash that occurs here
                                 //if (it_painted_region == layer_range.painted_regions.end() || it_painted_region->region == nullptr) {
                                 //    continue;
                                 //}

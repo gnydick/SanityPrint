@@ -6478,10 +6478,10 @@ extern "C" {
                 oldPath.append(minidump_id).replace_extension(".dmp");
 
                 boost::posix_time::ptime now = boost::posix_time::second_clock::local_time();
-                // 创建一个 time_facet 对象，用于自定义时间格式
+                // Create a time_facet object to customize the time format
                 boost::posix_time::time_facet* timeFacet = new boost::posix_time::time_facet();
                 std::stringstream ss;
-                // 设置时间格式为 yyyyMMDD_hhmmss
+                // Set the time format to yyyyMMDD_hhmmss
                 timeFacet->format("%Y%m%d_%H%M%S");
                 ss.imbue(std::locale(std::locale::classic(), timeFacet));
                 ss << now;
@@ -6542,22 +6542,22 @@ extern "C" {
             static bool already_in_handler = false;
 
             if (already_in_handler) {
-                already_in_handler = false; // 重置共享的标志位
-                throw std::bad_alloc();     // 直接抛出异常返回，防止递归死循环
+                already_in_handler = false; // Reset the shared flag
+                throw std::bad_alloc();     // Throw immediately to return, preventing an infinite recursion loop
             }
 
-            already_in_handler = true; // 第一层设置标志位
+            already_in_handler = true; // First level sets the flag
 
-            // 打印日志（可能触发递归）
+            // Print the log (may trigger recursion)
             system_memory_stats(__FUNCTION__);
 #ifdef _MSC_VER
-            // 追加：记录到的本次失败分配请求大小（来自 CRT sized new-handler），便于判断是否异常大块
+            // Additional: log the size of this failed allocation request (from the CRT sized new-handler), to help determine whether it is an abnormally large block
             BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << " RequestedNewSize=" << (unsigned long long)g_cp_last_new_req_size;
 #endif
 #ifdef _WIN32
-            // 追加：打印当前进程内存快照（忽略日志级别抑制）
+            // Additional: print the current process memory snapshot (ignoring log-level suppression)
             BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << " process memory info " << log_memory_info(true);
-            // 追加：系统内存状态快照，辅助判断是否接近提交/物理内存上限
+            // Additional: system memory state snapshot, to help determine whether we are nearing the commit / physical memory limit
             MEMORYSTATUSEX gmsx{};
             gmsx.dwLength = sizeof(gmsx);
             if (GlobalMemoryStatusEx(&gmsx)) {
@@ -6568,18 +6568,18 @@ extern "C" {
                                          << " TotalPageFile=" << (unsigned long long)gmsx.ullTotalPageFile
                                          << " AvailPageFile=" << (unsigned long long)gmsx.ullAvailPageFile;
             }
-            // 追加：进程句柄数（大量句柄泄漏可能导致失败）
+            // Additional: process handle count (a large handle leak can cause failures)
             DWORD handle_count = 0;
             if (GetProcessHandleCount(GetCurrentProcess(), &handle_count)) {
                 BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << " HandleCount=" << handle_count;
             }
     #ifdef SLIC3R_GUI
-            // 追加：GUI 资源占用（仅 GUI 进程有效）
+            // Additional: GUI resource usage (only valid for GUI processes)
             DWORD gdi_count  = GetGuiResources(GetCurrentProcess(), GR_GDIOBJECTS);
             DWORD user_count = GetGuiResources(GetCurrentProcess(), GR_USEROBJECTS);
             BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << " GUIResources: GDI=" << gdi_count << " USER=" << user_count;
     #endif
-            // 追加：系统提交信息（更直观的 CommitTotal/CommitLimit），使用动态获取避免包含 <psapi.h>
+            // Additional: system commit info (the more intuitive CommitTotal/CommitLimit), obtained dynamically to avoid including <psapi.h>
             typedef struct _MY_PERFORMANCE_INFORMATION {
                 DWORD  cb;
                 SIZE_T CommitTotal;
@@ -6625,19 +6625,19 @@ extern "C" {
                 if (psapi_loaded) FreeLibrary(hPsapi);
              }
             
-            // 追加：是否处于 Job（可能存在 Job 内存/工作集限制）
+            // Additional: whether we are in a Job (Job memory/working-set limits may apply)
             BOOL in_job = FALSE;
             if (IsProcessInJob(GetCurrentProcess(), NULL, &in_job)) {
                 BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << " InJob=" << (in_job ? 1 : 0);
             }
-            // 追加：进程工作集限制（若被显式限制可在此体现）
+            // Additional: process working-set limits (visible here if explicitly constrained)
             SIZE_T ws_min = 0, ws_max = 0; DWORD ws_flags = 0;
             if (GetProcessWorkingSetSizeEx(GetCurrentProcess(), &ws_min, &ws_max, &ws_flags)) {
                 BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << " WorkingSetLimit: min=" << (unsigned long long)ws_min
                                          << " max=" << (unsigned long long)ws_max
                                          << " flags=0x" << std::hex << ws_flags << std::dec;
             }
-            // 追加：捕获调用栈（地址+模块），帮助定位是谁在请求大块内存
+            // Additional: capture the call stack (address + module), to help identify who is requesting a large memory block
             {
                 HMODULE hK32 = GetModuleHandleW(L"kernel32.dll");
                 typedef USHORT (WINAPI *PFN_RtlCaptureStackBackTrace)(ULONG, ULONG, PVOID*, PULONG);
@@ -6660,7 +6660,7 @@ extern "C" {
                     }
                 }
             }
-            // 地址空间遍历，估计可用区块与碎片程度
+            // Walk the address space to estimate available blocks and the degree of fragmentation
             SIZE_T largest_free = 0;
             SIZE_T free_regions = 0;
             SIZE_T total_free = 0;
@@ -6676,13 +6676,13 @@ extern "C" {
                 unsigned char* next = (unsigned char*)mbi.BaseAddress + mbi.RegionSize;
                 if (next <= addr) break;
                 addr = next;
-                if (++regions_scanned > 100000) break; // 安全上限，避免极端情况下扫描过久
+                if (++regions_scanned > 100000) break; // Safety cap, to avoid scanning too long in extreme cases
             }
             BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << " VAS: free_regions=" << (size_t)free_regions
                                      << " total_free=" << (size_t)total_free
                                      << " largest_free=" << (size_t)largest_free
                                      << " ptr_size=" << sizeof(void*);
-            // 启发式判断：地址空间耗尽 / 碎片化
+            // Heuristic check: address space exhaustion / fragmentation
             if (largest_free < (SIZE_T)(16ull << 20)) {
                 BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << " Heuristic: Address space exhaustion likely (largest_free < 16MB)";
             }
@@ -6727,10 +6727,10 @@ static bool dumpCallback(const google_breakpad::MinidumpDescriptor& descriptor,v
 		     boost::filesystem::path logPath(LogFilePath);
 
 		     boost::posix_time::ptime now = boost::posix_time::second_clock::local_time();
-		     // 创建一个 time_facet 对象，用于自定义时间格式
+		     // Create a time_facet object to customize the time format
 		     boost::posix_time::time_facet* timeFacet = new boost::posix_time::time_facet();
 		     std::stringstream ss;
-		     // 设置时间格式为 yyyyMMDD_hhmmss
+		     // Set the time format to yyyyMMDD_hhmmss
 		     timeFacet->format("%Y%m%d_%H%M%S");
 		     ss.imbue(std::locale(std::locale::classic(), timeFacet));
 		     ss << now;
@@ -6741,20 +6741,20 @@ static bool dumpCallback(const google_breakpad::MinidumpDescriptor& descriptor,v
 
 		     if (boost::filesystem::exists(oldPath)) {
 			 boost::filesystem::rename(oldPath, logPath);
-			 // 获取当前可执行文件路径
+			 // Get the path of the current executable
 			 char exePath[PATH_MAX];
 			 ssize_t len = readlink("/proc/self/exe", exePath, sizeof(exePath) - 1);
 			 if (len != -1) {
 			     exePath[len] = '\0';
 			     std::string command = std::string(exePath) + " \"minidump://file=" + logPath.string() + "\"";
-			     // 使用fork和exec启动新进程
+			     // Use fork and exec to start a new process
 			     pid_t pid = fork();
 			     if (pid == 0) {
-				 // 子进程
+				 // Child process
 				 execl("/bin/sh", "sh", "-c", command.c_str(), (char*)NULL);
-				 _exit(1); // 如果exec失败
+				 _exit(1); // If exec fails
 			     } else if (pid > 0) {
-				 // 父进程继续执行
+				 // Parent process continues execution
 			     }
 			 }
 		     }
@@ -6777,7 +6777,7 @@ int main(int argc, char **argv)
     
     boost::filesystem::path   tempPath = boost::filesystem::path(wxFileName::GetTempDir().ToStdString());
     if (argc == 2 && boost::starts_with(std::string(argv[1]), "minidump://file=")) {
-	 // 处理崩溃报告参数，直接启动GUI应用程序
+	 // Handle the crash-report argument by launching the GUI application directly
 	 return CLI().run(argc, argv);
     }else
     {

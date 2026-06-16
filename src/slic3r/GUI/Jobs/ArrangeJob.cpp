@@ -344,16 +344,16 @@ arrangement::ArrangePolygon estimate_wipe_tower_info(int plate_index, std::set<i
     return arrange_poly;
 }
 
-// 准备料塔。逻辑如下：
-// 1. 以下几种情况不需要料塔：
-//    1）料塔被禁用，
-//    2）逐件打印，
-//    3）不允许不同材料落在相同盘，且没有多色对象
-// 2. 以下情况需要料塔：
-//    1）某对象是多色对象；
-//    2）打开了支撑，且支撑体与接触面使用的是不同材料
-//    3）允许不同材料落在相同盘，且所有选定对象中使用了多种热床温度相同的材料
-//     （所有对象都是单色的，但不同对象的材料不同，例如：对象A使用红色PLA，对象B使用白色PLA）
+// Prepare the wipe tower. The logic is as follows:
+// 1. A wipe tower is NOT needed in the following cases:
+//    1) the wipe tower is disabled,
+//    2) print-by-object (sequential printing),
+//    3) different materials are not allowed on the same plate, and there are no multi-color objects.
+// 2. A wipe tower IS needed in the following cases:
+//    1) some object is a multi-color object;
+//    2) support is enabled and the support body uses a different material than the support interface;
+//    3) different materials are allowed on the same plate, and the selected objects use multiple materials with the same bed temperature
+//     (all objects are single-color, but different objects use different materials, e.g. object A uses red PLA and object B uses white PLA).
 void ArrangeJob::prepare_wipe_tower()
 {
     bool need_wipe_tower = false;
@@ -382,7 +382,7 @@ void ArrangeJob::prepare_wipe_tower()
     }
 
     // if multile extruders have same bed temp, we need wipe tower
-    // 允许不同材料落在相同盘，且所有选定对象中使用了多种热床温度相同的材料
+    // different materials are allowed on the same plate, and the selected objects use multiple materials with the same bed temperature
     if (params.allow_multi_materials_on_same_plate) {
         std::map<int, std::set<int>> bedTemp2extruderIds;
         for (const auto& item : m_selected)
@@ -473,7 +473,7 @@ void ArrangeJob::prepare_wipe_tower_ex(int plate_index)
     }
 
     // if multile extruders have same bed temp, we need wipe tower
-    // 允许不同材料落在相同盘，且所有选定对象中使用了多种热床温度相同的材料
+    // different materials are allowed on the same plate, and the selected objects use multiple materials with the same bed temperature
     if (params.allow_multi_materials_on_same_plate) {
         std::map<int, std::set<int>> bedTemp2extruderIds;
         for (const auto& item : m_selected)

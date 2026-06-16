@@ -2553,7 +2553,7 @@ static bool ImFontAtlasBuildWithStbTruetype(ImFontAtlas* atlas)
     atlas->TexUvScale = ImVec2(1.0f / atlas->TexWidth, 1.0f / atlas->TexHeight);
     const size_t alloc_bytes = static_cast<size_t>(atlas->TexWidth) * static_cast<size_t>(atlas->TexHeight);
     
-    // 定位日志: 分配前打印内存信息和申请大小
+    // Diagnostic log: print memory info and requested size before allocation
     BOOST_LOG_TRIVIAL(warning) << "ImFontAtlasBuildWithStbTruetype: about to allocate font texture. "
         << "TexWidth=" << atlas->TexWidth << ", TexHeight=" << atlas->TexHeight
         << ", alloc_bytes=" << alloc_bytes << " (" << (alloc_bytes / (1024.0f * 1024.0f)) << " MB)";

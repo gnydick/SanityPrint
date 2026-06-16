@@ -267,7 +267,7 @@ void FillBedJob::process(Ctl &ctl)
     params.on_packed = [&do_stop] (const ArrangePolygon &ap) {
         do_stop = ap.bed_idx > 0 && ap.priority == 0;
     };
-    // final align用的是凸包，在有fixed item的情况下可能找到的参考点位置是错的，这里就不做了。见STUDIO-3265
+    // final align uses the convex hull; when there are fixed items the reference point it finds may be wrong, so skip it here. See STUDIO-3265
     params.do_final_align = !is_bbl;
 
     if (m_selected.size() > 100){

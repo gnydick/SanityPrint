@@ -497,34 +497,34 @@ bool download_file(const std::string& server, const std::string& path, const std
     try {
         boost::asio::io_context io_context;
 
-        // 创建 TCP 解析器和查询对象
+        // create the TCP resolver and query object
         tcp::resolver resolver(io_context);
         tcp::resolver::query query(server, "http");
         tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
 
-        // 创建 TCP 套接字
+        // create the TCP socket
         tcp::socket socket(io_context);
-        // 创建定时器
+        // create the timer
         boost::asio::steady_timer timer(io_context);
         bool timeout_occurred = false;
 
-        // 设置超时时间
+        // set the timeout duration
         timer.expires_after(std::chrono::seconds(5));
         timer.async_wait([&](const boost::system::error_code& ec) {
             if (!ec) {
                 timeout_occurred = true;
-                socket.close(); // 超时后关闭套接字
+                socket.close(); // close the socket after timeout
             }
         });
 
-        // 异步连接
+        // connect asynchronously
         boost::asio::async_connect(socket, endpoint_iterator, [&](const boost::system::error_code& ec, tcp::resolver::iterator) {
             if (!ec) {
-                timer.cancel(); // 连接成功，取消定时器
+                timer.cancel(); // connection succeeded, cancel the timer
             }
         });
 
-        // 运行 io_context，等待连接或超时
+        // run io_context, waiting for connection or timeout
         io_context.run();
 
         if (timeout_occurred) {
@@ -533,7 +533,7 @@ bool download_file(const std::string& server, const std::string& path, const std
         }
 
 
-        // 构建 HTTP 请求
+        // build the HTTP request
         boost::asio::streambuf request;
         std::ostream request_stream(&request);
         request_stream << "GET " << path << " HTTP/1.1\r\n";
@@ -541,14 +541,14 @@ bool download_file(const std::string& server, const std::string& path, const std
         request_stream << "Accept: */*\r\n";
         request_stream << "Connection: close\r\n\r\n";
 
-        // 发送 HTTP 请求
+        // send the HTTP request
         boost::asio::write(socket, request);
 
-        // 接收响应
+        // receive the response
         boost::asio::streambuf response;
         boost::asio::read_until(socket, response, "\r\n");
 
-        // 检查响应状态行
+        // check the response status line
         std::istream response_stream(&response);
         std::string http_version;
         response_stream >> http_version;
@@ -565,23 +565,23 @@ bool download_file(const std::string& server, const std::string& path, const std
             return false;
         }
 
-        // 读取响应头
+        // read the response headers
         boost::asio::read_until(socket, response, "\r\n\r\n");
 
-        // 处理响应头
+        // process the response headers
         std::string header;
         while (std::getline(response_stream, header) && header != "\r")
             std::cout << header << "\n";
         std::cout << "\n";
 
-        // 打开文件以写入数据
+        // open the file to write data
         std::ofstream file(filename, std::ios::binary);
         if (!file) {
             std::cout << "Failed to open file for writing\n";
             return false;
         }
 
-        // 读取响应体并写入文件
+        // read the response body and write it to the file
         if (response.size() > 0)
             file << &response;
         boost::system::error_code error;

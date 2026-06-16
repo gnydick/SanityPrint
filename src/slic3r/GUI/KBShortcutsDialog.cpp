@@ -40,36 +40,36 @@ void SelectableCard::OnPaint(wxPaintEvent&)
     dc.SetBrush(wxBrush(bg));
     dc.DrawRectangle(rc);
 
-    // 颜色 & 尺寸
-    const wxColour colBorderSel(52, 152, 219);  // 选中边
-    const wxColour colBorderNor(150, 150, 152); // 未选边
-    const wxColour colBorderHov(190, 190, 190); // 悬停
-    const wxColour colTitle(145, 149, 153); //标题字体颜色
-    const wxColour colDivider(150, 150, 152);//分割线
+    // Colors & sizes
+    const wxColour colBorderSel(52, 152, 219);  // Selected border
+    const wxColour colBorderNor(150, 150, 152); // Unselected border
+    const wxColour colBorderHov(190, 190, 190); // Hover
+    const wxColour colTitle(145, 149, 153); //Title font color
+    const wxColour colDivider(150, 150, 152);//Divider line
 
     const int border_w = m_selected ? FromDIP(2) : FromDIP(1);
     const int pad      = FromDIP(8);
     const int header_h = HeaderHeight();
 
-    // 外框
+    // Outer frame
     wxRect rOuter = rc;
     rOuter.Deflate(FromDIP(2));
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
     dc.SetPen(wxPen(m_selected ? colBorderSel : (m_hover ? colBorderHov : colBorderNor), border_w));
     dc.DrawRoundedRectangle(rOuter,0);
 
-    // 内容区域
+    // Content area
     wxRect rInner = rOuter;
     rInner.Deflate(FromDIP(3));
 
-    // 顶部标题条
+    // Top title bar
     wxRect rHeader = rInner;
     rHeader.height = header_h;
 
     dc.SetPen(*wxTRANSPARENT_PEN);
     dc.DrawRectangle(rHeader);
 
-    // 标题文字
+    // Title text
     dc.SetTextForeground(colTitle);
     wxFont f = GetFont();
     f.SetWeight(wxFONTWEIGHT_SEMIBOLD);
@@ -96,7 +96,7 @@ void SelectableCard::OnPaint(wxPaintEvent&)
         pen.SetJoin(wxJOIN_ROUND);
         dc.SetPen(pen);
 
-        const int ip = FromDIP(5); // 勾的内边距
+        const int ip = FromDIP(5); // Inner padding of the checkmark
         wxPoint   p1(bx + ip, by + badge / 2);
         wxPoint   p2(bx + badge / 2 - 1, by + badge - ip);
         wxPoint   p3(bx + badge - ip, by + ip);
@@ -230,13 +230,13 @@ void KBShortcutsDialog::create_mouse_scheme_cards(wxWindow* parent)
         auto* v = new wxBoxSizer(wxVERTICAL);
         v->AddSpacer(card->HeaderHeight() + FromDIP(12));
 
-        // 使用 FlexGridSizer 构建两列（键、描述），让第二列自适应
+        // Use a FlexGridSizer to build two columns (key, description), letting the second column auto-size
         wxFlexGridSizer* grid = new wxFlexGridSizer((int)rows.size(), 2, FromDIP(8), FromDIP(20));
         grid->AddGrowableCol(1, 1);
         grid->SetFlexibleDirection(wxBOTH);
         grid->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
 
-        // 计算键列的最大文本宽度，确保不折行并与下方列表一致
+        // Calculate the maximum text width of the key column to prevent wrapping and stay consistent with the list below
         int max_key_width = 0;
         {
             wxClientDC dc(card);
@@ -255,20 +255,20 @@ void KBShortcutsDialog::create_mouse_scheme_cards(wxWindow* parent)
             auto* key = new wxStaticText(card, wxID_ANY, kv.first);
             key->SetBackgroundStyle(wxBG_STYLE_TRANSPARENT);
             key->SetFont(key->GetFont().Bold());
-            key->Wrap(-1); // 键列不换行
+            key->Wrap(-1); // The key column does not wrap
             key->SetMinSize(wxSize(max_key_width, -1));
             grid->Add(key, 0, wxALIGN_CENTER_VERTICAL);
 
             auto* desc = new wxStaticText(card, wxID_ANY, kv.second);
             desc->SetBackgroundStyle(wxBG_STYLE_TRANSPARENT);
-            desc->Wrap(10000); // 描述列默认不换行，空间不足时由 sizer 处理
+            desc->Wrap(10000); // The description column does not wrap by default; the sizer handles it when space is insufficient
             grid->Add(desc, 0, wxALIGN_CENTER_VERTICAL | wxEXPAND);
         }
 
         v->Add(grid, 1, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, FromDIP(12));
 
         card->SetSizer(v);
-        // 取消固定最小宽度，让左右两卡片按父容器宽度对半分
+        // Remove the fixed minimum width so the two cards split the parent container's width evenly
         card->SetMinSize(wxSize(wxDefaultCoord, wxDefaultCoord));
         card->SetCursor(wxCursor(wxCURSOR_HAND));
         return card;
@@ -665,7 +665,7 @@ wxPanel* KBShortcutsDialog::create_page(wxWindow* parent, const ShortcutsItem& s
 
         scrollable_panel_sizer->Add(m_mouse_cards_host, 0, wxEXPAND | wxALL, FromDIP(8));
 
-        // 分割线
+        // Divider line
 #ifdef __WXMSW__
         auto* line = new wxStaticLine(scrollable_panel);
         scrollable_panel_sizer->Add(line, 0, wxEXPAND | wxLEFT | wxRIGHT, FromDIP(8));

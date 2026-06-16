@@ -52,7 +52,7 @@ void RemotePrinterManager::workerThread()
                 tasks.pop();
             }
             
-            task(); // 执行下载任务
+            task(); // execute download task
         }
 }
 RemotePrinterManager::~RemotePrinterManager()
@@ -150,13 +150,13 @@ void RemotePrinterManager::uploadFileByLan(const std::string& ipAddress, const s
 }
 
 void RemotePrinterManager::cancelUpload(const std::string& ipAddress) { 
-    //从查询队列中是否有未执行的任务，如果有则移除
+    //check whether the queue has any pending tasks; if so, remove them
     std::lock_guard<std::mutex> lock(m_mtxUpload);
     for (auto it = m_uploadTasks.begin(); it != m_uploadTasks.end(); ) {
         if (std::get<0>(*it) == ipAddress) {
             auto error_call_back = std::get<4>(*it) ;
             error_call_back(ipAddress,601);
-            m_uploadTasks.erase(it); // 使用erase方法直接删除任务
+            m_uploadTasks.erase(it); // use erase to delete the task directly
             return;
         } else {
             ++it;

@@ -696,7 +696,7 @@ void AICloudService_ResultDialog::updateDataToModel(const std::list<CommWithAICl
 
     int count = m_dataCount;
     
-    // 使用TBB并行处理数据
+    // Process the data in parallel with TBB
     std::vector<CommWithAICloudService::STRespData> dataVec(datas.begin(), datas.end());
     tbb::spin_mutex progressMutex;
     std::atomic<int> totalProgress{0};
@@ -727,7 +727,7 @@ void AICloudService_ResultDialog::updateDataToModel(const std::list<CommWithAICl
                             }
                         } else if (data.dataType == CommWithAICloudService::ENRespDataType::ENRDT_ZseamPainting) {
                             blockerModelFacets(modelObject, data.block_seam_domains, [&](int step, int) {
-                                // 进度回调在blockerModelFacets内部处理
+                                // The progress callback is handled inside blockerModelFacets
                             });
                             if (i == vtMO.size() - 1) {
                                 localProgress += data.block_seam_domains.size();
@@ -737,7 +737,7 @@ void AICloudService_ResultDialog::updateDataToModel(const std::list<CommWithAICl
                 }
             }
             
-            // 批量更新进度，减少锁竞争
+            // Update progress in batches to reduce lock contention
             if (funProcessCb && localProgress > 0) {
                 tbb::spin_mutex::scoped_lock lock(progressMutex);
                 totalProgress += localProgress;
@@ -947,7 +947,7 @@ bool AICloudService_ResultDialog::blockerModelFacets(int partId, const std::vect
         //std::vector<indexed_triangle_set> facets_per_type;
         //ts.get_facets(facets_per_type);
 
-        // 使用TBB并行处理面片设置
+        // Set the facets in parallel with TBB
         tbb::parallel_for(tbb::blocked_range<size_t>(0, vtFacetIdx.size(), 1000),
             [&](const tbb::blocked_range<size_t>& range) {
                 for (size_t i = range.begin(); i != range.end(); ++i) {
@@ -960,11 +960,11 @@ bool AICloudService_ResultDialog::blockerModelFacets(int partId, const std::vect
         mo->volumes[0]->seam_facets.set(ts);
 
         if (funProcessCb) {
-            // 批量更新进度，减少回调频率
+            // Update progress in batches to reduce callback frequency
             for (int i = 0; i <= vtFacetIdx.size(); i += 100) {
                 funProcessCb(std::min(i, (int)vtFacetIdx.size()), vtFacetIdx.size());
             }
-            // 确保最终进度为100%
+            // Make sure the final progress is 100%
             funProcessCb(vtFacetIdx.size(), vtFacetIdx.size());
         }
     } while (0);
@@ -1002,7 +1002,7 @@ bool AICloudService_ResultDialog::blockerModelFacets(const ModelObject* mo, cons
         // std::vector<indexed_triangle_set> facets_per_type;
         // ts.get_facets(facets_per_type);
 
-        // 使用TBB并行处理面片设置
+        // Set the facets in parallel with TBB
         tbb::parallel_for(tbb::blocked_range<size_t>(0, vtFacetIdx.size(), 1000), [&](const tbb::blocked_range<size_t>& range) {
             for (size_t i = range.begin(); i != range.end(); ++i) {
                 if (vtFacetIdx[i] >= 0) {
@@ -1014,11 +1014,11 @@ bool AICloudService_ResultDialog::blockerModelFacets(const ModelObject* mo, cons
         mo->volumes[0]->seam_facets.set(ts);
 
         if (funProcessCb) {
-            // 批量更新进度，减少回调频率
+            // Update progress in batches to reduce callback frequency
             for (int i = 0; i <= vtFacetIdx.size(); i += 100) {
                 funProcessCb(std::min(i, (int) vtFacetIdx.size()), vtFacetIdx.size());
             }
-            // 确保最终进度为100%
+            // Make sure the final progress is 100%
             funProcessCb(vtFacetIdx.size(), vtFacetIdx.size());
         }
     } while (0);
@@ -1518,14 +1518,14 @@ AICloudService* AICloudService::getInstance()
     return &instance;
 }
 
-// 添加清理方法，在语言切换时调用
+// Cleanup method, invoked when switching languages
 void AICloudService::cleanup()
 {
-    // 停止所有异步操作
+    // Stop all asynchronous operations
     m_bRunning.store(false);
-    // 释放progressDlg，避免持有对旧MainFrame的引用
+    // Release progressDlg to avoid holding a reference to the old MainFrame
     m_progressDlg.reset();
-    // 清空命令队列
+    // Clear the command queue
     m_mutexLstAICmd.lock();
     m_lstAICmd.clear();
     m_mutexLstAICmd.unlock();
@@ -1582,11 +1582,11 @@ void AICloudService::run()
     m_progressDlg->setProcessMax(max);
     m_progressDlg->disable();
     
-    // 使用std::thread异步执行数据更新，确保m_progressDlg不会被提前销毁
-    auto progressDlgPtr = m_progressDlg; // 延长shared_ptr的生命周期
+    // Run the data update asynchronously on a std::thread, ensuring m_progressDlg is not destroyed prematurely
+    auto progressDlgPtr = m_progressDlg; // Extend the lifetime of the shared_ptr
     std::thread([progressDlgPtr, &resultDlg, &lstRespData]() {
         resultDlg->updateDataToModel(lstRespData, [progressDlgPtr](int step, int count) {
-            // 使用wxCallAfter确保UI更新在主线程执行
+            // Use wxCallAfter to ensure the UI update runs on the main thread
             wxGetApp().CallAfter([progressDlgPtr, step]() {
                 if (progressDlgPtr) {
                     progressDlgPtr->updateProgress("", step);
@@ -1594,7 +1594,7 @@ void AICloudService::run()
             });
         });
         
-        // 数据更新完成后，关闭进度对话框
+        // Close the progress dialog after the data update is finished
         wxGetApp().CallAfter([progressDlgPtr]() {
             if (progressDlgPtr) {
                 progressDlgPtr->EndModal(wxID_OK);
@@ -1740,7 +1740,7 @@ int AICloudService::doCloudProcess()
     int retCommZSeamService = 0;
     m_errMsg = "";
     
-    // 使用std::future来管理异步任务
+    // Use std::future to manage the asynchronous tasks
     std::future<int> futureSupport;
     std::future<int> futureZSeam;
     
@@ -1885,11 +1885,11 @@ int AICloudService::doCloudProcess()
     int timeout = 5 * 60;
     int curTime = 0;
     
-    // 检查是否有任务需要执行
+    // Check whether there are any tasks to run
     bool hasSupportTask = m_bAIRecommendationSupportGeneration && futureSupport.valid();
     bool hasZSeamTask = m_bAIRecommendationZseamPainting && futureZSeam.valid();
     
-    // 如果没有任务需要执行，直接返回成功
+    // If there are no tasks to run, return success directly
     if (!hasSupportTask && !hasZSeamTask) {
         return 0;
     }
@@ -1900,11 +1900,11 @@ int AICloudService::doCloudProcess()
                 m_progressDlg->updateTimeout(curTime / 2 + 1, timeout);
             }
             
-            // 检查任务状态
+            // Check the task status
             auto supportStatus = hasSupportTask ? futureSupport.wait_for(std::chrono::milliseconds(0)) : std::future_status::ready;
             auto zseamStatus = hasZSeamTask ? futureZSeam.wait_for(std::chrono::milliseconds(0)) : std::future_status::ready;
             
-            // 检查任务是否出错
+            // Check whether the task failed
             if (retCommSupportService != 0 || retCommZSeamService != 0) {
                 commSupportService.cancel();
                 commZSeamService.cancel();
@@ -1925,7 +1925,7 @@ int AICloudService::doCloudProcess()
                 return -1;
             }
             
-            // 更新队列信息
+            // Update the queue information
             if ((commSupportService.getTaskState() == CommWithAICloudService::ENTS_Detail && bSupportServiceWaitting) ||
                 (commZSeamService.getTaskState() == CommWithAICloudService::ENTS_Detail && bZSeamServiceWaitting)) {
                 m_progressDlg->updateQueue("", supportWaitingCountAhead.load()+zseamWaitingCountAhead.load(), supportWaitingCountTotal.load()+zseamWaitingCountTotal.load());
@@ -1940,20 +1940,20 @@ int AICloudService::doCloudProcess()
                 }
             }
             
-            // 检查任务是否完成
+            // Check whether the tasks are finished
             if (supportStatus == std::future_status::ready && zseamStatus == std::future_status::ready) {
-                // 两个任务都完成了
+                // Both tasks are finished
                 break;
             }
         } else {
-            // 超时处理
+            // Handle the timeout
             m_progressDlg->updateQueue("timeout", 0, 0);
-            
-            // 取消服务请求
+
+            // Cancel the service requests
             commSupportService.cancel();
             commZSeamService.cancel();
-            
-            // 等待一小段时间让任务有机会退出
+
+            // Wait a short while to give the tasks a chance to exit
             if (hasSupportTask && futureSupport.valid()) {
                 futureSupport.wait_for(std::chrono::milliseconds(100));
             }
@@ -1968,7 +1968,7 @@ int AICloudService::doCloudProcess()
         ++curTime;
     }
     
-    // 获取任务结果
+    // Get the task results
     if (hasSupportTask && futureSupport.valid()) {
         try {
             futureSupport.get();
@@ -1994,7 +1994,7 @@ std::string AICloudService::getAIUrl() {
     std::string url;
     std::string version_type = get_vertion_type();
     std::string country_code = wxGetApp().app_config->get_country_code();
-    // 当 PROJECT_VERSION_EXTRA 为 Dev 时，云端交互统一指向 Dev 接口
+    // When PROJECT_VERSION_EXTRA is Dev, all cloud interactions point to the Dev endpoint
     {
         std::string extra = std::string(PROJECT_VERSION_EXTRA);
         if (boost::algorithm::iequals(extra, std::string("Dev"))) {

@@ -273,32 +273,32 @@ CustomScrolledWindow::CustomScrolledWindow(wxWindow* parent,
 {}
 void CustomScrolledWindow::OnDraw(wxDC& dc)
 {
-    // 先调用基类的绘制
+    // First call the base class drawing
     // wxScrolledWindow::OnDraw(dc);
 
-    // 自定义滚动条绘制
+    // Custom scrollbar drawing
     wxRect rect = GetClientRect();
 
-    // 绘制垂直滚动条
+    // Draw the vertical scrollbar
     if (HasScrollbar(wxVERTICAL)) {
         int thumbPos  = GetScrollThumb(wxVERTICAL);
         int thumbSize = GetScrollThumb(wxVERTICAL);
         int range     = GetScrollRange(wxVERTICAL);
 
-        // 计算滚动条位置和大小
+        // Calculate the scrollbar position and size
         int scrollWidth  = FromDIP(8);
         int scrollX      = rect.GetRight() - scrollWidth;
         int scrollHeight = rect.GetHeight();
 
-        // 绘制滚动条背景
+        // Draw the scrollbar background
         dc.SetPen(*wxTRANSPARENT_PEN);
         dc.SetBrush(wxColour(220, 220, 220));
         dc.DrawRectangle(scrollX, 0, scrollWidth, scrollHeight);
 
-        // 绘制滚动条滑块
+        // Draw the scrollbar thumb
         if (range > 0) {
             int thumbHeight = (scrollHeight * thumbSize) / range;
-            thumbHeight     = wxMax(thumbHeight, FromDIP(20)); // 最小高度
+            thumbHeight     = wxMax(thumbHeight, FromDIP(20)); // Minimum height
             int thumbY      = (scrollHeight * thumbPos) / range;
 
             dc.SetBrush(wxColour(150, 150, 150));

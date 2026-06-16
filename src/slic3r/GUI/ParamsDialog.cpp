@@ -205,29 +205,29 @@ void CusTitlePanel::OnPaint(wxPaintEvent& event) {
     wxBufferedPaintDC dc(this);
     wxSize size = GetClientSize();
 
-    // 绘制背景
+    // Draw background
     dc.SetPen(*wxTRANSPARENT_PEN);
     dc.SetBrush(m_bgColor);
     dc.DrawRectangle(0, 0, size.x, size.y);
 
-    // 绘制标题文本
+    // Draw title text
     wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     font.SetWeight(wxFONTWEIGHT_BOLD);
     font.MakeLarger();
     dc.SetFont(font);
 
-    // 设置文本颜色
+    // Set text color
     bool is_dark = Slic3r::GUI::wxGetApp().dark_mode();
     dc.SetTextForeground(is_dark ? *wxWHITE : *wxBLACK);
 
     wxSize textSize = dc.GetTextExtent(m_title);
-    //int x = (size.x - textSize.x) / 2; // 水平居中
-    int x = FromDIP(10); // 水平居中
-    int y = (size.y - textSize.y) / 2; // 垂直居中
+    //int x = (size.x - textSize.x) / 2; // horizontally centered
+    int x = FromDIP(10); // horizontally centered
+    int y = (size.y - textSize.y) / 2; // vertically centered
 
     dc.DrawText(m_title, x, y);
 
-    // 绘制关闭按钮
+    // Draw close button
     int closeButtonSize = 18;
     int closeButtonX = size.x - closeButtonSize - FromDIP(13);
     int closeButtonY = (size.y - closeButtonSize) / 2;
@@ -242,7 +242,7 @@ void CusTitlePanel::OnMouseLeftDown(wxMouseEvent& event) {
     m_dragStartPos = event.GetPosition();
     CaptureMouse();
 
-    // 检查是否点击了关闭按钮
+    // Check whether the close button was clicked
     wxSize size = GetClientSize();
     int closeButtonSize = 18;
     int closeButtonX = size.x - closeButtonSize - FromDIP(13);
@@ -257,7 +257,7 @@ void CusTitlePanel::OnMouseLeftDown(wxMouseEvent& event) {
         if (parent) {
             static_cast<CusDialog*>(parent)->Hide();
         }
-        m_dragging = false; // 关闭按钮点击后取消拖动
+        m_dragging = false; // cancel dragging after the close button is clicked
     }
 
     event.Skip();

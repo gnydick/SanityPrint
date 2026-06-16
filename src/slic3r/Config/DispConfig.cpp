@@ -481,11 +481,11 @@ ImVec2 DispConfig::boldTextWrapped(const std::string& str, float scale, float wr
 {
     Loc_pushBoldStyle(scale);
     ImGui::SetCursorPosX(ImGui::GetCursorPosX());
-    ImGui::PushTextWrapPos(wrap_start_x); // 设置换行起点
+    ImGui::PushTextWrapPos(wrap_start_x); // set the wrap start position
     ImGui::TextWrapped("%s", str.c_str());
     ImGui::PopTextWrapPos();
     Loc_popBoldStyle(scale);
-    return ImGui::CalcTextSize(str.c_str()); //  注意：TextWrapped 不返回实际尺寸
+    return ImGui::CalcTextSize(str.c_str()); //  note: TextWrapped does not return the actual size
 }
 
 

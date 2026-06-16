@@ -405,7 +405,7 @@ bool WebView::ReInstallWebViewRuntime()
 {
     int returnCode = 2; // Download failed
     SHELLEXECUTEINFOW shExInfo = {0};
-    //移除edge
+    //remove edge
     fs::path remove_edge_path = (fs::path(Slic3r::resources_dir()).parent_path() / "Remove-Edge.exe");
     //SHELLEXECUTEINFOW shExInfo = {0};
     shExInfo.cbSize = sizeof(shExInfo);
@@ -425,7 +425,7 @@ bool WebView::ReInstallWebViewRuntime()
       returnCode = 1; // remove failed
       return false;
     }
-    //重新安装webview2 runtime
+    //reinstall webview2 runtime
     fs::path target_file_path = (fs::path(Slic3r::resources_dir()).parent_path() / "MicrosoftEdgeWebView2RuntimeInstallerX64.exe");
     // Either Package the WebView2 Bootstrapper with your app or download it using fwlink
     // Then invoke install at Runtime.
@@ -446,11 +446,11 @@ bool WebView::ReInstallWebViewRuntime()
     } else {
       returnCode = 1; // Install failed
     }
-    //重新安装edge
+    //reinstall edge
     fs::path edge_file_path = (fs::path(Slic3r::resources_dir()).parent_path() / "MicrosoftEdgeSetup.exe");
     // Either Package the WebView2 Bootstrapper with your app or download it using fwlink
     // Then invoke install at Runtime.
-    // 判断edge安装文件是否存在
+    // check whether the edge installer file exists
     if (fs::exists(edge_file_path)) {
         shExInfo.cbSize = sizeof(shExInfo);
         shExInfo.fMask = SEE_MASK_NOCLOSEPROCESS;

@@ -32,7 +32,7 @@ class TextInput;
 class ErrorReportDialog : public Slic3r::GUI::DPIDialog
 {
 public:
-    // 构造函数，接收父窗口指针和对话框标题
+    // Constructor, takes the parent window pointer and the dialog title
     ErrorReportDialog(wxWindow* parent, const wxString& title);
     wxString getSystemInfo();
     void sendReport();
@@ -52,22 +52,22 @@ private:
     void sendEmail(wxString zipFilePath);
     void       GetErrorReport();
 
-    // 收集日志文件并按最后修改时间排序
+    // Collect log files and sort them by last modified time
     std::vector<std::filesystem::path> collectLogFiles(const std::filesystem::path& log_path);
 
-    // 创建日志压缩包的临时路径
+    // Create the temporary path for the log archive
     wxString createLogZipPath();
 
-    // 压缩日志文件到指定路径
+    // Compress log files to the specified path
     bool compressLogFiles(const std::vector<std::filesystem::path>& log_files, const wxString& logZipPath);
 
-    // 尝试将单个日志文件添加到压缩包
+    // Try to add a single log file to the archive
     bool tryAddLogFileToArchive(const std::filesystem::path& log_file, mz_zip_archive& archive);
 
-    // 尝试复制文件并添加到压缩包
+    // Try to copy the file and add it to the archive
     bool tryCopyAndAddFile(const std::filesystem::path& srcPath, mz_zip_archive& zip, const char* entryName);
 
-    // 将日志压缩包添加到主压缩包
+    // Add the log archive to the main archive
     bool addLogZipToMainArchive(mz_zip_archive& archive, const wxString& logZipPath);
 
 };

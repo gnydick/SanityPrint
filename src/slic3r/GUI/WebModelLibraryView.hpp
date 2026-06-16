@@ -35,7 +35,7 @@ public:
     void GoForward();
     bool CanGoBack();
     bool CanGoForward();
-    // 标记是否已完成首次加载（用于避免重复首载并在重建 GUI 后正常触发）
+    // Marks whether the first load has completed (used to avoid repeating the first load and to trigger normally after rebuilding the GUI)
     bool IsInitialized() const;
     
     // Show/Hide functions
@@ -88,9 +88,9 @@ private:
     wxBoxSizer*     m_main_sizer;
     wxBoxSizer*     m_toolbar_sizer;
 
-    // 记录已为其注入过 Cookie 的域名，避免无限重载
+    // Records domains for which cookies have already been injected, to avoid infinite reloads
     std::unordered_set<std::string> m_cookie_injected_domains;
-    // UA 是否已初始化（仅首次设置 UA，后续调用只刷新 Cookies）
+    // Whether the UA has been initialized (set the UA only on the first call; later calls only refresh cookies)
     bool m_ua_initialized = false;
 
     DECLARE_EVENT_TABLE()

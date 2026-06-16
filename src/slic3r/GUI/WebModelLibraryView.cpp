@@ -153,7 +153,7 @@ void WebModelLibraryView::load_url(const wxString& url)
     if (m_browser && !url.IsEmpty()) {
         // Set cookies before navigation so the request carries expected state
         SetCookiesForUrl(url);
-        // 不在此处更新 UA；UA 仅在初始化时设置，其余场景只刷新 Cookie
+        // Do not update the UA here; the UA is only set during initialization, and other cases only refresh cookies
         m_current_url = url;
         m_browser->LoadURL(url);
         BOOST_LOG_TRIVIAL(info) << "load_url: Loading URL: " << url.ToStdString();
@@ -206,7 +206,7 @@ bool WebModelLibraryView::IsShown() const { return wxPanel::IsShown(); }
 
 bool WebModelLibraryView::IsInitialized() const
 {
-    // 当 m_current_url 已设置（且不是默认空值）视为已完成首次加载
+    // Consider the first load complete once m_current_url is set (and is not the default empty value)
     return !m_current_url.IsEmpty() && m_current_url != wxWebViewDefaultURLStr;
 }
 
@@ -236,7 +236,7 @@ void WebModelLibraryView::OnLoaded(wxWebViewEvent& evt)
 {
     // Page loaded successfully
     BOOST_LOG_TRIVIAL(info) << "DEBUG: ModelLibrary page loaded, requesting account info";
-    // Linux: 通过 JS 注入 Cookie 同步登录态，避免 UA 携带自定义段触发 WebKit 断言
+    // Linux: inject cookies via JS to sync login state, avoiding the WebKit assertion triggered when the UA carries a custom segment
 #if defined(__linux__) || defined(__WXMAC__)
     if (m_browser) {
         wxString current_url = m_browser->GetCurrentURL();
@@ -302,10 +302,10 @@ void WebModelLibraryView::OnTitleChanged(wxWebViewEvent& evt)
 bool WebModelLibraryView::needLogin(std::string cmd)
 {
     try {
-        // 解析JSON字符串
+        // parse the JSON string
         json j = json::parse(cmd);
 
-        // 检查action字段是否为"toNative"
+        // check whether the action field is "toNative"
         if (j.contains("action") && j["action"].is_string()) {
             std::string action = j["action"].get<std::string>();
             if (action != "toNative") {
@@ -315,33 +315,33 @@ bool WebModelLibraryView::needLogin(std::string cmd)
             return false;
         }
 
-        // 检查message字段是否存在且为对象
+        // check whether the message field exists and is an object
         if (j.contains("message") && j["message"].is_object()) {
             json message = j["message"];
 
-            // 检查linkType字段
+            // check the linkType field
             if (message.contains("linkType") && message["linkType"].is_number()) {
                 int linkType = message["linkType"].get<int>();
 
-                // linkType=1表示需要登录
+                // linkType=1 means login is required
                 if (linkType == 1) {
-                    // 发送触发登录检查的命令到JavaScript端
+                    // send the command that triggers a login check to the JavaScript side
                     std::string message = "{\"command\":\"trigger_login_check\"}";
-                     // 通过现有的消息机制发送给JavaScript
+                     // send it to JavaScript through the existing message mechanism
                     std::string result = wxGetApp().handle_web_request(message);
 
-                    // 返回true表示需要登录
+                    // return true to indicate login is required
                     return true;
                 }
-                // linkType=403 不在这里处理，返回false表示不需要登录
+                // linkType=403 is not handled here; return false to indicate login is not required
             }
         }
 
-        // 默认不需要登录
+        // by default login is not required
         return false;
 
     } catch (const std::exception& e) {
-        // JSON解析失败，记录错误日志
+        // JSON parsing failed, log the error
         BOOST_LOG_TRIVIAL(error) << "Failed to parse needLogin command: " << e.what();
         return false;
     }
@@ -350,10 +350,10 @@ bool WebModelLibraryView::needLogin(std::string cmd)
 bool WebModelLibraryView::handleLinkType403(std::string cmd)
 {
     try {
-        // 解析JSON字符串
+        // parse the JSON string
         json j = json::parse(cmd);
 
-        // 检查action字段是否为"toNative"
+        // check whether the action field is "toNative"
         if (j.contains("action") && j["action"].is_string()) {
             std::string action = j["action"].get<std::string>();
             if (action != "toNative") {
@@ -363,32 +363,32 @@ bool WebModelLibraryView::handleLinkType403(std::string cmd)
             return false;
         }
 
-        // 检查message字段是否存在且为对象
+        // check whether the message field exists and is an object
         if (j.contains("message") && j["message"].is_object()) {
             json message = j["message"];
 
-            // 检查linkType字段
+            // check the linkType field
             if (message.contains("linkType") && message["linkType"].is_number()) {
                 int linkType = message["linkType"].get<int>();
 
-                // 处理linkType=403的情况
+                // handle the linkType=403 case
                 if (linkType == 403) {
                     if (message.contains("linkUrl") && message["linkUrl"].is_object()) {
                         json linkJson = message["linkUrl"];
                         if (linkJson.contains("url") && linkJson["url"].is_string()) {
                             std::string url = linkJson["url"].get<std::string>();
                             wxLaunchDefaultBrowser(wxString::FromUTF8(url));
-                            return true; // 表示已处理
+                            return true; // indicates it has been handled
                         }
                     }
                 }
             }
         }
 
-        return false; // 不是linkType=403或处理失败
+        return false; // not linkType=403 or handling failed
 
     } catch (const std::exception& e) {
-        // JSON解析失败，记录错误日志
+        // JSON parsing failed, log the error
         BOOST_LOG_TRIVIAL(error) << "Failed to parse handleLinkType403 command: " << e.what();
         return false;
     }
@@ -410,7 +410,7 @@ bool WebModelLibraryView::handleLinkType404(std::string cmd)
         if (linkType != 404)
             return false;
 
-        // 将 404 转发到社区 WebView，触发社区端 token 失效弹窗
+        // forward 404 to the community WebView, triggering the community-side token-expired popup
         wxGetApp().mainframe->select_tab(MainFrame::tpHome);
         wxGetApp().swith_community_sub_page("token_expired");
         BOOST_LOG_TRIVIAL(info) << "WebModelLibraryView: forward linkType=404 to community (token_expired).";
@@ -475,7 +475,7 @@ bool WebModelLibraryView::UpdateUserAgent()
         BOOST_LOG_TRIVIAL(error) << "UpdateUserAgent: current_url=" << current_url.ToStdString() 
                                 << ", m_current_url=" << m_current_url.ToStdString();
 #ifdef __linux__
-        // UA 仅在首次初始化设置；后续调用不再改变 UA
+        // the UA is set only on first initialization; later calls no longer change the UA
         if (!m_ua_initialized) {
             wxString user_agent = wxString::Format(
                 "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -501,8 +501,8 @@ bool WebModelLibraryView::UpdateUserAgent()
         }
 #endif
 
-        // 使用浏览器当前 URL 设置 Cookie，确保 Cookie 设置到正确的域名
-        // 修复：登录后 Cookie 未更新问题，使用 current_url 而非 m_current_url
+        // use the browser's current URL to set cookies, ensuring cookies are set on the correct domain
+        // fix: cookies not updated after login; use current_url instead of m_current_url
         if (!current_url.IsEmpty() && current_url != wxWebViewDefaultURLStr)
             SetCookiesForUrl(current_url);
 #if defined(__linux__) || defined(__WXMAC__)

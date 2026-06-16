@@ -359,28 +359,28 @@ int UploadFile::uploadFileToAliyun(const std::string& local_path, const std::str
     boost::nowide::ifstream file_in(local_path, std::ios_base::binary);
         if (!file_in)
         {
-            std::cerr << "无法打开输入文件。" << std::endl;
+            std::cerr << "Failed to open input file." << std::endl;
             return 1;
         }
         auto call_back = std::bind(&UploadFile::UploadProgressCallback, this,
         std::placeholders::_1, std::placeholders::_2,
         std::placeholders::_3);
         call_back(0, 0, 0.01);
-        // 创建输出文件，文件名后缀为.gz
+        // Create the output file, with the .gz extension appended to the filename
         boost::filesystem::path temp_path = boost::filesystem::temp_directory_path();
         boost::filesystem::path outputfile("output.gz");
         boost::filesystem::path joined_path = temp_path / outputfile;
         boost::nowide::ofstream file_out(joined_path.string(), boost::nowide::ofstream::binary);
         if (!file_out)
         {
-            std::cerr << "无法打开输出文件。" << std::endl;
+            std::cerr << "Failed to open output file." << std::endl;
             return 1;
         }
-        // 创建过滤流缓冲区，用于压缩
+        // Create a filtering stream buffer used for compression
         boost::iostreams::filtering_streambuf<boost::iostreams::input> out;
         out.push(boost::iostreams::gzip_compressor());
         out.push(file_in);
-        // 将压缩后的数据写入输出文件
+        // Write the compressed data to the output file
         boost::iostreams::copy(out, file_out);
         file_out.close();
         if(m_cancel)

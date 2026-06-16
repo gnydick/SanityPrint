@@ -1,6 +1,6 @@
 
 #include "Crealityrint_dump.hpp"
-// 自定义对话框类
+// Custom dialog class
 
 
 
@@ -42,7 +42,7 @@ static size_t payload_source(void *ptr, size_t size, size_t nmemb, void *userp) 
 };
 
 void ErrorReportDialog::sendEmail(wxString zipFilePath) {
-        // 发送邮件
+        // Send email
         CURL *curl;
         CURLcode res = CURLE_OK;
         struct curl_slist *recipients = NULL;
@@ -67,8 +67,8 @@ void ErrorReportDialog::sendEmail(wxString zipFilePath) {
             curl_easy_setopt(curl, CURLOPT_READFUNCTION, payload_source);
             curl_easy_setopt(curl, CURLOPT_READDATA, &upload_ctx);
             curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
-            curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 5L);  // 连接超时5秒
-            curl_easy_setopt(curl, CURLOPT_TIMEOUT, 15L);       // 数据传输超时15秒
+            curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 5L);  // Connection timeout 5 seconds
+            curl_easy_setopt(curl, CURLOPT_TIMEOUT, 15L);       // Data transfer timeout 15 seconds
             curl_easy_setopt(curl, CURLOPT_USE_SSL, CURLUSESSL_ALL);
 
             res = curl_easy_perform(curl);
@@ -84,7 +84,7 @@ void ErrorReportDialog::sendEmail(wxString zipFilePath) {
         return ;
     }
     wxString ErrorReportDialog::zipFiles() {
-        // 创建一个zip文件
+        // Create a zip file
         wxString format1 = "%Y%m%d%H%M%S";
         wxString zipFilePath = wxString::Format("%s/SanityPrint_%s_%s.zip",wxFileName::GetTempDir(),SANITYPRINT_VERSION,wxDateTime::Now().Format(format1));
         mz_zip_archive archive;
@@ -94,7 +94,7 @@ void ErrorReportDialog::sendEmail(wxString zipFilePath) {
             std::cerr << "Failed to create zip file!" << std::endl;
             return "";
         }
-        // 添加文件到zip文件
+        // Add file to zip file
         wxFileName fileName(m_dumpFilePath);
         wxString nameWithExt = fileName.GetFullName();
         status = mz_zip_writer_add_file(&archive, nameWithExt.mb_str(), m_dumpFilePath.mb_str(), "", 0, MZ_BEST_COMPRESSION);
@@ -115,7 +115,7 @@ void ErrorReportDialog::sendEmail(wxString zipFilePath) {
             mz_zip_writer_end(&archive);
             return "";
         }
-        // 关闭zip文件
+        // Close the zip file
         mz_zip_writer_end(&archive);
         return zipFilePath;
     }
@@ -131,4 +131,4 @@ void ErrorReportDialog::sendEmail(wxString zipFilePath) {
             sendEmail(dumpfile);
         }
     }
-// 自定义应用程序类
+// Custom application class

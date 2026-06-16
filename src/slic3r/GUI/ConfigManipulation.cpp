@@ -338,8 +338,8 @@ void ConfigManipulation::update_print_fff_config(DynamicPrintConfig* config, con
         apply(config, &new_conf);
     }
 
-    //fix:[#14152]修改选项后，仅置灰，不修改值
-    //开启机型参数中的冲刷进擦拭塔选项后，使用的是旧擦拭塔，所需取消他们的勾选
+    //fix:[#14152]after changing the option, only gray it out, do not modify the value
+    //after enabling the "purge into prime tower" option in the printer parameters, the old prime tower is used, so their checkboxes need to be unchecked
     //bool purge_in_primetower = wxGetApp().preset_bundle->printers.get_edited_preset().config.opt_bool("purge_in_prime_tower");
     //if (purge_in_primetower || timelapse_type == TimelapseType::tlSmooth)
     //{
@@ -949,7 +949,7 @@ void ConfigManipulation::toggle_print_fff_options(DynamicPrintConfig *config, co
     toggle_line("interlocking_depth", use_beam_interlocking);
     toggle_line("interlocking_boundary_avoidance", use_beam_interlocking);
 
-    //开启机型参数中的冲刷进擦拭塔选项后，使用的是旧擦拭塔，所以需要并置灰
+    //after enabling the "purge into prime tower" option in the printer parameters, the old prime tower is used, so it needs to be grayed out
     bool purge_in_primetower = preset_bundle->printers.get_edited_preset().config.opt_bool("purge_in_prime_tower");
     if (purge_in_primetower || config->opt_enum<TimelapseType>("timelapse_type") == TimelapseType::tlSmooth)
     {

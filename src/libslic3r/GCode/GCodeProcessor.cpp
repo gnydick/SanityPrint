@@ -287,25 +287,25 @@ void GCodeProcessor::TimeBlock::calc_junction(const TimeBlock& prev)
    
     float extruder_v2        = extruder_calc_juntion(prev);
     float junction_cos_theta = -(axes_r[0] * prev.axes_r[0] + axes_r[1] * prev.axes_r[1] + axes_r[2] * prev.axes_r[2]);
-    // 角度几乎为0°时直接返回（方向完全一致，不需要限制）
+    // Return immediately when the angle is nearly 0 degrees (directions are identical, no limit needed)
     if (junction_cos_theta > 0.999999f)
         return;
-    // 防止数值精度问题导致 acos 传入非法值
+    // Prevent numerical precision issues from passing an invalid value into acos
     junction_cos_theta = std::max(junction_cos_theta, -0.999999f);
     // sin(θ/2)
     float sin_theta_d2 = std::sqrt(0.5f * (1.0f - junction_cos_theta));
 
-    // R_jd 是基于夹角的衰减因子，控制过渡速度
+    // R_jd is the angle-based attenuation factor that controls the transition speed
     float R_jd = sin_theta_d2 / (1.0f - sin_theta_d2);
 
-    // tan(θ/2)，用于计算离心限速
+    // tan(θ/2), used to compute the centripetal speed limit
     float tan_theta_d2 = sin_theta_d2 / std::sqrt(0.5f * (1.0f + junction_cos_theta));
 
-    // 离心力速度²限制
+    // Centripetal force speed² limit
     float move_centripetal_v2      = 0.5f * distance * tan_theta_d2 * acceleration;
     float prev_move_centripetal_v2 = 0.5f * prev.distance * tan_theta_d2 * prev.acceleration;
 
-    // 多种因素共同限制 max_start_v²
+    // Multiple factors jointly limit max_start_v²
     max_start_v2 = std::min({R_jd * junction_deviation * acceleration, R_jd * prev.junction_deviation * prev.acceleration,
                                  move_centripetal_v2, prev_move_centripetal_v2, extruder_v2, max_cruise_v2, prev.max_cruise_v2,
                                  prev.max_start_v2 + prev.delta_v2});
@@ -314,7 +314,7 @@ void GCodeProcessor::TimeBlock::calc_junction(const TimeBlock& prev)
         ;
     }
 
-    // 平滑限速
+    // Smoothed speed limit
     max_smoothed_v2 = std::min(max_start_v2, prev.max_smoothed_v2 + prev.smooth_delta_v2);
 
 }
@@ -343,12 +343,12 @@ float GCodeProcessor::TimeBlock::calc_move_time() const
     float vc   = std::sqrt(cruise_v2);
     float dist = distance;
 
-    // 计算加速和减速所需距离
+    // Compute the distances needed for acceleration and deceleration
     float d_acc = (vc * vc - v0 * v0) / (2.f * acceleration);
     float d_dec = (vc * vc - v1 * v1) / (2.f * deceleration);
 
     if (d_acc + d_dec <= dist) {
-        // 能达到巡航速度，三段时间相加
+        // Cruise speed can be reached; sum the three phase times
         float d_cruise = dist - d_acc - d_dec;
         float t_acc    = (vc - v0) / acceleration;
         float t_cruise; 
@@ -362,7 +362,7 @@ float GCodeProcessor::TimeBlock::calc_move_time() const
         float t_dec = (vc - v1) / deceleration;
         return t_acc + t_cruise + t_dec;
     } else {
-        // 速度曲线呈三角形，最大速度小于巡航速度
+        // Speed profile is triangular; the peak speed is below cruise speed
         float v_m   = std::sqrt((2.f * acceleration * dist + v0 * v0 + v1 * v1) / 2.f);
         float t_acc = (v_m - v0) / acceleration;
         float t_dec = (v_m - v1) / deceleration;
@@ -2174,7 +2174,7 @@ void GCodeProcessor::process_file(const std::string& filename, std::function<voi
     }, m_result.lines_ends);
 
    
-        //没有解析出来耗材
+        //no filament was parsed
     if(m_result.creality_extruder_colors.size()==0)
     {
         m_result.creality_extruder_colors.push_back("#FFFFFF");
@@ -2213,7 +2213,7 @@ void GCodeProcessor::process_buffer(const std::string &buffer)
 
 float GCodeProcessor::layer_time()
 {
-        // layer_time 用 Normal 模式的累计时间与 machine.time 对齐
+        // layer_time aligns the accumulated time of Normal mode with machine.time
     TimeMachine& machine = m_time_processor.machines[static_cast<size_t>(PrintEstimatedStatistics::ETimeMode::Normal)];
     machine.calculate_time(TimeProcessor::Planner::queue_size);
     return std::max(0.0f, machine.time);
@@ -6012,7 +6012,7 @@ void GCodeProcessor::process_G2_G3_klipper_new(const GCodeReader::GCodeLine& lin
         m_end_position[a] = absolute_position((Axis) a, line);
     }
 
-    // 圆弧独有计算----------------------------------------------------------------
+    // Arc-specific computation----------------------------------------------------------------
     // BBS: G2 G3 line but has no I and J axis, invalid G code format
     if (!line.has(I) && !line.has(J))
         return;
@@ -6039,7 +6039,7 @@ void GCodeProcessor::process_G2_G3_klipper_new(const GCodeReader::GCodeLine& lin
     float radian    = ArcSegment::calc_arc_radian(start_point, end_point, m_arc_center, (m_move_path_type == EMovePathType::Arc_move_ccw));
     Vec3f start_dir = Circle::calc_tangential_vector(start_point, m_arc_center, (m_move_path_type == EMovePathType::Arc_move_ccw));
     Vec3f end_dir   = Circle::calc_tangential_vector(end_point, m_arc_center, (m_move_path_type == EMovePathType::Arc_move_ccw));
-    // 圆弧独有计算----------------------------------------------------------------
+    // Arc-specific computation----------------------------------------------------------------
 
     if (line.has_f())
         m_feedrate = line.f() * MMMIN_TO_MMSEC;
@@ -6450,7 +6450,7 @@ void GCodeProcessor::process_G2_G3_klipper(const GCodeReader::GCodeLine& line)
         m_end_position[a] = absolute_position((Axis) a, line);
     }
 
-    // 圆弧独有计算----------------------------------------------------------------
+    // Arc-specific computation----------------------------------------------------------------
     // BBS: G2 G3 line but has no I and J axis, invalid G code format
     if (!line.has(I) && !line.has(J))
         return;
@@ -6477,7 +6477,7 @@ void GCodeProcessor::process_G2_G3_klipper(const GCodeReader::GCodeLine& line)
     float radian    = ArcSegment::calc_arc_radian(start_point, end_point, m_arc_center, (m_move_path_type == EMovePathType::Arc_move_ccw));
     Vec3f start_dir = Circle::calc_tangential_vector(start_point, m_arc_center, (m_move_path_type == EMovePathType::Arc_move_ccw));
     Vec3f end_dir   = Circle::calc_tangential_vector(end_point, m_arc_center, (m_move_path_type == EMovePathType::Arc_move_ccw));
-    // 圆弧独有计算----------------------------------------------------------------
+    // Arc-specific computation----------------------------------------------------------------
 
     if (line.has_f())
         m_feedrate = line.f() * MMMIN_TO_MMSEC;
@@ -6679,21 +6679,21 @@ void GCodeProcessor::process_G2_G3_klipper(const GCodeReader::GCodeLine& line)
             for (unsigned char a = X; a <= E; ++a) {
                 curr.axis_feedrate[a] = curr.feedrate * temp_delta_pos[a] * inv_distance;
 
-                // 根据Z轴最大速度计算速度限制因子
+                // Compute the speed-limit factor based on the Z-axis maximum speed
                 if (a == Z) {
                     curr.abs_axis_feedrate[a] = std::abs(curr.axis_feedrate[a]);
                     if (curr.abs_axis_feedrate[a] != 0.0f) {
                         float axis_max_feedrate = get_axis_max_feedrate(static_cast<PrintEstimatedStatistics::ETimeMode>(i),
                                                                         static_cast<Axis>(a));
-                        if (axis_max_feedrate != 0.0f) // 轴最大速度
+                        if (axis_max_feedrate != 0.0f) // axis maximum speed
                             min_feedrate_factor = std::min<float>(min_feedrate_factor, axis_max_feedrate / curr.abs_axis_feedrate[a]);
                     }
                 }
             }
             // BBS: update curr.feedrate
-            curr.feedrate *= min_feedrate_factor; // 重新计算速度（巡航，拐点）---最大巡航速度
+            curr.feedrate *= min_feedrate_factor; // recompute speed (cruise, corner) --- maximum cruise speed
 
-            curr.max_cruise_v2            = sqr(curr.feedrate); // 赋值最大巡航速度
+            curr.max_cruise_v2            = sqr(curr.feedrate); // assign the maximum cruise speed
             block.feedrate_profile.cruise = curr.feedrate;
 
             // calculates block acceleration
@@ -7302,7 +7302,7 @@ void GCodeProcessor::set_velocity_limit(const float& velocity, const float& acce
         updated                  = true;
     }
 
-    // 更新 junction 相关值
+    // Update junction-related values
     if (updated)
         calc_junction_deviation();
 }

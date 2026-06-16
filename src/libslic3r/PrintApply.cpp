@@ -1687,8 +1687,8 @@ Print::ApplyStatus Print::apply(const Model &model, DynamicPrintConfig new_full_
 	        	auto new_instance = model_object_new.instances.begin();
 				for (auto old_instance = model_object.instances.begin(); old_instance != model_object.instances.end(); ++ old_instance, ++ new_instance) 
                 {
-                    //如果发生了移动等变换，需要让支撑重新计算
-                    //见bug https://zentao.creality.com/zentao/bug-view-14157.html
+                    //If a transform such as a move occurs, the support needs to be recalculated
+                    //See bug https://zentao.creality.com/zentao/bug-view-14157.html
                     bool is_transform = !((*old_instance)->get_transformation().get_matrix().isApprox((*new_instance)->get_transformation().get_matrix()));
                      if (is_transform)
                      {

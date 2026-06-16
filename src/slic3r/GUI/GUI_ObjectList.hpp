@@ -326,7 +326,7 @@ private:
             int         device_type;
             bool        visible = true;
 
-            std::string apiKey;         // fluidd…Ë±∏
+            std::string apiKey;         // fluidd device
             std::string deviceUI;
             std::string caFile;
             int hostType;

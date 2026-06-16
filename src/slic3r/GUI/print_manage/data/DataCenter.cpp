@@ -98,15 +98,15 @@ nlohmann::json DataCenter::find_printer_by_mac(const std::string& device_mac)
 
                 if (printer["mac"] == device_mac) {
                     if (printer["deviceType"] == 0 && printer["online"].get<bool>()) {
-                        return printer; // 优先返回 deviceType 为 0 的打印机
+                        return printer; // prefer to return the printer with deviceType 0
                     } else if (printer["deviceType"] == 1) {
-                        foundPrinter = printer; // 记录 deviceType 为 1 的打印机
+                        foundPrinter = printer; // record the printer with deviceType 1
                     }
                 }
             }
         }
 
-        return foundPrinter; // 如果没有找到 deviceType 为 0 的打印机，返回 deviceType 为 1 的打印机
+        return foundPrinter; // if no printer with deviceType 0 was found, return the printer with deviceType 1
     } 
     catch (std::exception& e) 
     {

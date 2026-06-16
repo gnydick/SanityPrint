@@ -1459,9 +1459,10 @@ void Selection::scale_legacy(const Vec3d& scale, TransformationType transformati
     bool is_uniform_scaling = manipul_obj->get_uniform_scaling();
     std::vector<unsigned int> ids(m_list.begin(), m_list.end());
 
-        // 如果进行均匀缩放，同时又发现变换矩阵受到了类shear变换，那么认为这个模型是外部进行了剪切变换，
-        // 此时如果继续做均匀缩放，会使得旋转、缩放变换互相紊乱耦合，那么就把当前变换烘焙进mesh
-        // 处理方法参考void GizmoObjectManipulation::set_uniform_scaling(const bool new_value)
+        // If uniform scaling is being applied and the transform matrix is found to contain a shear-like transform,
+        // we assume the model was sheared externally. In that case continuing to apply uniform scaling would cause the
+        // rotation and scaling transforms to become disordered and coupled, so we bake the current transform into the mesh.
+        // For the handling approach, refer to void GizmoObjectManipulation::set_uniform_scaling(const bool new_value)
     if (is_uniform_scaling) {
         std::map<size_t, size_t> bake_targets; // object_id -> reference instance_id
         for (unsigned int i : ids) {
@@ -2273,7 +2274,7 @@ void Selection::calculate_model_object_clone_preview_offsets(int numbers)
                                                                                     extra_offset);
             }
 
-            // 如果当前找到的空单元格不足，则沿着 boundingbox 周围一圈一圈扩展
+            // If the number of empty cells found so far is insufficient, expand outward ring by ring around the boundingbox
             if (object_plate_idx >= 0 && all_empty_cells.size() < numbers) {
                 BoundingBoxf3 object_plate_bbox = object_plate->get_build_volume();
                 auto expanded_cells = wxGetApp().plater()->canvas3D()->get_expand_cells(Vec2f(start_point.x(), start_point.y()),
@@ -2473,7 +2474,7 @@ void Selection::calculate_checkerboard_preview_offsets(float distance)
     GLCanvas3D::WipeTowerInfo wti = plater->canvas3D()->get_wipe_tower_info(cur_plate_index);
     Vec2d wti_bb_size = wti.bb_size();
     Vec2d wti_pos = wti.pos();
-    // 根据 wti_pos 和 wti_bb_size 构建 BoundingBoxf
+    // Build a BoundingBoxf from wti_pos and wti_bb_size
     BoundingBoxf wti_bbox(wti_pos, wti_pos + wti_bb_size);
 
     const Slic3r::DynamicPrintConfig& global_config = wxGetApp().preset_bundle->full_config();
@@ -2614,12 +2615,12 @@ void Selection::calculate_checkerboard_preview_offsets(float distance)
         const float epsilon   = 1e-6f;
         float       distance  = settings.distance > epsilon ? settings.distance : brim;
 
-        // For by-object printing, brim_width 需要加上 extruder_clearance_radius
+        // For by-object printing, brim_width needs to add extruder_clearance_radius
         const Slic3r::DynamicPrintConfig& global_config = wxGetApp().preset_bundle->full_config();
         auto global_print_seq                        = global_config.option<ConfigOptionEnum<PrintSequence>>("print_sequence")->value;
         if(current_plate_seq == PrintSequence::ByObject && global_print_seq != PrintSequence::ByObject) {
-             // extruder_clearance_radius 只在 ByObject 时考虑
-            // 如果 distance 小于 brim_width，则用 brim_width，否则用 distance
+             // extruder_clearance_radius is only considered in ByObject mode
+            // If distance is less than brim_width, use brim_width; otherwise use distance
             distance = (settings.distance < brim) ? brim : settings.distance;
         }
         Vec2f step = base_step + Vec2f(distance, distance);

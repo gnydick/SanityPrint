@@ -31,7 +31,7 @@ class RTSPDecoder  {
             std::future_status status = m_playFutrue.wait_for(std::chrono::seconds(2));
             if (status == std::future_status::ready)
             {
-                //cout << "线程执行完" << endl;
+                //cout << "thread finished executing" << endl;
             }	
         }
         void getFrameData(std::vector<unsigned char>& framedata);
@@ -47,8 +47,8 @@ class RTSPDecoder  {
         std::future<int> m_playFutrue;
          std::mutex frame_mutex_;
 
-        std::queue<std::vector<uint8_t>> frame_queue;        // 帧缓存队列
-        const size_t                     MAX_QUEUE_SIZE = 3; // 缓存3帧（平衡内存与流畅度）
+        std::queue<std::vector<uint8_t>> frame_queue;        // Frame buffer queue
+        const size_t                     MAX_QUEUE_SIZE = 3; // Buffer 3 frames (balance memory and smoothness)
         // Add other necessary members and methods for RTSP handling
 };
 #endif // PLAYER_FFMPEG_RTSP_DECODER_H_

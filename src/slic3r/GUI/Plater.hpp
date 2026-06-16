@@ -234,32 +234,32 @@ private:
 class GCodeLoadingGuard
 {
 private:
-    bool& m_flagRef;      // 引用 Plater 的标志位成员
-    bool  m_acquiredLock; // 标记是否成功获取了锁
+    bool& m_flagRef;      // reference to Plater's flag member
+    bool  m_acquiredLock; // tracks whether the lock was successfully acquired
 
 public:
-    // 构造函数：尝试获取锁
+    // Constructor: try to acquire the lock
     explicit GCodeLoadingGuard(bool& flag) : m_flagRef(flag), m_acquiredLock(false)
     {
-        if (!m_flagRef) {          // 如果锁当前未被持有
-            m_flagRef      = true; // 获取锁
-            m_acquiredLock = true; // 标记已成功获取
+        if (!m_flagRef) {          // if the lock is not currently held
+            m_flagRef      = true; // acquire the lock
+            m_acquiredLock = true; // mark as successfully acquired
         }
-        // 如果锁已被持有，m_acquiredLock 保持 false
+        // if the lock is already held, m_acquiredLock stays false
     }
 
-    // 析构函数：如果构造时成功获取了锁，则释放锁
+    // Destructor: release the lock only if it was acquired in the constructor
     ~GCodeLoadingGuard()
     {
-        if (m_acquiredLock) { // 只有成功获取了锁，才需要释放
+        if (m_acquiredLock) { // only release if it was successfully acquired
             m_flagRef = false;
         }
     }
 
-    // 提供一个方法来检查是否成功获取了锁
+    // Provide a method to check whether the lock was successfully acquired
     bool IsLockAcquired() const { return m_acquiredLock; }
 
-    // 禁止拷贝和赋值，Guard 对象不应该被复制
+    // Disable copy and assignment; the Guard object should not be copied
     GCodeLoadingGuard(const GCodeLoadingGuard&)            = delete;
     GCodeLoadingGuard& operator=(const GCodeLoadingGuard&) = delete;
 };

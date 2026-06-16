@@ -147,7 +147,7 @@ void session::read_next_line()
 
                     const std::string url_str = Http::url_decode(headers.get_url());
                     if (url_str.find("/proxy") == 0){
-                        // 处理代理请求
+                        // handle the proxy request
                         this->handle_proxy_request(url_str);
                         return ;
                     }
@@ -336,11 +336,11 @@ bool is_port_in_use(unsigned short port) {
         boost::asio::ip::tcp::acceptor acceptor(io_context);
         acceptor.open(boost::asio::ip::tcp::v4());
         acceptor.bind(boost::asio::ip::tcp::endpoint(boost::asio::ip::address_v4::loopback(), port));
-        acceptor.close(); // 不需要持续监听，关闭 acceptor
-        return false; // 如果没有异常，端口未被占用
+        acceptor.close(); // no need to keep listening, close the acceptor
+        return false; // if no exception occurred, the port is not in use
     } catch (std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
-        return true; // 捕获异常，说明端口被占用
+        return true; // an exception was caught, meaning the port is in use
     }
 }
 void HttpServer::start()
@@ -350,7 +350,7 @@ void HttpServer::start()
     
     boost::system::error_code ec;
     //#ifndef _WIN32
-    // 尝试绑定到指定端口
+    // try to bind to the specified port
     for(int i=1;i<=20;i++)
     {
         if(is_port_in_use(port))
@@ -406,7 +406,7 @@ void HttpServer::set_request_handler(const std::function<std::shared_ptr<Respons
 {
     this->m_request_handler = request_handler;
 }
-// 根据文件扩展名确定Content-Type
+// determine the Content-Type based on the file extension
 std::string get_content_type(const std::string& file_extension) {
     static std::map<std::string, std::string> content_types = {
         {".html", "text/html"},
@@ -416,7 +416,7 @@ std::string get_content_type(const std::string& file_extension) {
         {".png", "image/png"},  
         {".svg", "image/svg+xml"},
         {".ttf", "font/ttf"}
-        // 可以继续添加更多的文件扩展名和对应的Content-Type映射
+        // more file extensions and their corresponding Content-Type mappings can be added here
     };
     auto it = content_types.find(file_extension);
     if (it!= content_types.end()) {
@@ -425,7 +425,7 @@ std::string get_content_type(const std::string& file_extension) {
     return "application/octet-stream";
 }
 
-// 构建HTTP响应消息
+// build the HTTP response message
 std::string build_http_response(int status_code, const std::string& content_type, const std::string& content) {
     std::stringstream response;
     switch (status_code) {
@@ -438,7 +438,7 @@ std::string build_http_response(int status_code, const std::string& content_type
     case 500:
         response << "HTTP/1.1 500 Internal Server Error\r\n";
         break;
-        // 可以添加更多的状态码处理逻辑
+        // more status code handling logic can be added here
     }
     response << "Content-Type: " << content_type << "\r\n";
     response << "Content-Length: " << content.length() << "\r\n";
@@ -449,10 +449,10 @@ std::string build_http_response(int status_code, const std::string& content_type
     response << content;
     return response.str();
 }
-// 解析URL，提取路径和参数
+// parse the URL, extracting the path and parameters
 void parse_url(const std::string& url, std::string& path, std::string& params) {
-    // 简单的正则表达式模式，用于匹配URL中的路径和查询参数部分
-    // 这里的正则表达式是一种简化示意，实际应用中可根据更严格的URL规范进一步完善
+    // a simple regular expression pattern used to match the path and query parameter parts of the URL
+    // the regular expression here is a simplified illustration; in practice it can be further refined according to stricter URL specifications
     boost::regex pattern("(/[^?]*)?(\\?.*)?");
     boost::smatch matches;
 
@@ -469,13 +469,13 @@ void parse_url(const std::string& url, std::string& path, std::string& params) {
 }
 void session::do_write_proxy(SocketPtr proxysocket, const std::string& target_host,const std::string& target_path)
 {
-    // 构造 HTTP 请求
+    // construct the HTTP request
         std::string request = "GET " + target_path + " HTTP/1.1\r\n";
         request += "Host: " + target_host + "\r\n";
         request += "Connection: close\r\n\r\n";
 
         std::shared_ptr<std::string> str = std::make_shared<std::string>(request);
-        // 发送请求
+        // send the request
         //boost::asio::write(socket, boost::asio::buffer(request));
         proxysocket->async_send(boost::asio::buffer(str->c_str(), str->length()), [str](const boost::system::error_code& ec, std::size_t bytes_transferred) {
             if (!ec) {
@@ -538,8 +538,8 @@ void session::do_read(SocketPtr socket_ptr)
                 {
                     if(line == "\r"&&!body_started)
                     {
-                        body_started = true; // 开始读取body
-                        continue; // 跳过空行
+                        body_started = true; // start reading the body
+                        continue; // skip the empty line
                     }
                     if(body_started)
                         allLine += line;
@@ -549,7 +549,7 @@ void session::do_read(SocketPtr socket_ptr)
                     std::string body = json_data.dump();
                     response_body << "Content-Length: " << body.length() << "\r\n";
                     response_body << "connection: keep-alive\r\n";
-                    response_body << "\r\n"; // 结束头部
+                    response_body << "\r\n"; // end of headers
                     response_body <<  body;
                     write_response(response_body.str());
                     }catch (nlohmann::json::parse_error& e) {
@@ -572,7 +572,7 @@ void session::handle_proxy_request(const std::string& url)
 {
     BOOST_LOG_TRIVIAL(info) << "Proxy request: " << url;
 
-    // 解析目标服务器地址和路径
+    // parse the target server address and path
     std::string target_host = url_get_param(url, "host");
     std::string target_path = url_get_param_ignore(url, "path");
     //std::string target_path = url_get_param(url, "path");
@@ -599,7 +599,7 @@ void session::handle_proxy_request(const std::string& url)
             tcp::endpoint(boost::asio::ip::address::from_string(target_host), 81),
             [this,socket_ptr,target_host,target_path](const boost::system::error_code& ec) {
                 if (!ec) {
-                    // 连接成功，可以继续使用 socket_ptr
+                    // connection succeeded, socket_ptr can continue to be used
                     timer_.cancel();
                     
                      this->do_write_proxy(socket_ptr,target_host, target_path);
@@ -617,14 +617,14 @@ void session::handle_proxy_request(const std::string& url)
                 //write_response(
                 //        build_http_response(500, "text/plain", "timeout: Unable to connect to target host"));
                 
-                socket_ptr->close(); // 超时后关闭socket连接
-               // 超时取消后的清理工作（如果有）
+                socket_ptr->close(); // close the socket connection after timeout
+               // cleanup work after the timeout is cancelled (if any)
             } else {
-                // 处理其他错误情况（理论上不应该发生）
+                // handle other error cases (which in theory should not happen)
             }
         });
 
-        // 返回代理响应
+        // return the proxy response
         return ;
     } catch (std::exception& e) {
         BOOST_LOG_TRIVIAL(error) << "Proxy request failed: " << e.what();
@@ -656,7 +656,7 @@ std::shared_ptr<HttpServer::Response> HttpServer::creality_handle_request(const 
         Http http = Http::post(base_url + "/api/cxy/account/v2/oauthLogin");
         json        j;
         j["code"]  = code;
-        // 当 PROJECT_VERSION_EXTRA 为 Dev 时，按 Dev 环境的 OAuth 配置处理
+        // when PROJECT_VERSION_EXTRA is Dev, handle it using the Dev environment's OAuth configuration
         {
             std::string extra = std::string(PROJECT_VERSION_EXTRA);
             if (boost::algorithm::iequals(extra, std::string("Dev"))) {
@@ -760,7 +760,7 @@ std::shared_ptr<HttpServer::Response> HttpServer::creality_handle_request(const 
         fs::path file_path(request_path);
 
         if (!fs::exists(file_path) ||!fs::is_regular_file(file_path)) {
-            // 文件不存在或者不是常规文件，返回404错误
+            // the file does not exist or is not a regular file, return a 404 error
             return std::make_shared<ResponseNotFound>();
         }
 
@@ -779,7 +779,7 @@ std::shared_ptr<HttpServer::Response> HttpServer::creality_handle_request(const 
         return std::make_shared<ResponseStaticFile>(http_response);
     } catch (std::exception& e) {
         std::cerr << "Exception in connection handler: " << e.what() << std::endl;
-        // 发生异常返回500错误给客户端
+        // on exception, return a 500 error to the client
         std::string error_response = build_http_response(500, "text/plain", "Internal server error");
         try {
             return std::make_shared<ResponseNotFound>();

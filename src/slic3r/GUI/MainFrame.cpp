@@ -607,7 +607,7 @@ MainFrame::MainFrame()
             m_print_btn->Enable(m_print_enable);
             if (m_print_enable) {
                 const DM::Device& current_device = DM::DataCenter::Ins().get_current_device_data();
-                if (current_device.deviceType == 1001) // fluidd 设备
+                if (current_device.deviceType == 1001) // fluidd device
                 {
                     wxPostEvent(m_plater, SimpleEvent(EVT_GLTOOLBAR_FLUIDD_PRINT_MACHINE));
                 }else
@@ -688,7 +688,7 @@ MainFrame::MainFrame()
     diff_dialog = std::make_unique<DiffPresetDialog>(this);
     bind_diff_dialog();
 
-    // 在程序启动时添加
+    // Add at program startup
   /*  boost::log::core::get()->set_logging_enabled(false);
     AllocConsole();
     freopen("CONOUT$", "w", stdout);
@@ -907,11 +907,11 @@ void MainFrame::update_layout()
                 if (m_webmodellibrary_view) {
                     //click online  models
                     AnalyticsDataUploadManager::uploadSlice822ClickEvent("online_models");
-                    // 切换到在线模型时不刷新 UA；仅在登录状态变更时由 GUI_App 触发更新
+                    // Do not refresh the UA when switching to online models; only let GUI_App trigger an update when the login state changes
 
-                    // 首次进入在线模型时加载默认页面；以视图实例状态为准，避免语言切换重建 GUI 后不加载的问题
+                    // Load the default page on first entry to online models; rely on the view instance state to avoid not loading after the GUI is rebuilt on a language switch
                     if (!m_webmodellibrary_view->IsInitialized()) {
-                        // 在首次加载模型库前，主动刷新 UA 与 Cookies，避免未授权请求导致首屏 401/403
+                        // Before loading the model library for the first time, proactively refresh the UA and Cookies to avoid unauthorized requests causing a 401/403 on the first screen
                         // m_webmodellibrary_view->UpdateUserAgent();
                         wxString url = get_cloud_webaddress() + "model-category/3d-print-all";
                         m_webmodellibrary_view->load_url(url);
@@ -1137,7 +1137,7 @@ void MainFrame::init_tabpanel() {
             {
                 topbar_sel = static_cast<size_t>(tpOnlineModel);
                 if (!m_webmodellibrary_view->IsInitialized()) {
-                        // 在首次加载模型库前，主动刷新 UA 与 Cookies，避免未授权请求导致首屏 401/403
+                        // Before loading the model library for the first time, proactively refresh the UA and Cookies to avoid unauthorized requests causing a 401/403 on the first screen
                         // m_webmodellibrary_view->UpdateUserAgent();
                         wxString url = get_cloud_webaddress() + "model-category/3d-print-all";
                         m_webmodellibrary_view->load_url(url);
@@ -2978,7 +2978,7 @@ void MainFrame::init_menubar_as_editor()
                     return;
                 }
 
-                // （MAC）清理ctrl键的状态，避免从菜单点击过来的，被系统认为ctrl是按下的
+                // (MAC) Clear the ctrl key state to avoid the system thinking ctrl is pressed when triggered via a menu click
                 ImGuiIO& io = ImGui::GetIO();
                 io.KeyCtrl  = false;
 
@@ -4830,7 +4830,7 @@ void MainFrame::RunScript(wxString js)
         m_webview->RunScript(js);
 }
 
-// 刷新设备管理页（触发前端 refresh_all_device）
+// Refresh the device management page (triggers the front-end refresh_all_device)
 void MainFrame::refresh_device_page()
 {
     if (m_printer_mgr_view) {

@@ -42,7 +42,7 @@ void AccountDeviceMgr::unbind_device(const std::string& device_id)
     Slic3r::GUI::UserInfo user = Slic3r::GUI::wxGetApp().get_user();
     std::string account_id = user.userId;
 
-    // 删除所有不是当前登录 account_id 的数据
+    // Remove all data that does not belong to the currently logged-in account_id
     for (auto it = accountDeviceInfos.account_infos.begin(); it != accountDeviceInfos.account_infos.end();) {
         if (it->first != account_id) {
             it = accountDeviceInfos.account_infos.erase(it);
@@ -78,7 +78,7 @@ void AccountDeviceMgr::unbind_device_by_address(const std::string& address)
     Slic3r::GUI::UserInfo user = Slic3r::GUI::wxGetApp().get_user();
     std::string account_id = user.userId;
 
-    // 删除所有不是当前登录 account_id 的数据
+    // Remove all data that does not belong to the currently logged-in account_id
     for (auto it = accountDeviceInfos.account_infos.begin(); it != accountDeviceInfos.account_infos.end();) {
         if (it->first != account_id) {
             it = accountDeviceInfos.account_infos.erase(it);
@@ -115,7 +115,7 @@ void AccountDeviceMgr::unbind_device_by_group(const std::string& group)
     Slic3r::GUI::UserInfo user = Slic3r::GUI::wxGetApp().get_user();
     std::string account_id = user.userId;
 
-    // 删除所有不是当前登录 account_id 的数据
+    // Remove all data that does not belong to the currently logged-in account_id
     for (auto it = accountDeviceInfos.account_infos.begin(); it != accountDeviceInfos.account_infos.end();) {
         if (it->first != account_id) {
             it = accountDeviceInfos.account_infos.erase(it);
@@ -145,7 +145,7 @@ void AccountDeviceMgr::unbind_device_by_group(const std::string& group)
 
 void AccountDeviceMgr::clear_all_account_info()
 {
-    // 清空当前数据
+    // Clear the current data
     accountDeviceInfos.account_infos.clear();
 }
 
@@ -158,7 +158,7 @@ void AccountDeviceMgr::add_to_my_devices(const DeviceInfo& device_info)
     Slic3r::GUI::UserInfo user = Slic3r::GUI::wxGetApp().get_user();
     std::string account_id = user.userId;
 
-    // 删除所有不是当前登录 account_id 的数据
+    // Remove all data that does not belong to the currently logged-in account_id
     for (auto it = accountDeviceInfos.account_infos.begin(); it != accountDeviceInfos.account_infos.end();) {
         if (it->first != account_id) {
             it = accountDeviceInfos.account_infos.erase(it);
@@ -167,15 +167,15 @@ void AccountDeviceMgr::add_to_my_devices(const DeviceInfo& device_info)
         }
     }
 
-    // 查找或创建 AccountInfo
+    // Find or create the AccountInfo
     auto& account = accountDeviceInfos.account_infos[account_id];
 
-    // 设置 account_id（如果是新创建的 AccountInfo）
+    // Set account_id (if this is a newly created AccountInfo)
     if (account.account_id.empty()) {
         account.account_id = account_id;
     }
 
-    // 添加设备到账户
+    // Add the device to the account
     add_device_to_account(account, device_info);
 
     // write into json file
@@ -184,13 +184,13 @@ void AccountDeviceMgr::add_to_my_devices(const DeviceInfo& device_info)
 
 void AccountDeviceMgr::add_device_to_account(AccountInfo& account, const DeviceInfo& device_info)
 {
-    // 查找设备是否已经存在
+    // Check whether the device already exists
     auto device_it = std::find_if(account.my_devices.begin(), account.my_devices.end(),
                                   [&device_info](const DeviceInfo& device) {
                                       return device.device_unique_id == device_info.device_unique_id;
                                   });
 
-    // 如果设备不存在，则添加新设备
+    // If the device does not exist, add it as a new device
     if (device_it == account.my_devices.end()) {
         account.my_devices.emplace_back(device_info);
     }
@@ -208,7 +208,7 @@ void AccountDeviceMgr::save_to_file()
                 json device_json;
                 device_json["device_unique_id"] = device.device_unique_id;
 
-                // 添加其他设备信息
+                // Add the other device information
                 device_json["address"] = device.address;
                 device_json["connectType"] = device.connectType;
                 device_json["mac"] = device.mac;
@@ -230,7 +230,7 @@ void AccountDeviceMgr::save_to_file()
             // throw std::runtime_error("Unable to open temporary file: " + temp_filename);
             return;
         }
-        temp_file << j.dump(4); // 格式化输出，缩进为 4 个空格
+        temp_file << j.dump(4); // formatted output, indented with 4 spaces
         temp_file.close();
 
         sync_to_cloud();
@@ -396,22 +396,22 @@ void AccountDeviceMgr::load()
 
         std::lock_guard<std::mutex> lock(file_mutex);
 
-        // 打开 JSON 文件
+        // Open the JSON file
         std::ifstream file(accout_device_file);
         if (!file.is_open()) {
             // throw std::runtime_error("Unable to open file: " + accout_device_file.string());
             return;
         }
 
-        // 解析 JSON 文件
+        // Parse the JSON file
         json j;
         file >> j;
         file.close();
 
-        // 清空当前数据
+        // Clear the current data
         accountDeviceInfos.account_infos.clear();
 
-        // 加载数据到 accountDeviceInfos
+        // Load the data into accountDeviceInfos
         for (const auto& account_json : j["accounts"]) {
             AccountInfo account;
             account.account_id = account_json["account_id"].get<std::string>();
@@ -419,7 +419,7 @@ void AccountDeviceMgr::load()
                 for (const auto& device_json : account_json["my_devices"]) {
                     DeviceInfo device;
                     device.device_unique_id = device_json["device_unique_id"].get<std::string>();
-                    // 加载其他设备信息
+                    // Load the other device information
                     try {
                         device.address     = device_json.contains("address") ? device_json["address"].get<std::string>() : "";
                         device.connectType = device_json.contains("connectType") ? device_json["connectType"].get<int>() : 3;
@@ -492,28 +492,28 @@ std::string AccountDeviceMgr::get_account_device_info_for_printers_init()
     Slic3r::GUI::UserInfo user = Slic3r::GUI::wxGetApp().get_user();
     std::string account_id = user.userId;
 
-    // 检查是否存在与 account_id 对应的项
+    // Check whether an entry exists for this account_id
     if (accountDeviceInfos.account_infos.find(account_id) == accountDeviceInfos.account_infos.end()) {
-        return ""; // 返回空字符串
+        return ""; // Return an empty string
     }
 
     json result;
     result["groups"] = json::array();
 
-    // 遍历 account_infos
+    // Iterate over account_infos
     for (const auto& account_pair : accountDeviceInfos.account_infos) {
         const AccountInfo& account = account_pair.second;
 
-        // 遍历 my_devices
+        // Iterate over my_devices
         for (const auto& device : account.my_devices) {
-            // 查找或创建对应的 group
+            // Find or create the corresponding group
             auto group_it = std::find_if(result["groups"].begin(), result["groups"].end(),
                                          [&device](const json& group) {
                                              return group["group"] == device.group;
                                          });
 
             if (group_it == result["groups"].end()) {
-                // 如果 group 不存在，则创建一个新的 group
+                // If the group does not exist, create a new one
                 json new_group;
                 new_group["group"] = device.group;
                 new_group["list"] = json::array();
@@ -521,7 +521,7 @@ std::string AccountDeviceMgr::get_account_device_info_for_printers_init()
                 group_it = std::prev(result["groups"].end());
             }
 
-            // 添加设备信息到对应的 group
+            // Add the device information to the corresponding group
             json device_json;
             device_json["address"] = device.address;
             device_json["connectType"] = std::to_string(device.connectType);

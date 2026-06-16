@@ -592,7 +592,7 @@ int ProfileFamilyLoader::LoadMachineJson(
         json pmodels = jLocal["printerList"];
         json series  = jLocal["series"];
 
-        std::map<std::string,std::vector<PrinterInfo>> mapPrinters;  //key = 品牌  Creality SparkX
+        std::map<std::string,std::vector<PrinterInfo>> mapPrinters;  //key = brand  Creality SparkX
 
          //wxString strJS = wxString::Format("handleStudioCmd(%s)", series.dump(-1, ' ', true));
         for (const auto& item : series) {
@@ -656,7 +656,7 @@ int ProfileFamilyLoader::LoadMachineJson(
                 json childList = json::object();
                 std::string fullName  = "";
                 if (brandName.find("Creality") == std::string::npos) {
-                    fullName = brandName + "|" + info.name;  // 其他品牌 如:sparkX 
+                    fullName = brandName + "|" + info.name;  // other brands, e.g. sparkX
                 } else {
                     fullName = info.name;
                 }

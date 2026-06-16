@@ -1649,8 +1649,8 @@ private:
         {
             wxBoxSizer* mainSizer = new wxBoxSizer(wxHORIZONTAL);
 
-            // 打印机选择
-            wxStaticText* printerLabel = new wxStaticText(this, wxID_ANY, L"打印机选择", wxDefaultPosition, wxSize(80, 28), wxALIGN_CENTER);
+            // printer selection
+            wxStaticText* printerLabel = new wxStaticText(this, wxID_ANY, L"Select Printer", wxDefaultPosition, wxSize(80, 28), wxALIGN_CENTER);
             mainSizer->Add(printerLabel, 1, wxALIGN_CENTER_HORIZONTAL | wxTOP, 5);
 
             {
@@ -1677,7 +1677,7 @@ private:
         }
 
         {
-            // 按钮
+            // buttons
             wxBoxSizer* btnSizer     = new wxBoxSizer(wxHORIZONTAL);
             _Button*    okButton     = new _Button(this, _L("Confirm"));
             _Button*    cancelButton = new _Button(this, _L("Cancel"));
@@ -1931,7 +1931,7 @@ private:
         {
             wxBoxSizer* mainSizer = new wxBoxSizer(wxHORIZONTAL);
 
-            // 打印机选择
+            // printer selection
             wxStaticText* printerLabel = new wxStaticText(this, wxID_ANY, _L("Select Printer"), wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER);
             setFont(printerLabel, 12);
             printerLabel->SetSize(wxSize(62, 13));
@@ -1994,7 +1994,7 @@ private:
         }
 
         {
-            // 按钮
+            // buttons
             wxBoxSizer* btnSizer     = new wxBoxSizer(wxHORIZONTAL);
             _Button*    okButton     = new _Button(this, _L("Confirm"));
             _Button*    cancelButton = new _Button(this, _L("Cancel"));
@@ -2051,7 +2051,7 @@ public:
         content_sizer->Add(msg_sizer, 0, wxEXPAND | wxALL, FromDIP(5));
         main_sizer->Add(content_sizer, 0, wxEXPAND | wxALL, FromDIP(5));
         {
-            // 按钮
+            // buttons
             wxBoxSizer* btnSizer     = new wxBoxSizer(wxHORIZONTAL);
             _Button*    okButton     = new _Button(this, _L("Resume"));
             _Button*    cancelButton = new _Button(this, _L("Cancel"));
@@ -2522,8 +2522,8 @@ public:
             m_treeCtrl = new _TreeView(parent);
             m_treeCtrl->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, [this](wxCommandEvent& e) { _sync(); });
 
-            m_treeCtrl->SetMinSize(wxSize(200, 800)); // 最小尺寸，防止被压缩
-            m_treeCtrl->SetMaxSize(wxSize(300, 1000)); // 最大尺寸，防止被拉伸
+            m_treeCtrl->SetMinSize(wxSize(200, 800)); // minimum size, to prevent it from being compressed
+            m_treeCtrl->SetMaxSize(wxSize(300, 1000)); // maximum size, to prevent it from being stretched
 
             ConfigRelateGUI::_Panel* tabView  = new ConfigRelateGUI::_Panel(parent, wxID_ANY, wxDefaultPosition, rightTabSize);
             ConfigRelateGUI::_Book*  notebook = new ConfigRelateGUI::_Book(tabView, wxID_ANY);
@@ -2662,13 +2662,13 @@ public:
         bool          m_binding{false};
         RelateBundle* m_bundle{NULL};
 
-        /* 过滤区域 */
+        /* filter area */
         ComboBox* m_brandChoice;
         ComboBox* m_modelChoice;
         ComboBox* m_nozzleChoice;
         ::TextInput* m_printerSearch;
 
-        /* 参数显示区域 */
+        /* parameter display area */
         _TreeView*         m_treeCtrl;
         wxDataViewItem              m_userPreset;
         std::vector<wxDataViewItem> m_userIds;
@@ -3172,12 +3172,12 @@ private:
     bool          m_binding{false};
     RelateBundle* m_bundle{NULL};
 
-    /* 过滤区域 */
+    /* filter area */
     ComboBox* m_brandChoice;
     ComboBox* m_categoryChoice;
     ::TextInput* m_printerSearch;
 
-    /* 参数显示区域 */
+    /* parameter display area */
     _TreeView*       m_treeCtrl;
     std::vector<wxDataViewItem> m_treeIds;
     _Button*                    m_addPrinterButton; 

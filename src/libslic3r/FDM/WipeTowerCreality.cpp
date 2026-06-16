@@ -824,7 +824,7 @@ public:
 	{
 
 
-    //creality 暂时屏蔽M220指令,固件不支持
+    //creality temporarily disable the M220 command, not supported by firmware
 #if 0
        m_gcode += "M220 S" + std::to_string(speed) + "\n";
 #endif
@@ -1440,8 +1440,8 @@ void WipeTowerCreality::toolchange_Change(
     writer.append("[change_filament_gcode]\n");
     //std::string z_up_for_firmware = "[z_up_for_firmware]"
  
-     //writer.z_hop(0.4f + m_z_offset, 1200.0f, "G0"); // 固件bug,临时抬升0.4,防止Z高度错误导致的移动到擦拭塔时产生剐蹭
-    writer.relative_zhop(0.4f + m_z_offset, 1200.0f, "relative_zhop_up_for_firmware G0"); // 固件bug,临时抬升0.4,防止Z高度错误导致的移动到擦拭塔时产生剐蹭
+     //writer.z_hop(0.4f + m_z_offset, 1200.0f, "G0"); // firmware bug: temporarily raise by 0.4 to prevent scraping when moving to the wipe tower due to an incorrect Z height
+    writer.relative_zhop(0.4f + m_z_offset, 1200.0f, "relative_zhop_up_for_firmware G0"); // firmware bug: temporarily raise by 0.4 to prevent scraping when moving to the wipe tower due to an incorrect Z height
     writer.append("[move_around_wipe_tower]\n");
     // Travel to where we assume we are. Custom toolchange or some special T code handling (parking extruder etc)
     // gcode could have left the extruder somewhere, we cannot just start extruding. We should also inform the
@@ -1588,9 +1588,9 @@ void WipeTowerCreality::toolchange_Wipe(
     }
 
     // We may be going back to the model - wipe the nozzle. If this is followed
-    //擦拭完去打产品（擦拭-抬升-产品）
+    //after wiping, go print the product (wipe - lift - product)
     //writer.add_wipe_point(writer.x(), writer.y()).add_wipe_point(!m_left_to_right ? m_wipe_tower_width : 0.f, writer.y());
-    //擦拭完继续填充擦拭塔下一个block（擦拭-空走-继续填充下一block）  暂时不加  否则跳转不对
+    //after wiping, continue filling the next block of the wipe tower (wipe - travel - continue filling next block)  not added for now  otherwise the jump is incorrect
     writer.add_wipe_group(Vec2f(writer.x(), writer.y()), Vec2f(!m_left_to_right ? m_wipe_tower_width : 0.f, writer.y()));
     writer.append(";wipe_finish_path\n"); 
     writer.set_feedrate(retract_speed);
@@ -2312,7 +2312,7 @@ void WipeTowerCreality::generate(std::vector<std::vector<WipeTower::ToolChangeRe
         for (int i = 0; i < num_tool_change; ++i) {
           
             if (i == 0 && (layer.tool_changes[i].old_tool == wall_idx)) {
-                finish_layer_tcr = finish_layer_new(m_enable_timelapse_print ? false : true, false, false);//不生成格子
+                finish_layer_tcr = finish_layer_new(m_enable_timelapse_print ? false : true, false, false);//do not generate grid
             } 
             
            const auto* block = get_block_by_category(m_filpar[layer.tool_changes[i].new_tool].category, false);
@@ -2487,7 +2487,7 @@ void WipeTowerCreality::generate_wipe_tower_blocks()
         const auto&                     layer_blocks      = m_all_layers_depth[layer_id];
         std::unordered_map<int, float>& category_to_depth = all_layer_category_to_depth[layer_id];
         for (auto block : layer_blocks) {
-            category_to_depth[block.category] = block.depth; // m_all_layers_depth    bambu是统一值
+            category_to_depth[block.category] = block.depth; // m_all_layers_depth    bambu uses a uniform value
         }
     }
 
@@ -2757,7 +2757,7 @@ WipeTower::ToolChangeResult WipeTowerCreality::finish_block(const WipeTower::Wip
    
     writer.travel(writer.pos(), m_travel_speed * 60.f);
     writer.relative_zhop(m_z_offset, 0.0, "relative_zhop_recovery_for_firmware G1");
-    writer.retract(-retract_length, retract_speed); // 装填
+    writer.retract(-retract_length, retract_speed); // load
    
     float line_width = m_perimeter_width;
     if (!first_layer) {
@@ -2771,15 +2771,15 @@ WipeTower::ToolChangeResult WipeTowerCreality::finish_block(const WipeTower::Wip
     // inner perimeter of the sparse section, if there is space for it:
     if (fill_box.ru.y() - fill_box.rd.y() > WT_EPSILON) {
         //writer.rectangle_fill_box(fill_box.ld, fill_box.rd.x() - fill_box.ld.x(), fill_box.ru.y() - fill_box.rd.y(), retract_length,
-        //                          retract_speed, feedrate);//格子外框
+        //                          retract_speed, feedrate);//grid outer frame
        // writer.retract(-retract_length, retract_speed);
-        writer.rectangle_fill_box(this, fill_box, finish_rect_wipe_path, retract_length, retract_speed, feedrate);//格子外框
+        writer.rectangle_fill_box(this, fill_box, finish_rect_wipe_path, retract_length, retract_speed, feedrate);//grid outer frame
     }
 
     WipeTower::box_coordinates wt_box(fill_box.ld, fill_box.ru.x() - fill_box.lu.x(), fill_box.ru.y() - fill_box.rd.y());
     wt_box = align_perimeter(wt_box);
 
-    // Now prepare future wipe. box contains rectangle that was extruded last (ccw).逆时针
+    // Now prepare future wipe. box contains rectangle that was extruded last (ccw).counterclockwise
     Vec2f target = (writer.pos() == wt_box.ld ?
                         wt_box.rd :
                         (writer.pos() == wt_box.rd ? wt_box.ru : (writer.pos() == wt_box.ru ? wt_box.lu : wt_box.ld)));
@@ -2793,7 +2793,7 @@ WipeTower::ToolChangeResult WipeTowerCreality::finish_block(const WipeTower::Wip
         if (distance > line_width) {
             //writer.add_wipe_point(writer.x(), writer.y()).add_wipe_point(target);
             writer.add_wipe_group(Vec2f(writer.x(), writer.y()),target);
-            writer.append(";wipe_finish_path\n");//框结束擦拭，为打印栅格填充做准备
+            writer.append(";wipe_finish_path\n");//finish wiping the frame, preparing for the grid infill print
             writer.set_feedrate(retract_speed);
         }
 
@@ -2835,7 +2835,7 @@ WipeTower::ToolChangeResult WipeTowerCreality::finish_block(const WipeTower::Wip
             }
             //writer.extrude(writer.x(), fill_box.lu.y());
             //finish_rect_wipe_path.emplace_back(writer.x(), fill_box.lu.y());
-            //添加擦拭路径
+            //add wipe path
             //writer/*.add_wipe_point(writer.x(), writer.y())*/
             //    .add_wipe_point(writer.x(), writer.y() - line_width)
             //    .add_wipe_point(!m_left_to_right ? m_wipe_tower_width : 0.f, writer.y() - line_width);
@@ -2864,7 +2864,7 @@ WipeTower::ToolChangeResult WipeTowerCreality::finish_block(const WipeTower::Wip
                 // BBS: add wipe_path for this case: only with finish rectangle
             if (finish_rect_wipe_path.size() == 2 && finish_rect_wipe_path[0] == writer.pos())
                 target = finish_rect_wipe_path[1];
-            // 添加擦拭路径
+            // add wipe path
             //writer.add_wipe_point(writer.x(), writer.y()).add_wipe_point(target);
             //writer.retract(retract_length * 0.7, retract_speed);
             writer.add_wipe_group(Vec2f(writer.x(), writer.y()), target);
@@ -2984,7 +2984,7 @@ WipeTower::ToolChangeResult WipeTowerCreality::finish_block_solid(const WipeTowe
 
 
     writer.add_wipe_group(Vec2f(writer.x(), writer.y()), finish_rect_wipe_path.back());
-    writer.append(";wipe_finish_path\n"); // 框结束擦拭，为打印栅格填充做准备
+    writer.append(";wipe_finish_path\n"); // finish wiping the frame, preparing for the grid infill print
     writer.set_feedrate(retract_speed);
 
 
@@ -3291,7 +3291,7 @@ WipeTower::ToolChangeResult WipeTowerCreality::finish_layer_new(bool extrude_per
         m_outer_wall[m_z_pos].push_back(shift_polyline);
     }
 
-#if 1 //"外墙缺口"
+#if 1 //"outer wall gap"
     // How many perimeters shall the brim have?
     int         loops_num         = (m_wipe_tower_brim_width + spacing / 2.f) / spacing;
     const float max_chamfer_width = 3.f;
@@ -3521,7 +3521,7 @@ Polygon WipeTowerCreality::generate_support_wall_new(WipeTowerWriterCreality&  w
 
 Polygon WipeTowerCreality::generate_cone_polygon(const WipeTower::box_coordinates& wt_box)
 {
-    // 稳定锥体
+    // stabilization cone
     //   This block creates the stabilization cone.
     //  First define a lambda to draw the rectangle with stabilization.
     float spacing             = m_perimeter_width - m_layer_height * float(1. - M_PI_4);
@@ -3596,7 +3596,7 @@ Polygon WipeTowerCreality::generate_cone_polygon(const WipeTower::box_coordinate
         return poly;
     };
 
-    bool first_layer = is_first_layer() || (m_num_tool_changes <= 1 && m_no_sparse_layers); //"无稀疏层beta"
+    bool first_layer = is_first_layer() || (m_num_tool_changes <= 1 && m_no_sparse_layers); //"no sparse layers beta"
 
     float feedrate = first_layer ? std::min(m_first_layer_speed * 60.f, m_max_speed) :
                                    std::min(60.0f * m_filpar[m_current_tool].max_e_speed / m_extrusion_flow, m_max_speed);

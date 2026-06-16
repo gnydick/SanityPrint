@@ -368,7 +368,7 @@ public:
     void show_device(bool bBBLPrinter);
 
     void set_content_visible(bool visiable);
-    // 刷新设备管理页（触发前端 refresh_all_device）
+    // Refresh the device management page (triggers the front-end refresh_all_device)
     void refresh_device_page();
 
     PrinterMgrView* get_printer_mgr_view() { return m_printer_mgr_view; }

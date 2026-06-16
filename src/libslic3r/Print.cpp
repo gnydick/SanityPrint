@@ -801,7 +801,7 @@ StringObjectException Print::sequential_print_clearance_valid(const Print &print
 #if 0 //do not sort anymore, use the order in object list
     auto bed_points = get_bed_shape(print_config);
     float bed_width = bed_points[1].x() - bed_points[0].x();
-    // 如果扩大以后的多边形的距离小于这个值，就需要严格保证从左到右的打印顺序，否则会撞工具头右侧
+    // If the distance between the expanded polygons is smaller than this value, the left-to-right print order must be strictly enforced, otherwise it will collide with the right side of the tool head
     float unsafe_dist = scale_(print_config.extruder_clearance_max_radius.value - print_config.extruder_clearance_radius.value);
     struct VecHash
     {
@@ -835,7 +835,7 @@ StringObjectException Print::sequential_print_clearance_valid(const Print &print
                 auto inter_max = std::min(ly2, ry2);
                 auto inter_y   = inter_max - inter_min;
 
-                // 如果y方向的重合超过轮廓的膨胀量，说明两个物体在一行，应该先打左边的物体，即先比较二者的x坐标。
+                // If the overlap in the y direction exceeds the contour's expansion amount, it means the two objects are in the same row, so the left object should be printed first, i.e. compare their x coordinates first.
                 if (inter_y > scale_(0.5 * print.config().extruder_clearance_radius.value)) {
                     if (std::max(rx1 - lx2, lx1 - rx2) < unsafe_dist) {
                         if (lx1 > rx1) {
@@ -850,13 +850,13 @@ StringObjectException Print::sequential_print_clearance_valid(const Print &print
                     }
                 }
                 if (l.height > hc1 && r.height < hc1) {
-                    // 当前物体超过了顶盖高度，必须后打
+                    // The current object exceeds the top cover height, so it must be printed last
                     left_right_pair.insert({j, i});
                     BOOST_LOG_TRIVIAL(debug) << "height>hc1, print_instance " << r.print_instance->model_instance->get_object()->name << "(" << r.arrange_score << ")"
                                              << " -> " << l.print_instance->model_instance->get_object()->name << "(" << l.arrange_score << ")";
                 }
                 else if (l.height > hc2 && l.height > r.height && l.arrange_score<r.arrange_score) {
-                    // 如果当前物体的高度超过滑杆，且比r高，就给它加一点代价，尽量让高的物体后打（只有物体高度超过滑杆时才有必要按高度来）
+                    // If the current object's height exceeds the slider bar and is taller than r, add a little cost to it so that taller objects are printed later as much as possible (it is only necessary to order by height when the object height exceeds the slider bar)
                     if (l.arrange_score < r.arrange_score)
                         l.arrange_score = r.arrange_score + 10;
                     BOOST_LOG_TRIVIAL(debug) << "height>hc2, print_instance " << inst.print_instance->model_instance->get_object()->name
@@ -866,8 +866,8 @@ StringObjectException Print::sequential_print_clearance_valid(const Print &print
             }
         }
     }
-    // 多做几次代价传播，因为前一次有些值没有更新。
-    // TODO 更好的办法是建立一颗树，一步到位。不过我暂时没精力搞，先就这样吧
+    // Do a few more rounds of cost propagation, because some values were not updated in the previous round.
+    // TODO A better approach would be to build a tree and do it in one pass. But I don't have the energy for that right now, so let's leave it like this for now
     for (int k=0;k<5;k++)
     for (auto p : left_right_pair) {
         auto &l = print_instance_with_bounding_box[p(0)];
@@ -935,7 +935,7 @@ StringObjectException Print::sequential_print_clearance_valid(const Print &print
         for (int k = 0; k < print_instance_count; k++)
         {
             auto inst = print_instance_with_bounding_box[k].print_instance;
-            // 只需要考虑喷嘴到滑杆的偏移量，这个比整个工具头的碰撞半径要小得多
+            // We only need to consider the offset from the nozzle to the slider bar, which is much smaller than the collision radius of the entire tool head
             auto bbox = print_instance_with_bounding_box[k].bounding_box.inflated(-scale_(0.5 * print.config().extruder_clearance_radius.value));
             auto iy1 = bbox.min.y();
             auto iy2 = bbox.max.y();
@@ -2376,8 +2376,8 @@ void Print::process(long long *time_cost_with_cache, bool use_cache)
     }
 
     
-    m_toolpath_outside_result.reset(); // 清除旧结果
-    // 1. 构建床身多边形 (需要将 ConfigOptionPoints 转换为 Polygon 并进行缩放)
+    m_toolpath_outside_result.reset(); // clear old result
+    // 1. Build the bed polygon (need to convert ConfigOptionPoints to Polygon and scale it)
     Polygons bed_polys;
     {
         const ConfigOptionPoints* bed_points_opt = m_config.option<ConfigOptionPoints>("printable_area");
@@ -2390,9 +2390,9 @@ void Print::process(long long *time_cost_with_cache, bool use_cache)
         }
     }
 
-    // 2. 执行检查
+    // 2. Perform the check
     if (!bed_polys.empty()) {
-        // 注意：find_toolpath_outside 实现时需要处理 Polygons 类型的 bed_poly
+        // Note: the find_toolpath_outside implementation needs to handle a Polygons-type bed_poly
         auto outsideRes = ConflictChecker::find_toolpath_outside(m_objects, bed_polys);
 
         if (outsideRes.has_value()) {
@@ -2443,7 +2443,7 @@ std::string Print::export_gcode(const std::string& path_template, GCodeProcessor
 #if AUTOMATION_TOOL
     if (AutomationMgr::enabled()) {
 
-        // 导出confi配置到指定目录
+        // Export the config to the specified directory
         std::string full_config;
         GCode::append_full_config(*this, full_config);
         std::string fileDir = Slic3r::data_dir() + "/automation/config/";
@@ -2457,7 +2457,7 @@ std::string Print::export_gcode(const std::string& path_template, GCodeProcessor
         logFile << full_config << std::endl;
         logFile.close();
 
-        // 导出gcode到指定目录
+        // Export the gcode to the specified directory
         std::string automation_path = Slic3r::data_dir() + "/automation/gcode";
 
         if (!fs::exists(automation_path)) {
@@ -2912,13 +2912,13 @@ void WipeTowerData::construct_mesh(
 {
     wipe_tower_mesh_data     = WipeTowerMeshData{};
     float first_layer_height = 0.08;  // brim height
-    if (!is_stable_cone_wipe_tower) { // 立方体
+    if (!is_stable_cone_wipe_tower) { // cube
         wipe_tower_mesh_data->real_wipe_tower_mesh = make_cube(width, depth, height);
         wipe_tower_mesh_data->real_brim_mesh       = make_cube(width + 2 * brim_width, depth + 2 * brim_width, first_layer_height);
         wipe_tower_mesh_data->real_brim_mesh.translate({-brim_width, -brim_width, 0});
         wipe_tower_mesh_data->bottom = {scaled(Vec2f{-brim_width, -brim_width}), scaled(Vec2f{width + brim_width, 0}),
                                         scaled(Vec2f{width + brim_width, depth + brim_width}), scaled(Vec2f{0, depth})};
-    } else { // 稳定锥体
+    } else { // stable cone
         wipe_tower_mesh_data->real_wipe_tower_mesh = make_cube(width, depth, height);
         wipe_tower_mesh_data->bottom               = cone_brim;
         wipe_tower_mesh_data->bottom               = offset(wipe_tower_mesh_data->bottom, scaled(brim_width)).front();
@@ -3108,7 +3108,7 @@ void Print::_make_wipe_tower()
     else if (m_machine_vender->is_firmwaresoft_mm_printer()) {
 
         if (m_config.purge_in_prime_tower || (m_config.timelapse_type == TimelapseType::tlSmooth) /*||
-            (m_config.timelapse_type == TimelapseType::tlTraditional)*/) // 冲刷进擦拭塔或延时摄影-平滑模式
+            (m_config.timelapse_type == TimelapseType::tlTraditional)*/) // purge into the wipe tower or timelapse - smooth mode
         {
             // Initialize the wipe tower.
             WipeTowerCrealityCFS wipe_tower(m_config, m_default_region_config, m_plate_index, m_origin, wipe_volumes,
@@ -3522,7 +3522,7 @@ DynamicConfig PrintStatistics::config() const
     config.set_key_value("print_time", new ConfigOptionString(normal_print_time));
     config.set_key_value("normal_print_time", new ConfigOptionString(normal_print_time));
     config.set_key_value("silent_print_time", new ConfigOptionString(silent_print_time));
-    config.set_key_value("used_filament", new ConfigOptionFloat(round(this->total_used_filament / 10.) / 100.00));//只保留小数点后2位
+    config.set_key_value("used_filament", new ConfigOptionFloat(round(this->total_used_filament / 10.) / 100.00));//keep only 2 decimal places
     config.set_key_value("extruded_volume",           new ConfigOptionFloat(this->total_extruded_volume));
     config.set_key_value("total_cost",                new ConfigOptionFloat(this->total_cost));
     config.set_key_value("total_toolchanges",         new ConfigOptionInt(this->total_toolchanges));

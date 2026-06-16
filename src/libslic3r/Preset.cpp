@@ -676,18 +676,18 @@ bool is_compatible_with_printer(const PresetWithVendorProfile &preset, const Pre
                 config.set_key_value("num_extruders", new ConfigOptionInt((int)floats->values.size()));
             } else {
                 BOOST_LOG_TRIVIAL(warning) << "Invalid nozzle_diameter option type or empty values";
-                config.set_key_value("num_extruders", new ConfigOptionInt(1)); // 默认单喷头
+                config.set_key_value("num_extruders", new ConfigOptionInt(1)); // single extruder by default
             }
         } else {
             BOOST_LOG_TRIVIAL(warning) << "Failed to get nozzle_diameter option";
-            config.set_key_value("num_extruders", new ConfigOptionInt(1)); // 默认单喷头
+            config.set_key_value("num_extruders", new ConfigOptionInt(1)); // single extruder by default
         }
     } catch (const std::exception& e) {
         BOOST_LOG_TRIVIAL(error) << "Exception in config access: " << e.what();
-        config.set_key_value("num_extruders", new ConfigOptionInt(1)); // 默认单喷头
+        config.set_key_value("num_extruders", new ConfigOptionInt(1)); // single extruder by default
     } catch (...) {
         BOOST_LOG_TRIVIAL(error) << "Unknown exception in config access";
-        config.set_key_value("num_extruders", new ConfigOptionInt(1)); // 默认单喷头
+        config.set_key_value("num_extruders", new ConfigOptionInt(1)); // single extruder by default
     }
     boost::log::core::get()->flush();
 

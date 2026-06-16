@@ -49,8 +49,8 @@ bool TabButton::Create(wxWindow *parent, wxString text, ScalableBitmap &bmp, lon
     //BBS set default font
     SetFont(Label::Body_14);
     wxWindow::SetLabel(text);
-    // 重建位图以绑定当前控件上下文，避免跨控件浅拷贝。
-    // 若传入的是空名称（用于清空图标），则保持空位图，避免 create_scaled_bitmap 抛异常。
+    // Rebuild the bitmap so it is bound to the current control's context, avoiding a shallow copy shared across controls.
+    // If an empty name is passed in (used to clear the icon), keep an empty bitmap to avoid create_scaled_bitmap throwing an exception.
     if (bmp.name().empty()) {
         this->icon = ScalableBitmap();
     } else {
@@ -107,8 +107,8 @@ void TabButton::SetBGColor(StateColor const &color)
 
 void TabButton::SetBitmap(ScalableBitmap &bitmap)
 {
-    // 重建位图以绑定当前控件上下文，避免跨控件浅拷贝。
-    // 若为清空图标（空名称），则保持默认空位图，避免空名称导致资源加载异常。
+    // Rebuild the bitmap so it is bound to the current control's context, avoiding a shallow copy shared across controls.
+    // If clearing the icon (empty name), keep the default empty bitmap to avoid a resource-load error caused by the empty name.
     if (bitmap.name().empty()) {
         this->icon = ScalableBitmap();
     } else {

@@ -93,10 +93,10 @@ int GUI_Run(GUI_InitParams &params)
                     BOOST_LOG_TRIVIAL(warning) << "macOS Breakpad: oldPath=" << oldPath.string();
 
                     boost::posix_time::ptime now = boost::posix_time::second_clock::local_time();
-                    // 创建一个 time_facet 对象，用于自定义时间格式
+                    // Create a time_facet object to customize the time format
                     boost::posix_time::time_facet* timeFacet = new boost::posix_time::time_facet();
                     std::stringstream              ss;
-                    // 设置时间格式为 yyyyMMDD_hhmmss
+                    // Set the time format to yyyyMMDD_hhmmss
                     timeFacet->format("%Y%m%d_%H%M%S");
                     ss.imbue(std::locale(std::locale::classic(), timeFacet));
                     ss << now;
@@ -116,10 +116,10 @@ int GUI_Run(GUI_InitParams &params)
                             BOOST_LOG_TRIVIAL(error) << "macOS Breakpad: rename failed: " << e.what();
                         }
                         #ifdef TARGET_OS_MAC
-                        // 获取当前可执行文件路径
+                        // Get the current executable path
                         wxString exePath = wxStandardPaths::Get().GetExecutablePath();
                         BOOST_LOG_TRIVIAL(warning) << "macOS Breakpad: exePath=" << exePath.ToStdString();
-                        // 提取 .app 包路径
+                        // Extract the .app bundle path
                         wxString appBundlePath;
                         size_t   pos = exePath.rfind(wxT("/Contents/MacOS/"));
                         if (pos != wxString::npos) {
@@ -140,16 +140,16 @@ int GUI_Run(GUI_InitParams &params)
                             }
                         }
                         BOOST_LOG_TRIVIAL(warning) << "macOS Breakpad: bundle_exists=" << (bundle_exists ? "true" : "false");
-                        // 记录当前进程 PID（用于对比是否真正拉起了新实例）
+                        // Record the current process PID (used to compare whether a new instance was actually launched)
                         BOOST_LOG_TRIVIAL(warning) << "macOS Breakpad: current pid=" << getpid() << ", parent pid=" << getppid();
-                        // 为后续构造命令准备参数字符串（保持简单），路径统一使用单引号包裹
+                        // Prepare the argument string for building the command later (keep it simple); wrap all paths in single quotes
                         wxString minidumpArgStr = wxString::Format(
                             "minidump://file=%s",
                             wxString::FromUTF8(newPath.string().c_str())
                         );
                         BOOST_LOG_TRIVIAL(warning) << "macOS Breakpad: minidumpArg=" << minidumpArgStr.ToStdString();
                         
-                        // 优先尝试使用 Launch Services：open -n（强制新实例）/ -a（可能激活旧实例），最后兜底直接执行二进制
+                        // Prefer Launch Services: open -n (force a new instance) / -a (may activate the existing instance), and finally fall back to executing the binary directly
                         if (!bundle_exists) {
                             BOOST_LOG_TRIVIAL(error) << "macOS Breakpad: app bundle path missing, skip 'open -na'/'open -a' and try direct exec binary (single-quoted)";
                             wxString command_exec;
@@ -162,20 +162,20 @@ int GUI_Run(GUI_InitParams &params)
                                 BOOST_LOG_TRIVIAL(warning) << "macOS Breakpad: direct exec started, pid=" << pid_exec;
                             }
                         } else {
-                            // 首选：open -na 'AppBundle' --args 'minidump://file=...'
+                            // Preferred: open -na 'AppBundle' --args 'minidump://file=...'
                             wxString command_force_new = wxString::Format("open -na '%s' --args '%s'", appBundlePath, minidumpArgStr);
                             BOOST_LOG_TRIVIAL(warning) << "macOS Breakpad: restart command (prefer -na)=" << command_force_new.ToStdString();
                             boost::log::core::get()->flush();
                             long pid_force = wxExecute(command_force_new, wxEXEC_ASYNC);
                             if (pid_force <= 0) {
                                 BOOST_LOG_TRIVIAL(error) << "macOS Breakpad: preferred 'open -na' failed to start process. Trying fallback 'open -a' (may activate existing instance)";
-                                // 回退1：允许激活旧实例
+                                // Fallback 1: allow activating the existing instance
                                 wxString command_allow_activate = wxString::Format("open -a '%s' --args '%s'", appBundlePath, minidumpArgStr);
                                 BOOST_LOG_TRIVIAL(warning) << "macOS Breakpad: fallback1 command (open -a)=" << command_allow_activate.ToStdString();
                                 long pid_a = wxExecute(command_allow_activate, wxEXEC_ASYNC);
                                 if (pid_a <= 0) {
                                     BOOST_LOG_TRIVIAL(error) << "macOS Breakpad: fallback1 'open -a' failed. Trying fallback 'exec binary'";
-                                    // 回退2：直接执行 Contents/MacOS 下的二进制
+                                    // Fallback 2: directly execute the binary under Contents/MacOS
                                     wxString command_exec;
                                     command_exec.Printf("'%s' '%s'", exePath, minidumpArgStr);
                                     BOOST_LOG_TRIVIAL(warning) << "macOS Breakpad: fallback2 command (exec binary)=" << command_exec.ToStdString();

@@ -2287,7 +2287,7 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
 
     bool _BBS_3MF_Importer::check_3mf_model_config(const std::string& filename)
     {
-        // 1. 初始化ZIP读取器
+        // 1. Initialize the ZIP reader
         mz_zip_archive archive;
         mz_zip_zero_struct(&archive);
 
@@ -2307,7 +2307,7 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
             return false;
         }
 
-        // 2. 检查Metadata文件夹
+        // 2. Check the Metadata folder
         bool has_metadata = false;
         mz_uint num_entries = mz_zip_reader_get_num_files(&archive);
 
@@ -2326,7 +2326,7 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
             }
         }
 
-        // 3. 检查3dmodel.model文件
+        // 3. Check the 3dmodel.model file
         const char* model_file = "3D/3dmodel.model";
         int file_index = mz_zip_reader_locate_file(&archive, model_file, nullptr, 0);
         if (file_index < 0)
@@ -2342,7 +2342,7 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
             return false;
         }
 
-        // 4. XML解析
+        // 4. XML parsing
         XML_Parser parser = XML_ParserCreate(nullptr);
         if (!parser)
         {
@@ -2363,7 +2363,7 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
         XML_SetUserData(parser, &state);
         XML_SetElementHandler(parser, start_element_handler, end_element_handler);
 
-        // 检查解压大小是否合理,不超过 XML_Parser 的限制
+        // Check whether the decompressed size is reasonable, not exceeding the XML_Parser limit
         if ((stat.m_uncomp_size <= 0) || (stat.m_uncomp_size > 100 * 1024 * 1024) || (stat.m_uncomp_size > INT_MAX))
         {  
             close_zip_reader(&archive);
@@ -3904,7 +3904,7 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
                         }
                 } else {
                     m_bambuslicer_generator_version = Semver::parse("0.0.0");
-                    //std::cout << "未找到版本号。" << std::endl;
+                    //std::cout << "Version number not found." << std::endl;
                 }
 
             }
@@ -5651,41 +5651,41 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
             _BBS_3MF_Importer::ObjectImporter& importer;
             const mz_zip_archive_file_stat& stat;
 
-            // 生产者-消费者模式相关成员
-            std::queue<std::string> data_queue;           // 数据队列
-            std::mutex queue_mutex;                       // 队列互斥锁
-            std::condition_variable queue_cv;             // 队列条件变量
-            std::atomic<bool> parsing_finished{false};    // 解析完成标志
-            std::atomic<bool> parsing_error{false};       // 解析错误标志
-            std::string error_message;                    // 错误信息
-            std::thread parse_thread;                     // 解析线程
+            // Members related to the producer-consumer pattern
+            std::queue<std::string> data_queue;           // data queue
+            std::mutex queue_mutex;                       // queue mutex
+            std::condition_variable queue_cv;             // queue condition variable
+            std::atomic<bool> parsing_finished{false};    // parsing-finished flag
+            std::atomic<bool> parsing_error{false};       // parsing-error flag
+            std::string error_message;                    // error message
+            std::thread parse_thread;                     // parsing thread
 
             CallbackData(XML_Parser& parser, _BBS_3MF_Importer::ObjectImporter& importer, const mz_zip_archive_file_stat& stat) : parser(parser), importer(importer), stat(stat)
             {
-                // 启动消费者线程
+                // Start the consumer thread
                 parse_thread = std::thread([this, parser, stat]() {
                     while (true) {
                         std::unique_lock<std::mutex> lock(queue_mutex);
                         
-                        // 等待数据或解析完成信号
+                        // Wait for data or the parsing-finished signal
                         queue_cv.wait(lock, [this]() {
                             return !data_queue.empty() || parsing_finished;
                         });
                         
-                        // 检查是否应该退出
+                        // Check whether we should exit
                         if (parsing_finished && data_queue.empty()) {
                             break;
                         }
                         
-                        // 处理队列中的所有数据
+                        // Process all data in the queue
                         while (!data_queue.empty()) {
                             std::string data = std::move(data_queue.front());
                             data_queue.pop();
                             
-                            // 释放锁以允许生产者继续添加数据
+                            // Release the lock to allow the producer to keep adding data
                             lock.unlock(); 
                             
-                            // 执行XML解析
+                            // Perform XML parsing
                             if (XML_Parse(parser, data.c_str(), (int)data.size(), 0) == XML_STATUS_ERROR) {
                                 parsing_error = true;
                                 error_message = std::string("XML parsing error: ") + XML_ErrorString(XML_GetErrorCode(parser));
@@ -5694,7 +5694,7 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
                                 return;
                             }
                             
-                            // 重新获取锁以检查队列
+                            // Re-acquire the lock to check the queue
                             lock.lock();
                         }
                     }
@@ -5703,9 +5703,9 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
 
             ~CallbackData()
             {
-                // 确保线程安全退出
+                // Ensure the thread exits safely
                 if (parse_thread.joinable()) {
-                    // 如果解析尚未完成，设置标志并通知
+                    // If parsing has not finished yet, set the flag and notify
                     if (!parsing_finished) {
                         parsing_finished = true;
                         queue_cv.notify_all();
@@ -5724,7 +5724,7 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
             mz_file_write_func callback = [](void* pOpaque, mz_uint64 file_ofs, const void* pBuf, size_t n)->size_t {
                 CallbackData* data = (CallbackData*)pOpaque;
 
-                // 生产者模式：只负责接收和存储字符串数据
+                // Producer mode: only responsible for receiving and storing string data
                 if (n > 0) {
                     std::lock_guard<std::mutex> lock(data->queue_mutex);
                     data->data_queue.emplace(std::string((const char*)pBuf, n));
@@ -5753,16 +5753,16 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
             return false;
         }
 
-        // 文件提取完成，设置解析完成标志
+        // File extraction complete; set the parsing-finished flag
         data.parsing_finished = true;
         data.queue_cv.notify_all();
 
-        // 等待消费者线程完成解析
+        // Wait for the consumer thread to finish parsing
         if (data.parse_thread.joinable()) {
             data.parse_thread.join();
         }
 
-        // 检查解析过程中是否有错误
+        // Check whether any error occurred during parsing
         if (data.parsing_error) {
             top_importer->add_error(data.error_message + " for " + object_path);
             return false;
@@ -8741,7 +8741,7 @@ static void handle_legacy_project_loaded(unsigned int version_project_file, Dyna
     }
 }
 
-// 更新单个文件的修改时间（兼容所有Boost版本）
+// Update the modification time of a single file (compatible with all Boost versions)
 bool update_file_modification_time(const fs::path& file_path, const std::time_t& new_time) {
     try {
         if (fs::exists(file_path) && (fs::is_regular_file(file_path)|| fs::is_directory(file_path))) {
@@ -8749,26 +8749,26 @@ bool update_file_modification_time(const fs::path& file_path, const std::time_t&
             return true;
         }
 
-        // 直接使用std::time_t作为时间类型（旧版本Boost兼容方式）
+        // Use std::time_t directly as the time type (older Boost compatibility approach)
         
         return false;
     }
     catch (const fs::filesystem_error& e) {
-        std::cerr << "操作失败 (" << file_path << "): " << e.what() << std::endl;
+        std::cerr << "Operation failed (" << file_path << "): " << e.what() << std::endl;
         return false;
     }
 }
 
-// 递归更新文件夹内所有文件
+// Recursively update all files within a folder
 void recursive_update_directory(const fs::path& dir_path, const std::time_t& new_time, 
                                int& updated_count, int& error_count) {
     try {
         if (!fs::exists(dir_path) || !fs::is_directory(dir_path)) {
-            std::cerr << "无效文件夹: " << dir_path << std::endl;
+            std::cerr << "Invalid folder: " << dir_path << std::endl;
             return;
         }
 
-        // 兼容旧版本的目录迭代方式
+        // Directory iteration approach compatible with older versions
         fs::directory_iterator end_iter;
         for (fs::directory_iterator iter(dir_path); iter != end_iter; ++iter) {
             try {
@@ -8779,20 +8779,20 @@ void recursive_update_directory(const fs::path& dir_path, const std::time_t& new
                 else if (fs::is_regular_file(iter->status())) {
                     if (update_file_modification_time(iter->path(), new_time)) {
                         updated_count++;
-                        std::cout << "已更新: " << iter->path() << std::endl;
+                        std::cout << "Updated: " << iter->path() << std::endl;
                     } else {
                         error_count++;
                     }
                 }
             }
             catch (const fs::filesystem_error& e) {
-                std::cerr << "处理失败 (" << iter->path() << "): " << e.what() << std::endl;
+                std::cerr << "Processing failed (" << iter->path() << "): " << e.what() << std::endl;
                 error_count++;
             }
         }
     }
     catch (const fs::filesystem_error& e) {
-        std::cerr << "文件夹操作失败: " << e.what() << std::endl;
+        std::cerr << "Folder operation failed: " << e.what() << std::endl;
         error_count++;
     }
 }

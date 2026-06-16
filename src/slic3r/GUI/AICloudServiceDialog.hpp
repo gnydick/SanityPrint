@@ -196,7 +196,7 @@ public:
     void doAIRecommendation(bool bAIRecommendationSupportGeneration, bool bAIRecommendationZseamPainting);
     std::string get3mfPath() { return m_3mfPath; }
     void getRespData(std::list<CommWithAICloudService::STRespData>& lstRespData);
-    void cleanup(); // 清理方法，用于语言切换时释放资源
+    void cleanup(); // Cleanup method; releases resources when switching languages
 
 private:
     int startup();
