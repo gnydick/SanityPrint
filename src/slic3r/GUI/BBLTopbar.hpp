@@ -9,8 +9,6 @@
 
 using namespace Slic3r::GUI;
 
-class ProgressBar;
-
 class BBLTopbar : public wxAuiToolBar
 {
 public:
@@ -136,8 +134,15 @@ private:
     wxAuiToolBarItem* m_upload_btn;
     wxAuiToolBarItem* m_feedback_separator_item{nullptr};
     wxAuiToolBarItem* m_feedback_item;
-    ProgressBar*      m_sync_progress      = nullptr;
-    wxAuiToolBarItem* m_sync_progress_item = nullptr;
+    // Push-progress bar: a borderless child window painted into the empty topbar gap to the
+    // right of the sync button. It is NOT an AUI toolbar item, so it can never displace the
+    // window controls / save / undo / redo (which an AddControl'd widget did).
+    wxWindow*         m_sync_overlay = nullptr;
+    bool              m_sync_active  = false;
+    int               m_sync_total   = 0;
+    int               m_sync_done    = 0;
+    void OnSyncOverlayPaint(wxPaintEvent& evt);
+    void layout_sync_overlay();
     wxControl* m_tabCtrol;
 
     wxBitmap m_publish_bitmap;

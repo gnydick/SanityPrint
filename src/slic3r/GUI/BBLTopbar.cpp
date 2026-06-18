@@ -11,7 +11,7 @@
 #include "WebViewDialog.hpp"
 #include "PartPlate.hpp"
 #include "FilamentSyncDialog.hpp"
-#include "Widgets/ProgressBar.hpp"
+#include <wx/dcbuffer.h>
 
 #include <boost/log/trivial.hpp>
 #include <boost/log/core.hpp>
@@ -689,24 +689,33 @@ void BBLTopbar::Init(wxFrame* parent)
     m_title_LabelItem->SetBackgroundColour(bgColor);
     m_title_LabelItem->Hide();
 
-    // Filament sync sits to the LEFT of the separator (away from undo/redo to avoid misclicks),
-    // with its push-progress bar right beside it (collapsed to 0 width until a sync runs).
+    // The feedback separator marks the RIGHT edge of the centered title/filename region
+    // (see GetTitleDisplayRect). It MUST come before the sync button: the title label is a floating
+    // child painted on top of the toolbar, and anything inside tab..separator gets covered by it.
+    addDipSpacer(10);
+    // Invisible anchor (was a visible separator, which looked bad - no line is drawn now). Marks the
+    // RIGHT edge of the centered title/filename region (GetTitleDisplayRect) and the LEFT edge of the
+    // sync-bar gap (layout_sync_overlay).
+    m_feedback_separator_item = addDipSpacer(1);
+    // Dedicated gap between that anchor and the sync button: the push-progress bar is painted ONLY
+    // here during a sync, so it never overlaps the title region nor the window controls. 170 DIP
+    // leaves room for the bar plus side padding.
+    addDipSpacer(170);
+
+    // Filament sync button sits to the right of the title region, just left of the window controls,
+    // so the filename label can never overlap it. Its push-progress bar is painted into the gap to
+    // its LEFT during a sync (see layout_sync_overlay).
     {
         wxBitmap sync_bitmap = create_scaled_bitmap(is_dark ? "topbar_sync" : "topbar_sync_light", this, (TOPBAR_ICON_SIZE));
         this->AddTool(ID_FILAMENT_SYNC, "", sync_bitmap, _L("Sync filaments to printers"));
-
-        m_sync_progress = new ProgressBar(this, wxID_ANY, 100, wxDefaultPosition, wxSize(FromDIP(0), FromDIP(14)), false);
-        m_sync_progress->ShowNumber(true);
-        m_sync_progress->SetMinSize(wxSize(FromDIP(0), FromDIP(14)));
-        m_sync_progress->Hide();
-        // ProgressBar derives from wxWindow; AddControl wants wxControl* -- same C-cast the
-        // tab control (ButtonsCtrl) uses above. The toolbar only calls wxWindow methods on it.
-        m_sync_progress_item = this->AddControl((wxControl *) m_sync_progress);
     }
 
-    addDipSpacer(10);
-    m_feedback_separator_item = this->AddSeparator();
-    addDipSpacer(10);
+    // Push-progress bar lives in a borderless child window (not a toolbar item, so it can never
+    // displace the window controls). Hidden until a sync runs.
+    m_sync_overlay = new wxWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE);
+    m_sync_overlay->SetBackgroundStyle(wxBG_STYLE_PAINT);
+    m_sync_overlay->Bind(wxEVT_PAINT, &BBLTopbar::OnSyncOverlayPaint, this);
+    m_sync_overlay->Hide();
 
     // User-feedback button removed: it linked to the Creality support site.
     m_feedback_item = nullptr;
@@ -1175,30 +1184,103 @@ void BBLTopbar::OnFilamentSync(wxAuiToolBarEvent& evt)
     });
 }
 
+// Position the push-progress overlay in the empty gap between the sync button and the window
+// controls. Computed from real tool rects so it tracks the live layout (resize / DPI).
+void BBLTopbar::layout_sync_overlay()
+{
+    if (!m_sync_overlay)
+        return;
+
+    const wxRect btn = this->GetToolRect(ID_FILAMENT_SYNC);
+    wxSizerItem* sep_item = m_feedback_separator_item ? m_feedback_separator_item->GetSizerItem() : nullptr;
+    const wxRect sep = sep_item ? sep_item->GetRect() : wxRect();
+
+    // Fail-safe: need both anchors to place the bar in the dedicated gap between them.
+    if (btn.GetWidth() <= 0 || sep.GetWidth() <= 0) {
+        m_sync_overlay->Hide();
+        return;
+    }
+
+    // Fill the dedicated gap: from just right of the separator to just left of the sync button.
+    // This can never overlap the separator, the button, or the title region (left of the separator).
+    const int pad  = FromDIP(8);
+    const int left = sep.GetRight() + pad;
+    const int w    = (btn.GetLeft() - pad) - left;
+    if (w < FromDIP(40)) { // no room
+        m_sync_overlay->Hide();
+        return;
+    }
+    const int h = FromDIP(16);
+    const int y = (this->GetSize().GetHeight() - h) / 2;
+    m_sync_overlay->SetSize(left, y, w, h);
+}
+
 void BBLTopbar::StartSyncProgress(int total)
 {
-    if (!m_sync_progress)
+    m_sync_active = true;
+    m_sync_total  = (total > 0) ? total : 1;
+    m_sync_done   = 0;
+    if (!m_sync_overlay)
         return;
-    m_sync_progress->m_max = (total > 0) ? total : 1;
-    m_sync_progress->SetProgress(0);
-    m_sync_progress->SetMinSize(wxSize(FromDIP(150), FromDIP(14)));
-    m_sync_progress->Show();
-    this->Realize();
+    layout_sync_overlay();
+    m_sync_overlay->Show();
+    m_sync_overlay->Raise();
+    m_sync_overlay->Refresh();
 }
 
 void BBLTopbar::StepSyncProgress(int done)
 {
-    if (m_sync_progress)
-        m_sync_progress->SetProgress(done);
+    m_sync_done = done;
+    if (m_sync_overlay && m_sync_active)
+        m_sync_overlay->Refresh();
 }
 
 void BBLTopbar::FinishSyncProgress()
 {
-    if (!m_sync_progress)
+    m_sync_active = false;
+    if (m_sync_overlay)
+        m_sync_overlay->Hide();
+}
+
+void BBLTopbar::OnSyncOverlayPaint(wxPaintEvent& WXUNUSED(evt))
+{
+    wxAutoBufferedPaintDC dc(m_sync_overlay);
+    const wxSize sz = m_sync_overlay->GetClientSize();
+    if (sz.x <= 0 || sz.y <= 0)
         return;
-    m_sync_progress->Hide();
-    m_sync_progress->SetMinSize(wxSize(FromDIP(0), FromDIP(14)));
-    this->Realize();
+
+    const bool     is_dark = Slic3r::GUI::wxGetApp().dark_mode();
+    const wxColour bg      = is_dark ? wxColour("#010101") : wxColour(214, 214, 220); // topbar bg
+    const wxColour track   = is_dark ? wxColour(60, 60, 68) : wxColour(196, 196, 202);
+    const wxColour fill    = wxColour(74, 144, 184);  // steel-blue, matches the device-card finish
+    const wxColour txtcol  = is_dark ? wxColour(207, 207, 210) : wxColour(60, 60, 60);
+
+    // clear to topbar background so the rounded track edges blend in
+    dc.SetPen(*wxTRANSPARENT_PEN);
+    dc.SetBrush(wxBrush(bg));
+    dc.DrawRectangle(0, 0, sz.x, sz.y);
+
+    const int radius = sz.y / 2;
+    dc.SetBrush(wxBrush(track));
+    dc.DrawRoundedRectangle(0, 0, sz.x, sz.y, radius);
+
+    double frac = (m_sync_total > 0) ? double(m_sync_done) / double(m_sync_total) : 0.0;
+    if (frac < 0.0) frac = 0.0;
+    if (frac > 1.0) frac = 1.0;
+    int fw = int(sz.x * frac);
+    if (fw > 0) {
+        if (fw < 2 * radius) fw = 2 * radius; // keep the rounded cap from collapsing
+        dc.SetBrush(wxBrush(fill));
+        dc.DrawRoundedRectangle(0, 0, fw, sz.y, radius);
+    }
+
+    wxFont f = m_sync_overlay->GetFont();
+    f.SetPointSize(8);
+    dc.SetFont(f);
+    const wxString t  = wxString::Format("%d/%d", m_sync_done, m_sync_total);
+    const wxSize   ts = dc.GetTextExtent(t);
+    dc.SetTextForeground(txtcol);
+    dc.DrawText(t, (sz.x - ts.x) / 2, (sz.y - ts.y) / 2);
 }
 
 void BBLTopbar::OnDownMgr(wxAuiToolBarEvent& evt) {}
@@ -1714,4 +1796,6 @@ void BBLTopbar::OnWindowResize(wxSizeEvent& event)
 {
     event.Skip();
     UpdateFileNameDisplay();
+    if (m_sync_active)
+        layout_sync_overlay();
 }
