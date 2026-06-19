@@ -13,6 +13,7 @@ clients; SanityPrint itself no longer reads it (sync is push-only per
 | `name` | `base.name` | Upsert match key (tier 2). The preset's display name |
 | `id` | `base.id` | Upsert primary key (tier 1). **SanityPrint never sends it** (its pushes are id-less; the printer mints `U####`). Other API clients may send an explicit unused id (**5 chars**). Immutable after creation. Response must always return the row's canonical `result.id` |
 | `type` | `base.type` | `filament_type` (e.g. PLA, PETG, TPU, or custom strings) |
+| `account` | `userMaterial` marker path | Registering Creality userId. SanityPrint sends its current-login userId, omitting it when logged out. The printer builds the marker **path** itself — `…/usrMaterial/<account>/<name>.json` (real device form: `/mnt/UDISK/creality/userdata/box/usrMaterial/<account>/<materialId>`) — using this `account` as the owner segment, then **echoes that path as `userMaterial` both in `GET /server/material` rows AND per loaded CFS slot in the device status JSON** (`boxsInfo.materialBoxs[].materials[].userMaterial`). The slicer's auto-map gate splits the echoed path on `/` and reads the **second-to-last** segment as the owning userId; it must equal the logged-in account or the slot is rejected for in-slicer mapping. Absent → leave the row's owner untouched. |
 
 ## Standard parameter params (-> `kvParam`, keyed by slicer config name)
 

@@ -237,6 +237,20 @@ static std::vector<MaterialPayload> collect_custom_filament_payloads()
                                          : std::string("Custom"));
         }
         p.emplace_back("name", payload.preset_name); // nozzle-independent upsert identity
+
+        // account: the registering Creality userId. The printer builds the
+        // userMaterial marker path itself (".../usrMaterial/<account>/<name>.json"),
+        // so the slicer sends only the account segment, never a fabricated path. The
+        // slicer's auto-map gate (LoginTip::isFilamentUserMaterialValid) splits that
+        // marker on '/' and reads the SECOND-TO-LAST segment -- the account -- which
+        // must equal the logged-in userId for the CFS slot to be selectable. Emitted
+        // only when logged in; absent leaves the row's owner untouched.
+        {
+            const std::string &user_id = wxGetApp().get_user().userId;
+            if (!user_id.empty())
+                p.emplace_back("account", user_id);
+        }
+
         add_shared_params(rep.config, p);
 
         std::set<std::string> seen_nozzles;
