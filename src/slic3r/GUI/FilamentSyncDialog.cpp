@@ -725,11 +725,20 @@ bool FilamentSyncDialog::run_remove(const std::vector<SyncDevice> &targets)
     auto chosen = std::make_shared<std::vector<RemoteMaterial>>();
     for (size_t i : sel)
         chosen->push_back(mats[i]);
+    const int total = static_cast<int>(chosen->size());
 
-    boost::thread([chosen]() {
+    boost::thread([chosen, total]() {
         int         ok_count   = 0;
         int         fail_count = 0;
+        int         done       = 0;
         std::string failures;
+
+        // Topbar progress bar: same one the push uses, so removal shows progress too.
+        wxGetApp().CallAfter([total]() {
+            if (BBLTopbar *tb = wxGetApp().mainframe ? wxGetApp().mainframe->topbar() : nullptr)
+                tb->StartSyncProgress(total);
+        });
+
         try {
             for (const RemoteMaterial &rm : *chosen) {
                 if (delete_material(rm.dev, rm.id)) {
@@ -739,11 +748,18 @@ bool FilamentSyncDialog::run_remove(const std::vector<SyncDevice> &targets)
                     if (failures.size() < 600)
                         failures += "\n" + rm.name + " -> " + rm.dev.name;
                 }
+                ++done;
+                wxGetApp().CallAfter([done]() {
+                    if (BBLTopbar *tb = wxGetApp().mainframe ? wxGetApp().mainframe->topbar() : nullptr)
+                        tb->StepSyncProgress(done);
+                });
             }
         } catch (const std::exception &e) {
             BOOST_LOG_TRIVIAL(error) << "FilamentSync: remove thread exception: " << e.what();
         }
         wxGetApp().CallAfter([ok_count, fail_count, failures]() {
+            if (BBLTopbar *tb = wxGetApp().mainframe ? wxGetApp().mainframe->topbar() : nullptr)
+                tb->FinishSyncProgress();
             wxString msg = wxString::Format(_L("Remove finished: %d removed, %d failed."), ok_count, fail_count);
             if (fail_count > 0)
                 msg += "\n" + from_u8(failures);
