@@ -281,8 +281,15 @@ def _disambiguate_name(name, taken):
 
 
 def _material_to_presets(mat, array_keys, valid_keys, version, printer=None):
-    """Map one printer material -> a list of (preset_name, nozzle, preset_dict),
-    one entry per nozzle diameter the material was registered for."""
+    """Map one printer material -> a list of (preset_name, pernozzle_names, preset).
+
+    Mirrors the push (FilamentSyncDialog: ONE material per filament_id, with only
+    the calibration triplet stored per nozzle in nozzleParam). So this emits ONE
+    preset per material -- every nozzle listed in compatible_printers -- and splits
+    into separate presets ONLY for nozzles whose calibration actually differs (a
+    slicer preset holds a single calibration value, which is the whole reason the
+    push tracks it per nozzle). pernozzle_names are the per-nozzle preset names this
+    group covers, for duplicate detection against CP's per-nozzle on-disk presets."""
     base = mat.get("base", {})
     kv = mat.get("kvParam", {})
     nozzle_param = mat.get("nozzleParam", {}) or {}
@@ -292,24 +299,38 @@ def _material_to_presets(mat, array_keys, valid_keys, version, printer=None):
     ftype = kv.get("filament_type") or base.get("type", "")
     fid = base.get("id", "")
 
-    out = []
+    # Group nozzles by calibration signature: kvParam is shared across nozzles, only
+    # nozzleParam[<nz>] varies, so nozzles with identical calibration collapse into
+    # one preset and differing ones split -- the minimum set of slicer presets.
+    groups, index = [], {}  # groups: [(calib_dict, [nozzles])] in first-seen order
     for nz in nozzles:
-        cfg = dict(kv)
-        # Overlay per-nozzle calibration (pressure_advance / flow / enable_pa).
-        for k, v in (nozzle_param.get(nz) or {}).items():
-            cfg[k] = v
-        preset_name = (f"{mat_name} @{printer} {nz} nozzle" if printer
-                       else f"{mat_name} {nz} nozzle")
+        calib = nozzle_param.get(nz) or {}
+        sig = json.dumps(calib, sort_keys=True)
+        if sig not in index:
+            index[sig] = len(groups)
+            groups.append((calib, []))
+        groups[index[sig]][1].append(nz)
 
+    def per_nozzle_name(nz):
+        return f"{mat_name} @{printer} {nz} nozzle" if printer else f"{mat_name} {nz} nozzle"
+
+    out = []
+    for calib, gnz in groups:
+        cfg = dict(kv)
+        cfg.update(calib)  # this group's per-nozzle calibration (pa / flow / enable)
         # Stamp identity so the row is self-describing even if kvParam omitted it.
         cfg["filament_vendor"] = vendor
         if ftype:
             cfg["filament_type"] = ftype
-        # compatible_printers is empty in kvParam (the printer doesn't track it).
-        # Stamp it only when the caller names the target printer; the slicer needs
-        # "<printer> <nozzle> nozzle" for the preset to be selectable.
+        # Keep the nozzle suffix for a single-nozzle group (matches CP's native
+        # per-nozzle naming and the install's dup names); drop it when the preset
+        # spans several nozzles, which are instead all listed in compatible_printers.
+        if len(gnz) == 1:
+            preset_name = per_nozzle_name(gnz[0])
+        else:
+            preset_name = f"{mat_name} @{printer}" if printer else mat_name
         if printer:
-            cfg["compatible_printers"] = f"{printer} {nz} nozzle"
+            cfg["compatible_printers"] = [f"{printer} {n} nozzle" for n in gnz]
         # CrealityPrint backfills this from the name on save, but stamp it for
         # exact-shape fidelity with what it writes for user presets.
         cfg["filament_settings_id"] = preset_name
@@ -332,7 +353,11 @@ def _material_to_presets(mat, array_keys, valid_keys, version, printer=None):
             # stray push-param aliases can't pollute the preset.
             if valid_keys is not None and k not in valid_keys:
                 continue
-            v = _unquote_cstyle(cfg[k])  # reverse the printer's INI string encoding
+            v = cfg[k]
+            if isinstance(v, list):  # already a vector (compatible_printers)
+                preset[k] = v
+                continue
+            v = _unquote_cstyle(v)  # reverse the printer's INI string encoding
             if k in PERCENT_KEYS and _NUMERIC_RE.match(v):
                 v += "%"  # canonical percent form (push stripped the '%')
             if k in array_keys:
@@ -345,7 +370,7 @@ def _material_to_presets(mat, array_keys, valid_keys, version, printer=None):
                     preset[k] = [v]
             else:
                 preset[k] = v
-        out.append((preset_name, nz, preset))
+        out.append((preset_name, [per_nozzle_name(n) for n in gnz], preset))
     return out
 
 
@@ -408,12 +433,15 @@ def cmd_presets(args):
     taken = set(existing)  # preset names already in the install + assigned this run
     used = set()           # sanitized filenames already written this run
     for m in selected:
-        for preset_name, _nz, preset in _material_to_presets(
+        for preset_name, pernozzle_names, preset in _material_to_presets(
                 m, array_keys, valid_keys, version, args.printer):
-            # A duplicate of an existing system/user preset: skip by default so we
-            # never clone (and an import never conflicts); --create-new instead
-            # writes it under a disambiguated '(pulled)' name beside the original.
-            if preset_name in existing:
+            # A duplicate of an existing system/user preset: the user already has it
+            # if its own (collapsed) name exists, or every per-nozzle name it covers
+            # exists. Skip by default so we never clone (and an import never
+            # conflicts); --create-new instead writes it under a disambiguated
+            # '(pulled)' name beside the original.
+            is_dup = preset_name in existing or all(n in existing for n in pernozzle_names)
+            if is_dup:
                 if not args.create_new:
                     skipped_dup += 1
                     continue
