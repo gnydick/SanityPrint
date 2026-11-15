@@ -1,5 +1,5 @@
 {
-	"name": "CrealityPrint24",
+	"name": "SanityPrint24",
 	"image": "mcr.microsoft.com/devcontainers/cpp:ubuntu-24.04",
 	"runArgs": ["--env-file", "/tmp/devcontainer.env"],
     "features": {

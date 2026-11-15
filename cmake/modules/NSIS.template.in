@@ -646,7 +646,7 @@ FunctionEnd
   LangString DESC_old_version ${LANG_SIMPCHINESE} "安装新的版本前是否需要卸载旧的版本？"
   LangString DESC_old_version ${LANG_TradChinese} "安裝新的版本前是否需要解除安裝舊的版本？"
 
-  LangString DESC_Version_Checked ${LANG_ENGLISH} "Your system is a bit outdated. We recommend upgrading to Windows 10 or higher  for the best experience. Do you still want to continue with the installation? What are the system requirements for installing Creality Print?"
+  LangString DESC_Version_Checked ${LANG_ENGLISH} "Your system is a bit outdated. We recommend upgrading to Windows 10 or higher  for the best experience. Do you still want to continue with the installation? What are the system requirements for installing Sanity Print?"
   LangString DESC_Version_Checked ${LANG_SIMPCHINESE} "您的操作系统版本过低，建议升级至Windows 10及以上版本以获得更佳体验。是否继续安装？"
   LangString DESC_Version_Checked ${LANG_TradChinese} "您的作業系統版本過低，建議升級至 Windows 10 或更高版本以獲得更好的體驗。是否繼續安裝？"
 
@@ -817,8 +817,8 @@ Section "-Core installation"
   Push "$INSTALL_DESKTOP"
   Call ConditionalAddToRegisty
 
-  WriteRegStr HKCR "CrealityPrintLink" "URL Protocol" ""
-  WriteRegStr HKCR "CrealityPrintLink\shell\open\command" "" '"$INSTDIR\${PROCESS_NAME}" "%1"'
+  WriteRegStr HKCR "SanityPrintLink" "URL Protocol" ""
+  WriteRegStr HKCR "SanityPrintLink\shell\open\command" "" '"$INSTDIR\${PROCESS_NAME}" "%1"'
   !insertmacro MUI_STARTMENU_WRITE_END
 
 @CPACK_NSIS_EXTRA_INSTALL_COMMANDS@
@@ -1040,7 +1040,7 @@ Jump_Del_Thumb:
 
   ; Remove the registry entries.
   DeleteRegKey SHCTX "Software\@CPACK_PACKAGE_VENDOR@\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@"
-  DeleteRegKey HKCR "CrealityPrintLink"
+  DeleteRegKey HKCR "SanityPrintLink"
 
   ; Removes all optional components
   !insertmacro SectionList "RemoveSection_CPack"

@@ -10,7 +10,7 @@ namespace DM{
         if (!data.contains(field_name))
             return default_val;
 
-        // 如果类型匹配，直接返回
+        // if the type matches, return directly
         if (data[field_name].type() == expect_type) {
             try {
                 return data[field_name].get<T>();
@@ -21,20 +21,20 @@ namespace DM{
             }
         }
 
-        // 处理数字类型互转（int ↔ float ↔ uint）
+        // handle conversion between numeric types (int ↔ float ↔ uint)
         auto is_num = [](nlohmann::json::value_t type) {
             return (type == nlohmann::json::value_t::number_integer || type == nlohmann::json::value_t::number_float ||
                     type == nlohmann::json::value_t::number_unsigned);
         };
 
         if (is_num(expect_type) && is_num(data[field_name].type())) {
-            // 数字类型可以互转
+            // numeric types can be converted between each other
             return data[field_name].get<T>();
         }
 
-        // 处理 string ↔ number 转换
+        // handle string ↔ number conversion
         if constexpr (std::is_same_v<T, std::string>) {
-            // T 是 string，但 JSON 可能是 number 或 bool
+            // T is string, but the JSON may be number or bool
             if (data[field_name].is_number()) {
                 return std::to_string(data[field_name].get<double>());
             } else if (data[field_name].is_boolean()) {
@@ -42,8 +42,8 @@ namespace DM{
             } else if (data[field_name].is_string()) {
                 return data[field_name].get<std::string>();
             }
-        } else if constexpr (std::is_arithmetic_v<T>) { // T 是 int/double 等数字类型
-            // T 是数字，但 JSON 可能是 string 或 bool
+        } else if constexpr (std::is_arithmetic_v<T>) { // T is a numeric type such as int/double
+            // T is a number, but the JSON may be string or bool
             if (data[field_name].is_string()) {
                 std::istringstream iss(data[field_name].get<std::string>());
                 T                  output;

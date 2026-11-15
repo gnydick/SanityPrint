@@ -702,8 +702,8 @@ msgstr "请在设备列表添加设备"
 msgid "Reconnecting"
 msgstr "正在重连..."
 
-msgid "Creality Print camera function does not currently support devices that are only bound to Creality Cloud"
-msgstr "Creality Print camera function does not currently support devices that are only bound to Creality Cloud"
+msgid "Sanity Print camera function does not currently support devices that are only bound to Creality Cloud"
+msgstr "Sanity Print camera function does not currently support devices that are only bound to Creality Cloud"
 
 msgid "Feed issue, filament failed to exit extruder.Please resolve and click 'Retry' button."
 msgstr "退料异常,耗材退出挤出机失败,请排除异常后点击'重试'按钮"
@@ -815,10 +815,10 @@ msgid "Nozzle  camera failed to start, try restarting."
 msgstr "喷头摄像头打开失败，可尝试重启"
 
 msgid ""
-"Creality Print requires the Microsoft WebView2 Runtime,But it has been found that the abnormal operation of Microsoft WebView2 may be related to the installation of Microsoft Edge. \n"
+"Sanity Print requires the Microsoft WebView2 Runtime,But it has been found that the abnormal operation of Microsoft WebView2 may be related to the installation of Microsoft Edge. \n"
 "Click the Yes to reinstall Microsoft Edge"
 msgstr ""
-"Creality Print 需要 Microsoft WebView2 Runtime，但已发现其异常运行可能与安装 Microsoft Edge 有关。\n"
+"Sanity Print 需要 Microsoft WebView2 Runtime，但已发现其异常运行可能与安装 Microsoft Edge 有关。\n"
 "点击“是”重新安装 Microsoft Edge。"
 
 msgid "Failed to reinstall the Microsoft WebView2 Runtime. Please reinstall it manually."

@@ -1,16 +1,34 @@
 {
-    "type": "filament",
-    "name": "Anker Generic PETG @base",
-    "inherits": "fdm_filament_pet",
-    "from": "system",
-    "filament_type": [
-        "PETG"
-    ],
-    "filament_id": "GFG99",
-    "instantiation": "false",
-    "filament_retraction_speed": "20",
-    "filament_deretraction_speed": "60",
-    "filament_retract_when_changing_layer": "1",
-    "filament_wipe": "1",
-    "filament_retract_before_wipe": "100"
+  "type": "filament",
+  "name": "Anker Generic PETG @base",
+  "inherits": "fdm_filament_pet",
+  "from": "system",
+  "filament_type": [
+    "PETG"
+  ],
+  "filament_id": "GFG99",
+  "instantiation": "false",
+  "filament_retraction_speed": "20",
+  "filament_deretraction_speed": "60",
+  "filament_retract_when_changing_layer": "1",
+  "filament_wipe": "1",
+  "filament_retract_before_wipe": "100",
+  "filament_temp_type": [
+    "2"
+  ],
+  "filament_cooling_smart_zone": [
+    "1"
+  ],
+  "filament_bed_adhesion_strength": [
+    "0.3"
+  ],
+  "filament_brim_adhesion_coeff": [
+    "2.0"
+  ],
+  "filament_small_island_threshold": [
+    "20.0"
+  ],
+  "filament_chamber_temp_limit": [
+    "55"
+  ]
 }

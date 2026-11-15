@@ -218,7 +218,7 @@ button {
     gap: 5px;
 }
 #selectAll{
-    background-color:#17cc5f;
+    background-color:#3498db;
     color: #ffffff;
     border: 1px solid #ffffff;
 }
@@ -307,7 +307,7 @@ button {
     display: none;
 }
 .is-selected {
-    background-color: #17cc5f;
+    background-color: #3498db;
     color: #fff !important;
 }
 
@@ -323,7 +323,7 @@ button {
 }
 /**/
 .hover-bth-selected {
-    border: 2px solid #17CC5F !important;
+    border: 2px solid #3498DB !important;
 }
 
 
@@ -360,7 +360,7 @@ button {
     width: 120px;
     height: 24px;
     line-height: 24px;
-    background: #17CC5F;
+    background: #3498DB;
     border-radius: 12px 12px 12px 12px;
     text-align: center;
 }
@@ -502,12 +502,12 @@ button {
     text-align: center;
 }
 .toggle-button:hover {
-    background: #17cc5f;
+    background: #3498db;
     color: #fff;
 }
 /* 黑色主题色 */
 .toggle-button-isChecked {
-    background: #17cc5f;
+    background: #3498db;
     color: #fff !important;
 }
 
@@ -701,9 +701,9 @@ input[type=checkbox]::after {
 
 input[type=checkbox]:checked::after {
     content: "";
-    background-color: #17CC5F;
-    border-color: #17CC5F;
-    background-color: #17CC5F;
+    background-color: #3498DB;
+    border-color: #3498DB;
+    background-color: #3498DB;
 }
 input[type=checkbox]:checked::before {
     content: '';

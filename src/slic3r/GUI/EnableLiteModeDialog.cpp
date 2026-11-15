@@ -56,11 +56,6 @@ EnableLiteModeDialog::EnableLiteModeDialog(wxWindow* parent, wxWindowID id, cons
 
     m_sizer_right->Add(0, 0, 1, wxTOP, FromDIP(15));
 
-     std::string url = "https://wiki.creality.com/en/software/6-0/lite-mode";
-    if (wxGetApp().app_config->get("language").find("zh_CN")==0) {
-        url = "https://wiki.creality.com/zh/software/6-0/lite-mode";
-    }
-
     wxHtmlWindow* m_website_html = new wxHtmlWindow(this, wxID_ANY, wxDefaultPosition, wxSize(FromDIP(480),FromDIP(100)), 0x0002 /*NEVER*/);
      
     {
@@ -76,27 +71,24 @@ EnableLiteModeDialog::EnableLiteModeDialog(wxWindow* parent, wxWindowID id, cons
         wxString content1 = format_wxstr(
             _L("In the slicing preview, Lite Mode displays only the essential toolpath data and hides internal infill structures, effectively preventing unresponsiveness caused by excessive rendering. You can disable this mode at any time in the preview interface."));
         
-        wxString content2 = format_wxstr(_L("[Learn more]"));
-                    
+        // "[Learn more]" hyperlink removed: it opened the Creality wiki.
         const wxString color = wxGetApp().app_config->get("dark_color_mode") == "1" ? wxString("#FFFFFF") : wxString("#000000");
         const auto  text =
-            wxString::Format("<html> <body><font style=\"color: %s;font-size:20px;\">%s<a href=\"%s\">%s</a></font></body></html>", color.c_str(), content1.c_str(), url.c_str(), content2.c_str());
-                                                                 
-        m_website_html->SetPage(text);
-        m_website_html->Bind(wxEVT_HTML_LINK_CLICKED, &EnableLiteModeDialog::onLinkClicked, this);
+            wxString::Format("<html> <body><font style=\"color: %s;font-size:20px;\">%s</font></body></html>", color.c_str(), content1.c_str());
 
+        m_website_html->SetPage(text);
     }
     m_sizer_right->Add(m_website_html, 0, wxEXPAND | wxCENTER, FromDIP(15));
 
     auto sizer_button = new wxBoxSizer(wxHORIZONTAL);
-    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(0, 137, 123), StateColor::Pressed), std::pair<wxColour, int>(wxColour(38, 166, 154), StateColor::Hovered),
-        std::pair<wxColour, int>(wxColour(0, 150, 136), StateColor::Normal));
+    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(26, 111, 163), StateColor::Pressed), std::pair<wxColour, int>(wxColour(93, 173, 226), StateColor::Hovered),
+        std::pair<wxColour, int>(wxColour(46, 134, 193), StateColor::Normal));
 
     StateColor btn_bg_white(std::pair<wxColour, int>(wxColour(206, 206, 206), StateColor::Pressed), std::pair<wxColour, int>(wxColour(220, 220, 220), StateColor::Hovered),
         std::pair<wxColour, int>(wxColour(238, 238, 238), StateColor::Normal));
 
     m_button_ok = new Button(this, _L("Enable"));
-    m_button_ok->SetBackgroundColor(wxColour("#17CC5F"));
+    m_button_ok->SetBackgroundColor(wxColour("#3498DB"));
     m_button_ok->SetBorderColor(*wxWHITE);
     m_button_ok->SetTextColor(wxColour("#FFFFFE"));
     m_button_ok->SetFont(Label::Body_12);

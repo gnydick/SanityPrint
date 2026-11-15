@@ -69,5 +69,8 @@
   ],
   "filament_notes": [
     "JiaNong PET 1.63x1.75mm"
+  ],
+  "filament_bed_adhesion_strength": [
+    "0.3"
   ]
 }

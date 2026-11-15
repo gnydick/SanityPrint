@@ -1,0 +1,55 @@
+name: Check profiles
+on: 
+  push:
+    branches: 
+    - main
+    - master 
+    - windows
+    paths:
+    - 'resources/profiles/**'
+    - ".github/workflows/check_profiles.yml"
+  pull_request:
+    branches: 
+    - main
+    - master 
+    paths:
+    - 'resources/profiles/**'
+    - ".github/workflows/check_profiles.yml"
+
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'     
+        required: true
+        default: 'warning'
+
+
+jobs:
+  check_translation:
+    name: Check profiles
+    runs-on: ubuntu-24.04
+    steps:  
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run extra JSON check
+        run: |
+          # curl -LJO https://github.com/lihaowen123/CrealityPrint/releases/download/tools/check_profile_format.py
+          python3 ./scripts/check_profile_format.py
+
+      # - name: validate system profiles 
+      #   working-directory: ${{ github.workspace }}
+      #   run: |
+      #     curl -LJO https://github.com/lihaowen123/CrealityPrint/releases/download/tools/check_json.py
+      #     python3 ./check_json.py ${{ github.workspace }}/resources/profiles
+
+      # - name: validate custom presets
+      #   working-directory: ${{ github.workspace }}
+      #   run: |
+      #     curl -LJO https://github.com/lihaowen123/CrealityPrint/releases/download/tools/creality_preset.zip
+      #     unzip ./creality_preset.zip -d ${{ github.workspace }}/resources/profiles
+      #     python3 ./check_json.py -p ${{ github.workspace }}/resources/profiles -l 2
+
+
+
+

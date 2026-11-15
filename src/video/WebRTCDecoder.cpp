@@ -45,8 +45,8 @@ void WebRTCDecoder::stopPlay()
     std::future_status status = m_playFutrue.wait_for(std::chrono::seconds(2));
     if (status == std::future_status::ready)
 	{
-		//cout << "线程执行完" << endl;
-	}	
+		//cout << "thread finished executing" << endl;
+	}
     if (m_player) m_player->stopPlay();
 
 }
@@ -131,62 +131,62 @@ void YUV420P_to_RGB24(const unsigned char* yuv, unsigned char* rgb, int width, i
     }
 }
     /**
- * 将 RGB 数据压缩为 JPEG 并存储在内存中
- * 
- * @param rgb_data 输入的 RGB 数据 (格式为 R,G,B,R,G,B,...)
- * @param width 图像宽度
- * @param height 图像高度
- * @param quality JPEG 质量 (1-100)
- * @param[out] out_buffer 输出的 JPEG 数据
- * @param[out] out_size 输出的 JPEG 数据大小
- * 
- * @return 成功返回 true，失败返回 false
+ * Compress RGB data into JPEG and store it in memory
+ *
+ * @param rgb_data Input RGB data (in the format R,G,B,R,G,B,...)
+ * @param width Image width
+ * @param height Image height
+ * @param quality JPEG quality (1-100)
+ * @param[out] out_buffer Output JPEG data
+ * @param[out] out_size Output JPEG data size
+ *
+ * @return Returns true on success, false on failure
  */
 bool rgb_to_jpeg(const unsigned char* rgb_data, int width, int height, int quality,
     std::vector<unsigned char>& out_buffer) {
     struct jpeg_compress_struct cinfo;
     struct jpeg_error_mgr jerr;
 
-    // 初始化 JPEG 压缩对象
+    // Initialize the JPEG compression object
     cinfo.err = jpeg_std_error(&jerr);
     jpeg_create_compress(&cinfo);
 
-    // 设置内存目标
+    // Set the memory destination
     unsigned char* buffer = nullptr;
     unsigned long buffer_size = 0;
     jpeg_mem_dest(&cinfo, &buffer, &buffer_size);
 
-    // 设置图像参数
+    // Set the image parameters
     cinfo.image_width = width;
     cinfo.image_height = height;
-    cinfo.input_components = 3;  // RGB 有 3 个分量
+    cinfo.input_components = 3;  // RGB has 3 components
     cinfo.in_color_space = JCS_RGB;
 
-    // 设置默认参数
+    // Set the default parameters
     jpeg_set_defaults(&cinfo);
 
-    // 设置质量
+    // Set the quality
     jpeg_set_quality(&cinfo, quality, TRUE);
 
-    // 开始压缩
+    // Start compression
     jpeg_start_compress(&cinfo, TRUE);
 
-    // 逐行写入数据
+    // Write data row by row
     JSAMPROW row_pointer[1];
-    int row_stride = width * 3;  // RGB 每行有 width*3 字节
+    int row_stride = width * 3;  // RGB has width*3 bytes per row
 
     while (cinfo.next_scanline < cinfo.image_height) {
     row_pointer[0] = (JSAMPROW)&rgb_data[cinfo.next_scanline * row_stride];
     jpeg_write_scanlines(&cinfo, row_pointer, 1);
 }
 
-// 完成压缩
+// Finish compression
 jpeg_finish_compress(&cinfo);
 
-// 将数据拷贝到输出缓冲区
+// Copy the data into the output buffer
 out_buffer.assign(buffer, buffer + buffer_size);
 
-// 清理
+// Clean up
 jpeg_destroy_compress(&cinfo);
 free(buffer);
 
@@ -223,7 +223,7 @@ void WebRTCDecoder::receiveFrame(){
         std::copy(t_vb,t_vb+yuvData.size(),yuvData.begin());
         //memncpy((void *)yuvData.data(),(void *)t_vb,yuvData.size());
         YUV420P_to_RGB24(yuvData.data(), rgbData.data(), m_width, m_height);
-        int quality = 90;  // JPEG 质量
+        int quality = 90;  // JPEG quality
     
         if (rgb_to_jpeg(rgbData.data(), m_width, m_height, quality, frame_data)) {
             

@@ -893,7 +893,7 @@ public:
          //5e-09*x*x+0.0049x+26.955f
          float sup_quan = 5e-09f * (vol + xc_vol) * (vol + xc_vol) + 0.0049f * (vol + xc_vol) + 26.955f;
          // 
-         //这里可以加入计算
+         //calculation can be added here
          float layer_quan = 0.0f;
          if (wall_quan + fill_quan + top_quan < layer_num * 1.0f)
          {

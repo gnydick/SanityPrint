@@ -177,7 +177,7 @@ fi
 
 if [[ -n "${BUILD_ORCA}" ]]
 then
-    echo "Configuring CrealityPrint..."
+    echo "Configuring SanityPrint..."
     if [[ -n "${CLEAN_BUILD}" ]]
     then
         rm -fr build
@@ -202,14 +202,14 @@ then
         -DENABLE_BREAKPAD=ON \
         ${BUILD_ARGS}
     echo "done"
-    echo "Building CrealityPrint ..."
+    echo "Building SanityPrint ..."
     if [[ -n "${num_threads}" ]]; then
-        cmake --build build --target CrealityPrint -j${NUM_THREADS}
+        cmake --build build --target SanityPrint -j${NUM_THREADS}
     else
-        cmake --build build --target CrealityPrint
+        cmake --build build --target SanityPrint
     fi
-    echo "Building CrealityPrint_profile_validator .."
-    #cmake --build build --target CrealityPrint_profile_validator
+    echo "Building SanityPrint_profile_validator .."
+    #cmake --build build --target SanityPrint_profile_validator
     ./run_gettext.sh
     echo "done"
 fi

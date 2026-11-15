@@ -78,5 +78,11 @@
   ],
   "nozzle_temperature_range_high": [
     "280"
+  ],
+  "filament_temp_type": [
+    "0"
+  ],
+  "filament_bed_adhesion_strength": [
+    "0.1"
   ]
 }

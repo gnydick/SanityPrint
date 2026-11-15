@@ -3,7 +3,7 @@
 #include "../libslic3r/libslic3r_version.h"
 namespace Slic3r { 
 namespace CxBuildInfo {
-const std::string getVersion() { return std::string(CREALITYPRINT_VERSION); }
+const std::string getVersion() { return std::string(SANITYPRINT_VERSION); }
 // Use __DATE__ and __TIME__ instead of cmake-generated timestamp to enable incremental builds
 const std::string  getBuildTime() { return std::string(__DATE__ " " __TIME__); }
 const std::string  getBuildId() { return std::string(SLIC3R_BUILD_ID); }
@@ -30,11 +30,8 @@ const bool isCusotmized()
 
 const bool isEnabledCxCloud()
 {
-#if defined(CUSTOMIZED) && !defined(CUSTOM_CXCLOUD_ENABLED)
+    // SanityPrint: Creality Cloud connectivity is permanently disabled.
     return false;
-#else
-    return true;
-#endif
 }
 const std::string getIconName_noTheme() {
 #if defined(CUSTOMIZED) && defined(CUSTOM_ICON_NAME)

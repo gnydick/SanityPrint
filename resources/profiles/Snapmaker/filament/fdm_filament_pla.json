@@ -63,5 +63,14 @@
   ],
   "additional_cooling_fan_speed": [
     "70"
+  ],
+  "filament_temp_type": [
+    "1"
+  ],
+  "filament_cooling_smart_zone": [
+    "1"
+  ],
+  "filament_chamber_temp_limit": [
+    "45"
   ]
 }

@@ -11,21 +11,21 @@ class AccountDeviceMgr
 public:
     struct DeviceInfo
     {
-        std::string device_unique_id;    // device id(可能是mac地址)
-        std::string address;             // ip地址
-        int         connectType = 3;         // 连接类型
-        std::string mac;                 // mac地址
-        std::string model;               // 打印机型号
-        std::string name;                // 打印机名称
-        std::string group;               // 打印机分组
-        // 其他设备信息
+        std::string device_unique_id;    // device id (possibly the MAC address)
+        std::string address;             // IP address
+        int         connectType = 3;         // connection type
+        std::string mac;                 // MAC address
+        std::string model;               // printer model
+        std::string name;                // printer name
+        std::string group;               // printer group
+        // other device info
     };
 
     struct AccountInfo
     {
-        std::string             account_id; // 账号id
+        std::string             account_id; // account id
         std::vector<DeviceInfo> my_devices;
-        // 其他账户信息
+        // other account info
     };
 
     struct AccountDeviceInfo
@@ -75,9 +75,9 @@ private:
     static std::unique_ptr<AccountDeviceMgr> instance;
     static std::once_flag            flag;
 
-    std::string m_account_device_file_id = "";   //参数包唯一id
+    std::string m_account_device_file_id = "";   //parameter package unique id
 
-    static std::mutex file_mutex; // 静态互斥锁
+    static std::mutex file_mutex; // static mutex
 };
 
 #endif /* ACCOUNT_DEVICE_MANAGER_hpp_ */

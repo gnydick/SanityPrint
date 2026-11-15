@@ -678,8 +678,8 @@ msgstr "The file cannot be restored after deletion. Are you sure to continue?"
 msgid "This operation cannot be undone. Are you sure to continue sending the termination command?"
 msgstr "This operation cannot be undone. Are you sure to continue sending the termination command?"
 
-msgid "Creality Print camera function does not currently support devices that are only bound to Creality Cloud"
-msgstr "Creality Print camera function does not currently support devices that are only bound to Creality Cloud"
+msgid "Sanity Print camera function does not currently support devices that are only bound to Creality Cloud"
+msgstr "Sanity Print camera function does not currently support devices that are only bound to Creality Cloud"
 
 msgid "Select a slot and click the 'Feed'/'Retract' button"
 msgstr "Select a slot and click the \"Feed\"/\"Retract\" button"
@@ -1273,10 +1273,10 @@ msgid "Ignore"
 msgstr "Ignore"
 
 msgid ""
-"Creality Print requires the Microsoft WebView2 Runtime,But it has been found that the abnormal operation of Microsoft WebView2 may be related to the installation of Microsoft Edge. \n"
+"Sanity Print requires the Microsoft WebView2 Runtime,But it has been found that the abnormal operation of Microsoft WebView2 may be related to the installation of Microsoft Edge. \n"
 "Click the Yes to reinstall Microsoft Edge"
 msgstr ""
-"Creality Print requires the Microsoft WebView2 Runtime,But it has been found that the abnormal operation of Microsoft WebView2 may be related to the installation of Microsoft Edge. \n"
+"Sanity Print requires the Microsoft WebView2 Runtime,But it has been found that the abnormal operation of Microsoft WebView2 may be related to the installation of Microsoft Edge. \n"
 "Click the Yes to reinstall Microsoft Edge"
 
 msgid "Failed to reinstall the Microsoft WebView2 Runtime. Please reinstall it manually."

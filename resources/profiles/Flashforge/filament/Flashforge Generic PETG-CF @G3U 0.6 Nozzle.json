@@ -64,5 +64,8 @@
   "slow_down_min_speed": [
     "12"
   ],
-  "version": "1.9.0.2"
+  "version": "1.9.0.2",
+  "filament_chamber_temp_limit": [
+    "55"
+  ]
 }

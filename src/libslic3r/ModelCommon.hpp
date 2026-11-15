@@ -260,6 +260,10 @@ struct ExtruderParams
     //std::array<double, BedType::btCount> bedTemp;
     int bedTemp;
     double heatEndTemp;
+    // Parameterized filament behavior (populated from filament config fields)
+    double thermalLength      = 200.0;
+    double brimAdhesionCoeff  = 1.0;
+    double bedAdhesionStrength = 0.02;
 };
 
 struct GlobalSpeedMap

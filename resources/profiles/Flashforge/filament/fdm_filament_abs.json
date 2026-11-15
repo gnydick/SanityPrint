@@ -84,5 +84,17 @@
   ],
   "slow_down_layer_time": [
     "8"
+  ],
+  "filament_temp_type": [
+    "0"
+  ],
+  "filament_cooling_smart_zone": [
+    "1"
+  ],
+  "filament_bed_adhesion_strength": [
+    "0.1"
+  ],
+  "filament_thermal_length": [
+    "100.0"
   ]
 }

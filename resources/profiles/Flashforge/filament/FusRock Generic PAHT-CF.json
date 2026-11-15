@@ -250,5 +250,11 @@
   "textured_plate_temp_initial_layer": [
     "85"
   ],
-  "version": "1.9.0.2"
+  "version": "1.9.0.2",
+  "filament_temp_type": [
+    "0"
+  ],
+  "filament_thermal_length": [
+    "100.0"
+  ]
 }

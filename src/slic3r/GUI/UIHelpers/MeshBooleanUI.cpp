@@ -694,7 +694,7 @@ bool MeshBooleanUI::draw_tab_button(const char* icon_name, const char* text, boo
     ImVec2 button_max = ImGui::GetItemRectMax();
 
     ImU32 bg_color = selected
-        ? ImGui::GetColorU32(ImVec4(0, 174.0f/255.0f, 66.0f/255.0f, 1.0f))
+        ? ImGui::GetColorU32(ImVec4(46.0f/255.0f, 134.0f/255.0f, 193.0f/255.0f, 1.0f))
         : (ImGui::IsItemHovered()
             ? ImGui::GetColorU32(m_is_dark_mode ? ImVec4(0.3f,0.3f,0.3f,1.0f) : ImVec4(0.9f,0.9f,0.9f,1.0f))
             : ImGui::GetColorU32(m_is_dark_mode ? ImVec4(0.2f,0.2f,0.2f,1.0f) : ImVec4(1.0f,1.0f,1.0f,1.0f)));

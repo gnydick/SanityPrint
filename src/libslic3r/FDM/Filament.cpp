@@ -15,41 +15,24 @@ namespace creality
 {
     Slic3r::FilamentTempType Filament::get_filament_temp_type(const std::string& filament_type)
     {
-        const static std::string HighTempFilamentStr = "high_temp_filament";
-        const static std::string LowTempFilamentStr = "low_temp_filament";
-        const static std::string HighLowCompatibleFilamentStr = "high_low_compatible_filament";
-        static std::unordered_map<std::string, std::unordered_set<std::string>> filament_temp_type_map;
-
-        if (filament_temp_type_map.empty()) {
-            fs::path file_path = fs::path(Slic3r::resources_dir()) / "info" / "filament_info.json";
-            std::ifstream in(file_path.string());
-            json j;
-            try{
-                j = json::parse(in);
-                in.close();
-                auto&&high_temp_filament_arr =j[HighTempFilamentStr].get < std::vector<std::string>>();
-                filament_temp_type_map[HighTempFilamentStr] = std::unordered_set<std::string>(high_temp_filament_arr.begin(), high_temp_filament_arr.end());
-                auto&& low_temp_filament_arr = j[LowTempFilamentStr].get < std::vector<std::string>>();
-                filament_temp_type_map[LowTempFilamentStr] = std::unordered_set<std::string>(low_temp_filament_arr.begin(), low_temp_filament_arr.end());
-                auto&& high_low_compatible_filament_arr = j[HighLowCompatibleFilamentStr].get < std::vector<std::string>>();
-                filament_temp_type_map[HighLowCompatibleFilamentStr] = std::unordered_set<std::string>(high_low_compatible_filament_arr.begin(), high_low_compatible_filament_arr.end());
-            }
-            catch (const json::parse_error& err){
-                in.close();
-                BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << ": parse " << file_path.string() << " got a nlohmann::detail::parse_error, reason = " << err.what();
-                filament_temp_type_map[HighTempFilamentStr] = {"ABS","ASA","PC","PA","PA-CF","PA-GF","PA6-CF","PET-CF","PPS","PPS-CF","PPA-GF","PPA-CF","ABS-Aero","ABS-GF"};
-                filament_temp_type_map[LowTempFilamentStr] = {"PLA","TPU","PLA-CF","PLA-AERO","PVA","BVOH"};
-                filament_temp_type_map[HighLowCompatibleFilamentStr] = { "HIPS","PETG","PCTG","PE","PP","EVA","PE-CF","PP-CF","PP-GF","PHA"};
-            }
-        }
-
-        if (filament_temp_type_map[HighLowCompatibleFilamentStr].find(filament_type) != filament_temp_type_map[HighLowCompatibleFilamentStr].end())
-            return Slic3r::HighLowCompatible;
-        if (filament_temp_type_map[HighTempFilamentStr].find(filament_type) != filament_temp_type_map[HighTempFilamentStr].end())
-            return Slic3r::HighTemp;
-        if (filament_temp_type_map[LowTempFilamentStr].find(filament_type) != filament_temp_type_map[LowTempFilamentStr].end())
-            return Slic3r::LowTemp;
-        return Slic3r::Undefine;
+        // Legacy string-based lookup used for display/info purposes only.
+        // Slicing-critical code reads filament_temp_type config field directly.
+        static const std::unordered_map<std::string, Slic3r::FilamentTempType> s_map = {
+            {"ABS",Slic3r::HighTemp},{"ASA",Slic3r::HighTemp},{"PC",Slic3r::HighTemp},
+            {"PA",Slic3r::HighTemp},{"PA-CF",Slic3r::HighTemp},{"PA-GF",Slic3r::HighTemp},
+            {"PA6-CF",Slic3r::HighTemp},{"PET-CF",Slic3r::HighTemp},{"PPS",Slic3r::HighTemp},
+            {"PPS-CF",Slic3r::HighTemp},{"PPA-CF",Slic3r::HighTemp},{"PPA-GF",Slic3r::HighTemp},
+            {"ABS-GF",Slic3r::HighTemp},{"ASA-Aero",Slic3r::HighTemp},
+            {"PLA",Slic3r::LowTemp},{"TPU",Slic3r::LowTemp},{"PLA-CF",Slic3r::LowTemp},
+            {"PLA-AERO",Slic3r::LowTemp},{"PVA",Slic3r::LowTemp},{"BVOH",Slic3r::LowTemp},
+            {"HIPS",Slic3r::HighLowCompatible},{"PETG",Slic3r::HighLowCompatible},
+            {"PE",Slic3r::HighLowCompatible},{"PP",Slic3r::HighLowCompatible},
+            {"EVA",Slic3r::HighLowCompatible},{"PE-CF",Slic3r::HighLowCompatible},
+            {"PP-CF",Slic3r::HighLowCompatible},{"PP-GF",Slic3r::HighLowCompatible},
+            {"PHA",Slic3r::HighLowCompatible},
+        };
+        auto it = s_map.find(filament_type);
+        return it != s_map.end() ? it->second : Slic3r::Undefine;
     }
 
     int Filament::get_hrc_by_nozzle_type(const Slic3r::NozzleType&type)

@@ -8,8 +8,8 @@ target_link_libraries(${_APP_NAME} libslic3r OpenSSL::SSL OpenSSL::Crypto Bcrypt
 
 if (WIN32)
     if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-        crealityprint_copy_dlls(COPY_DLLS "Debug" "d" "")
+        sanityprint_copy_dlls(COPY_DLLS "Debug" "d" "")
     else()
-        crealityprint_copy_dlls(COPY_DLLS "Release" "" "")
+        sanityprint_copy_dlls(COPY_DLLS "Release" "" "")
     endif()
 endif()

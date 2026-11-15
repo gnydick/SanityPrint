@@ -1646,7 +1646,7 @@ void triangulate_face(
 
     std::uint32_t fix_edge_seed_triangle = cdt::null_neighbour;
 
-    // 1️⃣ 优先：通过 fixed edge 找共享 triangle
+    // 1️⃣ Preferred: find a shared triangle via the fixed edge
     if (have_valid_fixed_edge) {
         const auto& tris0 = SAFE_ACCESS(vertex_to_triangle_map, fixed_edge_vtx0_id);
         const auto& tris1 = SAFE_ACCESS(vertex_to_triangle_map, fixed_edge_vtx1_id);
@@ -1663,14 +1663,14 @@ void triangulate_face(
         }
     }
 
-    // 2️⃣ 回退：fixed edge 路线失败，选任意 triangle
+    // 2️⃣ Fallback: the fixed-edge approach failed, pick any triangle
     if (fix_edge_seed_triangle == cdt::null_neighbour) {
         if (!cdt.triangles.empty()) {
             fix_edge_seed_triangle = 0;
             context_uptr->dbg_cb(MC_DEBUG_SOURCE_KERNEL, MC_DEBUG_TYPE_OTHER, 0, MC_DEBUG_SEVERITY_NOTIFICATION,
                                  "face " + std::to_string(cc_face_iter) + " fallback to first triangle as seed");
         } else {
-            // 3️⃣ 极端情况：完全没有三角形
+            // 3️⃣ Extreme case: no triangles at all
             context_uptr->dbg_cb(MC_DEBUG_SOURCE_KERNEL, MC_DEBUG_TYPE_ERROR, 0, MC_DEBUG_SEVERITY_HIGH,
                                  "face " + std::to_string(cc_face_iter) + " triangulation empty, skip face");
             return;

@@ -1,0 +1,110 @@
+on:
+    workflow_call:
+      inputs:
+        cache-key:
+          required: true
+          type: string
+        cache-path:
+          required: true
+          type: string
+        os:
+          required: true
+          type: string
+        arch:
+          required: false
+          type: string
+
+jobs:
+  build_orca:
+    name: Build Creality Print
+    runs-on: ${{ inputs.os }}
+    env:
+      date:
+      ver:
+      ver_pure:
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: 'true'
+
+      - name: load cached deps
+        uses: actions/cache@v4
+        with:
+          path: ${{ inputs.cache-path }}
+          key: ${{ inputs.cache-key }}
+          fail-on-cache-miss: true
+
+      - uses: lukka/get-cmake@latest
+        with:
+          cmakeVersion: "~3.28.0"  # use most recent 3.28.x version
+
+      - name: Get the version and date on Windows
+        if: inputs.os == 'windows-latest'
+        run: |
+          $date = Get-Date -Format 'yyyyMMdd'
+          $ref = "${{ github.ref }}"
+          $eventName = "${{ github.event_name }}"
+          $prNumber = "${{ github.event.number }}"
+
+          if ($eventName -eq 'pull_request') {
+              $ver = "PR" + $prNumber
+          } else {
+              $versionContent = Get-Content version.inc -Raw
+              if ($versionContent -match 'set\(SoftFever_VERSION "(.*?)"\)') {
+                  $ver = $matches[1]
+              }
+              $ver = "V$ver"
+          }
+
+          echo "ver=$ver" | Out-File -Append -FilePath $env:GITHUB_ENV -Encoding utf8
+          echo "date=$date" | Out-File -Append -FilePath $env:GITHUB_ENV -Encoding utf8
+          echo "date: ${{ env.date }} version: ${{ env.ver }}"
+        shell: pwsh
+
+# Windows
+      - name: setup MSVC
+        if: inputs.os == 'windows-latest'
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Install nsis
+        if: inputs.os == 'windows-latest'
+        run: |
+          dir "C:/Program Files (x86)/Windows Kits/10/Include"
+          choco install nsis
+
+      - name: Download tools
+        if: inputs.os == 'windows-latest'
+        working-directory: ${{ github.workspace }}
+        run: |
+          cd package
+          cd runtime
+          curl -LJO https://github.com/CrealityOfficial/CrealityPrint/releases/download/tools/MicrosoftEdgeWebView2RuntimeInstallerX64.exe
+
+      - name: Build slicer Win
+        if: inputs.os == 'windows-latest'
+        working-directory: ${{ github.workspace }}
+        env:
+          WindowsSdkDir: 'C:\Program Files (x86)\Windows Kits\10\'
+          WindowsSDKVersion: '10.0.22000.0\'
+        run: .\test_build.bat slicer
+
+      # - name: Create installer Win
+      #   if: inputs.os == 'windows-latest'
+      #   working-directory: ${{ github.workspace }}/build
+      #   run: |
+      #     cpack -G NSIS
+
+      # - name: Pack app
+      #   if: inputs.os == 'windows-latest'
+      #   working-directory: ${{ github.workspace }}/build
+      #   shell: cmd
+      #   run: '"C:/Program Files/7-Zip/7z.exe" a -tzip OrcaSlicer_Windows_${{ env.ver }}_portable.zip ${{ github.workspace }}/build/OrcaSlicer'
+
+      # - name: Pack PDB
+      #   if: inputs.os == 'windows-latest'
+      #   working-directory: ${{ github.workspace }}/build/src/Release
+      #   shell: cmd
+      #   run: '"C:/Program Files/7-Zip/7z.exe" a -m0=lzma2 -mx9 Debug_PDB_${{ env.ver }}_for_developers_only.7z  *.pdb'
+

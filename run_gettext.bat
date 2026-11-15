@@ -1,6 +1,6 @@
 @echo off
 
-REM CrealityPrint gettext
+REM SanityPrint gettext
 REM Created by SoftFever on 27/5/23.
 
 REM Check for --full argument
@@ -26,17 +26,17 @@ if %FULL_MODE%==1 (
     )
     
     echo "Get the list of files to .pot"
-    .\tools\xgettext.exe --keyword=L --keyword=_L --keyword=_u8L --keyword=_L_ZH --keyword=L_CONTEXT:1,2c --keyword=_L_PLURAL:1,2 --add-comments=TRN --from-code=UTF-8 --no-location --debug --boost -f %TEMP_FILE% -o ./localization/i18n/CrealityPrint.pot
+    .\tools\xgettext.exe --keyword=L --keyword=_L --keyword=_u8L --keyword=_L_ZH --keyword=L_CONTEXT:1,2c --keyword=_L_PLURAL:1,2 --add-comments=TRN --from-code=UTF-8 --no-location --debug --boost -f %TEMP_FILE% -o ./localization/i18n/SanityPrint.pot
     build\\src\\hints\\Release\\hintsToPot ./resources ./localization/i18n
 )
 REM Print the current directory
 echo %cd%
-set pot_file="./localization/i18n/CrealityPrint.pot"
+set pot_file="./localization/i18n/SanityPrint.pot"
 
 REM Run the script for each .po file
 echo "Run the script for each .po file"
-for /r "./localization/i18n/" %%f in (CrealityPrint*.po) do (
-    call :processFile "%%f" "CrealityPrint"
+for /r "./localization/i18n/" %%f in (SanityPrint*.po) do (
+    call :processFile "%%f" "SanityPrint"
 )
 @REM set pot_file="./localization/i18n/Community.pot"
 @REM echo "Run the script for each .po file"

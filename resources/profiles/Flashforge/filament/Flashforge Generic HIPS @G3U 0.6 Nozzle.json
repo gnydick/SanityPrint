@@ -67,5 +67,8 @@
   "support_material_interface_fan_speed": [
     "40"
   ],
-  "version": "1.9.0.2"
+  "version": "1.9.0.2",
+  "filament_temp_type": [
+    "2"
+  ]
 }

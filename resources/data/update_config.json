@@ -1,10 +1,10 @@
 {
   "provider": "squirrel.windows",
   "channel": "stable",
-  "update_feed": "http://172.20.180.14/shared/crealityprint/windows",
+  "update_feed": "http://172.20.180.14/shared/sanityprint/windows",
   "releases_file": "RELEASES",
-  "bootstrapper": "CrealityPrintSetup.exe",
-  "package_prefix": "CrealityPrint",
+  "bootstrapper": "SanityPrintSetup.exe",
+  "package_prefix": "SanityPrint",
   "artifact_dir": "Releases",
   "signature": "sha256"
 }

@@ -1,0 +1,38 @@
+name: Check locale
+
+on: 
+    push:
+      branches: 
+       - main
+       - master 
+       - windows
+      paths:
+       - 'localization/**'
+       - ".github/workflows/check_locale.yml"
+    pull_request:
+      branches: 
+       - main
+       - master 
+      paths:
+       - 'localization/**'
+       - ".github/workflows/check_locale.yml"
+
+jobs:
+  check_translation:
+    name: Check translation
+    runs-on: 'windows-latest'
+    steps:  
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install polib 
+        run: |
+          pip install polib
+      
+      - name: Check translation format
+        working-directory: ${{ github.workspace }}
+        run: |
+          echo $PWD
+          curl -LJO https://github.com/CrealityOfficial/CrealityPrint/releases/download/tools/check_po_format.py
+          python check_po_format.py $PWD\localization\i18n
+        

@@ -172,7 +172,7 @@ public:
     void visit_intersect_line_impl(coord_t ix, coord_t iy, Point p1, coord_t ixb, coord_t iyb, Point p2, VISITOR& visitor) const
     {
         // Account for the end points.
-        // 防御性检查：确保起点在有效范围内
+        // Defensive check: ensure the start point is within the valid range
         if (ix < 0 || ix >= m_cols || iy < 0 || iy >= m_rows)
             return;
         if (!visitor(iy, ix) || (ix == ixb && iy == iyb))
@@ -207,7 +207,7 @@ public:
                         iy += 1;
                         assert(iy <= iyb);
                     }
-                    // 防御性检查：确保新的坐标在有效范围内
+                    // Defensive check: ensure the new coordinates are within the valid range
                     if (ix < 0 || ix >= m_cols || iy < 0 || iy >= m_rows)
                         return;
                     if (!visitor(iy, ix))
@@ -229,7 +229,7 @@ public:
                         iy -= 1;
                         assert(iy >= iyb);
                     }
-                    // 防御性检查：确保新的坐标在有效范围内
+                    // Defensive check: ensure the new coordinates are within the valid range
                     if (ix < 0 || ix >= m_cols || iy < 0 || iy >= m_rows)
                         return;
                     if (!visitor(iy, ix))
@@ -255,7 +255,7 @@ public:
                         iy += 1;
                         assert(iy <= iyb);
                     }
-                    // 防御性检查：确保新的坐标在有效范围内
+                    // Defensive check: ensure the new coordinates are within the valid range
                     if (ix < 0 || ix >= m_cols || iy < 0 || iy >= m_rows)
                         return;
                     if (!visitor(iy, ix))
@@ -292,7 +292,7 @@ public:
                         iy -= 1;
                         assert(iy >= iyb);
                     }
-                    // 防御性检查：确保新的坐标在有效范围内
+                    // Defensive check: ensure the new coordinates are within the valid range
                     if (ix < 0 || ix >= m_cols || iy < 0 || iy >= m_rows)
                         return;
                     if (!visitor(iy, ix))
@@ -391,7 +391,7 @@ public:
 	{
         assert(row >= 0 && size_t(row) < m_rows);
         assert(col >= 0 && size_t(col) < m_cols);
-        // 防御性检查：防止越界访问
+        // Defensive check: prevent out-of-bounds access
         if (row < 0 || size_t(row) >= m_rows || col < 0 || size_t(col) >= m_cols)
             return std::make_pair(m_cell_data.end(), m_cell_data.end());
 		const EdgeGrid::Grid::Cell &cell = m_cells[row * m_cols + col];

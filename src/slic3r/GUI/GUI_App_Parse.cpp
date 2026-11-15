@@ -111,14 +111,14 @@ namespace GUI {
                     if(init_params->argc < 4    )
 					    return;
 
-                    // 检查第二个参数是否是目录
+                    // check whether the second argument is a directory
                     wxString inputPath = wxString::FromUTF8(init_params->argv[2]);
 
                     if (wxDirExists(inputPath) && init_params->argc >= 7) {
                         // stl to 3mf
-                        // convert_3mf 某个文件夹  机型预设  耗材预设  工艺预设   输出的3mf文件名
-                        // 比如:
-                        // convert_3mf "某个stl文件夹"  "Creality K2 Plus 0.4 nozzle"  "Hyper PLA"  "0.20mm Standard"  "outputfile_1.3mf"
+                        // convert_3mf  some_folder  printer_preset  filament_preset  process_preset   output_3mf_filename
+                        // for example:
+                        // convert_3mf "some_stl_folder"  "Creality K2 Plus 0.4 nozzle"  "Hyper PLA"  "0.20mm Standard"  "outputfile_1.3mf"
 
                         auto_convert_3mf_mgr.set_printer_preset(init_params->argv[3]);
                         auto_convert_3mf_mgr.set_output_3mf(init_params->argv[6]);
@@ -134,7 +134,7 @@ namespace GUI {
                         auto_convert_3mf_mgr.set_conversion_mode(ConversionMode::_3MF_TO_3MF);
                     }
             
-                    // 开始转换过程
+                    // start the conversion process
                     auto_convert_3mf_mgr.start_conversion();
                 
 			} 

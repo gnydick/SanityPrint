@@ -208,50 +208,50 @@ void StaticBox::doRender(wxDC& dc)
             else
                 dc.SetBrush(wxBrush(GetBackgroundColour()));
 
-            // 绘制圆角矩形
-            if (cornerFlags == 0xF) { // 所有角都是圆角
+            // draw rounded rectangle
+            if (cornerFlags == 0xF) { // all corners are rounded
                 rc.width += border_width * 2;
                 rc.height += border_width * 2;
                 dc.DrawRoundedRectangle(rc, radius - border_width);
             } else {
                 int r = radius - border_width;
                 dc.SetBrush(*wxTRANSPARENT_BRUSH);
-                // 左上角
+                // top-left corner
                 if (cornerFlags & 0x1) {
                     dc.DrawArc(rc.x + r, rc.y, rc.x, rc.y + r, rc.x + r, rc.y + r);
                 }
 
-                // 左边
+                // left edge
                 dc.DrawLine(rc.x, rc.y + r * (cornerFlags & 0x1), rc.x, rc.y + rc.height - r * ((cornerFlags & 0x2) ? 1 : 0));
 
-                // 左下角
+                // bottom-left corner
                 if (cornerFlags & 0x2) {
                     dc.DrawArc(rc.x, rc.y + rc.height - r, rc.x + r, rc.y + rc.height,
                                rc.x + r,
                                rc.y + rc.height - r);
                 }
 
-                // 下边
+                // bottom edge
                 dc.DrawLine(rc.x + r * ((cornerFlags & 0x2) ? 1 : 0), rc.y + rc.height,
                             rc.x + rc.width - r * ((cornerFlags & 0x4) ? 1 : 0),
                             rc.y + rc.height);
 
-                // 右下角
+                // bottom-right corner
                  if (cornerFlags & 0x4) {
                      dc.DrawArc(rc.x + rc.width - r, rc.y + rc.height, rc.x + rc.width, rc.y + rc.height - r, rc.x + rc.width - r,
                                 rc.y + rc.height - r);
                  }
                  
-                 // 右边
+                 // right edge
                  dc.DrawLine(rc.x + rc.width, rc.y + rc.height - r * ((cornerFlags & 0x4) ? 1 : 0), rc.x + rc.width,
                              rc.y + r * ((cornerFlags & 0x8) ? 1 : 0));
 
-                 // 右上角
+                 // top-right corner
                  if (cornerFlags & 0x8) {
                      dc.DrawArc(rc.x + rc.width, rc.y + r, rc.x + rc.width - r, rc.y, rc.x + rc.width - r, rc.y + r);
                  }
 
-                // 上边
+                // top edge
                  dc.DrawLine(rc.x + rc.width - r * ((cornerFlags & 0x8) ? 1 : 0), rc.y, rc.x + r * ((cornerFlags & 0x1) ? 1 : 0), rc.y);
             }
         }

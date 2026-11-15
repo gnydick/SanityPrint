@@ -133,12 +133,12 @@ protected:
     bool validate_version_text(const boost::optional<std::string>& version_text) const override;
 };
 
-class CrealityPrint : public PrusaLink
+class SanityPrint : public PrusaLink
 {
 public:
-    CrealityPrint(DynamicPrintConfig* config);
-    ~CrealityPrint() override = default;
-    const char* get_name() const override { return "CrealityPrint"; }
+    SanityPrint(DynamicPrintConfig* config);
+    ~SanityPrint() override = default;
+    const char* get_name() const override { return "SanityPrint"; }
     bool        validate_version_text(const boost::optional<std::string>& version_text) const override;
 
     wxString get_test_ok_msg() const override;

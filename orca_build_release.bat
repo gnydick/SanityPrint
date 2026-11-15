@@ -56,8 +56,8 @@ cd %WP%
 mkdir %build_dir%
 cd %build_dir%
 
-echo cmake .. -G "Visual Studio 16 2019" -A x64 -DBBL_RELEASE_TO_PUBLIC=1 -DCMAKE_PREFIX_PATH="%DEPS%\usr\local" -DCMAKE_INSTALL_PREFIX=".\CrealityPrint" -DCMAKE_BUILD_TYPE=%build_type%
-cmake .. -G "Visual Studio 16 2019" -A x64 -DBBL_RELEASE_TO_PUBLIC=1 -DCMAKE_PREFIX_PATH="%DEPS%\usr\local" -DCMAKE_INSTALL_PREFIX=".\CrealityPrint" -DCMAKE_BUILD_TYPE=%build_type% -DWIN10SDK_PATH="%WindowsSdkDir%Include\%WindowsSDKLibVersion%"
+echo cmake .. -G "Visual Studio 16 2019" -A x64 -DBBL_RELEASE_TO_PUBLIC=1 -DCMAKE_PREFIX_PATH="%DEPS%\usr\local" -DCMAKE_INSTALL_PREFIX=".\SanityPrint" -DCMAKE_BUILD_TYPE=%build_type%
+cmake .. -G "Visual Studio 16 2019" -A x64 -DBBL_RELEASE_TO_PUBLIC=1 -DCMAKE_PREFIX_PATH="%DEPS%\usr\local" -DCMAKE_INSTALL_PREFIX=".\SanityPrint" -DCMAKE_BUILD_TYPE=%build_type% -DWIN10SDK_PATH="%WindowsSdkDir%Include\%WindowsSDKLibVersion%"
 
 if "%compile%"=="ON" (
 rem cmake --build . --config %build_type% --target ALL_BUILD -- -m

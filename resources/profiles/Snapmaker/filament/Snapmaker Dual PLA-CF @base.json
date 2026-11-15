@@ -73,5 +73,11 @@
   ],
   "additional_cooling_fan_speed": [
     "0"
+  ],
+  "filament_temp_type": [
+    "1"
+  ],
+  "filament_chamber_temp_limit": [
+    "45"
   ]
 }

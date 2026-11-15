@@ -19,10 +19,10 @@
   "compatible_printers": [
     "Flashforge Adventurer 5M 0.4 Nozzle",
     "Flashforge Adventurer 5M 0.6 Nozzle",
-	"Flashforge Adventurer 5M 0.8 Nozzle",
+    "Flashforge Adventurer 5M 0.8 Nozzle",
     "Flashforge Adventurer 5M Pro 0.4 Nozzle",
     "Flashforge Adventurer 5M Pro 0.6 Nozzle",
-	"Flashforge Adventurer 5M Pro 0.8 Nozzle"
+    "Flashforge Adventurer 5M Pro 0.8 Nozzle"
   ],
   "compatible_printers_condition": "",
   "compatible_prints": [],
@@ -189,5 +189,20 @@
   "textured_plate_temp_initial_layer": [
     "60"
   ],
-  "version": "1.5.1.2"
+  "version": "1.5.1.2",
+  "filament_temp_type": [
+    "1"
+  ],
+  "filament_thermal_length": [
+    "1000.0"
+  ],
+  "filament_brim_adhesion_coeff": [
+    "0.5"
+  ],
+  "filament_chamber_temp_limit": [
+    "50"
+  ],
+  "filament_is_flexible": [
+    "1"
+  ]
 }

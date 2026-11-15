@@ -84,5 +84,20 @@
   ],
   "filament_notes": [
     "!! It needs to be dried before use.\nSunlu TPU 95A\n"
+  ],
+  "filament_temp_type": [
+    "1"
+  ],
+  "filament_thermal_length": [
+    "1000.0"
+  ],
+  "filament_brim_adhesion_coeff": [
+    "0.5"
+  ],
+  "filament_chamber_temp_limit": [
+    "50"
+  ],
+  "filament_is_flexible": [
+    "1"
   ]
 }

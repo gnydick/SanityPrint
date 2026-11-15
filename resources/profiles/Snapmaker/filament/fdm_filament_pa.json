@@ -84,5 +84,11 @@
   ],
   "filament_notes": [
     "!! It needs to be dried before use.\n"
+  ],
+  "filament_temp_type": [
+    "0"
+  ],
+  "filament_thermal_length": [
+    "100.0"
   ]
 }

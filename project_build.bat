@@ -170,8 +170,8 @@ if !LIST_C3d[%index%]!==ON (
     mkdir build_!LIST_TYPE[%index%]!
     cd build_!LIST_TYPE[%index%]!
     SET DEP_INSTALL_DIR=!LIST_DEPS_LIB[%index%]!
-    echo cmake .. -G "%VS_Version%" -A x64 -DGENERATE_ORCA_HEADER=!SLICER_HEADER! -DBBL_RELEASE_TO_PUBLIC=1 -DCMAKE_PREFIX_PATH="!DEP_INSTALL_DIR!\usr\local" -DCMAKE_INSTALL_PREFIX="./CrealityPrint" -DCMAKE_BUILD_TYPE=!LIST_TYPE[%index%]! -DWIN10SDK_PATH="%WindowsSdkDir%Include\%WindowsSDKLibVersion%"
-    cmake .. -G "%VS_Version%" -A x64 -DCMAKE_VLD_ENABLED=%VLD_ENABLED_STATUS% -DGENERATE_ORCA_HEADER=!SLICER_HEADER! -DBBL_RELEASE_TO_PUBLIC=1 -DCMAKE_PREFIX_PATH="!DEP_INSTALL_DIR!\usr\local" -DCMAKE_INSTALL_PREFIX="./CrealityPrint" -DCMAKE_BUILD_TYPE=!LIST_TYPE[%index%]! -DWIN10SDK_PATH="%WindowsSdkDir%Include\%WindowsSDKLibVersion%" || exit /b 1
+    echo cmake .. -G "%VS_Version%" -A x64 -DGENERATE_ORCA_HEADER=!SLICER_HEADER! -DBBL_RELEASE_TO_PUBLIC=1 -DCMAKE_PREFIX_PATH="!DEP_INSTALL_DIR!\usr\local" -DCMAKE_INSTALL_PREFIX="./SanityPrint" -DCMAKE_BUILD_TYPE=!LIST_TYPE[%index%]! -DWIN10SDK_PATH="%WindowsSdkDir%Include\%WindowsSDKLibVersion%"
+    cmake .. -G "%VS_Version%" -A x64 -DCMAKE_VLD_ENABLED=%VLD_ENABLED_STATUS% -DGENERATE_ORCA_HEADER=!SLICER_HEADER! -DBBL_RELEASE_TO_PUBLIC=1 -DCMAKE_PREFIX_PATH="!DEP_INSTALL_DIR!\usr\local" -DCMAKE_INSTALL_PREFIX="./SanityPrint" -DCMAKE_BUILD_TYPE=!LIST_TYPE[%index%]! -DWIN10SDK_PATH="%WindowsSdkDir%Include\%WindowsSDKLibVersion%" || exit /b 1
 
     @REM call text
     IF NOT !CALL_RUN_GETTEXT!==TRUE (

@@ -1,38 +1,44 @@
 {
-    "type": "filament",
-    "filament_id": "GFN03",
-    "name": "Arena PA-CF @base",
-    "from": "system",
-    "instantiation": "false",
-    "inherits": "fdm_filament_pa",
-    "required_nozzle_HRC": [
-        "40"
-    ],
-    "filament_vendor": [
-        "Orca Arena"
-    ],
-    "filament_density": [
-        "1.09"
-    ],
-    "filament_flow_ratio": [
-        "0.96"
-    ],
-    "nozzle_temperature_initial_layer": [
-        "280"
-    ],
-    "overhang_fan_threshold": [
-        "0%"
-    ],
-    "overhang_fan_speed": [
-        "40"
-    ],
-    "filament_type": [
-        "PA-CF"
-    ],
-    "filament_cost": [
-        "84.99"
-    ],
-    "nozzle_temperature": [
-        "280"
-    ]
+  "type": "filament",
+  "filament_id": "GFN03",
+  "name": "Arena PA-CF @base",
+  "from": "system",
+  "instantiation": "false",
+  "inherits": "fdm_filament_pa",
+  "required_nozzle_HRC": [
+    "40"
+  ],
+  "filament_vendor": [
+    "Orca Arena"
+  ],
+  "filament_density": [
+    "1.09"
+  ],
+  "filament_flow_ratio": [
+    "0.96"
+  ],
+  "nozzle_temperature_initial_layer": [
+    "280"
+  ],
+  "overhang_fan_threshold": [
+    "0%"
+  ],
+  "overhang_fan_speed": [
+    "40"
+  ],
+  "filament_type": [
+    "PA-CF"
+  ],
+  "filament_cost": [
+    "84.99"
+  ],
+  "nozzle_temperature": [
+    "280"
+  ],
+  "filament_temp_type": [
+    "0"
+  ],
+  "filament_thermal_length": [
+    "100.0"
+  ]
 }

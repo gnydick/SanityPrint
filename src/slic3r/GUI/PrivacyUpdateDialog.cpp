@@ -56,11 +56,6 @@ PrivacyUpdateDialog::PrivacyUpdateDialog(wxWindow* parent, wxWindowID id, const 
 
     m_sizer_right->Add(0, 0, 1, wxTOP, FromDIP(15));
 
-     std::string url = "https://wiki.creality.com/en/software/6-0/privacy";
-    if (wxGetApp().app_config->get("language").find("zh")==0) {
-        url = "https://wiki.creality.com/zh/software/6-0/privacy";
-    }
-
     wxHtmlWindow* m_website_html = new wxHtmlWindow(this, wxID_ANY, wxDefaultPosition, wxSize(FromDIP(480),FromDIP(150)), 0x0002 /*NEVER*/);
      
     {
@@ -73,7 +68,7 @@ PrivacyUpdateDialog::PrivacyUpdateDialog(wxWindow* parent, wxWindowID id, const 
         m_website_html->SetMaxSize(wxSize(FromDIP(480), FromDIP(150)));
         m_website_html->SetBorders(2);
        
-        wxString    content1    = format_wxstr(_L("We sincerely invite you to join Creality Print's \" User Experience Improvement Program\" "
+        wxString    content1    = format_wxstr(_L("We sincerely invite you to join Sanity Print's \" User Experience Improvement Program\" "
             "to help us optimize printing efficiency, improve printing performance and software experience by "
             "anonymously collecting data such as slicing parameters, settings and usage logs. We will not collect any "
                            "personally identifiable information, and all data will be protected in accordance with the"));
@@ -81,13 +76,12 @@ PrivacyUpdateDialog::PrivacyUpdateDialog(wxWindow* parent, wxWindowID id, const 
                     wxString    content3    = format_wxstr(_L(". You can turn off this feature in the settings at any time."));
                     std::string color       = wxGetApp().app_config->get("dark_color_mode") == "1" ? " #FFFFFF " : " #000000";
                     int fontSize    = FromDIP(16);
-                    const auto  text        = wxString::Format("<html> <body><font  style=\"color: %s;font-size:20px\">%s<a href=\"%s\">%s</a>%s</font></body></html>" ,
-                        color, content1, url, content2, content3 );
-                                            
-                                             
-        m_website_html->SetPage(text);
-        m_website_html->Bind(wxEVT_HTML_LINK_CLICKED, &PrivacyUpdateDialog::onLinkClicked, this);
+                    // Privacy Policy hyperlink removed: it opened the Creality privacy wiki.
+                    const auto  text        = wxString::Format("<html> <body><font  style=\"color: %s;font-size:20px\">%s%s%s</font></body></html>" ,
+                        color, content1, content2, content3 );
 
+
+        m_website_html->SetPage(text);
     }
     m_sizer_right->Add(m_website_html, 0, wxEXPAND | wxCENTER, FromDIP(15));
 
@@ -115,8 +109,8 @@ PrivacyUpdateDialog::PrivacyUpdateDialog(wxWindow* parent, wxWindowID id, const 
    m_sizer_right->Add(content2, 0,   wxLEFT, FromDIP(15));*/
 
     auto sizer_button = new wxBoxSizer(wxHORIZONTAL);
-    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(0, 137, 123), StateColor::Pressed), std::pair<wxColour, int>(wxColour(38, 166, 154), StateColor::Hovered),
-        std::pair<wxColour, int>(wxColour(0, 150, 136), StateColor::Normal));
+    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(26, 111, 163), StateColor::Pressed), std::pair<wxColour, int>(wxColour(93, 173, 226), StateColor::Hovered),
+        std::pair<wxColour, int>(wxColour(46, 134, 193), StateColor::Normal));
 
     StateColor btn_bg_white(std::pair<wxColour, int>(wxColour(206, 206, 206), StateColor::Pressed), std::pair<wxColour, int>(wxColour(220, 220, 220), StateColor::Hovered),
         std::pair<wxColour, int>(wxColour(238, 238, 238), StateColor::Normal));
@@ -135,7 +129,7 @@ PrivacyUpdateDialog::PrivacyUpdateDialog(wxWindow* parent, wxWindowID id, const 
     //m_vebview_release_note->Bind(wxEVT_WEBVIEW_NAVIGATING , &PrivacyUpdateDialog::OnNavigating, this);
 
     m_button_ok = new Button(this, _L("Join in"));
-    m_button_ok->SetBackgroundColor(wxColour("#17CC5F"));
+    m_button_ok->SetBackgroundColor(wxColour("#3498DB"));
     m_button_ok->SetBorderColor(*wxWHITE);
     m_button_ok->SetTextColor(wxColour("#FFFFFE"));
     m_button_ok->SetFont(Label::Body_12);

@@ -64,5 +64,8 @@
   ],
   "nozzle_temperature_range_high": [
     "255"
+  ],
+  "filament_chamber_temp_limit": [
+    "55"
   ]
 }

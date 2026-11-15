@@ -17,8 +17,10 @@ namespace SupportSpotsGenerator {
 struct Params
 {
     Params(
-        const std::vector<std::string> &filament_types, float max_acceleration, int raft_layers_count, BrimType brim_type, float brim_width)
-        : max_acceleration(max_acceleration), raft_layers_count(raft_layers_count), brim_type(brim_type), brim_width(brim_width)
+        const std::vector<std::string> &filament_types, float max_acceleration, int raft_layers_count, BrimType brim_type, float brim_width,
+        double bed_adhesion_strength = 0.02)
+        : max_acceleration(max_acceleration), raft_layers_count(raft_layers_count), brim_type(brim_type), brim_width(brim_width),
+          bed_adhesion_strength(bed_adhesion_strength)
     {
         if (filament_types.size() > 1) {
             BOOST_LOG_TRIVIAL(warning)
@@ -39,6 +41,7 @@ struct Params
                                   // however we do not have such info yet. The force is usually small anyway, so not such a big deal to include it everytime
     const int raft_layers_count;
     std::string filament_type;
+    double bed_adhesion_strength = 0.02; // MPa, from filament_bed_adhesion_strength config field
 
     BrimType brim_type;
     const float brim_width;
@@ -60,19 +63,9 @@ struct Params
 
     // MPa * 1e^6 = (g*mm/s^2)/mm^2 = g/(mm*s^2); yield strength of the bed surface
     double get_bed_adhesion_yield_strength() const {
-        if (raft_layers_count > 0) {
+        if (raft_layers_count > 0)
             return get_support_spots_adhesion_strength() * 2.0;
-        }
-
-        if (filament_type == "PLA") {
-            return 0.02 * 1e6;
-        } else if (filament_type == "PET" || filament_type == "PETG") {
-            return 0.3 * 1e6;
-        } else if (filament_type == "ABS" || filament_type == "ASA") {
-            return 0.1 * 1e6; //TODO do measurements
-        } else { //PLA default value - defensive approach, PLA has quite low adhesion
-            return 0.02 * 1e6;
-        }
+        return bed_adhesion_strength * 1e6;
     }
 
     double get_support_spots_adhesion_strength() const {

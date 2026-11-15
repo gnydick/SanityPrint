@@ -1042,6 +1042,7 @@ bool CalibrationPresetPage::is_filaments_compatiable(const std::vector<Preset*> 
 
     bed_temp = 0;
     std::vector<std::string> filament_types;
+    std::vector<int> filament_temp_types;
     for (auto &item : prests) {
         if (!item)
             continue;
@@ -1068,13 +1069,17 @@ bool CalibrationPresetPage::is_filaments_compatiable(const std::vector<Preset*> 
         }
         std::string display_filament_type;
         filament_types.push_back(item->config.get_filament_type(display_filament_type, 0));
+        int temp_type = item->config.has("filament_temp_type")
+            ? item->config.option<ConfigOptionInts>("filament_temp_type")->get_at(0)
+            : Slic3r::FilamentTempType::Undefine;
+        filament_temp_types.push_back(temp_type);
 
         // check is it in the filament blacklist
         if (!is_filament_in_blacklist(item, error_tips))
             return false;
     }
 
-    if (!creality::Filament::check_multi_filaments_compatibility(filament_types)) {
+    if (!creality::Filament::is_filaments_compatible(filament_temp_types)) {
         error_tips = _u8L("Can not print multiple filaments which have large difference of temperature together. Otherwise, the extruder and nozzle may be blocked or damaged during printing");
         return false;
     }

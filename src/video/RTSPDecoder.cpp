@@ -23,21 +23,21 @@ void RTSPDecoder::startPlay(const std::string& strUrl) {
     m_frame_data.clear();
     m_playFutrue = std::async(std::launch::async, [this](){
                    avformat_network_init();
-                // 打开RTSP流
+                // Open the RTSP stream
                 AVFormatContext *pFormatCtx = NULL;
                 if (avformat_open_input(&pFormatCtx, m_url.c_str(), NULL, NULL) != 0) {
                     std::cerr << "Couldn't open input stream." << std::endl;
                     m_isStop = true;
                     return -1;
                 }
-                // 查找视频流信息
+                // Find stream information
                 if (avformat_find_stream_info(pFormatCtx, NULL) < 0) {
                     std::cerr << "Couldn't find stream information." << std::endl;
                     avformat_close_input(&pFormatCtx);
                     m_isStop = true;
                     return -1;
                 }
-                // 找到视频流的编号
+                // Find the index of the video stream
                 int videoStream = -1;
                 for (unsigned int i = 0; i < pFormatCtx->nb_streams; i++) {
                     if (pFormatCtx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO) {
@@ -51,9 +51,9 @@ void RTSPDecoder::startPlay(const std::string& strUrl) {
                     m_isStop = true;
                     return -1;
                 }
-                // 获取视频流的解码器上下文
+                // Get the codec parameters of the video stream
                 AVCodecParameters *pCodecPar = pFormatCtx->streams[videoStream]->codecpar;
-                // 查找视频解码器
+                // Find the video decoder
                 const AVCodec *pCodec = avcodec_find_decoder(pCodecPar->codec_id);
                 if (pCodec == NULL) {
                     std::cerr << "Codec not found." << std::endl;
@@ -61,7 +61,7 @@ void RTSPDecoder::startPlay(const std::string& strUrl) {
                     m_isStop = true;
                     return -1;
                 }
-                // 分配解码器上下文
+                // Allocate the decoder context
                 AVCodecContext *pCodecCtx = avcodec_alloc_context3(pCodec);
                 if (avcodec_parameters_to_context(pCodecCtx, pCodecPar) < 0) {
                     std::cerr << "Could not copy codec parameters to codec context" << std::endl;
@@ -69,7 +69,7 @@ void RTSPDecoder::startPlay(const std::string& strUrl) {
                     m_isStop = true;
                     return -1;
                 }
-                // 打开解码器
+                // Open the decoder
                 if (avcodec_open2(pCodecCtx, pCodec, NULL) < 0) {
                     std::cerr << "Could not open codec." << std::endl;
                     avcodec_free_context(&pCodecCtx);
@@ -77,7 +77,7 @@ void RTSPDecoder::startPlay(const std::string& strUrl) {
                     m_isStop = true;
                     return -1;
                 }
-                // 分配AVFrame
+                // Allocate an AVFrame
                 AVFrame *pFrame = av_frame_alloc();
                 if (pFrame == NULL) {
                     std::cerr << "Could not allocate video frame" << std::endl;
@@ -86,7 +86,7 @@ void RTSPDecoder::startPlay(const std::string& strUrl) {
                     m_isStop = true;
                     return -1;
                 }
-                // 分配AVPacket
+                // Allocate an AVPacket
                 AVPacket *pPacket = av_packet_alloc();
                 if (pPacket == NULL) {
                     std::cerr << "Could not allocate packet" << std::endl;
@@ -97,43 +97,43 @@ void RTSPDecoder::startPlay(const std::string& strUrl) {
                     return -1;
                 }
                 std::vector<std::vector<uint8_t>> jpegArrays;
-                // 读取帧并解码
+                // Read frames and decode them
                 while (!m_isStop) {
                     int ret = av_read_frame(pFormatCtx, pPacket);
                     if (ret < 0) {
                         if (ret == AVERROR_EOF) {
-                            // 流正常结束，退出
+                            // Stream ended normally, exit
                             break;
                         } else if (ret == AVERROR(EAGAIN) || ret == AVERROR(EINTR)) {
-                            // 临时错误（无数据/被中断），重试
-                            std::this_thread::sleep_for(std::chrono::milliseconds(100)); //重试
+                            // Temporary error (no data / interrupted), retry
+                            std::this_thread::sleep_for(std::chrono::milliseconds(100)); // retry
                             continue;
                         } else {
-                            // 网络错误（如丢包、连接断开），打印错误并重试
+                            // Network error (e.g. packet loss, connection dropped), log the error and retry
                             av_packet_unref(pPacket);
-                            std::this_thread::sleep_for(std::chrono::milliseconds(100)); //重试
+                            std::this_thread::sleep_for(std::chrono::milliseconds(100)); // retry
                             continue;
                         }
                     }
 
-                    // 处理视频流数据包
+                    // Process video stream packets
                     if (pPacket->stream_index == videoStream) {
-                        // 发送数据包到解码器，失败时刷新解码器
+                        // Send the packet to the decoder, flushing it on failure
                         if (avcodec_send_packet(pCodecCtx, pPacket) < 0) {
-                            std::cerr << "发送数据包到解码器失败，刷新解码器..." << std::endl;
-                            avcodec_flush_buffers(pCodecCtx); // 刷新解码器，避免错误累积
+                            std::cerr << "Failed to send packet to decoder, flushing decoder..." << std::endl;
+                            avcodec_flush_buffers(pCodecCtx); // Flush the decoder to avoid error accumulation
                         }
 
-                        // 接收解码帧（循环确保接收所有输出）
+                        // Receive decoded frames (loop to ensure all output is received)
                         int frame_ret;
                         while ((frame_ret = avcodec_receive_frame(pCodecCtx, pFrame)) == 0) {
-                            img2jpeg(pFrame); // 转换为JPEG
+                            img2jpeg(pFrame); // Convert to JPEG
                         }
                     }
                     av_packet_unref(pPacket);
                 }
 
-                // 释放资源
+                // Release resources
                 av_frame_free(&pFrame);
                 av_packet_free(&pPacket);
                 avcodec_free_context(&pCodecCtx);
@@ -182,11 +182,11 @@ void RTSPDecoder::img2jpeg(AVFrame *pFrame) {
        while (avcodec_receive_packet(pCodecCtx, pPacket) == 0) 
        {
             std::lock_guard<std::mutex> guard(frame_mutex_);
-            // 队列满时移除最旧的帧
+            // Drop the oldest frame when the queue is full
             if (frame_queue.size() >= MAX_QUEUE_SIZE) {
                 frame_queue.pop();
             }
-            // 存入新帧
+            // Store the new frame
             frame_queue.emplace(pPacket->data, pPacket->data + pPacket->size);
             av_packet_unref(pPacket);
        }
@@ -205,12 +205,12 @@ void RTSPDecoder::getFrameData(std::vector<unsigned char>& framedata)
         framedata = frame_queue.front();
         frame_queue.pop();
     } else {
-        // 队列空时，返回上一帧的备份
+        // When the queue is empty, return the backup of the previous frame
         if (!last_valid_frame.empty()) {
             framedata = last_valid_frame;
         }
     }
-    // 备份当前帧，用于网络中断时
+    // Back up the current frame, used in case of network interruption
     if (!framedata.empty()) {
         last_valid_frame = framedata;
     }

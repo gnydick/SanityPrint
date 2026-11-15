@@ -4,13 +4,9 @@
 
 #include "buildinfo.h"
 
-#if defined(CUSTOMIZED) && !defined(CUSTOM_CXCLOUD_ENABLED)
-	#define CUSTOM_CXCLOUD false
-	#define CUSTOM_COMMUNITY_ENABLE false
-#else
-	#define CUSTOM_CXCLOUD true
-	#define CUSTOM_COMMUNITY_ENABLE true
-#endif
+// SanityPrint: Creality Cloud connectivity is permanently disabled.
+#define CUSTOM_CXCLOUD false
+#define CUSTOM_COMMUNITY_ENABLE false
 
 
 

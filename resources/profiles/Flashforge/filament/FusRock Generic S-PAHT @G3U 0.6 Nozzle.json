@@ -79,5 +79,11 @@
   "temperature_vitrification": [
     "90"
   ],
-  "version": "1.9.0.2"
+  "version": "1.9.0.2",
+  "filament_temp_type": [
+    "0"
+  ],
+  "filament_thermal_length": [
+    "100.0"
+  ]
 }
