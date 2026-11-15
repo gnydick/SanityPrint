@@ -6139,6 +6139,23 @@ msgstr ""
 msgid "Disable \"%1%\" (%2%)"
 msgstr "Vypnout „%1%“ (%2%)"
 
+msgid "Minimum mixed sublayer thickness"
+msgstr ""
+
+msgid ""
+"Minimum thickness of each mixed or gradient filament sublayer. Color ratios "
+"are adjusted when necessary while preserving the total layer height. Slicing "
+"stops with an error if the layer is too thin to fit all colors. Set to 0 to "
+"disable this limit."
+msgstr ""
+
+#, boost-format
+msgid ""
+"Mixed filament %1% at Z=%2% mm cannot fit %3% sublayers with a minimum "
+"thickness of %4% mm. Increase the layer height or reduce Minimum mixed "
+"sublayer thickness."
+msgstr ""
+
 msgid "affected Plate setting(s)"
 msgstr "dotčená nastavení podložky"
 
@@ -11870,8 +11887,8 @@ msgstr ""
 msgid ""
 "When recording timelapse without toolhead, it is recommended to add a "
 "\"Timelapse Wipe Tower\" \n"
-"by right-click the empty position of build plate and choose \"Add "
-"Primitive\"->\"Timelapse Wipe Tower\"."
+"by right-click the empty position of build plate and choose \"Add Primitive"
+"\"->\"Timelapse Wipe Tower\"."
 msgstr ""
 "Při nahrávání časosběru bez nástrojové hlavy se doporučuje přidat  "
 "\"Timelapse Wipe Tower\" \n"
@@ -17844,6 +17861,14 @@ msgstr "Chladicí pohyby se postupně zrychlují a začínají touto rychlostí.
 msgid "Minimal purge on wipe tower"
 msgstr "Minimální vytlačený objem na čistící věži"
 
+msgid "Filament pre-flush volume"
+msgstr ""
+
+msgid ""
+"After a filament change, the pre-flush volume of the new filament. Set to 0 "
+"to disable pre-flushing."
+msgstr ""
+
 msgid ""
 "After a tool change, the exact position of the newly loaded filament inside "
 "the nozzle may not be known, and the filament pressure is likely not yet "
@@ -18495,10 +18520,10 @@ msgstr "Maximální otáčky ventilátoru ve vrstvě"
 
 msgid ""
 "Fan speed will be ramped up linearly from zero at layer "
-"\"close_fan_the_first_x_layers\" to maximum at layer "
-"\"full_fan_speed_layer\". \"full_fan_speed_layer\" will be ignored if lower "
-"than \"close_fan_the_first_x_layers\", in which case the fan will be running "
-"at maximum allowed speed at layer \"close_fan_the_first_x_layers\" + 1."
+"\"close_fan_the_first_x_layers\" to maximum at layer \"full_fan_speed_layer"
+"\". \"full_fan_speed_layer\" will be ignored if lower than "
+"\"close_fan_the_first_x_layers\", in which case the fan will be running at "
+"maximum allowed speed at layer \"close_fan_the_first_x_layers\" + 1."
 msgstr ""
 "Rychlost ventilátoru bude lineárně zvyšována od nuly na vrstvě \"zavřít "
 "ventilátor na prvních x vrstvách\" až po maximum na vrstvě "
@@ -21788,7 +21813,11 @@ msgid ""
 "layers to purge on the prime tower before printing skeleton, then walls in "
 "the configured order, then skin and surface fill. This does not change "
 "bottom shell layers."
-msgstr "Když je povoleno proplachování do kostry objektů, vynutí se u spodních N vrstev objektu propláchnutí na čisticí věži před tiskem kostry, poté se vytisknou stěny v nastaveném pořadí a nakonec povrchová vrstva a povrchová výplň. Počet spodních plných vrstev se tím nezmění."
+msgstr ""
+"Když je povoleno proplachování do kostry objektů, vynutí se u spodních N "
+"vrstev objektu propláchnutí na čisticí věži před tiskem kostry, poté se "
+"vytisknou stěny v nastaveném pořadí a nakonec povrchová vrstva a povrchová "
+"výplň. Počet spodních plných vrstev se tím nezmění."
 
 msgid "Top fill flush layers"
 msgstr "Horní vrstvy s proplachem před výplní"
@@ -21798,7 +21827,11 @@ msgid ""
 "layers to purge on the prime tower before printing skeleton, then walls in "
 "the configured order, then skin and surface fill. This does not change top "
 "shell layers."
-msgstr "Když je povoleno proplachování do kostry objektů, vynutí se u horních N vrstev objektu propláchnutí na čisticí věži před tiskem kostry, poté se vytisknou stěny v nastaveném pořadí a nakonec povrchová vrstva a povrchová výplň. Počet horních plných vrstev se tím nezmění."
+msgstr ""
+"Když je povoleno proplachování do kostry objektů, vynutí se u horních N "
+"vrstev objektu propláchnutí na čisticí věži před tiskem kostry, poté se "
+"vytisknou stěny v nastaveném pořadí a nakonec povrchová vrstva a povrchová "
+"výplň. Počet horních plných vrstev se tím nezmění."
 
 msgid "Skeleton wipe speed"
 msgstr "Rychlost stírání kostry"
@@ -23192,6 +23225,752 @@ msgstr ""
 
 msgid "Canceled"
 msgstr "Zrušeno"
+
+msgid "Pre-flush length slowdown"
+msgstr ""
+
+msgid ""
+"After a filament change, use the numeric value of Filament pre-flush volume "
+"as the model infill path distance in millimeters for this speed limit. For "
+"example, a value of 10 limits only the first 10 mm of printed infill path, "
+"then restores normal speed. The volumetric flow limit is this percentage of "
+"the filament's maximum volumetric speed. With a prime tower, applies when "
+"Flush into objects' infill is enabled. Without a tower, applies to skeleton "
+"infill. Travel and retraction do not count. The tower's original pre-flush "
+"behavior is unchanged. Lower printing speeds are preserved. Set to 0 to "
+"disable this additional speed limit."
+msgstr ""
+
+#: src/libslic3r/PrintConfig.cpp
+msgid ""
+"Minimum estimated printing time in seconds between time flushes. With a wipe "
+"tower, flushing runs before a filament change or before a normal tower visit "
+"on a sparse tower layer. The nozzle flushes outside the plate, then "
+"continues directly to the tower entry. Towers without sparse layers still "
+"flush only before filament changes. Without a tower, including single-color "
+"printing, flushing waits for an internal infill path boundary. Small or "
+"narrow model islands suppress time flushing. The actual interval may be "
+"longer. Set to 0 to disable time flushing."
+msgstr ""
+
+#: src/libslic3r/PrintConfig.cpp
+msgid ""
+"Runs when overdue before a tower filament change, before a normal tower "
+"visit on a sparse tower layer, or at an internal infill path boundary "
+"without a tower. Towers without sparse layers still flush only before "
+"filament changes. Time keeps accumulating outside these nodes. Layers with "
+"model islands smaller than 25 square millimeters or without a 2 mm inset "
+"suppress time flushing. Tower flushes continue directly to the tower entry; "
+"other flushes return to the model. The interval may be exceeded while "
+"waiting for a safe node. Like Time lapse G-code, supports [layer_num], "
+"[layer_z] and [max_layer_z] with the same layer values and expression "
+"syntax. Use [return_x], [return_y] and [return_z] for the final tower entry "
+"position on a normal tower visit, or the nozzle position at other triggers, "
+"[current_tool] for the zero-based tool index, and [time_flush_elapsed] for "
+"estimated seconds since the previous flush. Expressions such as {layer_z + "
+"0.4} and {if time_flush_elapsed > 0}...{endif} are evaluated before G-code "
+"comments, even when preceded by a semicolon. The script must preserve "
+"coordinate origin, positioning modes and units; independent flushes must "
+"also preserve the active tool. The slicer restores position and absolute E "
+"for moves it can parse. Commands wrapped in M950 are passed through without "
+"tracking their motion, E resets or duration; firmware or the script must "
+"handle recovery. With or without a tower, use time_flush_has_toolchange in "
+"both Filament change G-code and Time flush G-code to combine an overdue "
+"flush with a filament change. It is true only for that combined event: skip "
+"the ordinary change and let Time flush G-code select [next_extruder] at the "
+"flush station using [new_filament_temp]. No-tower combined changes resume at "
+"the first new-filament print path. The active no-tower change branch must "
+"use this state; phased skeleton flushes keep their original flow."
+msgstr ""
+
+#: src/slic3r/GUI/GUI_App.cpp:8124 src/slic3r/GUI/GUI_App.cpp:8131
+#: src/slic3r/GUI/GUI_App.cpp:8493
+msgid "Updating parameter packages..."
+msgstr "Aktualizují se balíčky parametrů..."
+
+#: src/slic3r/GUI/GUI_App.cpp:8134
+msgid "Failed to update parameter packages. Please try again."
+msgstr "Balíčky parametrů se nepodařilo aktualizovat. Zkuste to prosím znovu."
+
+#: src/slic3r/GUI/GUI_App.cpp:8135 src/slic3r/GUI/GUI_App.cpp:8138
+msgid "Parameter update"
+msgstr "Aktualizace parametrů"
+
+#: src/slic3r/GUI/GUI_App.cpp:8499
+#, c-format
+msgid "Updated to %s"
+msgstr "Aktualizováno na %s"
+
+#: src/slic3r/GUI/GUI_App.cpp:8501
+msgid "Update content:"
+msgstr "Obsah aktualizace:"
+
+#: src/slic3r/GUI/GUI_App.cpp:8502
+msgid "No update description was provided."
+msgstr "Popis aktualizace nebyl poskytnut."
+
+#: src/slic3r/GUI/GUI_App.cpp:8505
+msgid "The update will be applied when you create or reopen a project."
+msgstr "Aktualizace se použije při vytvoření nebo opětovném otevření projektu."
+
+#: src/slic3r/GUI/GUI_App.cpp:8507
+msgid "The update will be applied after slicing finishes."
+msgstr "Aktualizace se použije po dokončení slicování."
+
+#: src/slic3r/GUI/GUI_App.cpp:8508
+msgid "Parameter packages updated"
+msgstr "Balíčky parametrů byly aktualizovány"
+
+#: src/slic3r/GUI/UpdateDialogs.cpp:32 src/slic3r/GUI/MainFrame.cpp:2924
+msgid "Check for Preset Updates"
+msgstr "Zkontrolovat aktualizace předvoleb"
+
+#: src/slic3r/GUI/UpdateDialogs.cpp:37 src/slic3r/GUI/UpdateDialogs.cpp:95
+msgid "Checking preset updates..."
+msgstr "Kontrola aktualizací předvoleb…"
+
+#: src/slic3r/GUI/UpdateDialogs.cpp:47 src/slic3r/GUI/UpdateDialogs.cpp:116
+msgid "Remind me later"
+msgstr "Připomenout později"
+
+#: src/slic3r/GUI/UpdateDialogs.cpp:101
+msgid "Updates are available for the following added printers."
+msgstr "Pro následující přidané tiskárny jsou k dispozici aktualizace."
+
+#: src/slic3r/GUI/UpdateDialogs.cpp:104
+#, c-format
+msgid "Target version: %s"
+msgstr "Cílová verze: %s"
+
+#: src/slic3r/GUI/UpdateDialogs.cpp:118
+#, c-format
+msgid "Update all (%d)"
+msgstr "Aktualizovat vše (%d)"
+
+#: src/slic3r/GUI/UpdateParams.cpp:197
+msgid "No printers have been added. Add a printer before checking for updates."
+msgstr ""
+"Nebyly přidány žádné tiskárny. Před kontrolou aktualizací přidejte tiskárnu."
+
+#: src/slic3r/GUI/UpdateParams.cpp:258
+msgid "All added printers are up to date."
+msgstr "Předvolby všech přidaných tiskáren jsou aktuální."
+
+#: src/slic3r/GUI/UpdateParams.cpp:222 src/slic3r/GUI/UpdateParams.cpp:233
+msgid ""
+"Failed to check preset updates. Please check your network and try again."
+msgstr ""
+"Kontrola aktualizací předvoleb se nezdařila. Zkontrolujte síťové připojení a "
+"zkuste to znovu."
+
+#: src/slic3r/GUI/UpdateParams.cpp:217 src/slic3r/GUI/UpdateParams.cpp:285
+msgid "The printer list or account has changed. Please check again."
+msgstr "Seznam tiskáren nebo účet se změnil. Proveďte kontrolu znovu."
+
+msgid "Floating vertical shell"
+msgstr ""
+
+msgid "Time flush G-code"
+msgstr ""
+
+# generated by robot
+msgid ""
+"The jerk setting exceeds the printer's maximum jerk (machine_max_jerk_x/"
+"machine_max_jerk_y).\n"
+"SanityPrint will automatically cap the jerk speed to ensure it doesn't "
+"surpass the printer's capabilities.\n"
+"You can adjust the maximum jerk setting in your printer's configuration to "
+"get higher speeds."
+msgstr ""
+"Nastavení jerku překračuje maximální jerk tiskárny (machine_max_jerk_x/"
+"machine_max_jerk_y). nSanityPrint automaticky omezí rychlost trysku, aby "
+"zajistila, že nepřekročí schopnosti tiskárny.nNastavení maximálního ruchu "
+"můžete nastavit v konfiguraci tiskárny, abyste získali vyšší rychlosti."
+
+# generated by robot
+msgid ""
+"The acceleration setting exceeds the printer's maximum acceleration "
+"(machine_max_acceleration_extruding).\n"
+"SanityPrint will automatically cap the acceleration speed to ensure it "
+"doesn't surpass the printer's capabilities.\n"
+"You can adjust the machine_max_acceleration_extruding value in your "
+"printer's configuration to get higher speeds."
+msgstr ""
+"Nastavení zrychlení překračuje maximální zrychlení tiskárny "
+"(machine_max_acceleration_extruding). nSanityPrint automaticky omezí "
+"rychlost zrychlení, aby zajistila, že nepřekročí schopnosti tiskárny. "
+"Vkonfiguraci tiskárny můžete nastavit hodnotu "
+"machine_max_acceleration_extruding, abyste získali vyšší rychlosti."
+
+# generated by robot
+msgid ""
+"The travel acceleration setting exceeds the printer's maximum travel "
+"acceleration (machine_max_acceleration_travel).\n"
+"SanityPrint will automatically cap the travel acceleration speed to ensure "
+"it doesn't surpass the printer's capabilities.\n"
+"You can adjust the machine_max_acceleration_travel value in your printer's "
+"configuration to get higher speeds."
+msgstr ""
+"Nastavení zrychlení jízdy přesahuje maximální zrychlení jízdy tiskárny "
+"(machine_max_acceleration_travel). \n"
+"SanityPrint automaticky omezí rychlost zrychlení jízdy, aby se zajistilo, "
+"ženepřekročí možnosti tiskárny. \n"
+"Hodnotu machine_max_acceleration_travel můžete upravit v konfiguraci "
+"tiskárny, abyste získali vyšší rychlost."
+
+msgid ""
+"Sanity Print can upload G-code files to a printer host. This field should "
+"contain the hostname, IP address or URL of the printer host instance. Print "
+"host behind HAProxy with basic auth enabled can be accessed by putting the "
+"user name and password into the URL in the following format: https://"
+"username:password@your-octopi-address/"
+msgstr ""
+"Sanity Print může nahrávat G-kódy do tiskového serveru. Toto pole by mělo "
+"obsahovat název hostitele, IP adresu nebo URL  tiskového serveru. K  "
+"tiskovému serveru za HAProxy se zapnutým ověřením basic auth lze přistupovat "
+"zadáním uživatelského jména a hesla do adresy URL v následujícím formátu: "
+"https://username: password@your-octopi-address/"
+
+msgid ""
+"Sanity Print can upload G-code files to a printer host. This field should "
+"contain the API Key or the password required for authentication."
+msgstr ""
+"Sanity Print může nahrát soubory do tiskového serveru. Toto pole by mělo "
+"obsahovat klíč API požadovaný pro ověření."
+
+# generated by robot
+msgid ""
+"This option sets the min point for the allowed bed mesh area. Due to the "
+"probe's XY offset, most printers are unable to probe the entire bed. To "
+"ensure the probe point does not go outside the bed area, the minimum and "
+"maximum points of the bed mesh should be set appropriately. SanityPrint "
+"ensures that adaptive_bed_mesh_min/adaptive_bed_mesh_max values do not "
+"exceed these min/max points. This information can usually be obtained from "
+"your printer manufacturer. The default setting is (-99999, -99999), which "
+"means there are no limits, thus allowing probing across the entire bed."
+msgstr ""
+"Tato volba nastavuje minimální bod pro povolenou plochu sítě lůžka. Vzhledem "
+"k XY offsetu sondy není většina tiskáren schopnasondovat celé lůžko. Aby se "
+"zajistilo, že bod sondy nevede mimo oblast lůžka, měly by být vhodně "
+"nastaveny minimálnía maximální body lůžkové sítě. SanityPrint zajišťuje, že "
+"hodnoty adaptive_bed_mesh_min/adaptive_bed_mesh_max nepřekračují tyto min/"
+"max body. Tyto informace obvykle získáte uvýrobce tiskárny. Výchozí "
+"nastavení je (-99999, -99999), což znamená, že neexistují žádné limity, což "
+"umožňuje sondování napříč celým lůžkem."
+
+# generated by robot
+msgid ""
+"This option sets the max point for the allowed bed mesh area. Due to the "
+"probe's XY offset, most printers are unable to probe the entire bed. To "
+"ensure the probe point does not go outside the bed area, the minimum and "
+"maximum points of the bed mesh should be set appropriately. SanityPrint "
+"ensures that adaptive_bed_mesh_min/adaptive_bed_mesh_max values do not "
+"exceed these min/max points. This information can usually be obtained from "
+"your printer manufacturer. The default setting is (99999, 99999), which "
+"means there are no limits, thus allowing probing across the entire bed."
+msgstr ""
+"Tato volba nastavuje maximální bod pro povolenou plochu sítě lůžka. Vzhledem "
+"k XY offsetu sondy není většina tiskáren schopnasondovat celé lůžko. Aby se "
+"zajistilo, že bod sondy nevede mimo oblast lůžka, měly by být vhodně "
+"nastaveny minimálnía maximální body lůžkové sítě. SanityPrint zajišťuje, že "
+"hodnoty adaptive_bed_mesh_min/adaptive_bed_mesh_max nepřekračují tyto min/"
+"max body. Tyto informace obvykle získáte uvýrobce tiskárny. Výchozí "
+"nastavení je (99999, 99999), což znamená, že neexistují žádné limity, což "
+"umožňuje sondování napříč celou postelí."
+
+msgid "Temperature type"
+msgstr ""
+
+msgid ""
+"Multi-material temperature compatibility class. 0=HighTemp, 1=LowTemp, "
+"2=HighLowCompatible, 3=Undefine."
+msgstr ""
+
+msgid "Smart cooling zone"
+msgstr ""
+
+msgid "Enable smart cooling slowdown zones for this filament."
+msgstr ""
+
+msgid "Bed adhesion strength"
+msgstr ""
+
+msgid ""
+"Bed adhesion yield strength in MPa used for support-spot generation. Engine "
+"multiplies by 1e6 internally."
+msgstr ""
+
+msgid "Thermal length"
+msgstr ""
+
+msgid "Characteristic thermal length (mm) used for brim/warp estimation."
+msgstr ""
+
+msgid "Brim adhesion coefficient"
+msgstr ""
+
+msgid ""
+"Multiplier applied to brim width for adhesion estimation. Higher = wider "
+"brim generated."
+msgstr ""
+
+msgid "Small island threshold"
+msgstr ""
+
+msgid "Area threshold (mm²) below which a slice island is treated as small."
+msgstr ""
+
+msgid "Chamber temperature limit"
+msgstr ""
+
+msgid ""
+"Maximum safe chamber temperature (°C) for this filament. 0 = no limit / no "
+"warning."
+msgstr ""
+
+msgid "Flexible filament"
+msgstr ""
+
+msgid ""
+"Mark this filament as flexible (e.g. TPU). Used to suggest appropriate "
+"support filament."
+msgstr ""
+
+msgid ""
+"After a tool change, the exact position of the newly loaded filament inside "
+"the nozzle may not be known, and the filament pressure is likely not yet "
+"stable. Before purging the print head into an infill or a sacrificial "
+"object, Sanity Print will always prime this amount of material into the wipe "
+"tower to produce successive infill or sacrificial object extrusions reliably."
+msgstr ""
+"Po výměně nástroje nemusí být známa přesná poloha nově zavedeného filamentu "
+"uvnitř trysky a tlak filamentu pravděpodobně ještě není stabilní. Před "
+"vyčištěním tiskové hlavy do výplně nebo do objektu bude Sanity Print toto "
+"množství vláknou vždy vytlačovat do čistící věže, aby se spolehlivě "
+"vytvořily následné výplně nebo objekty."
+
+msgid ""
+"Connect an infill line to an internal perimeter with a short segment of an "
+"additional perimeter. If expressed as percentage (example: 15%) it is "
+"calculated over infill extrusion width. Sanity Print tries to connect two "
+"close infill lines to a short perimeter segment. If no such perimeter "
+"segment shorter than infill_anchor_max is found, the infill line is "
+"connected to a perimeter segment at just one side and the length of the "
+"perimeter segment taken is limited to this parameter, but no longer than "
+"anchor_length_max. \n"
+"Set this parameter to zero to disable anchoring perimeters connected to a "
+"single infill line."
+msgstr ""
+"Připojení výplně k vnitřnímu perimetru krátkým segmentem dalšího perimetru. "
+"Pokud je vyjádřeno v procentech (příklad: 15%), vypočítává se z šířky "
+"extruze výplně. Sanity Print se pokouší spojit dvě blízké výplňová čáry "
+"krátkým obvodovým perimetrem. Pokud není nalezen žádný takový obvodový "
+"perimetr kratší než infill_anchor_max, je výplňová čára spojena s obvodovým "
+"perimetrem pouze na jedné straně a délka odebraného obvodového perimetru je "
+"omezena na tento parametr, ale ne dále než anchor_length_max. \n"
+"Nastavením tohoto parametru na nulu deaktivujete kotvící perimetry připojené "
+"k jedné výplňové čáře."
+
+msgid ""
+"Connect an infill line to an internal perimeter with a short segment of an "
+"additional perimeter. If expressed as percentage (example: 15%) it is "
+"calculated over infill extrusion width. Sanity Print tries to connect two "
+"close infill lines to a short perimeter segment. If no such perimeter "
+"segment shorter than this parameter is found, the infill line is connected "
+"to a perimeter segment at just one side and the length of the perimeter "
+"segment taken is limited to infill_anchor, but no longer than this "
+"parameter. \n"
+"If set to 0, the old algorithm for infill connection will be used, it should "
+"create the same result as with 1000 & 0."
+msgstr ""
+"Připojení výplně k vnitřnímu perimetru krátkým segmentem dalšího perimetru. "
+"Pokud je vyjádřeno v procentech (příklad: 15%), vypočítává se z šířky "
+"extruze výplně. SanityPrint se pokouší spojit dvě blízké výplňová linky "
+"krátkým obvodovým perimetrem. Pokud není nalezen žádný takový obvodový "
+"perimetr kratší než tento parametr, je výplňová čára spojena s obvodovým "
+"perimetrem pouze na jedné straně a délka odebraného obvodového perimetru je "
+"omezena na infill_anchor, ale ne delší než tento parametr. \n"
+" Pokud je nastaveno na 0, použije se starý algoritmus pro výplň připojení, "
+"měl by vytvořit stejný výsledek jako s 1000 & 0."
+
+msgid ""
+"Sanity Print can upload G-code files to a printer host. This field must "
+"contain the kind of the host."
+msgstr ""
+"Sanity Print může nahrát soubory G-kódu do tiskového serveru. Toto pole musí "
+"obsahovat druh tiskového serveru."
+
+msgid ""
+"If you want to process the output G-code through custom scripts, just list "
+"their absolute paths here. Separate multiple scripts with a semicolon. "
+"Scripts will be passed the absolute path to the G-code file as the first "
+"argument, and they can access the Sanity Print config settings by reading "
+"environment variables."
+msgstr ""
+"Pokud chcete výstupní G-kód zpracovat pomocí vlastních skriptů, stačí zde "
+"uvést jejich absolutní cesty. Více skriptů oddělte středníkem. Skriptu bude "
+"předána absolutní cesta k souboru G-kódu jako první argument a mohou přístup "
+"k nastavení konfigurace Sanity Print čtením proměnných prostředí."
+
+msgid "Vertical shell speed"
+msgstr ""
+
+msgid ""
+"Speed for narrow internal solid infill regions that overlap sparse infill or "
+"internal voids in the layer below. Requires \"Detect narrow internal solid "
+"infill\" to be enabled. Percentages are relative to the internal solid "
+"infill speed. When \"Detect floating vertical shells\" is enabled, paths "
+"identified as floating use the bridge speed instead."
+msgstr ""
+
+msgid "Time flush interval"
+msgstr ""
+
+msgid "Detect floating vertical shells"
+msgstr ""
+
+msgid ""
+"Identify floating paths in narrow internal solid infill regions above sparse "
+"infill or internal voids, and print those paths at the bridge speed. "
+"Unmarked paths, or all paths when this option is disabled, use the vertical "
+"shell speed. Requires \"Detect narrow internal solid infill\" to be enabled."
+msgstr ""
+
+# generated by robot
+msgid ""
+"SanityPrint has encountered an error while taking a configuration snapshot."
+msgstr "Při pořizování snímku konfigurace došlo k chybě SanityPrint."
+
+# generated by robot
+msgid "SanityPrint error"
+msgstr "KrealityPrint error"
+
+# generated by robot
+msgid "SanityPrint is licensed under "
+msgstr "SanityPrint je licencován pod"
+
+# generated by robot
+msgid "SanityPrint is based on PrusaSlicer and BambuStudio"
+msgstr "SanityPrint je založen na PrusaSlicer a BambuStudio"
+
+msgid "Sanity Print "
+msgstr "Sanity Print "
+
+# generated by robot
+msgid ""
+"This project file is not from Sanity Print. Please select the printer preset "
+"you want to use for slicing."
+msgstr ""
+"Tento soubor projektu není z Sanity Print. Vyberte prosím přednastavení "
+"tiskárny, které chcete použít pro řezání."
+
+msgid ""
+"To keep the feature you just enabled, Sanity Print will make the following "
+"changes:"
+msgstr ""
+
+msgid "------- Templates -------"
+msgstr ""
+
+msgid "------- Existing presets -------"
+msgstr ""
+
+# generated by robot
+msgid "Printer config bundle(.sanity_printer)"
+msgstr "Konfigurační balíček tiskárny(.sanity_printer)"
+
+# generated by robot
+msgid ""
+"Performing desktop integration failed - could not create Gcodeviewer desktop "
+"file. SanityPrint desktop file was probably created successfully."
+msgstr ""
+"Provádění integrace plochy selhalo správně, nebylo možné vytvořit soubor "
+"plochy Gcodeviewer. Desktop soubor SanityPrint byl pravděpodobně úspěšně "
+"vytvořen."
+
+msgid "Remove Materials from Printer"
+msgstr ""
+
+msgid ""
+"Select the materials to remove from the printer (only those added by "
+"SanityPrint are listed; factory materials are protected):"
+msgstr ""
+
+msgid "Remove selected"
+msgstr ""
+
+msgid "Sync Filaments to Printers"
+msgstr ""
+
+#, c-format
+msgid "Push all custom filaments (%zu) to the selected printers:"
+msgstr ""
+
+msgid " - offline"
+msgstr ""
+
+msgid "No printers found. Add printers on the Device page first."
+msgstr ""
+
+msgid "Push"
+msgstr ""
+
+msgid "Remove..."
+msgstr ""
+
+msgid "There are no custom filaments to sync."
+msgstr ""
+
+msgid "Please select at least one printer."
+msgstr ""
+
+#, c-format, boost-format
+msgid "Filament sync finished: %d pushed, %d failed."
+msgstr ""
+
+msgid "Sync Filaments"
+msgstr ""
+
+msgid ""
+"No removable materials were found on the selected printer(s). Only materials "
+"added by SanityPrint can be removed here; factory materials are protected."
+msgstr ""
+
+msgid "Remove Materials"
+msgstr ""
+
+#, c-format, boost-format
+msgid "Remove finished: %d removed, %d failed."
+msgstr ""
+
+msgid "The configuration may be generated by a newer version of SanityPrint."
+msgstr "Konfiguraci může generovat novější verze SanityPrint."
+
+# generated by robot
+msgid ""
+"Sanity Print requires the Microsoft WebView2 Runtime to operate certain "
+"features.\n"
+"Click Yes to install it now."
+msgstr ""
+"Pro provoz určitých funkcí Sanity Print vyžaduje runtime Microsoft "
+"WebView2. \n"
+"Klepněte na tlačítko Ano a nainstalujte ho nyní."
+
+# generated by robot
+msgid ""
+"Sanity Print requires the Microsoft WebView2 Runtime,But it has been found "
+"that the abnormal operation of Microsoft WebView2 may be related to the "
+"installation of Microsoft Edge. \n"
+"Click the Yes to reinstall Microsoft Edge"
+msgstr ""
+"Sanity Print vyžaduje Microsoft WebView2 Runtime, ale bylo zjištěno, že "
+"abnormální provoz Microsoft WebView2 může souviset s instalací "
+"MicrosoftEdge. nKlepnutím na tlačítko Ano přeinstalujete aplikaci Microsoft "
+"Edge"
+
+msgid "The Sanity Print needs an upgrade"
+msgstr "Sanity Print potřebuje aktualizaci"
+
+# generated by robot
+msgid ""
+"Detected corruption in the Sanity Print configuration file, attempted to "
+"rebuild, \n"
+"please manually restart the software."
+msgstr ""
+"Zjištěno poškození v konfiguračním souboru Sanity Print, pokus o obnovu, "
+"nplease ručně restartujte software."
+
+msgid ""
+"The SanityPrint configuration file may be corrupted and cannot be parsed.\n"
+"SanityPrint has attempted to recreate the configuration file.\n"
+"Please note, application settings will be lost, but printer profiles will "
+"not be affected."
+msgstr ""
+"Soubor konfigurace programu SanityPrint může být poškozen a nelze ho "
+"analyzovat.\n"
+"SanityPrint se pokusil znovu vytvořit konfigurační soubor.\n"
+"Všimněte si, že nastavení aplikace bude ztraceno, ale profily tiskárny "
+"nebudou ovlivněny."
+
+msgid ""
+"The version of Sanity Print is too low and needs to be updated to the latest "
+"version before it can be used normally"
+msgstr ""
+"Verze Sanity Print je příliš nízká a je třeba ji aktualizovat na nejnovější "
+"verze předtím, než ji lze normálně používat"
+
+msgid "Sanity Print GUI initialization failed"
+msgstr "Inicializace grafického rozhraní Sanity Print se nezdařila"
+
+msgid ""
+"Another virtual camera is running.\n"
+"Sanity Print supports only a single virtual camera.\n"
+"Do you want to stop this virtual camera?"
+msgstr ""
+"Je spuštěna další virtuální kamera.\n"
+"Sanity Print podporuje pouze jednu virtuální kameru.\n"
+"Chcete zastavit tuto virtuální kameru?"
+
+# generated by robot
+msgid ""
+"The 3mf file version is in Beta and it is newer than the current "
+"SanityPrint  version."
+msgstr ""
+"Verze souboru 3mf je v Beta a je novější než aktuální verze SanityPrint."
+
+# generated by robot
+msgid "If you would like to try Sanity Print Beta, you may click to"
+msgstr "Pokud chcete vyzkoušet Sanity Print Beta, klikněte na tlačítko"
+
+# generated by robot
+msgid "The 3mf file version is newer than the current Sanity Print version."
+msgstr "Verze souboru 3mf je novější než aktuální verze Sanity Print."
+
+# generated by robot
+msgid ""
+"Update your Sanity Print could enable all functionality in the 3mf file."
+msgstr ""
+"Aktualizace Sanity Print by mohla povolit veškeré funkce v souboru 3mf."
+
+# generated by robot
+msgid "SanityPrint Version:"
+msgstr "Verze SanityPrint:"
+
+# generated by robot
+msgid "Test SanityPrint(GitHub)"
+msgstr "Test SanityPrint(GitHub)"
+
+# generated by robot
+msgid "Test SanityPrint(GitHub):"
+msgstr "Test SanityPrint(GitHub):"
+
+msgid "Obj"
+msgstr ""
+
+msgid ""
+"There are some unknown filaments mapped to generic preset. Please update "
+"Sanity Print or restart Creality Print to check if there is an update to "
+"system presets."
+msgstr ""
+
+msgid "The 3mf is not supported by SanityPrint, load geometry data only."
+msgstr ""
+"Formát 3MF není podporován programem SanityPrint, lze načíst pouze "
+"geometrická data."
+
+#, boost-format
+msgid ""
+"The no-tower algorithm for plate %1% requires %2% external purge visits, "
+"exceeding 100.\n"
+"The model has limited internal infill available for purging. Enabling a "
+"prime tower may reduce external purge travel and improve print quality.\n"
+"\n"
+"Enable the prime tower and slice again, or keep the current no-tower result?"
+msgstr ""
+
+msgid "No-tower infill"
+msgstr ""
+
+msgid "Enable prime tower and slice again"
+msgstr ""
+
+msgid "Continue without prime tower"
+msgstr ""
+
+msgid ""
+"Importing to Sanity Print failed. Please download the file and manually "
+"import it."
+msgstr ""
+"Import do Sanity Printu selhal. Stáhněte soubor a proveďte jeho ruční import."
+
+# generated by robot
+msgid "with SanityPrint so that SanityPrint can open models from"
+msgstr "s SanityPrint tak, aby SanityPrint mohl otevírat modely z"
+
+# generated by robot
+msgid ""
+"We sincerely invite you to join Sanity Print's \" User Experience "
+"Improvement Program\" to help us optimize printing efficiency, improve "
+"printing performance and software experience by anonymously collecting data "
+"such as slicing parameters, settings and usage logs. We will not collect any "
+"personally identifiable information, and all data will be protected in "
+"accordance with the"
+msgstr ""
+"Upřímně vás zváme, abyste se připojili k \"Programu zlepšení uživatelské "
+"zkušenosti\" společnosti Sanity Print, který nám pomůže optimalizovat "
+"účinnosttisku, zlepšit výkon tisku a zkušenost s softwarem anonymním "
+"shromažďováním dat, jako jsou parametry řezání, nastavení a záznamy použití."
+"Nebudeme shromažďovat žádné osobní údaje a veškerá data budou chráněna v "
+"souladu s"
+
+msgid ""
+"Click OK to update the Network plug-in when Sanity Print launches next time."
+msgstr ""
+"Klepnutím na OK aktualizujte síťový zásuvný modul při příštím spuštění "
+"SanityPrint Sliceru."
+
+msgid "New version of Sanity Print"
+msgstr "Nová verze Sanity Print"
+
+msgid ""
+"Step 1, please confirm Sanity Print and your printer are in the same LAN."
+msgstr ""
+"Krok 1, potvrďte, že Sanity Print a vaše tiskárna jsou ve stejné síti LAN."
+
+msgid "The printer is required to be in the same LAN as Sanity Print"
+msgstr "Tiskárna musí být ve stejné síti LAN jako Sanity Print."
+
+# generated by robot
+msgid "Blacklisted libraries loaded into SanityPrint process:"
+msgstr "Knihovny na černé seznamu načtené do procesu SanityPrint:"
+
+msgid "Material properties"
+msgstr ""
+
+msgid "Time flush"
+msgstr ""
+
+msgid ""
+"SanityPrint uses this matrix only when flushing into objects skeleton is "
+"enabled."
+msgstr ""
+
+msgid ""
+"The firmware version is abnormal. Repairing and updating are required before "
+"printing. Do you want to update now? You can also update later on printer or "
+"update next time starting SanityPrint."
+msgstr ""
+"Verze firmwaru je abnormální. Oprava a aktualizace jsou nutné před tisk. "
+"Chcete provést aktualizaci nyní? Aktualizaci můžete provést také později na "
+"tiskárně nebo aktualizovat při příštím spuštění studia."
+
+msgid "Please check the network connection of the printer and SanityPrint"
+msgstr "Prosím, zkontrolujte síťové připojení tiskárny a Studia."
+
+# generated by robot
+msgid ""
+"SanityPrint would re-calculate your flushing volumes everytime the filaments "
+"color changed."
+msgstr ""
+"SanityPrint přepočítá objemy splachování pokaždé, když se barva vláken změní."
+
+# generated by robot
+msgid ""
+"Your system is missing H.264 codecs for GStreamer, which are required to "
+"play video.  (Try installing the gstreamer1.0-plugins-bad or gstreamer1.0-"
+"libav packages, then restart Sanity Print?)"
+msgstr ""
+"V systému chybí kodeky H.264 pro GStreamer, které jsou nutné pro přehrávání "
+"videa. (Zkuste nainstalovat balíčky gstreamer1.0-plugins-bad nebo "
+"gstreamer1.0-libava restartovat Sanity Print?)"
+
+# generated by robot
+msgid "Connection to SanityPrint works correctly."
+msgstr "Připojení k SanityPrint funguje správně."
+
+# generated by robot
+msgid "Could not connect to SanityPrint"
+msgstr "Nelze se připojit k SanityPrint"
 
 #~ msgid ""
 #~ "Prime tower is required for smooth timelapse. There may be flaws on the "
@@ -24633,12 +25412,12 @@ msgstr "Zrušeno"
 
 #~ msgid ""
 #~ "There are some unknown filaments in the AMS mappings. Please check "
-#~ "whether they are the required filaments. If they are okay, press "
-#~ "\"Confirm\" to start printing."
+#~ "whether they are the required filaments. If they are okay, press \"Confirm"
+#~ "\" to start printing."
 #~ msgstr ""
 #~ "V mapování AMS jsou nějaké neznámé filamenty. Zkontrolujte prosím, zda "
-#~ "jsou to požadované filamenty. Pokud jsou v pořádku, stiskněte "
-#~ "\"Potvrdit\" pro zahájení tisku."
+#~ "jsou to požadované filamenty. Pokud jsou v pořádku, stiskněte \"Potvrdit"
+#~ "\" pro zahájení tisku."
 
 #~ msgid ""
 #~ "Thank you for purchasing a Bambu Lab device.Before using your Bambu Lab "
@@ -24769,12 +25548,12 @@ msgstr "Zrušeno"
 #~ "Najdete podrobnosti o kalibraci průtoku dynamiky v naší wiki.\n"
 #~ "\n"
 #~ "Obvykle kalibrace není potřebná. Při spuštění tisku s jednobarevným/"
-#~ "materiálovým filamentem a zaškrtnutou volbou \"kalibrace průtoku "
-#~ "dynamiky\" v menu spuštění tisku, tiskárna bude postupovat podle staré "
-#~ "metody a zkalibruje filament před tiskem. Při spuštění tisku s "
-#~ "vícebarevným/materiálovým filamentem bude tiskárna při každé změně "
-#~ "filamentu používat výchozí kompenzační parametr pro filament, což má "
-#~ "většinou dobrý výsledek.\n"
+#~ "materiálovým filamentem a zaškrtnutou volbou \"kalibrace průtoku dynamiky"
+#~ "\" v menu spuštění tisku, tiskárna bude postupovat podle staré metody a "
+#~ "zkalibruje filament před tiskem. Při spuštění tisku s vícebarevným/"
+#~ "materiálovým filamentem bude tiskárna při každé změně filamentu používat "
+#~ "výchozí kompenzační parametr pro filament, což má většinou dobrý "
+#~ "výsledek.\n"
 #~ "\n"
 #~ "Všimněte si, že existují některé případy, které mohou způsobit, že "
 #~ "výsledek kalibrace nebude spolehlivý: použití texturované podložky pro "
@@ -25586,82 +26365,3 @@ msgstr "Zrušeno"
 
 #~ msgid "Export to Local"
 #~ msgstr "Export to Local"
-
-#: src/slic3r/GUI/GUI_App.cpp:8124 src/slic3r/GUI/GUI_App.cpp:8131 src/slic3r/GUI/GUI_App.cpp:8493
-msgid "Updating parameter packages..."
-msgstr "Aktualizují se balíčky parametrů..."
-
-#: src/slic3r/GUI/GUI_App.cpp:8134
-msgid "Failed to update parameter packages. Please try again."
-msgstr "Balíčky parametrů se nepodařilo aktualizovat. Zkuste to prosím znovu."
-
-#: src/slic3r/GUI/GUI_App.cpp:8135 src/slic3r/GUI/GUI_App.cpp:8138
-msgid "Parameter update"
-msgstr "Aktualizace parametrů"
-
-#: src/slic3r/GUI/GUI_App.cpp:8499
-#, c-format
-msgid "Updated to %s"
-msgstr "Aktualizováno na %s"
-
-#: src/slic3r/GUI/GUI_App.cpp:8501
-msgid "Update content:"
-msgstr "Obsah aktualizace:"
-
-#: src/slic3r/GUI/GUI_App.cpp:8502
-msgid "No update description was provided."
-msgstr "Popis aktualizace nebyl poskytnut."
-
-#: src/slic3r/GUI/GUI_App.cpp:8505
-msgid "The update will be applied when you create or reopen a project."
-msgstr "Aktualizace se použije při vytvoření nebo opětovném otevření projektu."
-
-#: src/slic3r/GUI/GUI_App.cpp:8507
-msgid "The update will be applied after slicing finishes."
-msgstr "Aktualizace se použije po dokončení slicování."
-
-#: src/slic3r/GUI/GUI_App.cpp:8508
-msgid "Parameter packages updated"
-msgstr "Balíčky parametrů byly aktualizovány"
-
-#: src/slic3r/GUI/UpdateDialogs.cpp:32 src/slic3r/GUI/MainFrame.cpp:2924 src/slic3r/GUI/MainFrame.cpp:2924
-msgid "Check for Preset Updates"
-msgstr "Zkontrolovat aktualizace předvoleb"
-
-#: src/slic3r/GUI/UpdateDialogs.cpp:37 src/slic3r/GUI/UpdateDialogs.cpp:95
-msgid "Checking preset updates..."
-msgstr "Kontrola aktualizací předvoleb…"
-
-#: src/slic3r/GUI/UpdateDialogs.cpp:47 src/slic3r/GUI/UpdateDialogs.cpp:116
-msgid "Remind me later"
-msgstr "Připomenout později"
-
-#: src/slic3r/GUI/UpdateDialogs.cpp:101
-msgid "Updates are available for the following added printers."
-msgstr "Pro následující přidané tiskárny jsou k dispozici aktualizace."
-
-#: src/slic3r/GUI/UpdateDialogs.cpp:104
-#, c-format
-msgid "Target version: %s"
-msgstr "Cílová verze: %s"
-
-#: src/slic3r/GUI/UpdateDialogs.cpp:118
-#, c-format
-msgid "Update all (%d)"
-msgstr "Aktualizovat vše (%d)"
-
-#: src/slic3r/GUI/UpdateParams.cpp:197
-msgid "No printers have been added. Add a printer before checking for updates."
-msgstr "Nebyly přidány žádné tiskárny. Před kontrolou aktualizací přidejte tiskárnu."
-
-#: src/slic3r/GUI/UpdateParams.cpp:258
-msgid "All added printers are up to date."
-msgstr "Předvolby všech přidaných tiskáren jsou aktuální."
-
-#: src/slic3r/GUI/UpdateParams.cpp:222 src/slic3r/GUI/UpdateParams.cpp:233
-msgid "Failed to check preset updates. Please check your network and try again."
-msgstr "Kontrola aktualizací předvoleb se nezdařila. Zkontrolujte síťové připojení a zkuste to znovu."
-
-#: src/slic3r/GUI/UpdateParams.cpp:217 src/slic3r/GUI/UpdateParams.cpp:285
-msgid "The printer list or account has changed. Please check again."
-msgstr "Seznam tiskáren nebo účet se změnil. Proveďte kontrolu znovu."

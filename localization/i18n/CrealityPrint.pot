@@ -19247,3 +19247,468 @@ msgstr ""
 #: src/slic3r/GUI/UpdateParams.cpp:217 src/slic3r/GUI/UpdateParams.cpp:285
 msgid "The printer list or account has changed. Please check again."
 msgstr ""
+
+
+msgid "Floating vertical shell"
+msgstr ""
+
+msgid "Time flush G-code"
+msgstr ""
+
+msgid ""
+"The jerk setting exceeds the printer's maximum jerk (machine_max_jerk_x/"
+"machine_max_jerk_y).\n"
+"SanityPrint will automatically cap the jerk speed to ensure it doesn't "
+"surpass the printer's capabilities.\n"
+"You can adjust the maximum jerk setting in your printer's configuration to "
+"get higher speeds."
+msgstr ""
+
+msgid ""
+"The acceleration setting exceeds the printer's maximum acceleration "
+"(machine_max_acceleration_extruding).\n"
+"SanityPrint will automatically cap the acceleration speed to ensure it "
+"doesn't surpass the printer's capabilities.\n"
+"You can adjust the machine_max_acceleration_extruding value in your "
+"printer's configuration to get higher speeds."
+msgstr ""
+
+msgid ""
+"The travel acceleration setting exceeds the printer's maximum travel "
+"acceleration (machine_max_acceleration_travel).\n"
+"SanityPrint will automatically cap the travel acceleration speed to ensure "
+"it doesn't surpass the printer's capabilities.\n"
+"You can adjust the machine_max_acceleration_travel value in your printer's "
+"configuration to get higher speeds."
+msgstr ""
+
+msgid ""
+"Sanity Print can upload G-code files to a printer host. This field should "
+"contain the hostname, IP address or URL of the printer host instance. Print "
+"host behind HAProxy with basic auth enabled can be accessed by putting the "
+"user name and password into the URL in the following format: https://"
+"username:password@your-octopi-address/"
+msgstr ""
+
+msgid ""
+"Sanity Print can upload G-code files to a printer host. This field should "
+"contain the API Key or the password required for authentication."
+msgstr ""
+
+msgid ""
+"This option sets the min point for the allowed bed mesh area. Due to the "
+"probe's XY offset, most printers are unable to probe the entire bed. To "
+"ensure the probe point does not go outside the bed area, the minimum and "
+"maximum points of the bed mesh should be set appropriately. SanityPrint "
+"ensures that adaptive_bed_mesh_min/adaptive_bed_mesh_max values do not "
+"exceed these min/max points. This information can usually be obtained from "
+"your printer manufacturer. The default setting is (-99999, -99999), which "
+"means there are no limits, thus allowing probing across the entire bed."
+msgstr ""
+
+msgid ""
+"This option sets the max point for the allowed bed mesh area. Due to the "
+"probe's XY offset, most printers are unable to probe the entire bed. To "
+"ensure the probe point does not go outside the bed area, the minimum and "
+"maximum points of the bed mesh should be set appropriately. SanityPrint "
+"ensures that adaptive_bed_mesh_min/adaptive_bed_mesh_max values do not "
+"exceed these min/max points. This information can usually be obtained from "
+"your printer manufacturer. The default setting is (99999, 99999), which "
+"means there are no limits, thus allowing probing across the entire bed."
+msgstr ""
+
+msgid "Temperature type"
+msgstr ""
+
+msgid ""
+"Multi-material temperature compatibility class. 0=HighTemp, 1=LowTemp, "
+"2=HighLowCompatible, 3=Undefine."
+msgstr ""
+
+msgid "Smart cooling zone"
+msgstr ""
+
+msgid "Enable smart cooling slowdown zones for this filament."
+msgstr ""
+
+msgid "Bed adhesion strength"
+msgstr ""
+
+msgid ""
+"Bed adhesion yield strength in MPa used for support-spot generation. Engine "
+"multiplies by 1e6 internally."
+msgstr ""
+
+msgid "Thermal length"
+msgstr ""
+
+msgid "Characteristic thermal length (mm) used for brim/warp estimation."
+msgstr ""
+
+msgid "Brim adhesion coefficient"
+msgstr ""
+
+msgid ""
+"Multiplier applied to brim width for adhesion estimation. Higher = wider "
+"brim generated."
+msgstr ""
+
+msgid "Small island threshold"
+msgstr ""
+
+msgid "Area threshold (mm²) below which a slice island is treated as small."
+msgstr ""
+
+msgid "Chamber temperature limit"
+msgstr ""
+
+msgid ""
+"Maximum safe chamber temperature (°C) for this filament. 0 = no limit / no "
+"warning."
+msgstr ""
+
+msgid "Flexible filament"
+msgstr ""
+
+msgid ""
+"Mark this filament as flexible (e.g. TPU). Used to suggest appropriate "
+"support filament."
+msgstr ""
+
+msgid ""
+"After a tool change, the exact position of the newly loaded filament inside "
+"the nozzle may not be known, and the filament pressure is likely not yet "
+"stable. Before purging the print head into an infill or a sacrificial "
+"object, Sanity Print will always prime this amount of material into the wipe "
+"tower to produce successive infill or sacrificial object extrusions reliably."
+msgstr ""
+
+msgid ""
+"Connect an infill line to an internal perimeter with a short segment of an "
+"additional perimeter. If expressed as percentage (example: 15%) it is "
+"calculated over infill extrusion width. Sanity Print tries to connect two "
+"close infill lines to a short perimeter segment. If no such perimeter "
+"segment shorter than infill_anchor_max is found, the infill line is "
+"connected to a perimeter segment at just one side and the length of the "
+"perimeter segment taken is limited to this parameter, but no longer than "
+"anchor_length_max. \n"
+"Set this parameter to zero to disable anchoring perimeters connected to a "
+"single infill line."
+msgstr ""
+
+msgid ""
+"Connect an infill line to an internal perimeter with a short segment of an "
+"additional perimeter. If expressed as percentage (example: 15%) it is "
+"calculated over infill extrusion width. Sanity Print tries to connect two "
+"close infill lines to a short perimeter segment. If no such perimeter "
+"segment shorter than this parameter is found, the infill line is connected "
+"to a perimeter segment at just one side and the length of the perimeter "
+"segment taken is limited to infill_anchor, but no longer than this "
+"parameter. \n"
+"If set to 0, the old algorithm for infill connection will be used, it should "
+"create the same result as with 1000 & 0."
+msgstr ""
+
+msgid ""
+"Sanity Print can upload G-code files to a printer host. This field must "
+"contain the kind of the host."
+msgstr ""
+
+msgid ""
+"If you want to process the output G-code through custom scripts, just list "
+"their absolute paths here. Separate multiple scripts with a semicolon. "
+"Scripts will be passed the absolute path to the G-code file as the first "
+"argument, and they can access the Sanity Print config settings by reading "
+"environment variables."
+msgstr ""
+
+msgid "Vertical shell speed"
+msgstr ""
+
+msgid ""
+"Speed for narrow internal solid infill regions that overlap sparse infill or "
+"internal voids in the layer below. Requires \"Detect narrow internal solid "
+"infill\" to be enabled. Percentages are relative to the internal solid "
+"infill speed. When \"Detect floating vertical shells\" is enabled, paths "
+"identified as floating use the bridge speed instead."
+msgstr ""
+
+msgid "Time flush interval"
+msgstr ""
+
+msgid "Detect floating vertical shells"
+msgstr ""
+
+msgid ""
+"Identify floating paths in narrow internal solid infill regions above sparse "
+"infill or internal voids, and print those paths at the bridge speed. "
+"Unmarked paths, or all paths when this option is disabled, use the vertical "
+"shell speed. Requires \"Detect narrow internal solid infill\" to be enabled."
+msgstr ""
+
+msgid ""
+"SanityPrint has encountered an error while taking a configuration snapshot."
+msgstr ""
+
+msgid "SanityPrint error"
+msgstr ""
+
+msgid "SanityPrint is licensed under "
+msgstr ""
+
+msgid "SanityPrint is based on PrusaSlicer and BambuStudio"
+msgstr ""
+
+msgid "Sanity Print "
+msgstr ""
+
+msgid ""
+"This project file is not from Sanity Print. Please select the printer preset "
+"you want to use for slicing."
+msgstr ""
+
+msgid ""
+"To keep the feature you just enabled, Sanity Print will make the following "
+"changes:"
+msgstr ""
+
+msgid "------- Templates -------"
+msgstr ""
+
+msgid "------- Existing presets -------"
+msgstr ""
+
+msgid "Printer config bundle(.sanity_printer)"
+msgstr ""
+
+msgid ""
+"Performing desktop integration failed - could not create Gcodeviewer desktop "
+"file. SanityPrint desktop file was probably created successfully."
+msgstr ""
+
+msgid "Remove Materials from Printer"
+msgstr ""
+
+msgid ""
+"Select the materials to remove from the printer (only those added by "
+"SanityPrint are listed; factory materials are protected):"
+msgstr ""
+
+msgid "Remove selected"
+msgstr ""
+
+msgid "Sync Filaments to Printers"
+msgstr ""
+
+#, c-format
+msgid "Push all custom filaments (%zu) to the selected printers:"
+msgstr ""
+
+msgid " - offline"
+msgstr ""
+
+msgid "No printers found. Add printers on the Device page first."
+msgstr ""
+
+msgid "Push"
+msgstr ""
+
+msgid "Remove..."
+msgstr ""
+
+msgid "There are no custom filaments to sync."
+msgstr ""
+
+msgid "Please select at least one printer."
+msgstr ""
+
+#, c-format, boost-format
+msgid "Filament sync finished: %d pushed, %d failed."
+msgstr ""
+
+msgid "Sync Filaments"
+msgstr ""
+
+msgid ""
+"No removable materials were found on the selected printer(s). Only materials "
+"added by SanityPrint can be removed here; factory materials are protected."
+msgstr ""
+
+msgid "Remove Materials"
+msgstr ""
+
+#, c-format, boost-format
+msgid "Remove finished: %d removed, %d failed."
+msgstr ""
+
+msgid "The configuration may be generated by a newer version of SanityPrint."
+msgstr ""
+
+msgid ""
+"Sanity Print requires the Microsoft WebView2 Runtime to operate certain "
+"features.\n"
+"Click Yes to install it now."
+msgstr ""
+
+msgid ""
+"Sanity Print requires the Microsoft WebView2 Runtime,But it has been found "
+"that the abnormal operation of Microsoft WebView2 may be related to the "
+"installation of Microsoft Edge. \n"
+"Click the Yes to reinstall Microsoft Edge"
+msgstr ""
+
+msgid "The Sanity Print needs an upgrade"
+msgstr ""
+
+msgid ""
+"Detected corruption in the Sanity Print configuration file, attempted to "
+"rebuild, \n"
+"please manually restart the software."
+msgstr ""
+
+msgid ""
+"The SanityPrint configuration file may be corrupted and cannot be parsed.\n"
+"SanityPrint has attempted to recreate the configuration file.\n"
+"Please note, application settings will be lost, but printer profiles will "
+"not be affected."
+msgstr ""
+
+msgid ""
+"The version of Sanity Print is too low and needs to be updated to the latest "
+"version before it can be used normally"
+msgstr ""
+
+msgid "Sanity Print GUI initialization failed"
+msgstr ""
+
+msgid ""
+"Another virtual camera is running.\n"
+"Sanity Print supports only a single virtual camera.\n"
+"Do you want to stop this virtual camera?"
+msgstr ""
+
+msgid ""
+"The 3mf file version is in Beta and it is newer than the current "
+"SanityPrint  version."
+msgstr ""
+
+msgid "If you would like to try Sanity Print Beta, you may click to"
+msgstr ""
+
+msgid "The 3mf file version is newer than the current Sanity Print version."
+msgstr ""
+
+msgid ""
+"Update your Sanity Print could enable all functionality in the 3mf file."
+msgstr ""
+
+msgid "SanityPrint Version:"
+msgstr ""
+
+msgid "Test SanityPrint(GitHub)"
+msgstr ""
+
+msgid "Test SanityPrint(GitHub):"
+msgstr ""
+
+msgid "Obj"
+msgstr ""
+
+msgid ""
+"There are some unknown filaments mapped to generic preset. Please update "
+"Sanity Print or restart Creality Print to check if there is an update to "
+"system presets."
+msgstr ""
+
+msgid "The 3mf is not supported by SanityPrint, load geometry data only."
+msgstr ""
+
+#, boost-format
+msgid ""
+"The no-tower algorithm for plate %1% requires %2% external purge visits, "
+"exceeding 100.\n"
+"The model has limited internal infill available for purging. Enabling a "
+"prime tower may reduce external purge travel and improve print quality.\n"
+"\n"
+"Enable the prime tower and slice again, or keep the current no-tower result?"
+msgstr ""
+
+msgid "No-tower infill"
+msgstr ""
+
+msgid "Enable prime tower and slice again"
+msgstr ""
+
+msgid "Continue without prime tower"
+msgstr ""
+
+msgid ""
+"Importing to Sanity Print failed. Please download the file and manually "
+"import it."
+msgstr ""
+
+msgid "with SanityPrint so that SanityPrint can open models from"
+msgstr ""
+
+msgid ""
+"We sincerely invite you to join Sanity Print's \" User Experience "
+"Improvement Program\" to help us optimize printing efficiency, improve "
+"printing performance and software experience by anonymously collecting data "
+"such as slicing parameters, settings and usage logs. We will not collect any "
+"personally identifiable information, and all data will be protected in "
+"accordance with the"
+msgstr ""
+
+msgid ""
+"Click OK to update the Network plug-in when Sanity Print launches next time."
+msgstr ""
+
+msgid "New version of Sanity Print"
+msgstr ""
+
+msgid ""
+"Step 1, please confirm Sanity Print and your printer are in the same LAN."
+msgstr ""
+
+msgid "The printer is required to be in the same LAN as Sanity Print"
+msgstr ""
+
+msgid "Blacklisted libraries loaded into SanityPrint process:"
+msgstr ""
+
+msgid "Material properties"
+msgstr ""
+
+msgid "Time flush"
+msgstr ""
+
+msgid ""
+"SanityPrint uses this matrix only when flushing into objects skeleton is "
+"enabled."
+msgstr ""
+
+msgid ""
+"The firmware version is abnormal. Repairing and updating are required before "
+"printing. Do you want to update now? You can also update later on printer or "
+"update next time starting SanityPrint."
+msgstr ""
+
+msgid "Please check the network connection of the printer and SanityPrint"
+msgstr ""
+
+msgid ""
+"SanityPrint would re-calculate your flushing volumes everytime the filaments "
+"color changed."
+msgstr ""
+
+msgid ""
+"Your system is missing H.264 codecs for GStreamer, which are required to "
+"play video.  (Try installing the gstreamer1.0-plugins-bad or gstreamer1.0-"
+"libav packages, then restart Sanity Print?)"
+msgstr ""
+
+msgid "Connection to SanityPrint works correctly."
+msgstr ""
+
+msgid "Could not connect to SanityPrint"
+msgstr ""

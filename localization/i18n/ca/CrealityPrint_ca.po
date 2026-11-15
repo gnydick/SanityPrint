@@ -6162,6 +6162,23 @@ msgstr ""
 msgid "Disable \"%1%\" (%2%)"
 msgstr "Desactiva «%1%» (%2%)"
 
+msgid "Minimum mixed sublayer thickness"
+msgstr ""
+
+msgid ""
+"Minimum thickness of each mixed or gradient filament sublayer. Color ratios "
+"are adjusted when necessary while preserving the total layer height. Slicing "
+"stops with an error if the layer is too thin to fit all colors. Set to 0 to "
+"disable this limit."
+msgstr ""
+
+#, boost-format
+msgid ""
+"Mixed filament %1% at Z=%2% mm cannot fit %3% sublayers with a minimum "
+"thickness of %4% mm. Increase the layer height or reduce Minimum mixed "
+"sublayer thickness."
+msgstr ""
+
 msgid "affected Plate setting(s)"
 msgstr "paràmetres de la placa afectats"
 
@@ -11891,8 +11908,8 @@ msgstr ""
 msgid ""
 "When recording timelapse without toolhead, it is recommended to add a "
 "\"Timelapse Wipe Tower\" \n"
-"by right-click the empty position of build plate and choose \"Add "
-"Primitive\"->\"Timelapse Wipe Tower\"."
+"by right-click the empty position of build plate and choose \"Add Primitive"
+"\"->\"Timelapse Wipe Tower\"."
 msgstr ""
 "Quan graveu timelapse sense capçal d'impressió, es recomana afegir una "
 "\"Torre de Purga Timelapse\" \n"
@@ -17815,6 +17832,14 @@ msgstr ""
 msgid "Minimal purge on wipe tower"
 msgstr "Purga mínima a la Torre de Purga"
 
+msgid "Filament pre-flush volume"
+msgstr ""
+
+msgid ""
+"After a filament change, the pre-flush volume of the new filament. Set to 0 "
+"to disable pre-flushing."
+msgstr ""
+
 msgid ""
 "After a tool change, the exact position of the newly loaded filament inside "
 "the nozzle may not be known, and the filament pressure is likely not yet "
@@ -18490,10 +18515,10 @@ msgstr "Velocitat màxima del ventilador a la capa"
 
 msgid ""
 "Fan speed will be ramped up linearly from zero at layer "
-"\"close_fan_the_first_x_layers\" to maximum at layer "
-"\"full_fan_speed_layer\". \"full_fan_speed_layer\" will be ignored if lower "
-"than \"close_fan_the_first_x_layers\", in which case the fan will be running "
-"at maximum allowed speed at layer \"close_fan_the_first_x_layers\" + 1."
+"\"close_fan_the_first_x_layers\" to maximum at layer \"full_fan_speed_layer"
+"\". \"full_fan_speed_layer\" will be ignored if lower than "
+"\"close_fan_the_first_x_layers\", in which case the fan will be running at "
+"maximum allowed speed at layer \"close_fan_the_first_x_layers\" + 1."
 msgstr ""
 "La velocitat del ventilador augmentarà linealment des de zero a la capa "
 "\"close_fan_the_first_x_layers\" fins al màxim a la capa "
@@ -21846,7 +21871,12 @@ msgid ""
 "layers to purge on the prime tower before printing skeleton, then walls in "
 "the configured order, then skin and surface fill. This does not change "
 "bottom shell layers."
-msgstr "Quan el purgat a l’esquelet dels objectes està activat, força les N capes inferiors de l’objecte a purgar-se a la torre de purga abans d’imprimir l’esquelet, després les parets en l’ordre configurat i, finalment, la pell i l’emplenament de superfície. Això no modifica les capes inferiors de la carcassa."
+msgstr ""
+"Quan el purgat a l’esquelet dels objectes està activat, força les N capes "
+"inferiors de l’objecte a purgar-se a la torre de purga abans d’imprimir "
+"l’esquelet, després les parets en l’ordre configurat i, finalment, la pell i "
+"l’emplenament de superfície. Això no modifica les capes inferiors de la "
+"carcassa."
 
 msgid "Top fill flush layers"
 msgstr "Capes superiors amb purga abans del farciment"
@@ -21856,7 +21886,12 @@ msgid ""
 "layers to purge on the prime tower before printing skeleton, then walls in "
 "the configured order, then skin and surface fill. This does not change top "
 "shell layers."
-msgstr "Quan el purgat a l’esquelet dels objectes està activat, força les N capes superiors de l’objecte a purgar-se a la torre de purga abans d’imprimir l’esquelet, després les parets en l’ordre configurat i, finalment, la pell i l’emplenament de superfície. Això no modifica les capes superiors de la carcassa."
+msgstr ""
+"Quan el purgat a l’esquelet dels objectes està activat, força les N capes "
+"superiors de l’objecte a purgar-se a la torre de purga abans d’imprimir "
+"l’esquelet, després les parets en l’ordre configurat i, finalment, la pell i "
+"l’emplenament de superfície. Això no modifica les capes superiors de la "
+"carcassa."
 
 msgid "Skeleton wipe speed"
 msgstr "Velocitat de neteja de l'esquelet"
@@ -23046,8 +23081,8 @@ msgid ""
 msgstr ""
 "L' escriptura de postprocessament%1% va fallar. \n"
 "\n"
-"L'escriptura posterior al processament s'espera canviar el arxiu de codi "
-"G%2%en lloc, però el arxiu de codi G va ser eliminat i probablement guardat "
+"L'escriptura posterior al processament s'espera canviar el arxiu de codi G"
+"%2%en lloc, però el arxiu de codi G va ser eliminat i probablement guardat "
 "sota un nou nom. \n"
 "Sius plau ajusteu l'escriptura de postprocessament per canviar el codi G en "
 "lloc i consulteu el manual sobre comrenomar opcionalment el fichere de codi "
@@ -23290,6 +23325,756 @@ msgstr ""
 
 msgid "Canceled"
 msgstr "Cancel·lat"
+
+msgid "Pre-flush length slowdown"
+msgstr ""
+
+msgid ""
+"After a filament change, use the numeric value of Filament pre-flush volume "
+"as the model infill path distance in millimeters for this speed limit. For "
+"example, a value of 10 limits only the first 10 mm of printed infill path, "
+"then restores normal speed. The volumetric flow limit is this percentage of "
+"the filament's maximum volumetric speed. With a prime tower, applies when "
+"Flush into objects' infill is enabled. Without a tower, applies to skeleton "
+"infill. Travel and retraction do not count. The tower's original pre-flush "
+"behavior is unchanged. Lower printing speeds are preserved. Set to 0 to "
+"disable this additional speed limit."
+msgstr ""
+
+#: src/libslic3r/PrintConfig.cpp
+msgid ""
+"Minimum estimated printing time in seconds between time flushes. With a wipe "
+"tower, flushing runs before a filament change or before a normal tower visit "
+"on a sparse tower layer. The nozzle flushes outside the plate, then "
+"continues directly to the tower entry. Towers without sparse layers still "
+"flush only before filament changes. Without a tower, including single-color "
+"printing, flushing waits for an internal infill path boundary. Small or "
+"narrow model islands suppress time flushing. The actual interval may be "
+"longer. Set to 0 to disable time flushing."
+msgstr ""
+
+#: src/libslic3r/PrintConfig.cpp
+msgid ""
+"Runs when overdue before a tower filament change, before a normal tower "
+"visit on a sparse tower layer, or at an internal infill path boundary "
+"without a tower. Towers without sparse layers still flush only before "
+"filament changes. Time keeps accumulating outside these nodes. Layers with "
+"model islands smaller than 25 square millimeters or without a 2 mm inset "
+"suppress time flushing. Tower flushes continue directly to the tower entry; "
+"other flushes return to the model. The interval may be exceeded while "
+"waiting for a safe node. Like Time lapse G-code, supports [layer_num], "
+"[layer_z] and [max_layer_z] with the same layer values and expression "
+"syntax. Use [return_x], [return_y] and [return_z] for the final tower entry "
+"position on a normal tower visit, or the nozzle position at other triggers, "
+"[current_tool] for the zero-based tool index, and [time_flush_elapsed] for "
+"estimated seconds since the previous flush. Expressions such as {layer_z + "
+"0.4} and {if time_flush_elapsed > 0}...{endif} are evaluated before G-code "
+"comments, even when preceded by a semicolon. The script must preserve "
+"coordinate origin, positioning modes and units; independent flushes must "
+"also preserve the active tool. The slicer restores position and absolute E "
+"for moves it can parse. Commands wrapped in M950 are passed through without "
+"tracking their motion, E resets or duration; firmware or the script must "
+"handle recovery. With or without a tower, use time_flush_has_toolchange in "
+"both Filament change G-code and Time flush G-code to combine an overdue "
+"flush with a filament change. It is true only for that combined event: skip "
+"the ordinary change and let Time flush G-code select [next_extruder] at the "
+"flush station using [new_filament_temp]. No-tower combined changes resume at "
+"the first new-filament print path. The active no-tower change branch must "
+"use this state; phased skeleton flushes keep their original flow."
+msgstr ""
+
+#: src/slic3r/GUI/GUI_App.cpp:8124 src/slic3r/GUI/GUI_App.cpp:8131
+#: src/slic3r/GUI/GUI_App.cpp:8493
+msgid "Updating parameter packages..."
+msgstr "S’estan actualitzant els paquets de paràmetres..."
+
+#: src/slic3r/GUI/GUI_App.cpp:8134
+msgid "Failed to update parameter packages. Please try again."
+msgstr ""
+"No s’han pogut actualitzar els paquets de paràmetres. Torneu-ho a provar."
+
+#: src/slic3r/GUI/GUI_App.cpp:8135 src/slic3r/GUI/GUI_App.cpp:8138
+msgid "Parameter update"
+msgstr "Actualització de paràmetres"
+
+#: src/slic3r/GUI/GUI_App.cpp:8499
+#, c-format
+msgid "Updated to %s"
+msgstr "Actualitzat a %s"
+
+#: src/slic3r/GUI/GUI_App.cpp:8501
+msgid "Update content:"
+msgstr "Contingut de l’actualització:"
+
+#: src/slic3r/GUI/GUI_App.cpp:8502
+msgid "No update description was provided."
+msgstr "No s’ha proporcionat cap descripció de l’actualització."
+
+#: src/slic3r/GUI/GUI_App.cpp:8505
+msgid "The update will be applied when you create or reopen a project."
+msgstr "L’actualització s’aplicarà quan creeu o torneu a obrir un projecte."
+
+#: src/slic3r/GUI/GUI_App.cpp:8507
+msgid "The update will be applied after slicing finishes."
+msgstr "L’actualització s’aplicarà quan acabi el laminat."
+
+#: src/slic3r/GUI/GUI_App.cpp:8508
+msgid "Parameter packages updated"
+msgstr "Paquets de paràmetres actualitzats"
+
+#: src/slic3r/GUI/UpdateDialogs.cpp:32 src/slic3r/GUI/MainFrame.cpp:2924
+msgid "Check for Preset Updates"
+msgstr "Comprova si hi ha actualitzacions dels perfils"
+
+#: src/slic3r/GUI/UpdateDialogs.cpp:37 src/slic3r/GUI/UpdateDialogs.cpp:95
+msgid "Checking preset updates..."
+msgstr "S’estan cercant actualitzacions dels perfils…"
+
+#: src/slic3r/GUI/UpdateDialogs.cpp:47 src/slic3r/GUI/UpdateDialogs.cpp:116
+msgid "Remind me later"
+msgstr "Recorda-m’ho més tard"
+
+#: src/slic3r/GUI/UpdateDialogs.cpp:101
+msgid "Updates are available for the following added printers."
+msgstr ""
+"Hi ha actualitzacions disponibles per a les impressores afegides següents."
+
+#: src/slic3r/GUI/UpdateDialogs.cpp:104
+#, c-format
+msgid "Target version: %s"
+msgstr "Versió de destinació: %s"
+
+#: src/slic3r/GUI/UpdateDialogs.cpp:118
+#, c-format
+msgid "Update all (%d)"
+msgstr "Actualitza-ho tot (%d)"
+
+#: src/slic3r/GUI/UpdateParams.cpp:197
+msgid "No printers have been added. Add a printer before checking for updates."
+msgstr ""
+"No s’ha afegit cap impressora. Afegiu-ne una abans de cercar actualitzacions."
+
+#: src/slic3r/GUI/UpdateParams.cpp:258
+msgid "All added printers are up to date."
+msgstr "Els perfils de totes les impressores afegides estan actualitzats."
+
+#: src/slic3r/GUI/UpdateParams.cpp:222 src/slic3r/GUI/UpdateParams.cpp:233
+msgid ""
+"Failed to check preset updates. Please check your network and try again."
+msgstr ""
+"No s’han pogut cercar actualitzacions dels perfils. Comproveu la connexió de "
+"xarxa i torneu-ho a provar."
+
+#: src/slic3r/GUI/UpdateParams.cpp:217 src/slic3r/GUI/UpdateParams.cpp:285
+msgid "The printer list or account has changed. Please check again."
+msgstr "La llista d’impressores o el compte ha canviat. Torneu-ho a comprovar."
+
+msgid "Floating vertical shell"
+msgstr ""
+
+msgid "Time flush G-code"
+msgstr ""
+
+msgid ""
+"The jerk setting exceeds the printer's maximum jerk (machine_max_jerk_x/"
+"machine_max_jerk_y).\n"
+"SanityPrint will automatically cap the jerk speed to ensure it doesn't "
+"surpass the printer's capabilities.\n"
+"You can adjust the maximum jerk setting in your printer's configuration to "
+"get higher speeds."
+msgstr ""
+"La configuració de la sacsejada( Jerk ) supera la sacsejada màxima de la "
+"impressora (machine_max_jerk_x/machine_max_jerk_y).\n"
+"L'SanityPrint limitarà automàticament la velocitat de sacsejada per "
+"assegurar-se que no superi les capacitats de la impressora.\n"
+"Podeu ajustar la configuració de sacsejada màxima a la configuració de la "
+"impressora per obtenir velocitats més altes."
+
+msgid ""
+"The acceleration setting exceeds the printer's maximum acceleration "
+"(machine_max_acceleration_extruding).\n"
+"SanityPrint will automatically cap the acceleration speed to ensure it "
+"doesn't surpass the printer's capabilities.\n"
+"You can adjust the machine_max_acceleration_extruding value in your "
+"printer's configuration to get higher speeds."
+msgstr ""
+"La configuració d'acceleració supera l'acceleració màxima "
+"(machine_max_acceleration_extruding).\n"
+"L'SanityPrint limitarà automàticament la velocitat d'acceleració per "
+"assegurar-se que no superi les capacitats de la impressora.\n"
+"Podeu ajustar el valor machine_max_acceleration_extruding a la configuració "
+"de la impressora per obtenir velocitats més altes."
+
+msgid ""
+"The travel acceleration setting exceeds the printer's maximum travel "
+"acceleration (machine_max_acceleration_travel).\n"
+"SanityPrint will automatically cap the travel acceleration speed to ensure "
+"it doesn't surpass the printer's capabilities.\n"
+"You can adjust the machine_max_acceleration_travel value in your printer's "
+"configuration to get higher speeds."
+msgstr ""
+"La configuració de l'acceleració de deplaçament supera l'acceleració màxima "
+"de desplaçament (machine_max_acceleration_travel) de la impressora.\n"
+"L'SanityPrint limitarà automàticament la velocitat d'acceleració de viatge "
+"per assegurar-se que no superi les capacitats de la impressora.\n"
+"Podeu ajustar el valor machine_max_acceleration_travel a la configuració de "
+"la impressora per obtenir velocitats més altes."
+
+msgid ""
+"Sanity Print can upload G-code files to a printer host. This field should "
+"contain the hostname, IP address or URL of the printer host instance. Print "
+"host behind HAProxy with basic auth enabled can be accessed by putting the "
+"user name and password into the URL in the following format: https://"
+"username:password@your-octopi-address/"
+msgstr ""
+"SanityPrint pot pujar fitxers G-Code a una impressora. Aquest camp hauria de "
+"contenir el nom de Host, l'adreça IP o l'URL de la instància de la "
+"impressora. Es pot accedir a la impressora darrere d'un proxy amb "
+"l'autenticació bàsica activada per un nom d'usuari i contrasenya a la URL en "
+"el format següent: https://nomusuari:contrasenya@adreça-octopi/"
+
+msgid ""
+"Sanity Print can upload G-code files to a printer host. This field should "
+"contain the API Key or the password required for authentication."
+msgstr ""
+"Sanity Print pot pujar fitxers de Codi-G a una impressora. Aquest camp ha de "
+"contenir la clau API o la contrasenya necessària per a l'autenticació."
+
+msgid ""
+"This option sets the min point for the allowed bed mesh area. Due to the "
+"probe's XY offset, most printers are unable to probe the entire bed. To "
+"ensure the probe point does not go outside the bed area, the minimum and "
+"maximum points of the bed mesh should be set appropriately. SanityPrint "
+"ensures that adaptive_bed_mesh_min/adaptive_bed_mesh_max values do not "
+"exceed these min/max points. This information can usually be obtained from "
+"your printer manufacturer. The default setting is (-99999, -99999), which "
+"means there are no limits, thus allowing probing across the entire bed."
+msgstr ""
+"Aquesta opció estableix el punt mínim per a la zona de malla de llit "
+"permesa. A causa del desplaçament XY de la sonda, la majoria de les "
+"impressores no poden sondejar tot el llit. Per assegurar-se que el punt de "
+"sonda no surti de la zona del llit, s'han d'establir adequadament els punts "
+"mínims i màxims de la malla del llit. SanityPrint garanteix que els valors "
+"de adaptive_bed_mesh_min/adaptive_bed_mesh_max no superin aquests punts "
+"mínim/màxim. Normalment, aquesta informació es pot obtenir del fabricant de "
+"la impressora. La configuració predeterminada és (-99999, -99999), cosa que "
+"significa que no hi ha límits, el qual permet sondejar tot el llit."
+
+msgid ""
+"This option sets the max point for the allowed bed mesh area. Due to the "
+"probe's XY offset, most printers are unable to probe the entire bed. To "
+"ensure the probe point does not go outside the bed area, the minimum and "
+"maximum points of the bed mesh should be set appropriately. SanityPrint "
+"ensures that adaptive_bed_mesh_min/adaptive_bed_mesh_max values do not "
+"exceed these min/max points. This information can usually be obtained from "
+"your printer manufacturer. The default setting is (99999, 99999), which "
+"means there are no limits, thus allowing probing across the entire bed."
+msgstr ""
+"Aquesta opció estableix el punt màxim per a la zona de malla de llit "
+"permesa. A causa del desplaçament XY de la sonda, la majoria de les "
+"impressores no poden sondejar tot el llit. Per assegurar-se que el punt de "
+"sonda no surti de la zona del llit, s'han d'establir adequadament els punts "
+"mínims i màxims de la malla del llit. SanityPrint garanteix que els valors "
+"de adaptive_bed_mesh_min/adaptive_bed_mesh_max no superin aquests punts "
+"mínim/màxim. Normalment, aquesta informació es pot obtenir del fabricant de "
+"la impressora. La configuració predeterminada és (99999, 99999), cosa que "
+"significa que no hi ha límits, el qual permet sondejar tot el llit."
+
+msgid "Temperature type"
+msgstr ""
+
+msgid ""
+"Multi-material temperature compatibility class. 0=HighTemp, 1=LowTemp, "
+"2=HighLowCompatible, 3=Undefine."
+msgstr ""
+
+msgid "Smart cooling zone"
+msgstr ""
+
+msgid "Enable smart cooling slowdown zones for this filament."
+msgstr ""
+
+msgid "Bed adhesion strength"
+msgstr ""
+
+msgid ""
+"Bed adhesion yield strength in MPa used for support-spot generation. Engine "
+"multiplies by 1e6 internally."
+msgstr ""
+
+msgid "Thermal length"
+msgstr ""
+
+msgid "Characteristic thermal length (mm) used for brim/warp estimation."
+msgstr ""
+
+msgid "Brim adhesion coefficient"
+msgstr ""
+
+msgid ""
+"Multiplier applied to brim width for adhesion estimation. Higher = wider "
+"brim generated."
+msgstr ""
+
+msgid "Small island threshold"
+msgstr ""
+
+msgid "Area threshold (mm²) below which a slice island is treated as small."
+msgstr ""
+
+msgid "Chamber temperature limit"
+msgstr ""
+
+msgid ""
+"Maximum safe chamber temperature (°C) for this filament. 0 = no limit / no "
+"warning."
+msgstr ""
+
+msgid "Flexible filament"
+msgstr ""
+
+msgid ""
+"Mark this filament as flexible (e.g. TPU). Used to suggest appropriate "
+"support filament."
+msgstr ""
+
+msgid ""
+"After a tool change, the exact position of the newly loaded filament inside "
+"the nozzle may not be known, and the filament pressure is likely not yet "
+"stable. Before purging the print head into an infill or a sacrificial "
+"object, Sanity Print will always prime this amount of material into the wipe "
+"tower to produce successive infill or sacrificial object extrusions reliably."
+msgstr ""
+"Després d'un canvi d'eina, és possible que no es conegui la posició exacta "
+"del filament recentment carregat dins del broquet i que la pressió del "
+"filament encara no sigui estable. Abans de purgar el capçal d'impressió en "
+"un farciment o un objecte de sacrifici, SanityPrint sempre imprimirà aquesta "
+"quantitat de filament a la Torre de Purga per produir successives extrusions "
+"d'objectes de farciment o sacrifici de manera fiable."
+
+msgid ""
+"Connect an infill line to an internal perimeter with a short segment of an "
+"additional perimeter. If expressed as percentage (example: 15%) it is "
+"calculated over infill extrusion width. Sanity Print tries to connect two "
+"close infill lines to a short perimeter segment. If no such perimeter "
+"segment shorter than infill_anchor_max is found, the infill line is "
+"connected to a perimeter segment at just one side and the length of the "
+"perimeter segment taken is limited to this parameter, but no longer than "
+"anchor_length_max. \n"
+"Set this parameter to zero to disable anchoring perimeters connected to a "
+"single infill line."
+msgstr ""
+"Connectar una línia de farciment a un perímetre intern amb un segment curt "
+"d'un perímetre addicional. Si s'expressa en percentatge ( per exemple: 15% ) "
+"es calcula sobre l'amplada d'extrusió de farciment. Sanity Print intenta "
+"connectar dues línies de farciment properes a un segment perimetral curt. Si "
+"no es troba aquest segment perimetral més curt que infill_anchor_max, la "
+"línia de farciment es connecta a un segment perimetral a un sol costat i la "
+"longitud del segment perimetral pres es limita a aquest paràmetre, però no "
+"més de anchor_length_max. \n"
+"Establiu aquest paràmetre a zero per desactivar els perímetres d'ancoratge "
+"connectats a una sola línia de farciment."
+
+msgid ""
+"Connect an infill line to an internal perimeter with a short segment of an "
+"additional perimeter. If expressed as percentage (example: 15%) it is "
+"calculated over infill extrusion width. Sanity Print tries to connect two "
+"close infill lines to a short perimeter segment. If no such perimeter "
+"segment shorter than this parameter is found, the infill line is connected "
+"to a perimeter segment at just one side and the length of the perimeter "
+"segment taken is limited to infill_anchor, but no longer than this "
+"parameter. \n"
+"If set to 0, the old algorithm for infill connection will be used, it should "
+"create the same result as with 1000 & 0."
+msgstr ""
+"Connectar una línia de farciment a un perímetre intern amb un segment curt "
+"d'un perímetre addicional. Si s'expressa en percentatge ( per exemple: 15% ) "
+"es calcula sobre l'amplada d'extrusió de farciment. Sanity Print intenta "
+"connectar dues línies de farciment properes a un segment perimetral curt. Si "
+"no es troba aquest segment perimetral més curt que aquest paràmetre, la "
+"línia de farciment es connecta a un segment perimetral a un sol costat i la "
+"longitud del segment perimetral pres es limita a infill_anchor, però no més "
+"llarga que aquest paràmetre. \n"
+"Si s'estableix a 0, s'utilitzarà l'algorisme antic per a la connexió de "
+"farciment, hauria de crear el mateix resultat que amb 1000 i 0."
+
+msgid ""
+"Sanity Print can upload G-code files to a printer host. This field must "
+"contain the kind of the host."
+msgstr ""
+"Sanity Print pot carregar fitxers de Codi-G a un amfitrió( host ) "
+"d'impressora. Aquest camp ha de contenir el tipus d'amfitrió( host )."
+
+msgid ""
+"If you want to process the output G-code through custom scripts, just list "
+"their absolute paths here. Separate multiple scripts with a semicolon. "
+"Scripts will be passed the absolute path to the G-code file as the first "
+"argument, and they can access the Sanity Print config settings by reading "
+"environment variables."
+msgstr ""
+"Si voleu processar el Codi-G de sortida a través de scripts personalitzats, "
+"simplement enumereu les vostres rutes absolutes aquí. Separeu diversos "
+"scripts amb punt i coma. Als scripts se'ls passarà la ruta absoluta al "
+"fitxer Codi-G com a primer argument, i poden accedir als paràmetres de "
+"configuració d'SanityPrint llegint variables d'entorn."
+
+msgid "Vertical shell speed"
+msgstr ""
+
+msgid ""
+"Speed for narrow internal solid infill regions that overlap sparse infill or "
+"internal voids in the layer below. Requires \"Detect narrow internal solid "
+"infill\" to be enabled. Percentages are relative to the internal solid "
+"infill speed. When \"Detect floating vertical shells\" is enabled, paths "
+"identified as floating use the bridge speed instead."
+msgstr ""
+
+msgid "Time flush interval"
+msgstr ""
+
+msgid "Detect floating vertical shells"
+msgstr ""
+
+msgid ""
+"Identify floating paths in narrow internal solid infill regions above sparse "
+"infill or internal voids, and print those paths at the bridge speed. "
+"Unmarked paths, or all paths when this option is disabled, use the vertical "
+"shell speed. Requires \"Detect narrow internal solid infill\" to be enabled."
+msgstr ""
+
+# generated by robot
+msgid ""
+"SanityPrint has encountered an error while taking a configuration snapshot."
+msgstr "SanityPrint ha trobat un error mentre fa una captura de configuració."
+
+# generated by robot
+msgid "SanityPrint error"
+msgstr "Error de SanityPrint"
+
+# generated by robot
+msgid "SanityPrint is licensed under "
+msgstr "SanityPrint té llicència"
+
+# generated by robot
+msgid "SanityPrint is based on PrusaSlicer and BambuStudio"
+msgstr "SanityPrint es basa en PrusaSlicer i BambuStudio"
+
+msgid "Sanity Print "
+msgstr "Sanity Print "
+
+# generated by robot
+msgid ""
+"This project file is not from Sanity Print. Please select the printer preset "
+"you want to use for slicing."
+msgstr ""
+"Aquest fitxer de projecte no és de Sanity Print. Seleccioneu la configuració "
+"prèvia de l' impressora que voleu utilitzarper tallar."
+
+msgid ""
+"To keep the feature you just enabled, Sanity Print will make the following "
+"changes:"
+msgstr ""
+
+msgid "------- Templates -------"
+msgstr ""
+
+msgid "------- Existing presets -------"
+msgstr ""
+
+msgid "Printer config bundle(.sanity_printer)"
+msgstr "Paquet de configuració d'impressores( .sanity_printer )"
+
+# generated by robot
+msgid ""
+"Performing desktop integration failed - could not create Gcodeviewer desktop "
+"file. SanityPrint desktop file was probably created successfully."
+msgstr ""
+"La integració d'escritori va fallar - no va poder crear el ficher "
+"d'escritori Gcodeviewer. SanityPrint va ser creat ambèxit."
+
+msgid "Remove Materials from Printer"
+msgstr ""
+
+msgid ""
+"Select the materials to remove from the printer (only those added by "
+"SanityPrint are listed; factory materials are protected):"
+msgstr ""
+
+msgid "Remove selected"
+msgstr ""
+
+msgid "Sync Filaments to Printers"
+msgstr ""
+
+#, c-format
+msgid "Push all custom filaments (%zu) to the selected printers:"
+msgstr ""
+
+msgid " - offline"
+msgstr ""
+
+msgid "No printers found. Add printers on the Device page first."
+msgstr ""
+
+msgid "Push"
+msgstr ""
+
+msgid "Remove..."
+msgstr ""
+
+msgid "There are no custom filaments to sync."
+msgstr ""
+
+msgid "Please select at least one printer."
+msgstr ""
+
+#, c-format, boost-format
+msgid "Filament sync finished: %d pushed, %d failed."
+msgstr ""
+
+msgid "Sync Filaments"
+msgstr ""
+
+msgid ""
+"No removable materials were found on the selected printer(s). Only materials "
+"added by SanityPrint can be removed here; factory materials are protected."
+msgstr ""
+
+msgid "Remove Materials"
+msgstr ""
+
+#, c-format, boost-format
+msgid "Remove finished: %d removed, %d failed."
+msgstr ""
+
+msgid "The configuration may be generated by a newer version of SanityPrint."
+msgstr ""
+"La configuració podria haver estat generada per una versió més recent "
+"d'SanityPrint."
+
+# generated by robot
+msgid ""
+"Sanity Print requires the Microsoft WebView2 Runtime to operate certain "
+"features.\n"
+"Click Yes to install it now."
+msgstr ""
+"Sanity Print requereix que la execució de Microsoft WebView2 operi certes "
+"característiques. \n"
+"Cliqueu Sí per instal·lar-lo ara."
+
+# generated by robot
+msgid ""
+"Sanity Print requires the Microsoft WebView2 Runtime,But it has been found "
+"that the abnormal operation of Microsoft WebView2 may be related to the "
+"installation of Microsoft Edge. \n"
+"Click the Yes to reinstall Microsoft Edge"
+msgstr ""
+"Sanity Print requereix el Microsoft WebView2 Runtime, però s'ha trobat que "
+"el funcionament anormal de Microsoft WebView2 pot estarrelacionat amb la "
+"instal·lació de Microsoft Edge.  nFeu clic a Sí per reinstalar Microsoft Edge"
+
+msgid "The Sanity Print needs an upgrade"
+msgstr "L'Sanity Print necessita una actualització"
+
+# generated by robot
+msgid ""
+"Detected corruption in the Sanity Print configuration file, attempted to "
+"rebuild, \n"
+"please manually restart the software."
+msgstr ""
+"Detectat corrupció en el fitxer de configuració Sanity Print, intentà "
+"reconstruir, nplease reiniciar manualment el programari."
+
+msgid ""
+"The SanityPrint configuration file may be corrupted and cannot be parsed.\n"
+"SanityPrint has attempted to recreate the configuration file.\n"
+"Please note, application settings will be lost, but printer profiles will "
+"not be affected."
+msgstr ""
+"El fitxer de configuració d'SanityPrint podria estar corromput i no es pot "
+"analitzar.\n"
+"SanityPrint ha intentat tornar a crear el fitxer de configuració.\n"
+"Tingueu en compte que la configuració de l'aplicació es perdrà, però els "
+"perfils d'impressora no es veuran afectats."
+
+msgid ""
+"The version of Sanity Print is too low and needs to be updated to the latest "
+"version before it can be used normally"
+msgstr ""
+"La versió de l'Sanity Print és massa antiga i s'ha d'actualitzar a la versió "
+"més recent abans que es pugui utilitzar amb normalitat"
+
+msgid "Sanity Print GUI initialization failed"
+msgstr ""
+"La inicialització de la interfície gràfica d'usuari d'Sanity Print ha fallat"
+
+msgid ""
+"Another virtual camera is running.\n"
+"Sanity Print supports only a single virtual camera.\n"
+"Do you want to stop this virtual camera?"
+msgstr ""
+"Una altra Càmera Virtual està funcionant.\n"
+"Sanity Print només admet una sola Càmera Virtual.\n"
+"Vols aturar aquesta Càmera Virtual?"
+
+msgid ""
+"The 3mf file version is in Beta and it is newer than the current "
+"SanityPrint  version."
+msgstr ""
+"La versió d'arxiu 3mf està en Beta i és més recent que la versió actual "
+"d'SanityPrint."
+
+msgid "If you would like to try Sanity Print Beta, you may click to"
+msgstr "Si voleu provar Sanity Print Beta, podeu fer clic a"
+
+msgid "The 3mf file version is newer than the current Sanity Print version."
+msgstr ""
+"La versió del fitxer 3mf és més nova que la versió actual de l'Sanity Print."
+
+msgid ""
+"Update your Sanity Print could enable all functionality in the 3mf file."
+msgstr ""
+"Actualitzar el vostre Sanity Print podria habilitar totes les funcionalitats "
+"al fitxer 3mf."
+
+msgid "SanityPrint Version:"
+msgstr "Versió d'Sanity Print:"
+
+msgid "Test SanityPrint(GitHub)"
+msgstr "Prova SanityPrint (GitHub)"
+
+msgid "Test SanityPrint(GitHub):"
+msgstr "Prova SanityPrint (GitHub):"
+
+msgid "Obj"
+msgstr ""
+
+msgid ""
+"There are some unknown filaments mapped to generic preset. Please update "
+"Sanity Print or restart Creality Print to check if there is an update to "
+"system presets."
+msgstr ""
+
+msgid "The 3mf is not supported by SanityPrint, load geometry data only."
+msgstr ""
+"El 3mf no és compatible amb SanityPrint, només carrega dades de geometria."
+
+#, boost-format
+msgid ""
+"The no-tower algorithm for plate %1% requires %2% external purge visits, "
+"exceeding 100.\n"
+"The model has limited internal infill available for purging. Enabling a "
+"prime tower may reduce external purge travel and improve print quality.\n"
+"\n"
+"Enable the prime tower and slice again, or keep the current no-tower result?"
+msgstr ""
+
+msgid "No-tower infill"
+msgstr ""
+
+msgid "Enable prime tower and slice again"
+msgstr ""
+
+msgid "Continue without prime tower"
+msgstr ""
+
+msgid ""
+"Importing to Sanity Print failed. Please download the file and manually "
+"import it."
+msgstr ""
+"La importació a Sanity Print ha fallat. Descarregueu el fitxer manualment i "
+"importeu-lo."
+
+# generated by robot
+msgid "with SanityPrint so that SanityPrint can open models from"
+msgstr "amb SanityPrint perquè SanityPrint pugui obrir models des de"
+
+# generated by robot
+msgid ""
+"We sincerely invite you to join Sanity Print's \" User Experience "
+"Improvement Program\" to help us optimize printing efficiency, improve "
+"printing performance and software experience by anonymously collecting data "
+"such as slicing parameters, settings and usage logs. We will not collect any "
+"personally identifiable information, and all data will be protected in "
+"accordance with the"
+msgstr ""
+"Us convidem sincerament a unir-vos al \"Programa de millora de l'experiència "
+"d'usuari\" de Sanity Print per ajudar-nos a optimitzarl'eficiència "
+"d'impressió, millorar el rendiment d'impressió i l'experiència del "
+"programari recollint anònimament dades com paràmetres de tall, "
+"configuracions iregistres d'ús. No recollirem cap informació d'identificació "
+"personal, i totes les dades seran protegides d'acord amb les"
+
+msgid ""
+"Click OK to update the Network plug-in when Sanity Print launches next time."
+msgstr ""
+"Feu clic a D'acord per actualitzar el plugin de Xarxa la propera vegada que "
+"s'executi Sanity Print."
+
+msgid "New version of Sanity Print"
+msgstr "Nova versió d'Sanity Print"
+
+msgid ""
+"Step 1, please confirm Sanity Print and your printer are in the same LAN."
+msgstr ""
+"Pas 1: Confirmeu que Sanity Print i la impressora es troben a la mateixa LAN."
+
+msgid "The printer is required to be in the same LAN as Sanity Print"
+msgstr ""
+"Es requereix que la impressora estigui a la mateixa LAN que Sanity Print."
+
+# generated by robot
+msgid "Blacklisted libraries loaded into SanityPrint process:"
+msgstr "Biblioteques en llista negra carregades al procés de SanityPrint:"
+
+msgid "Material properties"
+msgstr ""
+
+msgid "Time flush"
+msgstr ""
+
+msgid ""
+"SanityPrint uses this matrix only when flushing into objects skeleton is "
+"enabled."
+msgstr ""
+
+msgid ""
+"The firmware version is abnormal. Repairing and updating are required before "
+"printing. Do you want to update now? You can also update later on printer or "
+"update next time starting SanityPrint."
+msgstr ""
+"La versió del firmware és anormal. Cal reparar i actualitzar-lo abans "
+"d'imprimir. Vols actualitzar-lo ara? També podeu actualitzar-lo més endavant "
+"a la impressora o actualitzar-lo la propera vegada que s'iniciï "
+"l'SanityPrint."
+
+msgid "Please check the network connection of the printer and SanityPrint"
+msgstr "Comproveu la connexió de xarxa de la impressora i l'SanityPrint."
+
+# generated by robot
+msgid ""
+"SanityPrint would re-calculate your flushing volumes everytime the filaments "
+"color changed."
+msgstr ""
+"SanityPrint recalcularia els volums de flushing cada cop que el color dels "
+"filaments canviava."
+
+msgid ""
+"Your system is missing H.264 codecs for GStreamer, which are required to "
+"play video.  (Try installing the gstreamer1.0-plugins-bad or gstreamer1.0-"
+"libav packages, then restart Sanity Print?)"
+msgstr ""
+"Al vostre sistema li falten còdecs H.264 per al GStreamer, necessaris per "
+"reproduir vídeo.  (Proveu d'instal·lar els paquets gstreamer1.0-plugins-bad "
+"o gstreamer1.0-libav i, a continuació, reinicieu Sanity Print?)"
+
+# generated by robot
+msgid "Connection to SanityPrint works correctly."
+msgstr "La connexió a SanityPrint funciona correctament."
+
+# generated by robot
+msgid "Could not connect to SanityPrint"
+msgstr "No s' ha pogut connectar a SanityPrint"
 
 #~ msgid ""
 #~ "Prime tower is required for smooth timelapse. There may be flaws on the "
@@ -25013,8 +25798,8 @@ msgstr "Cancel·lat"
 
 #~ msgid ""
 #~ "There are some unknown filaments in the AMS mappings. Please check "
-#~ "whether they are the required filaments. If they are okay, press "
-#~ "\"Confirm\" to start printing."
+#~ "whether they are the required filaments. If they are okay, press \"Confirm"
+#~ "\" to start printing."
 #~ msgstr ""
 #~ "Hi ha alguns filaments desconeguts en els mapejats AMS. Comproveu si són "
 #~ "els filaments requerits. Si estan bé, premeu \"Confirmar\" per començar a "
@@ -25179,8 +25964,8 @@ msgstr "Cancel·lat"
 #~ "Podem crear els perfils de filament per a la vostra impressora següent:"
 
 #~ msgid ""
-#~ "We would rename the presets as \"Vendor Type Serial @printer you "
-#~ "selected\". \n"
+#~ "We would rename the presets as \"Vendor Type Serial @printer you selected"
+#~ "\". \n"
 #~ "To add preset for more printers, Please go to printer selection"
 #~ msgstr ""
 #~ "Canviaríem el nom dels perfils seleccionats com a \"Proveïdor Tipus "
@@ -25525,82 +26310,3 @@ msgstr "Cancel·lat"
 
 #~ msgid "Export to Local"
 #~ msgstr "Export to Local"
-
-#: src/slic3r/GUI/GUI_App.cpp:8124 src/slic3r/GUI/GUI_App.cpp:8131 src/slic3r/GUI/GUI_App.cpp:8493
-msgid "Updating parameter packages..."
-msgstr "S’estan actualitzant els paquets de paràmetres..."
-
-#: src/slic3r/GUI/GUI_App.cpp:8134
-msgid "Failed to update parameter packages. Please try again."
-msgstr "No s’han pogut actualitzar els paquets de paràmetres. Torneu-ho a provar."
-
-#: src/slic3r/GUI/GUI_App.cpp:8135 src/slic3r/GUI/GUI_App.cpp:8138
-msgid "Parameter update"
-msgstr "Actualització de paràmetres"
-
-#: src/slic3r/GUI/GUI_App.cpp:8499
-#, c-format
-msgid "Updated to %s"
-msgstr "Actualitzat a %s"
-
-#: src/slic3r/GUI/GUI_App.cpp:8501
-msgid "Update content:"
-msgstr "Contingut de l’actualització:"
-
-#: src/slic3r/GUI/GUI_App.cpp:8502
-msgid "No update description was provided."
-msgstr "No s’ha proporcionat cap descripció de l’actualització."
-
-#: src/slic3r/GUI/GUI_App.cpp:8505
-msgid "The update will be applied when you create or reopen a project."
-msgstr "L’actualització s’aplicarà quan creeu o torneu a obrir un projecte."
-
-#: src/slic3r/GUI/GUI_App.cpp:8507
-msgid "The update will be applied after slicing finishes."
-msgstr "L’actualització s’aplicarà quan acabi el laminat."
-
-#: src/slic3r/GUI/GUI_App.cpp:8508
-msgid "Parameter packages updated"
-msgstr "Paquets de paràmetres actualitzats"
-
-#: src/slic3r/GUI/UpdateDialogs.cpp:32 src/slic3r/GUI/MainFrame.cpp:2924 src/slic3r/GUI/MainFrame.cpp:2924
-msgid "Check for Preset Updates"
-msgstr "Comprova si hi ha actualitzacions dels perfils"
-
-#: src/slic3r/GUI/UpdateDialogs.cpp:37 src/slic3r/GUI/UpdateDialogs.cpp:95
-msgid "Checking preset updates..."
-msgstr "S’estan cercant actualitzacions dels perfils…"
-
-#: src/slic3r/GUI/UpdateDialogs.cpp:47 src/slic3r/GUI/UpdateDialogs.cpp:116
-msgid "Remind me later"
-msgstr "Recorda-m’ho més tard"
-
-#: src/slic3r/GUI/UpdateDialogs.cpp:101
-msgid "Updates are available for the following added printers."
-msgstr "Hi ha actualitzacions disponibles per a les impressores afegides següents."
-
-#: src/slic3r/GUI/UpdateDialogs.cpp:104
-#, c-format
-msgid "Target version: %s"
-msgstr "Versió de destinació: %s"
-
-#: src/slic3r/GUI/UpdateDialogs.cpp:118
-#, c-format
-msgid "Update all (%d)"
-msgstr "Actualitza-ho tot (%d)"
-
-#: src/slic3r/GUI/UpdateParams.cpp:197
-msgid "No printers have been added. Add a printer before checking for updates."
-msgstr "No s’ha afegit cap impressora. Afegiu-ne una abans de cercar actualitzacions."
-
-#: src/slic3r/GUI/UpdateParams.cpp:258
-msgid "All added printers are up to date."
-msgstr "Els perfils de totes les impressores afegides estan actualitzats."
-
-#: src/slic3r/GUI/UpdateParams.cpp:222 src/slic3r/GUI/UpdateParams.cpp:233
-msgid "Failed to check preset updates. Please check your network and try again."
-msgstr "No s’han pogut cercar actualitzacions dels perfils. Comproveu la connexió de xarxa i torneu-ho a provar."
-
-#: src/slic3r/GUI/UpdateParams.cpp:217 src/slic3r/GUI/UpdateParams.cpp:285
-msgid "The printer list or account has changed. Please check again."
-msgstr "La llista d’impressores o el compte ha canviat. Torneu-ho a comprovar."

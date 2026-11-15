@@ -5786,6 +5786,23 @@ msgstr ""
 msgid "Disable \"%1%\" (%2%)"
 msgstr "\"%1%\" 비활성화 (%2%)"
 
+msgid "Minimum mixed sublayer thickness"
+msgstr ""
+
+msgid ""
+"Minimum thickness of each mixed or gradient filament sublayer. Color ratios "
+"are adjusted when necessary while preserving the total layer height. Slicing "
+"stops with an error if the layer is too thin to fit all colors. Set to 0 to "
+"disable this limit."
+msgstr ""
+
+#, boost-format
+msgid ""
+"Mixed filament %1% at Z=%2% mm cannot fit %3% sublayers with a minimum "
+"thickness of %4% mm. Increase the layer height or reduce Minimum mixed "
+"sublayer thickness."
+msgstr ""
+
 msgid "affected Plate setting(s)"
 msgstr "영향을 받는 플레이트 설정"
 
@@ -11201,8 +11218,8 @@ msgstr ""
 msgid ""
 "When recording timelapse without toolhead, it is recommended to add a "
 "\"Timelapse Wipe Tower\" \n"
-"by right-click the empty position of build plate and choose \"Add "
-"Primitive\"->\"Timelapse Wipe Tower\"."
+"by right-click the empty position of build plate and choose \"Add Primitive"
+"\"->\"Timelapse Wipe Tower\"."
 msgstr ""
 "툴헤드 없이 타임랩스를 녹화할 때는 빌드 플레이트의 빈 위치를 마우스 오른쪽 버"
 "튼으로 클릭하고 \"프리미티브 추가\"-> \"타임랩스 노즐 청소 타워\"를 선택하여 "
@@ -16590,6 +16607,14 @@ msgstr "이 속도부터 냉각 움직임이 점차 빨라집니다."
 msgid "Minimal purge on wipe tower"
 msgstr "노즐 청소 타워의 최소 배출량"
 
+msgid "Filament pre-flush volume"
+msgstr ""
+
+msgid ""
+"After a filament change, the pre-flush volume of the new filament. Set to 0 "
+"to disable pre-flushing."
+msgstr ""
+
 msgid ""
 "After a tool change, the exact position of the newly loaded filament inside "
 "the nozzle may not be known, and the filament pressure is likely not yet "
@@ -17226,10 +17251,10 @@ msgstr "레이어에서 최대 팬 속도"
 
 msgid ""
 "Fan speed will be ramped up linearly from zero at layer "
-"\"close_fan_the_first_x_layers\" to maximum at layer "
-"\"full_fan_speed_layer\". \"full_fan_speed_layer\" will be ignored if lower "
-"than \"close_fan_the_first_x_layers\", in which case the fan will be running "
-"at maximum allowed speed at layer \"close_fan_the_first_x_layers\" + 1."
+"\"close_fan_the_first_x_layers\" to maximum at layer \"full_fan_speed_layer"
+"\". \"full_fan_speed_layer\" will be ignored if lower than "
+"\"close_fan_the_first_x_layers\", in which case the fan will be running at "
+"maximum allowed speed at layer \"close_fan_the_first_x_layers\" + 1."
 msgstr ""
 "팬 속도는 \"close_fan_the_first_x_layers\" 의 0에서 \"full_fan_speed_layer\" "
 "의 최고 속도까지 선형적으로 증가합니다. \"full_fan_speed_layer\"가 "
@@ -20297,7 +20322,11 @@ msgid ""
 "layers to purge on the prime tower before printing skeleton, then walls in "
 "the configured order, then skin and surface fill. This does not change "
 "bottom shell layers."
-msgstr "객체 스켈레톤으로 플러싱이 활성화된 경우, 객체의 하단 N개 레이어에서 스켈레톤을 출력하기 전에 프라임 타워로 퍼지한 다음 설정된 순서대로 벽을 출력하고 마지막으로 스킨과 표면 채우기를 출력합니다. 하단 셸 레이어 수는 변경되지 않습니다."
+msgstr ""
+"객체 스켈레톤으로 플러싱이 활성화된 경우, 객체의 하단 N개 레이어에서 스켈레톤"
+"을 출력하기 전에 프라임 타워로 퍼지한 다음 설정된 순서대로 벽을 출력하고 마지"
+"막으로 스킨과 표면 채우기를 출력합니다. 하단 셸 레이어 수는 변경되지 않습니"
+"다."
 
 msgid "Top fill flush layers"
 msgstr "채우기 전 플러시할 상단 레이어 수"
@@ -20307,7 +20336,11 @@ msgid ""
 "layers to purge on the prime tower before printing skeleton, then walls in "
 "the configured order, then skin and surface fill. This does not change top "
 "shell layers."
-msgstr "객체 스켈레톤으로 플러싱이 활성화된 경우, 객체의 상단 N개 레이어에서 스켈레톤을 출력하기 전에 프라임 타워로 퍼지한 다음 설정된 순서대로 벽을 출력하고 마지막으로 스킨과 표면 채우기를 출력합니다. 상단 셸 레이어 수는 변경되지 않습니다."
+msgstr ""
+"객체 스켈레톤으로 플러싱이 활성화된 경우, 객체의 상단 N개 레이어에서 스켈레톤"
+"을 출력하기 전에 프라임 타워로 퍼지한 다음 설정된 순서대로 벽을 출력하고 마지"
+"막으로 스킨과 표면 채우기를 출력합니다. 상단 셸 레이어 수는 변경되지 않습니"
+"다."
 
 msgid "Skeleton wipe speed"
 msgstr "스켈레톤 와이프 속도"
@@ -21623,6 +21656,715 @@ msgstr ""
 
 msgid "Canceled"
 msgstr "취소됨"
+
+msgid "Pre-flush length slowdown"
+msgstr ""
+
+msgid ""
+"After a filament change, use the numeric value of Filament pre-flush volume "
+"as the model infill path distance in millimeters for this speed limit. For "
+"example, a value of 10 limits only the first 10 mm of printed infill path, "
+"then restores normal speed. The volumetric flow limit is this percentage of "
+"the filament's maximum volumetric speed. With a prime tower, applies when "
+"Flush into objects' infill is enabled. Without a tower, applies to skeleton "
+"infill. Travel and retraction do not count. The tower's original pre-flush "
+"behavior is unchanged. Lower printing speeds are preserved. Set to 0 to "
+"disable this additional speed limit."
+msgstr ""
+
+#: src/libslic3r/PrintConfig.cpp
+msgid ""
+"Minimum estimated printing time in seconds between time flushes. With a wipe "
+"tower, flushing runs before a filament change or before a normal tower visit "
+"on a sparse tower layer. The nozzle flushes outside the plate, then "
+"continues directly to the tower entry. Towers without sparse layers still "
+"flush only before filament changes. Without a tower, including single-color "
+"printing, flushing waits for an internal infill path boundary. Small or "
+"narrow model islands suppress time flushing. The actual interval may be "
+"longer. Set to 0 to disable time flushing."
+msgstr ""
+
+#: src/libslic3r/PrintConfig.cpp
+msgid ""
+"Runs when overdue before a tower filament change, before a normal tower "
+"visit on a sparse tower layer, or at an internal infill path boundary "
+"without a tower. Towers without sparse layers still flush only before "
+"filament changes. Time keeps accumulating outside these nodes. Layers with "
+"model islands smaller than 25 square millimeters or without a 2 mm inset "
+"suppress time flushing. Tower flushes continue directly to the tower entry; "
+"other flushes return to the model. The interval may be exceeded while "
+"waiting for a safe node. Like Time lapse G-code, supports [layer_num], "
+"[layer_z] and [max_layer_z] with the same layer values and expression "
+"syntax. Use [return_x], [return_y] and [return_z] for the final tower entry "
+"position on a normal tower visit, or the nozzle position at other triggers, "
+"[current_tool] for the zero-based tool index, and [time_flush_elapsed] for "
+"estimated seconds since the previous flush. Expressions such as {layer_z + "
+"0.4} and {if time_flush_elapsed > 0}...{endif} are evaluated before G-code "
+"comments, even when preceded by a semicolon. The script must preserve "
+"coordinate origin, positioning modes and units; independent flushes must "
+"also preserve the active tool. The slicer restores position and absolute E "
+"for moves it can parse. Commands wrapped in M950 are passed through without "
+"tracking their motion, E resets or duration; firmware or the script must "
+"handle recovery. With or without a tower, use time_flush_has_toolchange in "
+"both Filament change G-code and Time flush G-code to combine an overdue "
+"flush with a filament change. It is true only for that combined event: skip "
+"the ordinary change and let Time flush G-code select [next_extruder] at the "
+"flush station using [new_filament_temp]. No-tower combined changes resume at "
+"the first new-filament print path. The active no-tower change branch must "
+"use this state; phased skeleton flushes keep their original flow."
+msgstr ""
+
+#: src/slic3r/GUI/GUI_App.cpp:8124 src/slic3r/GUI/GUI_App.cpp:8131
+#: src/slic3r/GUI/GUI_App.cpp:8493
+msgid "Updating parameter packages..."
+msgstr "매개변수 패키지 업데이트 중..."
+
+#: src/slic3r/GUI/GUI_App.cpp:8134
+msgid "Failed to update parameter packages. Please try again."
+msgstr "매개변수 패키지를 업데이트하지 못했습니다. 다시 시도해 주세요."
+
+#: src/slic3r/GUI/GUI_App.cpp:8135 src/slic3r/GUI/GUI_App.cpp:8138
+msgid "Parameter update"
+msgstr "매개변수 업데이트"
+
+#: src/slic3r/GUI/GUI_App.cpp:8499
+#, c-format
+msgid "Updated to %s"
+msgstr "%s 버전으로 업데이트되었습니다"
+
+#: src/slic3r/GUI/GUI_App.cpp:8501
+msgid "Update content:"
+msgstr "업데이트 내용:"
+
+#: src/slic3r/GUI/GUI_App.cpp:8502
+msgid "No update description was provided."
+msgstr "업데이트 설명이 제공되지 않았습니다."
+
+#: src/slic3r/GUI/GUI_App.cpp:8505
+msgid "The update will be applied when you create or reopen a project."
+msgstr "프로젝트를 새로 만들거나 다시 열면 업데이트가 적용됩니다."
+
+#: src/slic3r/GUI/GUI_App.cpp:8507
+msgid "The update will be applied after slicing finishes."
+msgstr "슬라이싱이 완료되면 업데이트가 적용됩니다."
+
+#: src/slic3r/GUI/GUI_App.cpp:8508
+msgid "Parameter packages updated"
+msgstr "매개변수 패키지 업데이트 완료"
+
+#: src/slic3r/GUI/UpdateDialogs.cpp:32 src/slic3r/GUI/MainFrame.cpp:2924
+msgid "Check for Preset Updates"
+msgstr "프리셋 업데이트 확인"
+
+#: src/slic3r/GUI/UpdateDialogs.cpp:37 src/slic3r/GUI/UpdateDialogs.cpp:95
+msgid "Checking preset updates..."
+msgstr "프리셋 업데이트 확인 중…"
+
+#: src/slic3r/GUI/UpdateDialogs.cpp:47 src/slic3r/GUI/UpdateDialogs.cpp:116
+msgid "Remind me later"
+msgstr "나중에 알림"
+
+#: src/slic3r/GUI/UpdateDialogs.cpp:101
+msgid "Updates are available for the following added printers."
+msgstr "추가한 다음 프린터에 업데이트가 있습니다."
+
+#: src/slic3r/GUI/UpdateDialogs.cpp:104
+#, c-format
+msgid "Target version: %s"
+msgstr "업데이트 버전: %s"
+
+#: src/slic3r/GUI/UpdateDialogs.cpp:118
+#, c-format
+msgid "Update all (%d)"
+msgstr "모두 업데이트 (%d)"
+
+#: src/slic3r/GUI/UpdateParams.cpp:197
+msgid "No printers have been added. Add a printer before checking for updates."
+msgstr "추가된 프린터가 없습니다. 프린터를 추가한 후 업데이트를 확인하세요."
+
+#: src/slic3r/GUI/UpdateParams.cpp:258
+msgid "All added printers are up to date."
+msgstr "추가된 모든 프린터의 프리셋이 최신 상태입니다."
+
+#: src/slic3r/GUI/UpdateParams.cpp:222 src/slic3r/GUI/UpdateParams.cpp:233
+msgid ""
+"Failed to check preset updates. Please check your network and try again."
+msgstr ""
+"프리셋 업데이트를 확인하지 못했습니다. 네트워크를 확인한 후 다시 시도하세요."
+
+#: src/slic3r/GUI/UpdateParams.cpp:217 src/slic3r/GUI/UpdateParams.cpp:285
+msgid "The printer list or account has changed. Please check again."
+msgstr "프린터 목록 또는 계정이 변경되었습니다. 다시 확인하세요."
+
+msgid "Floating vertical shell"
+msgstr ""
+
+msgid "Time flush G-code"
+msgstr ""
+
+msgid ""
+"The jerk setting exceeds the printer's maximum jerk (machine_max_jerk_x/"
+"machine_max_jerk_y).\n"
+"SanityPrint will automatically cap the jerk speed to ensure it doesn't "
+"surpass the printer's capabilities.\n"
+"You can adjust the maximum jerk setting in your printer's configuration to "
+"get higher speeds."
+msgstr ""
+"저크 설정이 프린터의 최대 저크(machine_max_jerk_x/machine_max_jerk_y)를 초과"
+"합니다.\n"
+"SanityPrint는 프린터의 성능을 초과하지 않도록 저크 속도를 자동으로 제한합니"
+"다.\n"
+"프린터 구성에서 최대 저크 설정을 조정하여 더 빠른 속도를 얻을 수 있습니다."
+
+msgid ""
+"The acceleration setting exceeds the printer's maximum acceleration "
+"(machine_max_acceleration_extruding).\n"
+"SanityPrint will automatically cap the acceleration speed to ensure it "
+"doesn't surpass the printer's capabilities.\n"
+"You can adjust the machine_max_acceleration_extruding value in your "
+"printer's configuration to get higher speeds."
+msgstr ""
+"가속 설정이 프린터의 최대 가속(machine_max_acceleration_extruding)을 초과합니"
+"다.\n"
+"SanityPrint는 프린터의 기능을 초과하지 않도록 가속 속도를 자동으로 제한합니"
+"다.\n"
+"프린터의 구성에서 machine_max_acceleration_extruding 값을 조정하여 더 빠른 속"
+"도를 얻을 수 있습니다."
+
+msgid ""
+"The travel acceleration setting exceeds the printer's maximum travel "
+"acceleration (machine_max_acceleration_travel).\n"
+"SanityPrint will automatically cap the travel acceleration speed to ensure "
+"it doesn't surpass the printer's capabilities.\n"
+"You can adjust the machine_max_acceleration_travel value in your printer's "
+"configuration to get higher speeds."
+msgstr ""
+"이동 가속 설정이 프린터의 최대 이동 가속(machine_max_acceleration_travel)을 "
+"초과합니다.\n"
+"SanityPrint는 이동 가속 속도가 프린터의 성능을 초과하지 않도록 자동으로 제한"
+"합니다.\n"
+"프린터 구성에서 machine_max_acceleration_travel 값을 조정하여 더 빠른 속도를 "
+"얻을 수 있습니다."
+
+msgid ""
+"Sanity Print can upload G-code files to a printer host. This field should "
+"contain the hostname, IP address or URL of the printer host instance. Print "
+"host behind HAProxy with basic auth enabled can be accessed by putting the "
+"user name and password into the URL in the following format: https://"
+"username:password@your-octopi-address/"
+msgstr ""
+"Sanity Print는 Gcode 파일을 프린터 호스트에 업로드할 수 있습니다. 이 필드에"
+"는 프린터 호스트 인스턴스의 호스트 이름, IP 주소 또는 URL이 포함되어야 합니"
+"다. 기본 인증이 활성화된 HAProxy 뒤의 출력 호스트는 사용자 이름과 비밀번호를 "
+"다음 형식의 URL에 입력하면 액세스할 수 있습니다: https://username:"
+"password@your-octopi-address/."
+
+msgid ""
+"Sanity Print can upload G-code files to a printer host. This field should "
+"contain the API Key or the password required for authentication."
+msgstr ""
+"Sanity Print는 Gcode 파일을 프린터 호스트에 업로드할 수 있습니다. 이 필드에"
+"는 인증에 필요한 API 키 또는 비밀번호가 포함되어야 합니다."
+
+msgid ""
+"This option sets the min point for the allowed bed mesh area. Due to the "
+"probe's XY offset, most printers are unable to probe the entire bed. To "
+"ensure the probe point does not go outside the bed area, the minimum and "
+"maximum points of the bed mesh should be set appropriately. SanityPrint "
+"ensures that adaptive_bed_mesh_min/adaptive_bed_mesh_max values do not "
+"exceed these min/max points. This information can usually be obtained from "
+"your printer manufacturer. The default setting is (-99999, -99999), which "
+"means there are no limits, thus allowing probing across the entire bed."
+msgstr ""
+"이 옵션은 허용되는 베드 메시 영역의 최소 지점을 설정합니다. 프로브의 XY 오프"
+"셋으로 인해 대부분의 프린터는 전체 베드를 프로빙할 수 없습니다. 프로브 포인트"
+"가 베드 영역을 벗어나지 않도록 하려면 베드 메시의 최소 및 최대 포인트를 적절"
+"하게 설정해야 합니다. Sanity Print는 적응형 베드 메시 최소/최대 값이 이러한 "
+"최소/최대 포인트를 초과하지 않도록 합니다. 이 정보는 일반적으로 프린터 제조업"
+"체에서 얻을 수 있습니다. 기본 설정은 (-99999, -99999)로, 제한이 없으므로 전"
+"체 베드에 걸쳐 프로빙할 수 있습니다."
+
+msgid ""
+"This option sets the max point for the allowed bed mesh area. Due to the "
+"probe's XY offset, most printers are unable to probe the entire bed. To "
+"ensure the probe point does not go outside the bed area, the minimum and "
+"maximum points of the bed mesh should be set appropriately. SanityPrint "
+"ensures that adaptive_bed_mesh_min/adaptive_bed_mesh_max values do not "
+"exceed these min/max points. This information can usually be obtained from "
+"your printer manufacturer. The default setting is (99999, 99999), which "
+"means there are no limits, thus allowing probing across the entire bed."
+msgstr ""
+"이 옵션은 허용되는 베드 메시 영역의 최대 포인트를 설정합니다. 프로브의 XY 오"
+"프셋으로 인해 대부분의 프린터는 전체 베드를 프로빙할 수 없습니다. 프로브 포인"
+"트가 베드 영역을 벗어나지 않도록 하려면 베드 메시의 최소 및 최대 포인트를 적"
+"절하게 설정해야 합니다. Sanity Print는 적응형 베드 메시 최소/최대 값이 이러"
+"한 최소/최대 포인트를 초과하지 않도록 합니다. 이 정보는 일반적으로 프린터 제"
+"조업체에서 얻을 수 있습니다. 기본 설정은 (99999, 99999)로, 제한이 없으므로 전"
+"체 베드에 걸쳐 프로빙할 수 있습니다."
+
+msgid "Temperature type"
+msgstr ""
+
+msgid ""
+"Multi-material temperature compatibility class. 0=HighTemp, 1=LowTemp, "
+"2=HighLowCompatible, 3=Undefine."
+msgstr ""
+
+msgid "Smart cooling zone"
+msgstr ""
+
+msgid "Enable smart cooling slowdown zones for this filament."
+msgstr ""
+
+msgid "Bed adhesion strength"
+msgstr ""
+
+msgid ""
+"Bed adhesion yield strength in MPa used for support-spot generation. Engine "
+"multiplies by 1e6 internally."
+msgstr ""
+
+msgid "Thermal length"
+msgstr ""
+
+msgid "Characteristic thermal length (mm) used for brim/warp estimation."
+msgstr ""
+
+msgid "Brim adhesion coefficient"
+msgstr ""
+
+msgid ""
+"Multiplier applied to brim width for adhesion estimation. Higher = wider "
+"brim generated."
+msgstr ""
+
+msgid "Small island threshold"
+msgstr ""
+
+msgid "Area threshold (mm²) below which a slice island is treated as small."
+msgstr ""
+
+msgid "Chamber temperature limit"
+msgstr ""
+
+msgid ""
+"Maximum safe chamber temperature (°C) for this filament. 0 = no limit / no "
+"warning."
+msgstr ""
+
+msgid "Flexible filament"
+msgstr ""
+
+msgid ""
+"Mark this filament as flexible (e.g. TPU). Used to suggest appropriate "
+"support filament."
+msgstr ""
+
+msgid ""
+"After a tool change, the exact position of the newly loaded filament inside "
+"the nozzle may not be known, and the filament pressure is likely not yet "
+"stable. Before purging the print head into an infill or a sacrificial "
+"object, Sanity Print will always prime this amount of material into the wipe "
+"tower to produce successive infill or sacrificial object extrusions reliably."
+msgstr ""
+"도구를 교체한 후에는 노즐 내부에 새로 로드된 필라멘트의 정확한 위치를 알 수 "
+"없으며 필라멘트 압력이 아직 안정적이지 않을 수 있습니다. 프린트 헤드를 채우"
+"기 또는 희생 물체로 배출하기 전에 Sanity Print는 항상 이 양의 필라멘트를 노"
+"즐 청소 타워에 프라이밍하여 연속적인 인필러 희생 물체 돌출을 안정적으로 생성"
+"합니다."
+
+msgid ""
+"Connect an infill line to an internal perimeter with a short segment of an "
+"additional perimeter. If expressed as percentage (example: 15%) it is "
+"calculated over infill extrusion width. Sanity Print tries to connect two "
+"close infill lines to a short perimeter segment. If no such perimeter "
+"segment shorter than infill_anchor_max is found, the infill line is "
+"connected to a perimeter segment at just one side and the length of the "
+"perimeter segment taken is limited to this parameter, but no longer than "
+"anchor_length_max. \n"
+"Set this parameter to zero to disable anchoring perimeters connected to a "
+"single infill line."
+msgstr ""
+"추가 둘레의 짧은 세그먼트를 사용하여 채우기 라인을 내부 둘레에 연결합니다. 백"
+"분율(예: 15%)로 표시되는 경우 채우기 돌출 폭에 대해 계산됩니다. Creality "
+"Print는 두 개의 가까운 채우기 선을 짧은 경계 세그먼트에 연결하려고 시도합니"
+"다. infill_anchor_max보다 짧은 경계 세그먼트가 발견되지 않으면 채우기 선은 "
+"한 쪽의 경계 세그먼트에만 연결되며, 이 매개변수에 따라 경계 세그먼트의 길이"
+"가 제한되지만  infill_anchor_max보다 길어지지는 않습니다. \n"
+"단일 채우기 라인에 연결된 경계선 앵커링을 비활성화하려면 이 매개변수를 0으로 "
+"설정합니다."
+
+msgid ""
+"Connect an infill line to an internal perimeter with a short segment of an "
+"additional perimeter. If expressed as percentage (example: 15%) it is "
+"calculated over infill extrusion width. Sanity Print tries to connect two "
+"close infill lines to a short perimeter segment. If no such perimeter "
+"segment shorter than this parameter is found, the infill line is connected "
+"to a perimeter segment at just one side and the length of the perimeter "
+"segment taken is limited to infill_anchor, but no longer than this "
+"parameter. \n"
+"If set to 0, the old algorithm for infill connection will be used, it should "
+"create the same result as with 1000 & 0."
+msgstr ""
+"추가 둘레의 짧은 세그먼트를 사용하여 채우기 라인을 내부 둘레에 연결합니다. 백"
+"분율(예: 15%)로 표시되는 경우 채우기 돌출 폭에 대해 계산됩니다. Creality "
+"Print는 두 개의 가까운 채우기 선을 짧은 경계 세그먼트에 연결하려고 시도합니"
+"다. 이 매개변수보다 짧은 경계 세그먼트가 발견되지 않으면 채우기 선은 경계 세"
+"그먼트의 한쪽 면에만 연결되고 채우기 선의 길이는 이 매개변수보다 길지 않은 "
+"infill_anchor로 제한됩니다. \n"
+"0으로 설정하면 이전 채우기 연결 알고리즘이 사용되며 1000 & 0과 동일한 결과를 "
+"생성합니다."
+
+msgid ""
+"Sanity Print can upload G-code files to a printer host. This field must "
+"contain the kind of the host."
+msgstr ""
+"Sanity Print 는 Gcode 파일을 프린터 호스트에 업로드할 수 있습니다. 이 필드에"
+"는 호스트의 종류가 포함되어야 합니다."
+
+msgid ""
+"If you want to process the output G-code through custom scripts, just list "
+"their absolute paths here. Separate multiple scripts with a semicolon. "
+"Scripts will be passed the absolute path to the G-code file as the first "
+"argument, and they can access the Sanity Print config settings by reading "
+"environment variables."
+msgstr ""
+"사용자 지정 스크립트를 통해 출력 Gcode를 처리하려면 여기에 절대 경로를 나열하"
+"면 됩니다. 여러 개의 스크립트를 세미콜론으로 구분하세요. 스크립트는 첫 번째 "
+"인수로 Gcode 파일의 절대 경로를 전달받으며, 환경 변수를 읽음으로써 Creality "
+"Print 구성 설정에 액세스할 수 있습니다."
+
+msgid "Vertical shell speed"
+msgstr ""
+
+msgid ""
+"Speed for narrow internal solid infill regions that overlap sparse infill or "
+"internal voids in the layer below. Requires \"Detect narrow internal solid "
+"infill\" to be enabled. Percentages are relative to the internal solid "
+"infill speed. When \"Detect floating vertical shells\" is enabled, paths "
+"identified as floating use the bridge speed instead."
+msgstr ""
+
+msgid "Time flush interval"
+msgstr ""
+
+msgid "Detect floating vertical shells"
+msgstr ""
+
+msgid ""
+"Identify floating paths in narrow internal solid infill regions above sparse "
+"infill or internal voids, and print those paths at the bridge speed. "
+"Unmarked paths, or all paths when this option is disabled, use the vertical "
+"shell speed. Requires \"Detect narrow internal solid infill\" to be enabled."
+msgstr ""
+
+msgid ""
+"SanityPrint has encountered an error while taking a configuration snapshot."
+msgstr "구성 스냅샷을 만드는 동안 SanityPrint에서 오류가 발생했습니다."
+
+msgid "SanityPrint error"
+msgstr "SanityPrint 오류"
+
+msgid "SanityPrint is licensed under "
+msgstr "SanityPrint 의 라이선스는 다음과 같습니다."
+
+msgid "SanityPrint is based on PrusaSlicer and BambuStudio"
+msgstr "SanityPrint는 PrusaSlicer 및 BambuStudio를 기반으로 합니다."
+
+msgid "Sanity Print "
+msgstr "Sanity Print"
+
+# generated by robot
+msgid ""
+"This project file is not from Sanity Print. Please select the printer preset "
+"you want to use for slicing."
+msgstr ""
+"이 프로젝트 파일은 Sanity Print의 파일이 아닙니다. 슬라이싱에 사용할 프린터 "
+"미리 설정을 선택하십시오."
+
+msgid ""
+"To keep the feature you just enabled, Sanity Print will make the following "
+"changes:"
+msgstr ""
+
+msgid "------- Templates -------"
+msgstr ""
+
+msgid "------- Existing presets -------"
+msgstr ""
+
+msgid "Printer config bundle(.sanity_printer)"
+msgstr "프린터 구성 번들(.sanity_printer)"
+
+msgid ""
+"Performing desktop integration failed - could not create Gcodeviewer desktop "
+"file. SanityPrint desktop file was probably created successfully."
+msgstr ""
+"데스크톱 통합을 수행하지 못했습니다 - Gcodeviewer 데스크톱 파일을 만들 수 없"
+"습니다. SanityPrint 데스크톱 파일이 성공적으로 생성되었을 것입니다."
+
+msgid "Remove Materials from Printer"
+msgstr ""
+
+msgid ""
+"Select the materials to remove from the printer (only those added by "
+"SanityPrint are listed; factory materials are protected):"
+msgstr ""
+
+msgid "Remove selected"
+msgstr ""
+
+msgid "Sync Filaments to Printers"
+msgstr ""
+
+#, c-format
+msgid "Push all custom filaments (%zu) to the selected printers:"
+msgstr ""
+
+msgid " - offline"
+msgstr ""
+
+msgid "No printers found. Add printers on the Device page first."
+msgstr ""
+
+msgid "Push"
+msgstr ""
+
+msgid "Remove..."
+msgstr ""
+
+msgid "There are no custom filaments to sync."
+msgstr ""
+
+msgid "Please select at least one printer."
+msgstr ""
+
+#, c-format, boost-format
+msgid "Filament sync finished: %d pushed, %d failed."
+msgstr ""
+
+msgid "Sync Filaments"
+msgstr ""
+
+msgid ""
+"No removable materials were found on the selected printer(s). Only materials "
+"added by SanityPrint can be removed here; factory materials are protected."
+msgstr ""
+
+msgid "Remove Materials"
+msgstr ""
+
+#, c-format, boost-format
+msgid "Remove finished: %d removed, %d failed."
+msgstr ""
+
+msgid "The configuration may be generated by a newer version of SanityPrint."
+msgstr "이 구성은 최신 버전의 SanityPrint에서 생성될 수 있습니다."
+
+msgid ""
+"Sanity Print requires the Microsoft WebView2 Runtime to operate certain "
+"features.\n"
+"Click Yes to install it now."
+msgstr ""
+"특정 기능을 작동하려면 Microsoft WebView2 런타임이 필요합니다.\n"
+"지금 설치하려면 예를 클릭하세요."
+
+# generated by robot
+msgid ""
+"Sanity Print requires the Microsoft WebView2 Runtime,But it has been found "
+"that the abnormal operation of Microsoft WebView2 may be related to the "
+"installation of Microsoft Edge. \n"
+"Click the Yes to reinstall Microsoft Edge"
+msgstr ""
+"Sanity Print은 Microsoft WebView2 런타임이 필요하지만 Microsoft WebView2의 비"
+"정상적인 작동이 Microsoft Edge의 설치와 관련이 있을 수 있음을 발견했습니다."
+"Microsoft Edge를다시 설치하려면 예를 클릭하십시오."
+
+msgid "The Sanity Print needs an upgrade"
+msgstr "Sanity Print 출력에 업데이트가 필요합니다."
+
+# generated by robot
+msgid ""
+"Detected corruption in the Sanity Print configuration file, attempted to "
+"rebuild, \n"
+"please manually restart the software."
+msgstr ""
+"Creality 인쇄 구성 파일의 손상을 감지하고, 재구축하려고 시도하고, 수동으로 소"
+"프트웨어를 다시 시작하십시오."
+
+msgid ""
+"The SanityPrint configuration file may be corrupted and cannot be parsed.\n"
+"SanityPrint has attempted to recreate the configuration file.\n"
+"Please note, application settings will be lost, but printer profiles will "
+"not be affected."
+msgstr ""
+"SanityPrint 구성 파일이 손상되어 구문 분석할 수 없습니다.\n"
+"SanityPrint에서 구성 파일을 다시 만들려고 시도했습니다.\n"
+"응용 프로그램 설정은 손실되지만 프린터 프로필은 영향을 받지 않습니다."
+
+msgid ""
+"The version of Sanity Print is too low and needs to be updated to the latest "
+"version before it can be used normally"
+msgstr ""
+"Sanity Print 출력의 버전이 너무 낮아 정상적으로 사용하려면 최신 버전으로 업데"
+"이트해야 합니다."
+
+msgid "Sanity Print GUI initialization failed"
+msgstr "Sanity Print GUI 초기화 실패"
+
+msgid ""
+"Another virtual camera is running.\n"
+"Sanity Print supports only a single virtual camera.\n"
+"Do you want to stop this virtual camera?"
+msgstr ""
+"다른 가상 카메라가 실행 중입니다.\n"
+"Sanity Print는 하나의 가상 카메라만 지원합니다.\n"
+"이 가상 카메라를 중지하시겠습니까?"
+
+msgid ""
+"The 3mf file version is in Beta and it is newer than the current "
+"SanityPrint  version."
+msgstr ""
+"The 3mf file version is in Beta and it is newer than the current "
+"SanityPrint  version."
+
+msgid "If you would like to try Sanity Print Beta, you may click to"
+msgstr "Sanity Print 베타를 사용해 보려면 다음을 클릭하면 됩니다."
+
+msgid "The 3mf file version is newer than the current Sanity Print version."
+msgstr "3mf 파일 버전은 현재 Sanity Print 버전보다 최신 버전입니다."
+
+msgid ""
+"Update your Sanity Print could enable all functionality in the 3mf file."
+msgstr ""
+"Sanity Print를 업데이트하면 3mf 파일의 모든 기능을 활성화할 수 있습니다."
+
+msgid "SanityPrint Version:"
+msgstr "Sanity Print 버전:"
+
+msgid "Test SanityPrint(GitHub)"
+msgstr "Sanity Print 테스트(깃허브)"
+
+msgid "Test SanityPrint(GitHub):"
+msgstr "Sanity Print 테스트(깃허브):"
+
+msgid "Obj"
+msgstr ""
+
+msgid ""
+"There are some unknown filaments mapped to generic preset. Please update "
+"Sanity Print or restart Creality Print to check if there is an update to "
+"system presets."
+msgstr ""
+
+msgid "The 3mf is not supported by SanityPrint, load geometry data only."
+msgstr "3mf는 형상 데이터만 로드하는 SanityPrint에서 지원되지 않습니다."
+
+#, boost-format
+msgid ""
+"The no-tower algorithm for plate %1% requires %2% external purge visits, "
+"exceeding 100.\n"
+"The model has limited internal infill available for purging. Enabling a "
+"prime tower may reduce external purge travel and improve print quality.\n"
+"\n"
+"Enable the prime tower and slice again, or keep the current no-tower result?"
+msgstr ""
+
+msgid "No-tower infill"
+msgstr ""
+
+msgid "Enable prime tower and slice again"
+msgstr ""
+
+msgid "Continue without prime tower"
+msgstr ""
+
+msgid ""
+"Importing to Sanity Print failed. Please download the file and manually "
+"import it."
+msgstr ""
+"Sanity Print로 가져오기에 실패했습니다. 파일을 다운로드하여 수동으로 가져오세"
+"요."
+
+msgid "with SanityPrint so that SanityPrint can open models from"
+msgstr "를 사용하여 SanityPrint가 다음에서 모델을 열 수 있도록 합니다"
+
+msgid ""
+"We sincerely invite you to join Sanity Print's \" User Experience "
+"Improvement Program\" to help us optimize printing efficiency, improve "
+"printing performance and software experience by anonymously collecting data "
+"such as slicing parameters, settings and usage logs. We will not collect any "
+"personally identifiable information, and all data will be protected in "
+"accordance with the"
+msgstr ""
+"슬라이싱 매개변수, 설정 및 사용 로그와 같은 데이터를 익명으로 수집하여 인쇄 "
+"효율성을 최적화하고 인쇄 성능 및 소프트웨어 경험을 개선하는 데 도움이 되는 "
+"Sanity Print의 \"사용자 경험 개선 프로그램\"에 귀하를 진심으로 초대합니다. 당"
+"사는 개인 식별 정보를 수집하지 않으며 모든 데이터는 다음에 따라 보호됩니다."
+
+msgid ""
+"Click OK to update the Network plug-in when Sanity Print launches next time."
+msgstr ""
+"확인을 클릭하여 다음에 Sanity Print를 시작할 때 네트워크 플러그인을 업데이트"
+"합니다."
+
+msgid "New version of Sanity Print"
+msgstr "새 버전의 Sanity Print"
+
+msgid ""
+"Step 1, please confirm Sanity Print and your printer are in the same LAN."
+msgstr "1단계, Sanity Print와 프린터가 동일한 LAN에 있는지 확인합니다."
+
+msgid "The printer is required to be in the same LAN as Sanity Print"
+msgstr "프린터는 Sanity Print와 동일한 LAN에 있어야 합니다."
+
+msgid "Blacklisted libraries loaded into SanityPrint process:"
+msgstr "Sanity Print 프로세스에 로드된 블랙리스트 라이브러리:"
+
+msgid "Material properties"
+msgstr ""
+
+msgid "Time flush"
+msgstr ""
+
+msgid ""
+"SanityPrint uses this matrix only when flushing into objects skeleton is "
+"enabled."
+msgstr ""
+
+msgid ""
+"The firmware version is abnormal. Repairing and updating are required before "
+"printing. Do you want to update now? You can also update later on printer or "
+"update next time starting SanityPrint."
+msgstr ""
+"펌웨어 버전이 비정상입니다. 출력하기 전에 복구 및 업데이트가 필요합니다. 지"
+"금 업데이트하시겠습니까? 나중에 프린터에서 업데이트하거나 다음에 Creality "
+"Print를 시작할 때 업데이트할 수도 있습니다."
+
+msgid "Please check the network connection of the printer and SanityPrint"
+msgstr "프린터와 SanityPrint의 네트워크 연결을 확인하십시오."
+
+msgid ""
+"SanityPrint would re-calculate your flushing volumes everytime the filaments "
+"color changed."
+msgstr "SanityPrint는 필라멘트 색상이 바뀔 때마다 배출량을 다시 계산합니다."
+
+msgid ""
+"Your system is missing H.264 codecs for GStreamer, which are required to "
+"play video.  (Try installing the gstreamer1.0-plugins-bad or gstreamer1.0-"
+"libav packages, then restart Sanity Print?)"
+msgstr ""
+"시스템에 동영상 재생에 필요한 GStreamer용 H.264 코덱이 없습니다. "
+"(gstreamer1.0-plugins-bador gstreamer1.0-libav 패키지를 설치한 다음 Creality "
+"Print를 다시 시작해보세요.)"
+
+# generated by robot
+msgid "Connection to SanityPrint works correctly."
+msgstr "SanityPrint에 연결이 올바르게 작동합니다."
+
+# generated by robot
+msgid "Could not connect to SanityPrint"
+msgstr "SanityPrint에 연결할 수 없습니다."
 
 #~ msgid ""
 #~ "Prime tower is required for smooth timelapse. There may be flaws on the "
@@ -23330,8 +24072,8 @@ msgstr "취소됨"
 
 #~ msgid ""
 #~ "There are some unknown filaments in the AMS mappings. Please check "
-#~ "whether they are the required filaments. If they are okay, press "
-#~ "\"Confirm\" to start printing."
+#~ "whether they are the required filaments. If they are okay, press \"Confirm"
+#~ "\" to start printing."
 #~ msgstr ""
 #~ "AMS 매핑에 알 수 없는 필라멘트가 있습니다. 필요한 필라멘트인지 확인해주세"
 #~ "요. 정상이면 \"확인\"을 눌러 출력을 시작하세요."
@@ -23464,8 +24206,8 @@ msgstr "취소됨"
 #~ msgstr "다음 프린터에 대한 필라멘트 사전 설정을 만들 수 있습니다:"
 
 #~ msgid ""
-#~ "We would rename the presets as \"Vendor Type Serial @printer you "
-#~ "selected\". \n"
+#~ "We would rename the presets as \"Vendor Type Serial @printer you selected"
+#~ "\". \n"
 #~ "To add preset for more printers, Please go to printer selection"
 #~ msgstr ""
 #~ "사전 설정의 이름을 \"선택한 공급업체 유형 직렬 @프린터\"로 변경합니다.\n"
@@ -23914,8 +24656,8 @@ msgstr "취소됨"
 #~ msgstr "드문 레이어 없음(실험적)"
 
 #~ msgid ""
-#~ "We would rename the presets as \"Vendor Type Serial @printer you "
-#~ "selected\". \n"
+#~ "We would rename the presets as \"Vendor Type Serial @printer you selected"
+#~ "\". \n"
 #~ "To add preset for more prinetrs, Please go to printer selection"
 #~ msgstr ""
 #~ "사전 설정의 이름을 \"선택한 공급업체 유형 직렬 @프린터\"로 변경합니다.\n"
@@ -24514,82 +25256,3 @@ msgstr "취소됨"
 
 #~ msgid "Export to Local"
 #~ msgstr "Export to Local"
-
-#: src/slic3r/GUI/GUI_App.cpp:8124 src/slic3r/GUI/GUI_App.cpp:8131 src/slic3r/GUI/GUI_App.cpp:8493
-msgid "Updating parameter packages..."
-msgstr "매개변수 패키지 업데이트 중..."
-
-#: src/slic3r/GUI/GUI_App.cpp:8134
-msgid "Failed to update parameter packages. Please try again."
-msgstr "매개변수 패키지를 업데이트하지 못했습니다. 다시 시도해 주세요."
-
-#: src/slic3r/GUI/GUI_App.cpp:8135 src/slic3r/GUI/GUI_App.cpp:8138
-msgid "Parameter update"
-msgstr "매개변수 업데이트"
-
-#: src/slic3r/GUI/GUI_App.cpp:8499
-#, c-format
-msgid "Updated to %s"
-msgstr "%s 버전으로 업데이트되었습니다"
-
-#: src/slic3r/GUI/GUI_App.cpp:8501
-msgid "Update content:"
-msgstr "업데이트 내용:"
-
-#: src/slic3r/GUI/GUI_App.cpp:8502
-msgid "No update description was provided."
-msgstr "업데이트 설명이 제공되지 않았습니다."
-
-#: src/slic3r/GUI/GUI_App.cpp:8505
-msgid "The update will be applied when you create or reopen a project."
-msgstr "프로젝트를 새로 만들거나 다시 열면 업데이트가 적용됩니다."
-
-#: src/slic3r/GUI/GUI_App.cpp:8507
-msgid "The update will be applied after slicing finishes."
-msgstr "슬라이싱이 완료되면 업데이트가 적용됩니다."
-
-#: src/slic3r/GUI/GUI_App.cpp:8508
-msgid "Parameter packages updated"
-msgstr "매개변수 패키지 업데이트 완료"
-
-#: src/slic3r/GUI/UpdateDialogs.cpp:32 src/slic3r/GUI/MainFrame.cpp:2924 src/slic3r/GUI/MainFrame.cpp:2924
-msgid "Check for Preset Updates"
-msgstr "프리셋 업데이트 확인"
-
-#: src/slic3r/GUI/UpdateDialogs.cpp:37 src/slic3r/GUI/UpdateDialogs.cpp:95
-msgid "Checking preset updates..."
-msgstr "프리셋 업데이트 확인 중…"
-
-#: src/slic3r/GUI/UpdateDialogs.cpp:47 src/slic3r/GUI/UpdateDialogs.cpp:116
-msgid "Remind me later"
-msgstr "나중에 알림"
-
-#: src/slic3r/GUI/UpdateDialogs.cpp:101
-msgid "Updates are available for the following added printers."
-msgstr "추가한 다음 프린터에 업데이트가 있습니다."
-
-#: src/slic3r/GUI/UpdateDialogs.cpp:104
-#, c-format
-msgid "Target version: %s"
-msgstr "업데이트 버전: %s"
-
-#: src/slic3r/GUI/UpdateDialogs.cpp:118
-#, c-format
-msgid "Update all (%d)"
-msgstr "모두 업데이트 (%d)"
-
-#: src/slic3r/GUI/UpdateParams.cpp:197
-msgid "No printers have been added. Add a printer before checking for updates."
-msgstr "추가된 프린터가 없습니다. 프린터를 추가한 후 업데이트를 확인하세요."
-
-#: src/slic3r/GUI/UpdateParams.cpp:258
-msgid "All added printers are up to date."
-msgstr "추가된 모든 프린터의 프리셋이 최신 상태입니다."
-
-#: src/slic3r/GUI/UpdateParams.cpp:222 src/slic3r/GUI/UpdateParams.cpp:233
-msgid "Failed to check preset updates. Please check your network and try again."
-msgstr "프리셋 업데이트를 확인하지 못했습니다. 네트워크를 확인한 후 다시 시도하세요."
-
-#: src/slic3r/GUI/UpdateParams.cpp:217 src/slic3r/GUI/UpdateParams.cpp:285
-msgid "The printer list or account has changed. Please check again."
-msgstr "프린터 목록 또는 계정이 변경되었습니다. 다시 확인하세요."

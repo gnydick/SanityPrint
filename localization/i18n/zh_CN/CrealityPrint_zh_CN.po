@@ -5668,12 +5668,23 @@ msgstr "关闭“%1%”（%2%）"
 msgid "Minimum mixed sublayer thickness"
 msgstr "最小打印厚度"
 
-msgid "Minimum thickness of each mixed or gradient filament sublayer. Color ratios are adjusted when necessary while preserving the total layer height. Slicing stops with an error if the layer is too thin to fit all colors. Set to 0 to disable this limit."
-msgstr "每个混色或渐变耗材子层的最小厚度。必要时调整颜色比例，同时保持整层厚度不变。如果整层太薄，无法容纳所有颜色，切片将报错。设为 0 可关闭此限制。"
+msgid ""
+"Minimum thickness of each mixed or gradient filament sublayer. Color ratios "
+"are adjusted when necessary while preserving the total layer height. Slicing "
+"stops with an error if the layer is too thin to fit all colors. Set to 0 to "
+"disable this limit."
+msgstr ""
+"每个混色或渐变耗材子层的最小厚度。必要时调整颜色比例，同时保持整层厚度不变。"
+"如果整层太薄，无法容纳所有颜色，切片将报错。设为 0 可关闭此限制。"
 
 #, boost-format
-msgid "Mixed filament %1% at Z=%2% mm cannot fit %3% sublayers with a minimum thickness of %4% mm. Increase the layer height or reduce Minimum mixed sublayer thickness."
-msgstr "混色耗材 %1% 在 Z=%2% mm 处无法容纳 %3% 个最小厚度为 %4% mm 的子层。请增大层高或减小最小打印厚度。"
+msgid ""
+"Mixed filament %1% at Z=%2% mm cannot fit %3% sublayers with a minimum "
+"thickness of %4% mm. Increase the layer height or reduce Minimum mixed "
+"sublayer thickness."
+msgstr ""
+"混色耗材 %1% 在 Z=%2% mm 处无法容纳 %3% 个最小厚度为 %4% mm 的子层。请增大层"
+"高或减小最小打印厚度。"
 
 msgid "affected Plate setting(s)"
 msgstr "受影响的打印盘设置"
@@ -9073,9 +9084,6 @@ msgstr "无耗材"
 msgid "Objects"
 msgstr "对象"
 
-msgid "Obj"
-msgstr "对象"
-
 #, c-format, boost-format
 msgid "%s Update"
 msgstr "%s 更新"
@@ -10902,8 +10910,8 @@ msgstr ""
 msgid ""
 "When recording timelapse without toolhead, it is recommended to add a "
 "\"Timelapse Wipe Tower\" \n"
-"by right-click the empty position of build plate and choose \"Add "
-"Primitive\"->\"Timelapse Wipe Tower\"."
+"by right-click the empty position of build plate and choose \"Add Primitive"
+"\"->\"Timelapse Wipe Tower\"."
 msgstr ""
 "在录制无工具头延时摄影视频时，建议添加“延时摄影擦料塔”\n"
 "右键单击打印板的空白位置，选择“添加标准模型”->“延时摄影擦料塔”。"
@@ -16123,7 +16131,9 @@ msgstr "擦拭塔上的最小清理量"
 msgid "Filament pre-flush volume"
 msgstr "换料预冲刷体积"
 
-msgid "After a filament change, the pre-flush volume of the new filament. Set to 0 to disable pre-flushing."
+msgid ""
+"After a filament change, the pre-flush volume of the new filament. Set to 0 "
+"to disable pre-flushing."
 msgstr "换料后新耗材的预冲刷体积，设为 0 则关闭预冲刷。"
 
 msgid ""
@@ -16693,10 +16703,10 @@ msgstr "模型风扇满速在"
 
 msgid ""
 "Fan speed will be ramped up linearly from zero at layer "
-"\"close_fan_the_first_x_layers\" to maximum at layer "
-"\"full_fan_speed_layer\". \"full_fan_speed_layer\" will be ignored if lower "
-"than \"close_fan_the_first_x_layers\", in which case the fan will be running "
-"at maximum allowed speed at layer \"close_fan_the_first_x_layers\" + 1."
+"\"close_fan_the_first_x_layers\" to maximum at layer \"full_fan_speed_layer"
+"\". \"full_fan_speed_layer\" will be ignored if lower than "
+"\"close_fan_the_first_x_layers\", in which case the fan will be running at "
+"maximum allowed speed at layer \"close_fan_the_first_x_layers\" + 1."
 msgstr ""
 "风扇速度将从“禁用第一层”的零线性上升到“全风扇速度层”的最大。如果低于“禁用风扇"
 "第一层”，则“全风扇速度第一层”将被忽略，在这种情况下，风扇将在“禁用风扇第一"
@@ -20049,32 +20059,6 @@ msgstr ""
 "此选项用于自动识别内部狭窄的实心填充。开启后，将对狭窄实心区域使用同心填充加"
 "快打印速度。否则使用默认的直线填充。"
 
-msgid "Detect floating vertical shells"
-msgstr "识别悬空实心填充"
-
-msgid ""
-"Identify floating paths in narrow internal solid infill regions above sparse infill or internal voids, and print those paths at the bridge speed. "
-"Unmarked paths, or all paths when this option is disabled, use the vertical shell speed. "
-"Requires \"Detect narrow internal solid infill\" to be enabled."
-msgstr ""
-"识别下方存在稀疏填充或内部空洞的狭窄内部实心填充区域中的悬空路径，并使用桥接速度打印这些路径。"
-"未被标记为悬空的路径，以及关闭此选项后该区域内的所有路径，均使用斜面填充速度。"
-"需开启“识别狭窄内部实心填充”。"
-
-msgid "Vertical shell speed"
-msgstr "斜面填充速度"
-
-msgid ""
-"Speed for narrow internal solid infill regions that overlap sparse infill or internal voids in the layer below. "
-"Requires \"Detect narrow internal solid infill\" to be enabled. "
-"Percentages are relative to the internal solid infill speed. "
-"When \"Detect floating vertical shells\" is enabled, paths identified as floating use the bridge speed instead."
-msgstr ""
-"用于下方存在稀疏填充或内部空洞的狭窄内部实心填充区域。"
-"需开启“识别狭窄内部实心填充”。"
-"百分比以内部实心填充速度为基准。"
-"开启“识别悬空实心填充”后，其中被识别为悬空的路径改用桥接速度。"
-
 msgid "Dithering cadence height A"
 msgstr "抖动节奏高度 A"
 
@@ -20882,6 +20866,716 @@ msgstr "未知的文件格式。输入文件的扩展名必须为.3mf或.zip .am
 msgid "Canceled"
 msgstr "已取消"
 
+msgid "Pre-flush length slowdown"
+msgstr "预冲刷长度降速"
+
+msgid ""
+"After a filament change, use the numeric value of Filament pre-flush volume "
+"as the model infill path distance in millimeters for this speed limit. For "
+"example, a value of 10 limits only the first 10 mm of printed infill path, "
+"then restores normal speed. The volumetric flow limit is this percentage of "
+"the filament's maximum volumetric speed. With a prime tower, applies when "
+"Flush into objects' infill is enabled. Without a tower, applies to skeleton "
+"infill. Travel and retraction do not count. The tower's original pre-flush "
+"behavior is unchanged. Lower printing speeds are preserved. Set to 0 to "
+"disable this additional speed limit."
+msgstr ""
+"换料后，将“换料预冲刷体积”的数值作为本限速功能的模型填充路径距离（毫米）。例"
+"如设为10时，只对前10毫米填充路径限速，之后恢复正常速度。流量上限为此比例乘以"
+"耗材最大体积速度。有塔时须勾选冲刷到对象的填充，无塔时用于骨架填充。空驶和回"
+"抽不计入距离；擦拭塔原预冲刷功能保持不变。原速度更低时不提速。设为0可关闭此额"
+"外限速。"
+
+#: src/libslic3r/PrintConfig.cpp
+msgid ""
+"Minimum estimated printing time in seconds between time flushes. With a wipe "
+"tower, flushing runs before a filament change or before a normal tower visit "
+"on a sparse tower layer. The nozzle flushes outside the plate, then "
+"continues directly to the tower entry. Towers without sparse layers still "
+"flush only before filament changes. Without a tower, including single-color "
+"printing, flushing waits for an internal infill path boundary. Small or "
+"narrow model islands suppress time flushing. The actual interval may be "
+"longer. Set to 0 to disable time flushing."
+msgstr ""
+"两次定时冲刷之间的最短预计打印时间（秒）。有擦拭塔时，在换料前或正常前往塔稀"
+"疏层打印前执行冲刷，喷嘴到盘外冲刷后直接前往塔入口。无稀疏层的塔仍仅在换料前"
+"冲刷。无塔时（包括单色打印），在内部填充路径边界等待冲刷。小面积或狭窄的模型"
+"孤岛会禁止定时冲刷，实际间隔可能更长。设为 0 禁用。"
+
+#: src/libslic3r/PrintConfig.cpp
+msgid ""
+"Runs when overdue before a tower filament change, before a normal tower "
+"visit on a sparse tower layer, or at an internal infill path boundary "
+"without a tower. Towers without sparse layers still flush only before "
+"filament changes. Time keeps accumulating outside these nodes. Layers with "
+"model islands smaller than 25 square millimeters or without a 2 mm inset "
+"suppress time flushing. Tower flushes continue directly to the tower entry; "
+"other flushes return to the model. The interval may be exceeded while "
+"waiting for a safe node. Like Time lapse G-code, supports [layer_num], "
+"[layer_z] and [max_layer_z] with the same layer values and expression "
+"syntax. Use [return_x], [return_y] and [return_z] for the final tower entry "
+"position on a normal tower visit, or the nozzle position at other triggers, "
+"[current_tool] for the zero-based tool index, and [time_flush_elapsed] for "
+"estimated seconds since the previous flush. Expressions such as {layer_z + "
+"0.4} and {if time_flush_elapsed > 0}...{endif} are evaluated before G-code "
+"comments, even when preceded by a semicolon. The script must preserve "
+"coordinate origin, positioning modes and units; independent flushes must "
+"also preserve the active tool. The slicer restores position and absolute E "
+"for moves it can parse. Commands wrapped in M950 are passed through without "
+"tracking their motion, E resets or duration; firmware or the script must "
+"handle recovery. With or without a tower, use time_flush_has_toolchange in "
+"both Filament change G-code and Time flush G-code to combine an overdue "
+"flush with a filament change. It is true only for that combined event: skip "
+"the ordinary change and let Time flush G-code select [next_extruder] at the "
+"flush station using [new_filament_temp]. No-tower combined changes resume at "
+"the first new-filament print path. The active no-tower change branch must "
+"use this state; phased skeleton flushes keep their original flow."
+msgstr ""
+"达到间隔后，在塔换料前、正常前往塔稀疏层打印前，或无塔时的内部填充路径边界执"
+"行。无稀疏层的塔仍仅在换料前冲刷。在其他位置持续累计时间。模型孤岛面积小于 "
+"25 平方毫米或无法内缩 2 毫米时，该层不执行定时冲刷。有塔冲刷后直接前往塔入"
+"口，其他冲刷返回模型；等待安全位置时可能超过设定间隔。与延时摄影 G-code 一"
+"样，支持 [layer_num]、[layer_z]、[max_layer_z] 及相同的表达式语法。正常去塔"
+"时，[return_x]、[return_y]、[return_z] 表示最终塔入口坐标；其他触发位置表示喷"
+"嘴当前坐标。[current_tool] 为从 0 开始的工具编号，[time_flush_elapsed] 为上次"
+"冲刷后的预计秒数。{layer_z + 0.4} 和 {if time_flush_elapsed > 0}...{endif} 等"
+"表达式会在解析 G-code 注释前求值，即使前面有分号也一样。脚本必须保持坐标原"
+"点、定位模式和单位；独立冲刷还须保持当前工具。切片器会为可解析的移动恢复位置"
+"和绝对 E。M950 包裹的指令直接输出，不跟踪其中的移动、E 重置或耗时，需由固件或"
+"脚本负责恢复。 有塔或无塔时，在耗材更换和定时冲刷两段 G-code 中使用 "
+"time_flush_has_toolchange，可合并到期冲刷与换料。仅合并执行时为 true：跳过普"
+"通换料，由定时冲刷模板在冲刷位选择 [next_extruder] 并使用 "
+"[new_filament_temp]。无塔合并冲刷后返回新色首条打印路径；当前无塔换料分支须使"
+"用此状态，分阶段骨架冲刷仍按原流程执行。"
+
+#: src/slic3r/GUI/GUI_App.cpp:8124 src/slic3r/GUI/GUI_App.cpp:8131
+#: src/slic3r/GUI/GUI_App.cpp:8493
+msgid "Updating parameter packages..."
+msgstr "正在更新参数包…"
+
+#: src/slic3r/GUI/GUI_App.cpp:8134
+msgid "Failed to update parameter packages. Please try again."
+msgstr "参数包更新失败，请重试。"
+
+#: src/slic3r/GUI/GUI_App.cpp:8135 src/slic3r/GUI/GUI_App.cpp:8138
+msgid "Parameter update"
+msgstr "参数更新"
+
+#: src/slic3r/GUI/GUI_App.cpp:8499
+#, c-format
+msgid "Updated to %s"
+msgstr "已更新到 %s"
+
+#: src/slic3r/GUI/GUI_App.cpp:8501
+msgid "Update content:"
+msgstr "更新内容："
+
+#: src/slic3r/GUI/GUI_App.cpp:8502
+msgid "No update description was provided."
+msgstr "本次更新未提供更新说明。"
+
+#: src/slic3r/GUI/GUI_App.cpp:8505
+msgid "The update will be applied when you create or reopen a project."
+msgstr "本次更新将在新建或重新打开项目时生效。"
+
+#: src/slic3r/GUI/GUI_App.cpp:8507
+msgid "The update will be applied after slicing finishes."
+msgstr "本次更新将在切片结束后生效。"
+
+#: src/slic3r/GUI/GUI_App.cpp:8508
+msgid "Parameter packages updated"
+msgstr "参数包更新完成"
+
+#: src/slic3r/GUI/UpdateDialogs.cpp:32 src/slic3r/GUI/MainFrame.cpp:2924
+msgid "Check for Preset Updates"
+msgstr "检查预设更新"
+
+#: src/slic3r/GUI/UpdateDialogs.cpp:37 src/slic3r/GUI/UpdateDialogs.cpp:95
+msgid "Checking preset updates..."
+msgstr "正在检查预设更新…"
+
+#: src/slic3r/GUI/UpdateDialogs.cpp:47 src/slic3r/GUI/UpdateDialogs.cpp:116
+msgid "Remind me later"
+msgstr "稍后提醒"
+
+#: src/slic3r/GUI/UpdateDialogs.cpp:101
+msgid "Updates are available for the following added printers."
+msgstr "以下已添加机型有参数更新可用。"
+
+#: src/slic3r/GUI/UpdateDialogs.cpp:104
+#, c-format
+msgid "Target version: %s"
+msgstr "目标版本：%s"
+
+#: src/slic3r/GUI/UpdateDialogs.cpp:118
+#, c-format
+msgid "Update all (%d)"
+msgstr "更新全部（%d）"
+
+#: src/slic3r/GUI/UpdateParams.cpp:197
+msgid "No printers have been added. Add a printer before checking for updates."
+msgstr "尚未添加机型，请先添加机型再检查更新。"
+
+#: src/slic3r/GUI/UpdateParams.cpp:258
+msgid "All added printers are up to date."
+msgstr "已添加机型的预设均为最新版本。"
+
+#: src/slic3r/GUI/UpdateParams.cpp:222 src/slic3r/GUI/UpdateParams.cpp:233
+msgid ""
+"Failed to check preset updates. Please check your network and try again."
+msgstr "检查预设更新失败，请检查网络后重试。"
+
+#: src/slic3r/GUI/UpdateParams.cpp:217 src/slic3r/GUI/UpdateParams.cpp:285
+msgid "The printer list or account has changed. Please check again."
+msgstr "机型列表或账号已变更，请重新检查。"
+
+msgid "Floating vertical shell"
+msgstr ""
+
+msgid "Time flush G-code"
+msgstr "定时冲刷 G-code"
+
+msgid ""
+"The jerk setting exceeds the printer's maximum jerk (machine_max_jerk_x/"
+"machine_max_jerk_y).\n"
+"SanityPrint will automatically cap the jerk speed to ensure it doesn't "
+"surpass the printer's capabilities.\n"
+"You can adjust the maximum jerk setting in your printer's configuration to "
+"get higher speeds."
+msgstr ""
+"冲击设置超出了打印机的最大冲击 (机器最大冲击力 x/机器最大冲击力 y)。\n"
+"SanityPrint 将自动限制冲击速度，以确保其不超过打印机的功能。\n"
+"您可以在打印机配置中调整最大冲击设置以获得更高的速度。"
+
+msgid ""
+"The acceleration setting exceeds the printer's maximum acceleration "
+"(machine_max_acceleration_extruding).\n"
+"SanityPrint will automatically cap the acceleration speed to ensure it "
+"doesn't surpass the printer's capabilities.\n"
+"You can adjust the machine_max_acceleration_extruding value in your "
+"printer's configuration to get higher speeds."
+msgstr ""
+"加速度设置超出了打印机的最大加速度 (机器最大加速度挤出)。\n"
+"SanityPrint 将自动限制加速度，以确保其不超过打印机的功能。\n"
+"您可以在打印机配置中调整机器最大加速度挤出值以获得更高的速度。"
+
+msgid ""
+"The travel acceleration setting exceeds the printer's maximum travel "
+"acceleration (machine_max_acceleration_travel).\n"
+"SanityPrint will automatically cap the travel acceleration speed to ensure "
+"it doesn't surpass the printer's capabilities.\n"
+"You can adjust the machine_max_acceleration_travel value in your printer's "
+"configuration to get higher speeds."
+msgstr ""
+"行进加速度设置超出了打印机的最大行进加速度 (机器最大加速度行程)。\n"
+"SanityPrint 将自动限制行进加速度，以确保其不超过打印机的功能。\n"
+"您可以在打印机配置中调整机器最大加速度行程值以获得更高的速度。"
+
+msgid ""
+"Sanity Print can upload G-code files to a printer host. This field should "
+"contain the hostname, IP address or URL of the printer host instance. Print "
+"host behind HAProxy with basic auth enabled can be accessed by putting the "
+"user name and password into the URL in the following format: https://"
+"username:password@your-octopi-address/"
+msgstr ""
+"Sanity Print可以将G-code文件上传到打印机主机。此字段应包含打印机主机实例的主"
+"机名、IP地址或URL。启用基本身份验证的Print host可以通过将用户名和密码放入以下"
+"格式的URL中来访问：https://username:password@your-octopi-address/"
+
+msgid ""
+"Sanity Print can upload G-code files to a printer host. This field should "
+"contain the API Key or the password required for authentication."
+msgstr ""
+"Sanity Print可以将G-code文件上传到打印机主机。此字段应包含用于身份验证的API密"
+"钥或密码。"
+
+msgid ""
+"This option sets the min point for the allowed bed mesh area. Due to the "
+"probe's XY offset, most printers are unable to probe the entire bed. To "
+"ensure the probe point does not go outside the bed area, the minimum and "
+"maximum points of the bed mesh should be set appropriately. SanityPrint "
+"ensures that adaptive_bed_mesh_min/adaptive_bed_mesh_max values do not "
+"exceed these min/max points. This information can usually be obtained from "
+"your printer manufacturer. The default setting is (-99999, -99999), which "
+"means there are no limits, thus allowing probing across the entire bed."
+msgstr ""
+"此选项设置了允许的网床探测区域的最小点。由于探针的XY偏移，大多数打印机无法探"
+"测整个打印床。为了确保探针不会超出床的范围，应适当设置网床的最小和最大点。"
+"SanityPrint切片确保adaptive_bed_mesh_min/adaptive_bed_mesh_max值不超过这些最"
+"小/最大点。这些信息通常可以从您的打印机制造商那里获得。默认设置为(-99999, "
+"-99999)，这意味着没有限制，因此允许在整个床上进行探测。"
+
+msgid ""
+"This option sets the max point for the allowed bed mesh area. Due to the "
+"probe's XY offset, most printers are unable to probe the entire bed. To "
+"ensure the probe point does not go outside the bed area, the minimum and "
+"maximum points of the bed mesh should be set appropriately. SanityPrint "
+"ensures that adaptive_bed_mesh_min/adaptive_bed_mesh_max values do not "
+"exceed these min/max points. This information can usually be obtained from "
+"your printer manufacturer. The default setting is (99999, 99999), which "
+"means there are no limits, thus allowing probing across the entire bed."
+msgstr ""
+"此选项设置了允许的网床探测区域的最大点。由于探针的XY偏移，大多数打印机无法探"
+"测整个打印床。为了确保探针不会超出床的范围，应适当设置网床的最小和最大点。"
+"SanityPrint切片确保adaptive_bed_mesh_min/adaptive_bed_mesh_max值不超过这些最"
+"小/最大点。这些信息通常可以从您的打印机制造商那里获得。默认设置为(99999, "
+"99999)，这意味着没有限制，因此允许在整个床上进行探测。"
+
+msgid "Temperature type"
+msgstr ""
+
+msgid ""
+"Multi-material temperature compatibility class. 0=HighTemp, 1=LowTemp, "
+"2=HighLowCompatible, 3=Undefine."
+msgstr ""
+
+msgid "Smart cooling zone"
+msgstr ""
+
+msgid "Enable smart cooling slowdown zones for this filament."
+msgstr ""
+
+msgid "Bed adhesion strength"
+msgstr ""
+
+msgid ""
+"Bed adhesion yield strength in MPa used for support-spot generation. Engine "
+"multiplies by 1e6 internally."
+msgstr ""
+
+msgid "Thermal length"
+msgstr ""
+
+msgid "Characteristic thermal length (mm) used for brim/warp estimation."
+msgstr ""
+
+msgid "Brim adhesion coefficient"
+msgstr ""
+
+msgid ""
+"Multiplier applied to brim width for adhesion estimation. Higher = wider "
+"brim generated."
+msgstr ""
+
+msgid "Small island threshold"
+msgstr ""
+
+msgid "Area threshold (mm²) below which a slice island is treated as small."
+msgstr ""
+
+msgid "Chamber temperature limit"
+msgstr ""
+
+msgid ""
+"Maximum safe chamber temperature (°C) for this filament. 0 = no limit / no "
+"warning."
+msgstr ""
+
+msgid "Flexible filament"
+msgstr ""
+
+msgid ""
+"Mark this filament as flexible (e.g. TPU). Used to suggest appropriate "
+"support filament."
+msgstr ""
+
+msgid ""
+"After a tool change, the exact position of the newly loaded filament inside "
+"the nozzle may not be known, and the filament pressure is likely not yet "
+"stable. Before purging the print head into an infill or a sacrificial "
+"object, Sanity Print will always prime this amount of material into the wipe "
+"tower to produce successive infill or sacrificial object extrusions reliably."
+msgstr ""
+"换色后，新加载的耗材在喷嘴内的确切位置可能未知，耗材压力可能还不稳定。在冲刷"
+"打印头到填充或作为挤出废料之前，Sanity Print将始终将这些的耗材丝冲刷到擦拭塔"
+"中以产生连续的填充或稳定的挤出废料。"
+
+msgid ""
+"Connect an infill line to an internal perimeter with a short segment of an "
+"additional perimeter. If expressed as percentage (example: 15%) it is "
+"calculated over infill extrusion width. Sanity Print tries to connect two "
+"close infill lines to a short perimeter segment. If no such perimeter "
+"segment shorter than infill_anchor_max is found, the infill line is "
+"connected to a perimeter segment at just one side and the length of the "
+"perimeter segment taken is limited to this parameter, but no longer than "
+"anchor_length_max. \n"
+"Set this parameter to zero to disable anchoring perimeters connected to a "
+"single infill line."
+msgstr ""
+"用附加周长的一小段将填充线连接到内部周长。如果以百分比（例如：15%）表示，则计"
+"算填充拉伸宽度。SanityPrint 试图将两条紧密的填充线连接到一个短的周长段。如果"
+"找不到短于“填充”和“锚点”最大值的周长线段，则填充线仅在一侧连接到周长线段，并"
+"且所取周长线段的长度仅限于此参数，但不超过“锚点长度”最大值。将此参数设置为"
+"零，以禁用连接到单个填充线的锚点周长。"
+
+msgid ""
+"Connect an infill line to an internal perimeter with a short segment of an "
+"additional perimeter. If expressed as percentage (example: 15%) it is "
+"calculated over infill extrusion width. Sanity Print tries to connect two "
+"close infill lines to a short perimeter segment. If no such perimeter "
+"segment shorter than this parameter is found, the infill line is connected "
+"to a perimeter segment at just one side and the length of the perimeter "
+"segment taken is limited to infill_anchor, but no longer than this "
+"parameter. \n"
+"If set to 0, the old algorithm for infill connection will be used, it should "
+"create the same result as with 1000 & 0."
+msgstr ""
+"用附加周长的一小段将填充线连接到内部周长。如果以百分比（例如：15%）表示，则计"
+"算填充拉伸宽度。SanityPrint 试图将两条紧密的填充线连接到一个短的周长段。如果"
+"找不到比此参数短的周长线段，则填充线仅在一侧连接到周长线段，并且所采用的周长"
+"线段的长度仅限于 infl_anchor，但不超过此参数。将此参数设置为零以禁用锚点。"
+
+msgid ""
+"Sanity Print can upload G-code files to a printer host. This field must "
+"contain the kind of the host."
+msgstr "Sanity Print可以将G-code文件上传到打印机主机。此字段必须包含主机类型。"
+
+# generated by robot
+msgid ""
+"If you want to process the output G-code through custom scripts, just list "
+"their absolute paths here. Separate multiple scripts with a semicolon. "
+"Scripts will be passed the absolute path to the G-code file as the first "
+"argument, and they can access the Sanity Print config settings by reading "
+"environment variables."
+msgstr ""
+"如果你想通过自定义脚本处理输出的G-code，只需在此处列出它们的绝对路径。用分号"
+"分隔多个脚本。脚本将以G-code文件的绝对路径作为第一个参数传递，它们可以通过读"
+"取环境变量来访问Sanity Print配置设置。"
+
+msgid "Vertical shell speed"
+msgstr "斜面填充速度"
+
+msgid ""
+"Speed for narrow internal solid infill regions that overlap sparse infill or "
+"internal voids in the layer below. Requires \"Detect narrow internal solid "
+"infill\" to be enabled. Percentages are relative to the internal solid "
+"infill speed. When \"Detect floating vertical shells\" is enabled, paths "
+"identified as floating use the bridge speed instead."
+msgstr ""
+"用于下方存在稀疏填充或内部空洞的狭窄内部实心填充区域。需开启“识别狭窄内部实心"
+"填充”。百分比以内部实心填充速度为基准。开启“识别悬空实心填充”后，其中被识别为"
+"悬空的路径改用桥接速度。"
+
+msgid "Time flush interval"
+msgstr "定时冲刷间隔"
+
+msgid "Detect floating vertical shells"
+msgstr "识别悬空实心填充"
+
+msgid ""
+"Identify floating paths in narrow internal solid infill regions above sparse "
+"infill or internal voids, and print those paths at the bridge speed. "
+"Unmarked paths, or all paths when this option is disabled, use the vertical "
+"shell speed. Requires \"Detect narrow internal solid infill\" to be enabled."
+msgstr ""
+"识别下方存在稀疏填充或内部空洞的狭窄内部实心填充区域中的悬空路径，并使用桥接"
+"速度打印这些路径。未被标记为悬空的路径，以及关闭此选项后该区域内的所有路径，"
+"均使用斜面填充速度。需开启“识别狭窄内部实心填充”。"
+
+# generated by robot
+msgid ""
+"SanityPrint has encountered an error while taking a configuration snapshot."
+msgstr "SanityPrint在拍摄配置快照时遇到错误。"
+
+# generated by robot
+msgid "SanityPrint error"
+msgstr "Creality打印错误"
+
+# generated by robot
+msgid "SanityPrint is licensed under "
+msgstr "SanityPrint已获得许可"
+
+# generated by robot
+msgid "SanityPrint is based on PrusaSlicer and BambuStudio"
+msgstr "SanityPrint基于PrusaSlicer和BambuStudio"
+
+msgid "Sanity Print "
+msgstr "SanityPrint"
+
+msgid ""
+"This project file is not from Sanity Print. Please select the printer preset "
+"you want to use for slicing."
+msgstr "此项目文件不是来自Sanity Print，请选择需要用来切片的打印机预设。"
+
+msgid ""
+"To keep the feature you just enabled, Sanity Print will make the following "
+"changes:"
+msgstr ""
+
+msgid "------- Templates -------"
+msgstr ""
+
+msgid "------- Existing presets -------"
+msgstr ""
+
+msgid "Printer config bundle(.sanity_printer)"
+msgstr "打印机预设集(.sanity_printer)"
+
+# generated by robot
+msgid ""
+"Performing desktop integration failed - could not create Gcodeviewer desktop "
+"file. SanityPrint desktop file was probably created successfully."
+msgstr ""
+"执行桌面集成失败-无法创建Gcodeviewer桌面文件。SanityPrint桌面文件可能已成功创"
+"建。"
+
+msgid "Remove Materials from Printer"
+msgstr ""
+
+msgid ""
+"Select the materials to remove from the printer (only those added by "
+"SanityPrint are listed; factory materials are protected):"
+msgstr ""
+
+msgid "Remove selected"
+msgstr ""
+
+msgid "Sync Filaments to Printers"
+msgstr ""
+
+#, c-format
+msgid "Push all custom filaments (%zu) to the selected printers:"
+msgstr ""
+
+msgid " - offline"
+msgstr ""
+
+msgid "No printers found. Add printers on the Device page first."
+msgstr ""
+
+msgid "Push"
+msgstr ""
+
+msgid "Remove..."
+msgstr ""
+
+msgid "There are no custom filaments to sync."
+msgstr ""
+
+msgid "Please select at least one printer."
+msgstr ""
+
+#, c-format, boost-format
+msgid "Filament sync finished: %d pushed, %d failed."
+msgstr ""
+
+msgid "Sync Filaments"
+msgstr ""
+
+msgid ""
+"No removable materials were found on the selected printer(s). Only materials "
+"added by SanityPrint can be removed here; factory materials are protected."
+msgstr ""
+
+msgid "Remove Materials"
+msgstr ""
+
+#, c-format, boost-format
+msgid "Remove finished: %d removed, %d failed."
+msgstr ""
+
+msgid "The configuration may be generated by a newer version of SanityPrint."
+msgstr "此配置可能由新版本的SanityPrint生成"
+
+# generated by robot
+msgid ""
+"Sanity Print requires the Microsoft WebView2 Runtime to operate certain "
+"features.\n"
+"Click Yes to install it now."
+msgstr ""
+"Sanity Print需要Microsoft WebView2 Runtime来操作某些功能。\n"
+"单击“是”立即安装。"
+
+msgid ""
+"Sanity Print requires the Microsoft WebView2 Runtime,But it has been found "
+"that the abnormal operation of Microsoft WebView2 may be related to the "
+"installation of Microsoft Edge. \n"
+"Click the Yes to reinstall Microsoft Edge"
+msgstr ""
+"Sanity Print 需要 Microsoft WebView2 Runtime，但已发现其异常运行可能与安装 "
+"Microsoft Edge 有关。\n"
+"点击“是”重新安装 Microsoft Edge。"
+
+msgid "The Sanity Print needs an upgrade"
+msgstr "SanityPrint需要进行升级"
+
+msgid ""
+"Detected corruption in the Sanity Print configuration file, attempted to "
+"rebuild, \n"
+"please manually restart the software."
+msgstr "检测到 Sanity Print 配置文件损坏，已尝试重建，请手动重启软件。"
+
+# generated by robot
+msgid ""
+"The SanityPrint configuration file may be corrupted and cannot be parsed.\n"
+"SanityPrint has attempted to recreate the configuration file.\n"
+"Please note, application settings will be lost, but printer profiles will "
+"not be affected."
+msgstr ""
+"SanityPrint配置文件可能已损坏，无法解析。\n"
+"SanityPrint已尝试重新创建配置文件。\n"
+"请注意，应用程序设置将丢失，但打印机配置文件不会受到影响。"
+
+msgid ""
+"The version of Sanity Print is too low and needs to be updated to the latest "
+"version before it can be used normally"
+msgstr "SanityPrint版本过低，需要更新到最新版本方可正常使用"
+
+msgid "Sanity Print GUI initialization failed"
+msgstr "SanityPrint图形界面初始化失败"
+
+msgid ""
+"Another virtual camera is running.\n"
+"Sanity Print supports only a single virtual camera.\n"
+"Do you want to stop this virtual camera?"
+msgstr ""
+"另一个虚拟摄像头正在工作。\n"
+"Sanity Print 同时只能支持一个虚拟摄像头。\n"
+"是否停止前一个虚拟摄像头？"
+
+msgid ""
+"The 3mf file version is in Beta and it is newer than the current "
+"SanityPrint  version."
+msgstr "3mf文件版本处于Beta测试阶段，比当前SanityPrint版本更新。"
+
+msgid "If you would like to try Sanity Print Beta, you may click to"
+msgstr "如果您想尝试Sanity Print Beta，您可以点击"
+
+msgid "The 3mf file version is newer than the current Sanity Print version."
+msgstr "3mf文件版本比当前Sanity Print版本更新。"
+
+msgid ""
+"Update your Sanity Print could enable all functionality in the 3mf file."
+msgstr "更新你的Sanity Print以启用3mf文件中的所有功能。"
+
+msgid "SanityPrint Version:"
+msgstr "SanityPrint版本："
+
+msgid "Test SanityPrint(GitHub)"
+msgstr "测试SanityPrint项目网站(GitHub)"
+
+msgid "Test SanityPrint(GitHub):"
+msgstr "测试SanityPrint项目网站(GitHub)"
+
+msgid "Obj"
+msgstr "对象"
+
+msgid ""
+"There are some unknown filaments mapped to generic preset. Please update "
+"Sanity Print or restart Creality Print to check if there is an update to "
+"system presets."
+msgstr ""
+
+msgid "The 3mf is not supported by SanityPrint, load geometry data only."
+msgstr "该3mf文件不是来自SanityPrint，将只加载几何数据。"
+
+#, boost-format
+msgid ""
+"The no-tower algorithm for plate %1% requires %2% external purge visits, "
+"exceeding 100.\n"
+"The model has limited internal infill available for purging. Enabling a "
+"prime tower may reduce external purge travel and improve print quality.\n"
+"\n"
+"Enable the prime tower and slice again, or keep the current no-tower result?"
+msgstr ""
+"当前第 %1% 盘的无塔算法预计需要外出冲刷 %2% 次，已超过 100 次。\n"
+"模型内部可用于冲刷的填充路径有限。启用擦拭塔可能减少外部抛料，改善打印效"
+"果。\n"
+"\n"
+"是否启用擦拭塔并重新切片？也可选择继续使用无塔模式，保留当前切片结果。"
+
+msgid "No-tower infill"
+msgstr "无塔填充"
+
+msgid "Enable prime tower and slice again"
+msgstr "启用擦拭塔并重新切片"
+
+msgid "Continue without prime tower"
+msgstr "继续使用无塔模式"
+
+msgid ""
+"Importing to Sanity Print failed. Please download the file and manually "
+"import it."
+msgstr "导入到Sanity Print失败。请下载文件并手动导入。"
+
+# generated by robot
+msgid "with SanityPrint so that SanityPrint can open models from"
+msgstr "使用SanityPrint，以便SanityPrint可以从以下位置打开模型"
+
+msgid ""
+"We sincerely invite you to join Sanity Print's \" User Experience "
+"Improvement Program\" to help us optimize printing efficiency, improve "
+"printing performance and software experience by anonymously collecting data "
+"such as slicing parameters, settings and usage logs. We will not collect any "
+"personally identifiable information, and all data will be protected in "
+"accordance with the"
+msgstr ""
+"我们诚邀您加入Sanity Print的「用户体验改进计划」，通过匿名收集切片参数、设"
+"置\n"
+"和使用日志等数据，帮助我们优化打印效率、提升打印性能与软件使用体验。我们不"
+"会\n"
+"收集任何可识别个人身份的信息，所有数据将遵循"
+
+msgid ""
+"Click OK to update the Network plug-in when Sanity Print launches next time."
+msgstr "点击\"确定\"，将在Sanity Print下次启动之后自动升级网络插件。"
+
+msgid "New version of Sanity Print"
+msgstr "新版本的Sanity Print"
+
+msgid ""
+"Step 1, please confirm Sanity Print and your printer are in the same LAN."
+msgstr "第1步，请确认Sanity Print和您的打印机在同一个LAN上。"
+
+msgid "The printer is required to be in the same LAN as Sanity Print"
+msgstr "打印机需要与Sanity Print在同一个局域网内。"
+
+# generated by robot
+msgid "Blacklisted libraries loaded into SanityPrint process:"
+msgstr "已加载到SanityPrint流程中的黑名单库："
+
+msgid "Material properties"
+msgstr ""
+
+msgid "Time flush"
+msgstr ""
+
+msgid ""
+"SanityPrint uses this matrix only when flushing into objects skeleton is "
+"enabled."
+msgstr ""
+
+msgid ""
+"The firmware version is abnormal. Repairing and updating are required before "
+"printing. Do you want to update now? You can also update later on printer or "
+"update next time starting SanityPrint."
+msgstr ""
+"当前固件版本异常，需要进行修复升级，否则无法继续打印。你想现在就开始升级吗？"
+"你也可以稍后在打印机上升级，或者下一次启动studio再升级。"
+
+msgid "Please check the network connection of the printer and SanityPrint"
+msgstr "请检查打印机和工作室的网络连接"
+
+msgid ""
+"SanityPrint would re-calculate your flushing volumes everytime the filaments "
+"color changed."
+msgstr "SanityPrint 将会在每一次更换耗材颜色时重新计算你的冲刷体积"
+
+# generated by robot
+msgid ""
+"Your system is missing H.264 codecs for GStreamer, which are required to "
+"play video.  (Try installing the gstreamer1.0-plugins-bad or gstreamer1.0-"
+"libav packages, then restart Sanity Print?)"
+msgstr ""
+"您的系统缺少播放视频所需的GStreamer H.264编解码器。（尝试安装gstreamer1.0-"
+"plugins-bad或gstreamer1.0m-libav软件包，然后重新启动Sanity Print？）"
+
+msgid "Connection to SanityPrint works correctly."
+msgstr "与 SanityPrint 的连接正常。"
+
+msgid "Could not connect to SanityPrint"
+msgstr "无法连接到SanityPrint"
+
 #~ msgid ""
 #~ "Prime tower is required for smooth timelapse. There may be flaws on the "
 #~ "model without prime tower. Do you want to enable prime tower?"
@@ -21308,120 +22002,3 @@ msgstr "已取消"
 
 #~ msgid "Right Below"
 #~ msgstr "右下"
-
-#: src/libslic3r/PrintConfig.cpp
-msgid "Time flush interval"
-msgstr "定时冲刷间隔"
-
-#: src/libslic3r/PrintConfig.cpp
-msgid "Time flush G-code"
-msgstr "定时冲刷 G-code"
-
-#: src/libslic3r/PrintConfig.cpp
-msgid "Minimum estimated printing time in seconds between time flushes. With a wipe tower, flushing runs before a filament change or before a normal tower visit on a sparse tower layer. The nozzle flushes outside the plate, then continues directly to the tower entry. Towers without sparse layers still flush only before filament changes. Without a tower, including single-color printing, flushing waits for an internal infill path boundary. Small or narrow model islands suppress time flushing. The actual interval may be longer. Set to 0 to disable time flushing."
-msgstr "两次定时冲刷之间的最短预计打印时间（秒）。有擦拭塔时，在换料前或正常前往塔稀疏层打印前执行冲刷，喷嘴到盘外冲刷后直接前往塔入口。无稀疏层的塔仍仅在换料前冲刷。无塔时（包括单色打印），在内部填充路径边界等待冲刷。小面积或狭窄的模型孤岛会禁止定时冲刷，实际间隔可能更长。设为 0 禁用。"
-
-#: src/libslic3r/PrintConfig.cpp
-msgid "Runs when overdue before a tower filament change, before a normal tower visit on a sparse tower layer, or at an internal infill path boundary without a tower. Towers without sparse layers still flush only before filament changes. Time keeps accumulating outside these nodes. Layers with model islands smaller than 25 square millimeters or without a 2 mm inset suppress time flushing. Tower flushes continue directly to the tower entry; other flushes return to the model. The interval may be exceeded while waiting for a safe node. Like Time lapse G-code, supports [layer_num], [layer_z] and [max_layer_z] with the same layer values and expression syntax. Use [return_x], [return_y] and [return_z] for the final tower entry position on a normal tower visit, or the nozzle position at other triggers, [current_tool] for the zero-based tool index, and [time_flush_elapsed] for estimated seconds since the previous flush. Expressions such as {layer_z + 0.4} and {if time_flush_elapsed > 0}...{endif} are evaluated before G-code comments, even when preceded by a semicolon. The script must preserve coordinate origin, positioning modes and units; independent flushes must also preserve the active tool. The slicer restores position and absolute E for moves it can parse. Commands wrapped in M950 are passed through without tracking their motion, E resets or duration; firmware or the script must handle recovery. With or without a tower, use time_flush_has_toolchange in both Filament change G-code and Time flush G-code to combine an overdue flush with a filament change. It is true only for that combined event: skip the ordinary change and let Time flush G-code select [next_extruder] at the flush station using [new_filament_temp]. No-tower combined changes resume at the first new-filament print path. The active no-tower change branch must use this state; phased skeleton flushes keep their original flow."
-msgstr "达到间隔后，在塔换料前、正常前往塔稀疏层打印前，或无塔时的内部填充路径边界执行。无稀疏层的塔仍仅在换料前冲刷。在其他位置持续累计时间。模型孤岛面积小于 25 平方毫米或无法内缩 2 毫米时，该层不执行定时冲刷。有塔冲刷后直接前往塔入口，其他冲刷返回模型；等待安全位置时可能超过设定间隔。与延时摄影 G-code 一样，支持 [layer_num]、[layer_z]、[max_layer_z] 及相同的表达式语法。正常去塔时，[return_x]、[return_y]、[return_z] 表示最终塔入口坐标；其他触发位置表示喷嘴当前坐标。[current_tool] 为从 0 开始的工具编号，[time_flush_elapsed] 为上次冲刷后的预计秒数。{layer_z + 0.4} 和 {if time_flush_elapsed > 0}...{endif} 等表达式会在解析 G-code 注释前求值，即使前面有分号也一样。脚本必须保持坐标原点、定位模式和单位；独立冲刷还须保持当前工具。切片器会为可解析的移动恢复位置和绝对 E。M950 包裹的指令直接输出，不跟踪其中的移动、E 重置或耗时，需由固件或脚本负责恢复。 有塔或无塔时，在耗材更换和定时冲刷两段 G-code 中使用 time_flush_has_toolchange，可合并到期冲刷与换料。仅合并执行时为 true：跳过普通换料，由定时冲刷模板在冲刷位选择 [next_extruder] 并使用 [new_filament_temp]。无塔合并冲刷后返回新色首条打印路径；当前无塔换料分支须使用此状态，分阶段骨架冲刷仍按原流程执行。"
-
-msgid "Pre-flush length slowdown"
-msgstr "预冲刷长度降速"
-
-msgid "After a filament change, use the numeric value of Filament pre-flush volume as the model infill path distance in millimeters for this speed limit. For example, a value of 10 limits only the first 10 mm of printed infill path, then restores normal speed. The volumetric flow limit is this percentage of the filament's maximum volumetric speed. With a prime tower, applies when Flush into objects' infill is enabled. Without a tower, applies to skeleton infill. Travel and retraction do not count. The tower's original pre-flush behavior is unchanged. Lower printing speeds are preserved. Set to 0 to disable this additional speed limit."
-msgstr "换料后，将“换料预冲刷体积”的数值作为本限速功能的模型填充路径距离（毫米）。例如设为10时，只对前10毫米填充路径限速，之后恢复正常速度。流量上限为此比例乘以耗材最大体积速度。有塔时须勾选冲刷到对象的填充，无塔时用于骨架填充。空驶和回抽不计入距离；擦拭塔原预冲刷功能保持不变。原速度更低时不提速。设为0可关闭此额外限速。"
-
-#: src/slic3r/GUI/Plater.cpp
-msgid "No-tower infill"
-msgstr "无塔填充"
-
-#: src/slic3r/GUI/Plater.cpp
-msgid "Enable prime tower and slice again"
-msgstr "启用擦拭塔并重新切片"
-
-#: src/slic3r/GUI/Plater.cpp
-msgid "Continue without prime tower"
-msgstr "继续使用无塔模式"
-
-#: src/slic3r/GUI/Plater.cpp
-msgid "The no-tower algorithm for plate %1% requires %2% external purge visits, exceeding 100.\nThe model has limited internal infill available for purging. Enabling a prime tower may reduce external purge travel and improve print quality.\n\nEnable the prime tower and slice again, or keep the current no-tower result?"
-msgstr "当前第 %1% 盘的无塔算法预计需要外出冲刷 %2% 次，已超过 100 次。\n模型内部可用于冲刷的填充路径有限。启用擦拭塔可能减少外部抛料，改善打印效果。\n\n是否启用擦拭塔并重新切片？也可选择继续使用无塔模式，保留当前切片结果。"
-
-#: src/slic3r/GUI/GUI_App.cpp
-msgid "Updating parameter packages..."
-msgstr "正在更新参数包…"
-
-#: src/slic3r/GUI/GUI_App.cpp
-msgid "Failed to update parameter packages. Please try again."
-msgstr "参数包更新失败，请重试。"
-
-#: src/slic3r/GUI/GUI_App.cpp
-msgid "Parameter update"
-msgstr "参数更新"
-
-#: src/slic3r/GUI/GUI_App.cpp
-#, c-format
-msgid "Updated to %s"
-msgstr "已更新到 %s"
-
-#: src/slic3r/GUI/GUI_App.cpp
-msgid "Update content:"
-msgstr "更新内容："
-
-#: src/slic3r/GUI/GUI_App.cpp
-msgid "No update description was provided."
-msgstr "本次更新未提供更新说明。"
-
-#: src/slic3r/GUI/GUI_App.cpp
-msgid "The update will be applied when you create or reopen a project."
-msgstr "本次更新将在新建或重新打开项目时生效。"
-
-#: src/slic3r/GUI/GUI_App.cpp
-msgid "The update will be applied after slicing finishes."
-msgstr "本次更新将在切片结束后生效。"
-
-#: src/slic3r/GUI/GUI_App.cpp
-msgid "Parameter packages updated"
-msgstr "参数包更新完成"
-
-#: src/slic3r/GUI/UpdateDialogs.cpp:32 src/slic3r/GUI/MainFrame.cpp:2924 src/slic3r/GUI/MainFrame.cpp:2924
-msgid "Check for Preset Updates"
-msgstr "检查预设更新"
-
-#: src/slic3r/GUI/UpdateDialogs.cpp:37 src/slic3r/GUI/UpdateDialogs.cpp:95
-msgid "Checking preset updates..."
-msgstr "正在检查预设更新…"
-
-#: src/slic3r/GUI/UpdateDialogs.cpp:47 src/slic3r/GUI/UpdateDialogs.cpp:116
-msgid "Remind me later"
-msgstr "稍后提醒"
-
-#: src/slic3r/GUI/UpdateDialogs.cpp:101
-msgid "Updates are available for the following added printers."
-msgstr "以下已添加机型有参数更新可用。"
-
-#: src/slic3r/GUI/UpdateDialogs.cpp:104
-#, c-format
-msgid "Target version: %s"
-msgstr "目标版本：%s"
-
-#: src/slic3r/GUI/UpdateDialogs.cpp:118
-#, c-format
-msgid "Update all (%d)"
-msgstr "更新全部（%d）"
-
-#: src/slic3r/GUI/UpdateParams.cpp:197
-msgid "No printers have been added. Add a printer before checking for updates."
-msgstr "尚未添加机型，请先添加机型再检查更新。"
-
-#: src/slic3r/GUI/UpdateParams.cpp:258
-msgid "All added printers are up to date."
-msgstr "已添加机型的预设均为最新版本。"
-
-#: src/slic3r/GUI/UpdateParams.cpp:222 src/slic3r/GUI/UpdateParams.cpp:233
-msgid "Failed to check preset updates. Please check your network and try again."
-msgstr "检查预设更新失败，请检查网络后重试。"
-
-#: src/slic3r/GUI/UpdateParams.cpp:217 src/slic3r/GUI/UpdateParams.cpp:285
-msgid "The printer list or account has changed. Please check again."
-msgstr "机型列表或账号已变更，请重新检查。"

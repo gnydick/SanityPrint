@@ -6086,6 +6086,23 @@ msgstr ""
 msgid "Disable \"%1%\" (%2%)"
 msgstr "\"%1%\" özelliğini devre dışı bırak (%2%)"
 
+msgid "Minimum mixed sublayer thickness"
+msgstr ""
+
+msgid ""
+"Minimum thickness of each mixed or gradient filament sublayer. Color ratios "
+"are adjusted when necessary while preserving the total layer height. Slicing "
+"stops with an error if the layer is too thin to fit all colors. Set to 0 to "
+"disable this limit."
+msgstr ""
+
+#, boost-format
+msgid ""
+"Mixed filament %1% at Z=%2% mm cannot fit %3% sublayers with a minimum "
+"thickness of %4% mm. Increase the layer height or reduce Minimum mixed "
+"sublayer thickness."
+msgstr ""
+
 msgid "affected Plate setting(s)"
 msgstr "etkilenen tabla ayarları"
 
@@ -11673,8 +11690,8 @@ msgstr ""
 msgid ""
 "When recording timelapse without toolhead, it is recommended to add a "
 "\"Timelapse Wipe Tower\" \n"
-"by right-click the empty position of build plate and choose \"Add "
-"Primitive\"->\"Timelapse Wipe Tower\"."
+"by right-click the empty position of build plate and choose \"Add Primitive"
+"\"->\"Timelapse Wipe Tower\"."
 msgstr ""
 "Araç başlığı olmadan timelapse kaydederken, bir \"Timelapse Wipe Tower\" "
 "eklenmesi önerilir.\n"
@@ -15319,8 +15336,8 @@ msgid ""
 "Please select \"By object\" print sequence to print multiple objects in "
 "spiral vase mode."
 msgstr ""
-"Birden fazla nesneyi spiral vazo modunda yazdırmak için lütfen \"Nesneye "
-"göre\" yazdırma sırasını seçin."
+"Birden fazla nesneyi spiral vazo modunda yazdırmak için lütfen \"Nesneye göre"
+"\" yazdırma sırasını seçin."
 
 msgid ""
 "The spiral vase mode does not work when an object contains more than one "
@@ -17450,6 +17467,14 @@ msgstr "Soğutma hareketleri bu hızdan başlayarak kademeli olarak hızlanır."
 msgid "Minimal purge on wipe tower"
 msgstr "Silme kulesi üzerinde minimum boşaltım"
 
+msgid "Filament pre-flush volume"
+msgstr ""
+
+msgid ""
+"After a filament change, the pre-flush volume of the new filament. Set to 0 "
+"to disable pre-flushing."
+msgstr ""
+
 msgid ""
 "After a tool change, the exact position of the newly loaded filament inside "
 "the nozzle may not be known, and the filament pressure is likely not yet "
@@ -18101,17 +18126,16 @@ msgstr "Maksimum fan hızı"
 
 msgid ""
 "Fan speed will be ramped up linearly from zero at layer "
-"\"close_fan_the_first_x_layers\" to maximum at layer "
-"\"full_fan_speed_layer\". \"full_fan_speed_layer\" will be ignored if lower "
-"than \"close_fan_the_first_x_layers\", in which case the fan will be running "
-"at maximum allowed speed at layer \"close_fan_the_first_x_layers\" + 1."
+"\"close_fan_the_first_x_layers\" to maximum at layer \"full_fan_speed_layer"
+"\". \"full_fan_speed_layer\" will be ignored if lower than "
+"\"close_fan_the_first_x_layers\", in which case the fan will be running at "
+"maximum allowed speed at layer \"close_fan_the_first_x_layers\" + 1."
 msgstr ""
 "Fan hızı, \"close_fan_the_first_x_layers\" katmanında sıfırdan "
 "\"ful_fan_speed_layer\" katmanında maksimuma doğrusal olarak artırılacaktır. "
 "\"full_fan_speed_layer\", \"close_fan_the_first_x_layers\" değerinden "
-"düşükse göz ardı edilecektir; bu durumda fan, "
-"\"close_fan_the_first_x_layers\" + 1 katmanında izin verilen maksimum hızda "
-"çalışacaktır."
+"düşükse göz ardı edilecektir; bu durumda fan, \"close_fan_the_first_x_layers"
+"\" + 1 katmanında izin verilen maksimum hızda çalışacaktır."
 
 msgid "layer"
 msgstr "katman"
@@ -21382,7 +21406,11 @@ msgid ""
 "layers to purge on the prime tower before printing skeleton, then walls in "
 "the configured order, then skin and surface fill. This does not change "
 "bottom shell layers."
-msgstr "Nesne iskeletine temizleme etkinleştirildiğinde, nesnenin alt N katmanı iskelet yazdırılmadan önce temizleme kulesinde boşaltılır; ardından duvarlar yapılandırılan sırada, son olarak kabuk ve yüzey dolgusu yazdırılır. Bu, alt kabuk katmanlarının sayısını değiştirmez."
+msgstr ""
+"Nesne iskeletine temizleme etkinleştirildiğinde, nesnenin alt N katmanı "
+"iskelet yazdırılmadan önce temizleme kulesinde boşaltılır; ardından duvarlar "
+"yapılandırılan sırada, son olarak kabuk ve yüzey dolgusu yazdırılır. Bu, alt "
+"kabuk katmanlarının sayısını değiştirmez."
 
 msgid "Top fill flush layers"
 msgstr "Dolgudan önce temizleme yapılan üst katmanlar"
@@ -21392,7 +21420,11 @@ msgid ""
 "layers to purge on the prime tower before printing skeleton, then walls in "
 "the configured order, then skin and surface fill. This does not change top "
 "shell layers."
-msgstr "Nesne iskeletine temizleme etkinleştirildiğinde, nesnenin üst N katmanı iskelet yazdırılmadan önce temizleme kulesinde boşaltılır; ardından duvarlar yapılandırılan sırada, son olarak kabuk ve yüzey dolgusu yazdırılır. Bu, üst kabuk katmanlarının sayısını değiştirmez."
+msgstr ""
+"Nesne iskeletine temizleme etkinleştirildiğinde, nesnenin üst N katmanı "
+"iskelet yazdırılmadan önce temizleme kulesinde boşaltılır; ardından duvarlar "
+"yapılandırılan sırada, son olarak kabuk ve yüzey dolgusu yazdırılır. Bu, üst "
+"kabuk katmanlarının sayısını değiştirmez."
 
 msgid "Skeleton wipe speed"
 msgstr "İskelet silme hızı"
@@ -22799,6 +22831,755 @@ msgstr ""
 msgid "Canceled"
 msgstr "İptal edildi"
 
+msgid "Pre-flush length slowdown"
+msgstr ""
+
+msgid ""
+"After a filament change, use the numeric value of Filament pre-flush volume "
+"as the model infill path distance in millimeters for this speed limit. For "
+"example, a value of 10 limits only the first 10 mm of printed infill path, "
+"then restores normal speed. The volumetric flow limit is this percentage of "
+"the filament's maximum volumetric speed. With a prime tower, applies when "
+"Flush into objects' infill is enabled. Without a tower, applies to skeleton "
+"infill. Travel and retraction do not count. The tower's original pre-flush "
+"behavior is unchanged. Lower printing speeds are preserved. Set to 0 to "
+"disable this additional speed limit."
+msgstr ""
+
+#: src/libslic3r/PrintConfig.cpp
+msgid ""
+"Minimum estimated printing time in seconds between time flushes. With a wipe "
+"tower, flushing runs before a filament change or before a normal tower visit "
+"on a sparse tower layer. The nozzle flushes outside the plate, then "
+"continues directly to the tower entry. Towers without sparse layers still "
+"flush only before filament changes. Without a tower, including single-color "
+"printing, flushing waits for an internal infill path boundary. Small or "
+"narrow model islands suppress time flushing. The actual interval may be "
+"longer. Set to 0 to disable time flushing."
+msgstr ""
+
+#: src/libslic3r/PrintConfig.cpp
+msgid ""
+"Runs when overdue before a tower filament change, before a normal tower "
+"visit on a sparse tower layer, or at an internal infill path boundary "
+"without a tower. Towers without sparse layers still flush only before "
+"filament changes. Time keeps accumulating outside these nodes. Layers with "
+"model islands smaller than 25 square millimeters or without a 2 mm inset "
+"suppress time flushing. Tower flushes continue directly to the tower entry; "
+"other flushes return to the model. The interval may be exceeded while "
+"waiting for a safe node. Like Time lapse G-code, supports [layer_num], "
+"[layer_z] and [max_layer_z] with the same layer values and expression "
+"syntax. Use [return_x], [return_y] and [return_z] for the final tower entry "
+"position on a normal tower visit, or the nozzle position at other triggers, "
+"[current_tool] for the zero-based tool index, and [time_flush_elapsed] for "
+"estimated seconds since the previous flush. Expressions such as {layer_z + "
+"0.4} and {if time_flush_elapsed > 0}...{endif} are evaluated before G-code "
+"comments, even when preceded by a semicolon. The script must preserve "
+"coordinate origin, positioning modes and units; independent flushes must "
+"also preserve the active tool. The slicer restores position and absolute E "
+"for moves it can parse. Commands wrapped in M950 are passed through without "
+"tracking their motion, E resets or duration; firmware or the script must "
+"handle recovery. With or without a tower, use time_flush_has_toolchange in "
+"both Filament change G-code and Time flush G-code to combine an overdue "
+"flush with a filament change. It is true only for that combined event: skip "
+"the ordinary change and let Time flush G-code select [next_extruder] at the "
+"flush station using [new_filament_temp]. No-tower combined changes resume at "
+"the first new-filament print path. The active no-tower change branch must "
+"use this state; phased skeleton flushes keep their original flow."
+msgstr ""
+
+#: src/slic3r/GUI/GUI_App.cpp:8124 src/slic3r/GUI/GUI_App.cpp:8131
+#: src/slic3r/GUI/GUI_App.cpp:8493
+msgid "Updating parameter packages..."
+msgstr "Parametre paketleri güncelleniyor..."
+
+#: src/slic3r/GUI/GUI_App.cpp:8134
+msgid "Failed to update parameter packages. Please try again."
+msgstr "Parametre paketleri güncellenemedi. Lütfen tekrar deneyin."
+
+#: src/slic3r/GUI/GUI_App.cpp:8135 src/slic3r/GUI/GUI_App.cpp:8138
+msgid "Parameter update"
+msgstr "Parametre güncellemesi"
+
+#: src/slic3r/GUI/GUI_App.cpp:8499
+#, c-format
+msgid "Updated to %s"
+msgstr "%s sürümüne güncellendi"
+
+#: src/slic3r/GUI/GUI_App.cpp:8501
+msgid "Update content:"
+msgstr "Güncelleme içeriği:"
+
+#: src/slic3r/GUI/GUI_App.cpp:8502
+msgid "No update description was provided."
+msgstr "Güncelleme açıklaması sağlanmadı."
+
+#: src/slic3r/GUI/GUI_App.cpp:8505
+msgid "The update will be applied when you create or reopen a project."
+msgstr ""
+"Güncelleme, bir proje oluşturduğunuzda veya yeniden açtığınızda "
+"uygulanacaktır."
+
+#: src/slic3r/GUI/GUI_App.cpp:8507
+msgid "The update will be applied after slicing finishes."
+msgstr "Güncelleme, dilimleme tamamlandıktan sonra uygulanacaktır."
+
+#: src/slic3r/GUI/GUI_App.cpp:8508
+msgid "Parameter packages updated"
+msgstr "Parametre paketleri güncellendi"
+
+#: src/slic3r/GUI/UpdateDialogs.cpp:32 src/slic3r/GUI/MainFrame.cpp:2924
+msgid "Check for Preset Updates"
+msgstr "Ön ayar güncellemelerini denetle"
+
+#: src/slic3r/GUI/UpdateDialogs.cpp:37 src/slic3r/GUI/UpdateDialogs.cpp:95
+msgid "Checking preset updates..."
+msgstr "Ön ayar güncellemeleri denetleniyor…"
+
+#: src/slic3r/GUI/UpdateDialogs.cpp:47 src/slic3r/GUI/UpdateDialogs.cpp:116
+msgid "Remind me later"
+msgstr "Daha sonra hatırlat"
+
+#: src/slic3r/GUI/UpdateDialogs.cpp:101
+msgid "Updates are available for the following added printers."
+msgstr "Eklenen şu yazıcılar için güncellemeler mevcut."
+
+#: src/slic3r/GUI/UpdateDialogs.cpp:104
+#, c-format
+msgid "Target version: %s"
+msgstr "Hedef sürüm: %s"
+
+#: src/slic3r/GUI/UpdateDialogs.cpp:118
+#, c-format
+msgid "Update all (%d)"
+msgstr "Tümünü güncelle (%d)"
+
+#: src/slic3r/GUI/UpdateParams.cpp:197
+msgid "No printers have been added. Add a printer before checking for updates."
+msgstr ""
+"Hiç yazıcı eklenmedi. Güncellemeleri denetlemeden önce bir yazıcı ekleyin."
+
+#: src/slic3r/GUI/UpdateParams.cpp:258
+msgid "All added printers are up to date."
+msgstr "Eklenen tüm yazıcıların ön ayarları güncel."
+
+#: src/slic3r/GUI/UpdateParams.cpp:222 src/slic3r/GUI/UpdateParams.cpp:233
+msgid ""
+"Failed to check preset updates. Please check your network and try again."
+msgstr ""
+"Ön ayar güncellemeleri denetlenemedi. Ağ bağlantınızı kontrol edip tekrar "
+"deneyin."
+
+#: src/slic3r/GUI/UpdateParams.cpp:217 src/slic3r/GUI/UpdateParams.cpp:285
+msgid "The printer list or account has changed. Please check again."
+msgstr "Yazıcı listesi veya hesap değişti. Lütfen tekrar denetleyin."
+
+msgid "Floating vertical shell"
+msgstr ""
+
+msgid "Time flush G-code"
+msgstr ""
+
+# generated by robot
+msgid ""
+"The jerk setting exceeds the printer's maximum jerk (machine_max_jerk_x/"
+"machine_max_jerk_y).\n"
+"SanityPrint will automatically cap the jerk speed to ensure it doesn't "
+"surpass the printer's capabilities.\n"
+"You can adjust the maximum jerk setting in your printer's configuration to "
+"get higher speeds."
+msgstr ""
+"Jerk ayarı yazıcının maksimum jerk'ini aşır (machine_max_jerk_x/"
+"machine_max_jerk_y).  nSanityPrint, yazıcının yeteneklerini aşmamasını "
+"sağlamak için sacınma hızını otomatik olarak sınırlayacaktır.nYazıcınızın "
+"yapılandırmasında daha yüksek hızlar elde etmek için maksimum jerk ayarını "
+"ayarlayabilirsiniz."
+
+# generated by robot
+msgid ""
+"The acceleration setting exceeds the printer's maximum acceleration "
+"(machine_max_acceleration_extruding).\n"
+"SanityPrint will automatically cap the acceleration speed to ensure it "
+"doesn't surpass the printer's capabilities.\n"
+"You can adjust the machine_max_acceleration_extruding value in your "
+"printer's configuration to get higher speeds."
+msgstr ""
+"Hızlandırma ayarı yazıcının maksimum hızlanmasını aşır "
+"(machine_max_acceleration_extruding).  nSanityPrint, yazıcının yeteneklerini "
+"aşmamasını sağlamak için hızlanma hızını otomatik olarak sınırlayacaktır."
+"nDaha yüksek hızlar almak için yazıcınızın yapılandırmasında "
+"machine_max_acceleration_extruding değerini ayarlayabilirsiniz."
+
+# generated by robot
+msgid ""
+"The travel acceleration setting exceeds the printer's maximum travel "
+"acceleration (machine_max_acceleration_travel).\n"
+"SanityPrint will automatically cap the travel acceleration speed to ensure "
+"it doesn't surpass the printer's capabilities.\n"
+"You can adjust the machine_max_acceleration_travel value in your printer's "
+"configuration to get higher speeds."
+msgstr ""
+"Seyahat hızlandırma ayarları yazıcının en yüksek yolculuk hızlandırmasını "
+"aştır (machine_max_acceleration_travel). \n"
+"SanityPrint, yazıcının yeteneklerini aşmamasını sağlamak için seyahat "
+"hızlandırmahızını otomatik olarak kapatacak. \n"
+"Yazıcınızın yapılandırmasında machine_max_acceleration_travel değerini "
+"yüksek hızları almak için ayarlayabilirsiniz."
+
+msgid ""
+"Sanity Print can upload G-code files to a printer host. This field should "
+"contain the hostname, IP address or URL of the printer host instance. Print "
+"host behind HAProxy with basic auth enabled can be accessed by putting the "
+"user name and password into the URL in the following format: https://"
+"username:password@your-octopi-address/"
+msgstr ""
+"Sanity Print, G-code dosyalarını bir yazıcı ana bilgisayarına yükleyebilir. "
+"Bu alan, yazıcı ana bilgisayar örneğinin ana bilgisayar adını, IP adresini "
+"veya URL'sini içermelidir. Temel kimlik doğrulamanın etkin olduğu "
+"HAProxy'nin arkasındaki yazdırma ana bilgisayarına, kullanıcı adı ve "
+"parolanın aşağıdaki biçimdeki URL'ye girilmesiyle erişilebilir: https://"
+"username:password@your-octopi-address/"
+
+msgid ""
+"Sanity Print can upload G-code files to a printer host. This field should "
+"contain the API Key or the password required for authentication."
+msgstr ""
+"Sanity Print, G-code dosyalarını bir yazıcı ana bilgisayarına yükleyebilir. "
+"Bu alan, kimlik doğrulama için gereken API Anahtarını veya şifreyi "
+"içermelidir."
+
+msgid ""
+"This option sets the min point for the allowed bed mesh area. Due to the "
+"probe's XY offset, most printers are unable to probe the entire bed. To "
+"ensure the probe point does not go outside the bed area, the minimum and "
+"maximum points of the bed mesh should be set appropriately. SanityPrint "
+"ensures that adaptive_bed_mesh_min/adaptive_bed_mesh_max values do not "
+"exceed these min/max points. This information can usually be obtained from "
+"your printer manufacturer. The default setting is (-99999, -99999), which "
+"means there are no limits, thus allowing probing across the entire bed."
+msgstr ""
+"Bu seçenek, izin verilen yatak ağ alanı için minimum noktayı ayarlar. Prob "
+"XY ofseti nedeniyle çoğu yazıcı yatağın tamamını tarayamaz. Prob noktasının "
+"yatak alanı dışına çıkmamasını sağlamak için yatak ağının minimum ve "
+"maksimum noktaları uygun şekilde ayarlanmalıdır. SanityPrint, "
+"adaptive_bed_mesh_min/adaptive_bed_mesh_max değerlerinin bu min/maks "
+"noktalarını aşmamasını sağlar. Bu bilgi genellikle yazıcınızın üreticisinden "
+"edinilebilir. Varsayılan ayar (-99999, -99999) şeklindedir; bu, herhangi bir "
+"sınırın olmadığı anlamına gelir, dolayısıyla yatağın tamamında problamaya "
+"izin verilir."
+
+msgid ""
+"This option sets the max point for the allowed bed mesh area. Due to the "
+"probe's XY offset, most printers are unable to probe the entire bed. To "
+"ensure the probe point does not go outside the bed area, the minimum and "
+"maximum points of the bed mesh should be set appropriately. SanityPrint "
+"ensures that adaptive_bed_mesh_min/adaptive_bed_mesh_max values do not "
+"exceed these min/max points. This information can usually be obtained from "
+"your printer manufacturer. The default setting is (99999, 99999), which "
+"means there are no limits, thus allowing probing across the entire bed."
+msgstr ""
+"Bu seçenek, izin verilen yatak ağ alanı için maksimum noktayı ayarlar. "
+"Probun XY ofseti nedeniyle çoğu yazıcı yatağın tamamını tarayamaz. Prob "
+"noktasının yatak alanı dışına çıkmamasını sağlamak için yatak ağının minimum "
+"ve maksimum noktaları uygun şekilde ayarlanmalıdır. SanityPrint, "
+"adaptive_bed_mesh_min/adaptive_bed_mesh_max değerlerinin bu min/maks "
+"noktalarını aşmamasını sağlar. Bu bilgi genellikle yazıcınızın üreticisinden "
+"edinilebilir. Varsayılan ayar (99999, 99999) şeklindedir; bu, herhangi bir "
+"sınırın olmadığı anlamına gelir, dolayısıyla yatağın tamamında problamaya "
+"izin verilir."
+
+msgid "Temperature type"
+msgstr ""
+
+msgid ""
+"Multi-material temperature compatibility class. 0=HighTemp, 1=LowTemp, "
+"2=HighLowCompatible, 3=Undefine."
+msgstr ""
+
+msgid "Smart cooling zone"
+msgstr ""
+
+msgid "Enable smart cooling slowdown zones for this filament."
+msgstr ""
+
+msgid "Bed adhesion strength"
+msgstr ""
+
+msgid ""
+"Bed adhesion yield strength in MPa used for support-spot generation. Engine "
+"multiplies by 1e6 internally."
+msgstr ""
+
+msgid "Thermal length"
+msgstr ""
+
+msgid "Characteristic thermal length (mm) used for brim/warp estimation."
+msgstr ""
+
+msgid "Brim adhesion coefficient"
+msgstr ""
+
+msgid ""
+"Multiplier applied to brim width for adhesion estimation. Higher = wider "
+"brim generated."
+msgstr ""
+
+msgid "Small island threshold"
+msgstr ""
+
+msgid "Area threshold (mm²) below which a slice island is treated as small."
+msgstr ""
+
+msgid "Chamber temperature limit"
+msgstr ""
+
+msgid ""
+"Maximum safe chamber temperature (°C) for this filament. 0 = no limit / no "
+"warning."
+msgstr ""
+
+msgid "Flexible filament"
+msgstr ""
+
+msgid ""
+"Mark this filament as flexible (e.g. TPU). Used to suggest appropriate "
+"support filament."
+msgstr ""
+
+msgid ""
+"After a tool change, the exact position of the newly loaded filament inside "
+"the nozzle may not be known, and the filament pressure is likely not yet "
+"stable. Before purging the print head into an infill or a sacrificial "
+"object, Sanity Print will always prime this amount of material into the wipe "
+"tower to produce successive infill or sacrificial object extrusions reliably."
+msgstr ""
+"Bir takım değişiminden sonra, yeni yüklenen filamentin nozul içindeki kesin "
+"konumu bilinmeyebilir ve filament basıncı muhtemelen henüz stabil değildir. "
+"Yazdırma kafasını bir dolguya veya kurban nesneye boşaltmadan önce "
+"SanityPrint Slicer, ardışık dolgu veya kurban nesne ekstrüzyonlarını "
+"güvenilir bir şekilde üretmek için her zaman bu miktardaki filamentyi silme "
+"kulesine hazırlayacaktır."
+
+msgid ""
+"Connect an infill line to an internal perimeter with a short segment of an "
+"additional perimeter. If expressed as percentage (example: 15%) it is "
+"calculated over infill extrusion width. Sanity Print tries to connect two "
+"close infill lines to a short perimeter segment. If no such perimeter "
+"segment shorter than infill_anchor_max is found, the infill line is "
+"connected to a perimeter segment at just one side and the length of the "
+"perimeter segment taken is limited to this parameter, but no longer than "
+"anchor_length_max. \n"
+"Set this parameter to zero to disable anchoring perimeters connected to a "
+"single infill line."
+msgstr ""
+"Bir dolgu hattını, ek bir çevrenin kısa bir bölümü ile bir iç çevreye "
+"bağlayın. Yüzde olarak ifade edilirse (örnek: %15) dolgu ekstrüzyon "
+"genişliği üzerinden hesaplanır. Sanity Print iki yakın dolgu hattını kısa "
+"bir çevre segmentine bağlamaya çalışıyor. infill_anchor_max'tan daha kısa "
+"böyle bir çevre segmenti bulunamazsa, dolgu hattı yalnızca bir taraftaki bir "
+"çevre segmentine bağlanır ve alınan çevre segmentinin uzunluğu bu "
+"parametreyle sınırlıdır, ancak çapa_uzunluk_max'tan uzun olamaz.\n"
+"Tek bir dolgu hattına bağlı sabitleme çevrelerini devre dışı bırakmak için "
+"bu parametreyi sıfıra ayarlayın."
+
+msgid ""
+"Connect an infill line to an internal perimeter with a short segment of an "
+"additional perimeter. If expressed as percentage (example: 15%) it is "
+"calculated over infill extrusion width. Sanity Print tries to connect two "
+"close infill lines to a short perimeter segment. If no such perimeter "
+"segment shorter than this parameter is found, the infill line is connected "
+"to a perimeter segment at just one side and the length of the perimeter "
+"segment taken is limited to infill_anchor, but no longer than this "
+"parameter. \n"
+"If set to 0, the old algorithm for infill connection will be used, it should "
+"create the same result as with 1000 & 0."
+msgstr ""
+"Bir dolgu hattını, ek bir çevrenin kısa bir bölümü ile bir iç çevreye "
+"bağlayın. Yüzde olarak ifade edilirse (örnek: %15) dolgu ekstrüzyon "
+"genişliği üzerinden hesaplanır. Sanity Print iki yakın dolgu hattını kısa "
+"bir çevre segmentine bağlamaya çalışıyor. Bu parametreden daha kısa bir "
+"çevre segmenti bulunamazsa, dolgu hattı sadece bir kenardaki bir çevre "
+"segmentine bağlanır ve alınan çevre segmentinin uzunluğu infill_anchor ile "
+"sınırlıdır ancak bu parametreden daha uzun olamaz.\n"
+"0'a ayarlanırsa dolgu bağlantısı için eski algoritma kullanılacaktır; 1000 "
+"ve 0 ile aynı sonucu oluşturmalıdır."
+
+msgid ""
+"Sanity Print can upload G-code files to a printer host. This field must "
+"contain the kind of the host."
+msgstr ""
+"Sanity Print, G-code dosyalarını bir yazıcı ana bilgisayarına yükleyebilir. "
+"Bu alan ana bilgisayarın türünü içermelidir."
+
+msgid ""
+"If you want to process the output G-code through custom scripts, just list "
+"their absolute paths here. Separate multiple scripts with a semicolon. "
+"Scripts will be passed the absolute path to the G-code file as the first "
+"argument, and they can access the Sanity Print config settings by reading "
+"environment variables."
+msgstr ""
+"Çıktı G-codenu özel komut dosyaları aracılığıyla işlemek istiyorsanız, "
+"mutlak yollarını burada listeleyin. Birden fazla betiği noktalı virgülle "
+"ayırın. Betiklere ilk argüman olarak G-code dosyasının mutlak yolu aktarılır "
+"ve ortam değişkenlerini okuyarak Sanity Print yapılandırma ayarlarına "
+"erişebilirler."
+
+msgid "Vertical shell speed"
+msgstr ""
+
+msgid ""
+"Speed for narrow internal solid infill regions that overlap sparse infill or "
+"internal voids in the layer below. Requires \"Detect narrow internal solid "
+"infill\" to be enabled. Percentages are relative to the internal solid "
+"infill speed. When \"Detect floating vertical shells\" is enabled, paths "
+"identified as floating use the bridge speed instead."
+msgstr ""
+
+msgid "Time flush interval"
+msgstr ""
+
+msgid "Detect floating vertical shells"
+msgstr ""
+
+msgid ""
+"Identify floating paths in narrow internal solid infill regions above sparse "
+"infill or internal voids, and print those paths at the bridge speed. "
+"Unmarked paths, or all paths when this option is disabled, use the vertical "
+"shell speed. Requires \"Detect narrow internal solid infill\" to be enabled."
+msgstr ""
+
+# generated by robot
+msgid ""
+"SanityPrint has encountered an error while taking a configuration snapshot."
+msgstr ""
+"SanityPrint bir yapılandırma anlık görüntüsü alırken bir hata karşılaştı."
+
+# generated by robot
+msgid "SanityPrint error"
+msgstr "SanityPrint hatası"
+
+# generated by robot
+msgid "SanityPrint is licensed under "
+msgstr "SanityPrint lisensi altında"
+
+# generated by robot
+msgid "SanityPrint is based on PrusaSlicer and BambuStudio"
+msgstr "SanityPrint, PrusaSlicer ve BambuStudio'ya dayanır."
+
+msgid "Sanity Print "
+msgstr "SanityPrint Dilimleyici "
+
+# generated by robot
+msgid ""
+"This project file is not from Sanity Print. Please select the printer preset "
+"you want to use for slicing."
+msgstr ""
+"Bu proje dosyası Sanity Print'ten değil. Lütfen dilim yapmak için kullanmak "
+"istediğiniz yazıcı önayarını seçin."
+
+msgid ""
+"To keep the feature you just enabled, Sanity Print will make the following "
+"changes:"
+msgstr ""
+
+msgid "------- Templates -------"
+msgstr ""
+
+msgid "------- Existing presets -------"
+msgstr ""
+
+msgid "Printer config bundle(.sanity_printer)"
+msgstr "Yazıcı yapılandırma paketi(.sanity_printer)"
+
+# generated by robot
+msgid ""
+"Performing desktop integration failed - could not create Gcodeviewer desktop "
+"file. SanityPrint desktop file was probably created successfully."
+msgstr ""
+"Masaüstü entegrasyonu başarısız oldu - Gcodeviewer masaüstü dosyası "
+"oluşturulamadı. SanityPrint masaüstü dosyası muhtemelen başarıyla "
+"oluşturulmuştur."
+
+msgid "Remove Materials from Printer"
+msgstr ""
+
+msgid ""
+"Select the materials to remove from the printer (only those added by "
+"SanityPrint are listed; factory materials are protected):"
+msgstr ""
+
+msgid "Remove selected"
+msgstr ""
+
+msgid "Sync Filaments to Printers"
+msgstr ""
+
+#, c-format
+msgid "Push all custom filaments (%zu) to the selected printers:"
+msgstr ""
+
+msgid " - offline"
+msgstr ""
+
+msgid "No printers found. Add printers on the Device page first."
+msgstr ""
+
+msgid "Push"
+msgstr ""
+
+msgid "Remove..."
+msgstr ""
+
+msgid "There are no custom filaments to sync."
+msgstr ""
+
+msgid "Please select at least one printer."
+msgstr ""
+
+#, c-format, boost-format
+msgid "Filament sync finished: %d pushed, %d failed."
+msgstr ""
+
+msgid "Sync Filaments"
+msgstr ""
+
+msgid ""
+"No removable materials were found on the selected printer(s). Only materials "
+"added by SanityPrint can be removed here; factory materials are protected."
+msgstr ""
+
+msgid "Remove Materials"
+msgstr ""
+
+#, c-format, boost-format
+msgid "Remove finished: %d removed, %d failed."
+msgstr ""
+
+msgid "The configuration may be generated by a newer version of SanityPrint."
+msgstr ""
+"Yapılandırma, SanityPrint'ın daha yeni bir sürümü tarafından oluşturulabilir."
+
+msgid ""
+"Sanity Print requires the Microsoft WebView2 Runtime to operate certain "
+"features.\n"
+"Click Yes to install it now."
+msgstr ""
+"Sanity Print, belirli özellikleri çalıştırmak için Microsoft WebView2 "
+"Runtime gerektirir.\n"
+"Şimdi yüklemek için Evet'e tıklayın."
+
+# generated by robot
+msgid ""
+"Sanity Print requires the Microsoft WebView2 Runtime,But it has been found "
+"that the abnormal operation of Microsoft WebView2 may be related to the "
+"installation of Microsoft Edge. \n"
+"Click the Yes to reinstall Microsoft Edge"
+msgstr ""
+"Sanity Print, Microsoft WebView2 Çalışma Zamanını gerektirir, ancak "
+"Microsoft WebView2'nin anormal çalışmasının Microsoft Edge yüklemesiyle "
+"ilgili olabileceği bulundu. MicrosoftEdge'i yeniden yüklemek için Evet'e "
+"tıklayın"
+
+msgid "The Sanity Print needs an upgrade"
+msgstr "SanityPrint Dilimleyicinin yükseltilmesi gerekiyor"
+
+# generated by robot
+msgid ""
+"Detected corruption in the Sanity Print configuration file, attempted to "
+"rebuild, \n"
+"please manually restart the software."
+msgstr ""
+"Sanity Print yapılandırma dosyasında bozulma tespit edildi, yeniden inşa "
+"etmeye çalıştı, nplease yazılımı manuel olarak yeniden başlatın."
+
+msgid ""
+"The SanityPrint configuration file may be corrupted and cannot be parsed.\n"
+"SanityPrint has attempted to recreate the configuration file.\n"
+"Please note, application settings will be lost, but printer profiles will "
+"not be affected."
+msgstr ""
+"SanityPrint konfigürasyon dosyası bozulmuş olabilir ve "
+"ayrıştırılamayabilir.\n"
+"SanityPrint, konfigürasyon dosyasını yeniden oluşturmayı denedi.\n"
+"Lütfen dikkat edin, uygulama ayarları kaybolacak, ancak yazıcı profilleri "
+"etkilenmeyecek."
+
+msgid ""
+"The version of Sanity Print is too low and needs to be updated to the latest "
+"version before it can be used normally"
+msgstr ""
+"Sanity Print'ın sürümü çok düşük ve normal şekilde kullanılabilmesi için en "
+"son sürüme güncellenmesi gerekiyor"
+
+msgid "Sanity Print GUI initialization failed"
+msgstr "SanityPrint Dilimleyici GUI'si başlatılamadı"
+
+msgid ""
+"Another virtual camera is running.\n"
+"Sanity Print supports only a single virtual camera.\n"
+"Do you want to stop this virtual camera?"
+msgstr ""
+"Başka bir sanal kamera çalışıyor.\n"
+"Sanity Print yalnızca tek bir sanal kamerayı destekler.\n"
+"Bu sanal kamerayı durdurmak istiyor musunuz?"
+
+msgid ""
+"The 3mf file version is in Beta and it is newer than the current "
+"SanityPrint  version."
+msgstr ""
+"3mf dosya sürümü Beta’dadır ve mevcut SanityPrint sürümünden daha yenidir."
+
+msgid "If you would like to try Sanity Print Beta, you may click to"
+msgstr "Sanity Print Beta’yı denemek isterseniz tıklayabilirsiniz."
+
+msgid "The 3mf file version is newer than the current Sanity Print version."
+msgstr "3mf dosya sürümü mevcut Sanity Print sürümünden daha yenidir."
+
+msgid ""
+"Update your Sanity Print could enable all functionality in the 3mf file."
+msgstr ""
+"SanityPrint Dilimleyicinizi güncellemek, 3mf dosyasındaki tüm işlevleri "
+"etkinleştirebilir."
+
+msgid "SanityPrint Version:"
+msgstr "SanityPrint Sürümü:"
+
+msgid "Test SanityPrint(GitHub)"
+msgstr "SanityPrint'ı (GitHub) test edin"
+
+msgid "Test SanityPrint(GitHub):"
+msgstr "SanityPrint'ı (GitHub) test edin:"
+
+msgid "Obj"
+msgstr ""
+
+msgid ""
+"There are some unknown filaments mapped to generic preset. Please update "
+"Sanity Print or restart Creality Print to check if there is an update to "
+"system presets."
+msgstr ""
+
+msgid "The 3mf is not supported by SanityPrint, load geometry data only."
+msgstr ""
+"SanityPrint, 3mf formatını desteklememektedir. Sadece geometri verilerini "
+"yükle."
+
+#, boost-format
+msgid ""
+"The no-tower algorithm for plate %1% requires %2% external purge visits, "
+"exceeding 100.\n"
+"The model has limited internal infill available for purging. Enabling a "
+"prime tower may reduce external purge travel and improve print quality.\n"
+"\n"
+"Enable the prime tower and slice again, or keep the current no-tower result?"
+msgstr ""
+
+msgid "No-tower infill"
+msgstr ""
+
+msgid "Enable prime tower and slice again"
+msgstr ""
+
+msgid "Continue without prime tower"
+msgstr ""
+
+msgid ""
+"Importing to Sanity Print failed. Please download the file and manually "
+"import it."
+msgstr ""
+"Sanity Print'ya aktarma başarısız oldu. Lütfen dosyayı indirin ve manuel "
+"olarak İçe aktarın."
+
+# generated by robot
+msgid "with SanityPrint so that SanityPrint can open models from"
+msgstr "SanityPrint ile böylece SanityPrint modelleri açabilir"
+
+# generated by robot
+msgid ""
+"We sincerely invite you to join Sanity Print's \" User Experience "
+"Improvement Program\" to help us optimize printing efficiency, improve "
+"printing performance and software experience by anonymously collecting data "
+"such as slicing parameters, settings and usage logs. We will not collect any "
+"personally identifiable information, and all data will be protected in "
+"accordance with the"
+msgstr ""
+"Sizi, dilim parametreleri, ayarlar ve kullanım günlükleri gibi verileri "
+"anonim olarak toplayarak baskı verimliliğini optimize etmemize, baskı "
+"performansını veyazılım deneyimini iyileştirmemize yardımcı olmak için "
+"Sanity Print'in \"Kullanıcı Deneyimi İyileştirme Programı'na\" katılmaya "
+"samimiyetle davet ediyoruz. Kişisel olarak tanımlanabilirherhangi bir bilgi "
+"toplamayacağız ve tüm veriler"
+
+msgid ""
+"Click OK to update the Network plug-in when Sanity Print launches next time."
+msgstr ""
+"Sanity Print bir sonraki sefer başlatıldığında Ağ eklentisini güncellemek "
+"için Tamam'a tıklayın."
+
+msgid "New version of Sanity Print"
+msgstr "Sanity Print’ın yeni versiyonu"
+
+msgid ""
+"Step 1, please confirm Sanity Print and your printer are in the same LAN."
+msgstr ""
+"Adım 1, lütfen Sanity Print ile yazıcınızın aynı LAN'da olduğunu doğrulayın."
+
+msgid "The printer is required to be in the same LAN as Sanity Print"
+msgstr "Yazıcının Sanity Print ile aynı LAN'da olması gerekir."
+
+# generated by robot
+msgid "Blacklisted libraries loaded into SanityPrint process:"
+msgstr "SanityPrint işlemine yüklenen siyah listeli kütüphaneler:"
+
+msgid "Material properties"
+msgstr ""
+
+msgid "Time flush"
+msgstr ""
+
+msgid ""
+"SanityPrint uses this matrix only when flushing into objects skeleton is "
+"enabled."
+msgstr ""
+
+msgid ""
+"The firmware version is abnormal. Repairing and updating are required before "
+"printing. Do you want to update now? You can also update later on printer or "
+"update next time starting SanityPrint."
+msgstr ""
+"Ürün yazılımı sürümü anormal. Yazdırmadan önce onarım ve güncelleme "
+"yapılması gerekir. Şimdi güncellemek istiyor musunuz? Ayrıca daha sonra "
+"yazıcıda güncelleyebilir veya stüdyoyu bir sonraki başlatışınızda "
+"güncelleyebilirsiniz."
+
+msgid "Please check the network connection of the printer and SanityPrint"
+msgstr "Lütfen yazıcının ve Studio'nun ağ bağlantısını kontrol edin."
+
+# generated by robot
+msgid ""
+"SanityPrint would re-calculate your flushing volumes everytime the filaments "
+"color changed."
+msgstr ""
+"SanityPrint, filamentlerin rengi değiştiğinde yıkama hacmlerinizi yeniden "
+"hesaplayacaktır."
+
+msgid ""
+"Your system is missing H.264 codecs for GStreamer, which are required to "
+"play video.  (Try installing the gstreamer1.0-plugins-bad or gstreamer1.0-"
+"libav packages, then restart Sanity Print?)"
+msgstr ""
+"Sisteminizde video oynatmak için gerekli olan GStreamer H.264 codec "
+"bileşenleri eksik. (gstreamer1.0-plugins-bad veya gstreamer1.0-libav "
+"paketlerini kurmayı deneyin, ardından Sanity Print’ı yeniden başlatın)"
+
+# generated by robot
+msgid "Connection to SanityPrint works correctly."
+msgstr "SanityPrint'e bağlantı doğru çalışıyor."
+
+# generated by robot
+msgid "Could not connect to SanityPrint"
+msgstr "SanityPrint'e bağlanamadı"
+
 #~ msgid ""
 #~ "Prime tower is required for smooth timelapse. There may be flaws on the "
 #~ "model without prime tower. Do you want to enable prime tower?"
@@ -23687,82 +24468,3 @@ msgstr "İptal edildi"
 # generated by robot
 #~ msgid "Filament can not match"
 #~ msgstr "Filament eşleşemez"
-
-#: src/slic3r/GUI/GUI_App.cpp:8124 src/slic3r/GUI/GUI_App.cpp:8131 src/slic3r/GUI/GUI_App.cpp:8493
-msgid "Updating parameter packages..."
-msgstr "Parametre paketleri güncelleniyor..."
-
-#: src/slic3r/GUI/GUI_App.cpp:8134
-msgid "Failed to update parameter packages. Please try again."
-msgstr "Parametre paketleri güncellenemedi. Lütfen tekrar deneyin."
-
-#: src/slic3r/GUI/GUI_App.cpp:8135 src/slic3r/GUI/GUI_App.cpp:8138
-msgid "Parameter update"
-msgstr "Parametre güncellemesi"
-
-#: src/slic3r/GUI/GUI_App.cpp:8499
-#, c-format
-msgid "Updated to %s"
-msgstr "%s sürümüne güncellendi"
-
-#: src/slic3r/GUI/GUI_App.cpp:8501
-msgid "Update content:"
-msgstr "Güncelleme içeriği:"
-
-#: src/slic3r/GUI/GUI_App.cpp:8502
-msgid "No update description was provided."
-msgstr "Güncelleme açıklaması sağlanmadı."
-
-#: src/slic3r/GUI/GUI_App.cpp:8505
-msgid "The update will be applied when you create or reopen a project."
-msgstr "Güncelleme, bir proje oluşturduğunuzda veya yeniden açtığınızda uygulanacaktır."
-
-#: src/slic3r/GUI/GUI_App.cpp:8507
-msgid "The update will be applied after slicing finishes."
-msgstr "Güncelleme, dilimleme tamamlandıktan sonra uygulanacaktır."
-
-#: src/slic3r/GUI/GUI_App.cpp:8508
-msgid "Parameter packages updated"
-msgstr "Parametre paketleri güncellendi"
-
-#: src/slic3r/GUI/UpdateDialogs.cpp:32 src/slic3r/GUI/MainFrame.cpp:2924 src/slic3r/GUI/MainFrame.cpp:2924
-msgid "Check for Preset Updates"
-msgstr "Ön ayar güncellemelerini denetle"
-
-#: src/slic3r/GUI/UpdateDialogs.cpp:37 src/slic3r/GUI/UpdateDialogs.cpp:95
-msgid "Checking preset updates..."
-msgstr "Ön ayar güncellemeleri denetleniyor…"
-
-#: src/slic3r/GUI/UpdateDialogs.cpp:47 src/slic3r/GUI/UpdateDialogs.cpp:116
-msgid "Remind me later"
-msgstr "Daha sonra hatırlat"
-
-#: src/slic3r/GUI/UpdateDialogs.cpp:101
-msgid "Updates are available for the following added printers."
-msgstr "Eklenen şu yazıcılar için güncellemeler mevcut."
-
-#: src/slic3r/GUI/UpdateDialogs.cpp:104
-#, c-format
-msgid "Target version: %s"
-msgstr "Hedef sürüm: %s"
-
-#: src/slic3r/GUI/UpdateDialogs.cpp:118
-#, c-format
-msgid "Update all (%d)"
-msgstr "Tümünü güncelle (%d)"
-
-#: src/slic3r/GUI/UpdateParams.cpp:197
-msgid "No printers have been added. Add a printer before checking for updates."
-msgstr "Hiç yazıcı eklenmedi. Güncellemeleri denetlemeden önce bir yazıcı ekleyin."
-
-#: src/slic3r/GUI/UpdateParams.cpp:258
-msgid "All added printers are up to date."
-msgstr "Eklenen tüm yazıcıların ön ayarları güncel."
-
-#: src/slic3r/GUI/UpdateParams.cpp:222 src/slic3r/GUI/UpdateParams.cpp:233
-msgid "Failed to check preset updates. Please check your network and try again."
-msgstr "Ön ayar güncellemeleri denetlenemedi. Ağ bağlantınızı kontrol edip tekrar deneyin."
-
-#: src/slic3r/GUI/UpdateParams.cpp:217 src/slic3r/GUI/UpdateParams.cpp:285
-msgid "The printer list or account has changed. Please check again."
-msgstr "Yazıcı listesi veya hesap değişti. Lütfen tekrar denetleyin."
