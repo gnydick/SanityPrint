@@ -1231,20 +1231,20 @@ std::string string_printf(const char *format, ...)
 }
 std::string header_slic3r_generated2()
 {
-	return std::string("Creality_Print V" CREALITYPRINT_VERSION);
+	return std::string("Creality_Print V" SANITYPRINT_VERSION);
 }
 
-std::string header_slic3r_generated_cloud() { return std::string("Creality_Cloud_Slicer V" CREALITYPRINT_VERSION); }
+std::string header_slic3r_generated_cloud() { return std::string("Creality_Cloud_Slicer V" SANITYPRINT_VERSION); }
 
 
 std::string header_slic3r_generated()
 {
-	return std::string(SLIC3R_APP_NAME " " CREALITYPRINT_VERSION);
+	return std::string(SLIC3R_APP_NAME " " SANITYPRINT_VERSION);
 }
 
 std::string header_gcodeviewer_generated()
 {
-	return std::string(GCODEVIEWER_APP_NAME " " CREALITYPRINT_VERSION);
+	return std::string(GCODEVIEWER_APP_NAME " " SANITYPRINT_VERSION);
 }
 
 unsigned get_current_pid()

@@ -14,6 +14,8 @@
 #include "MainFrame.hpp"
 #include "WebViewDialog.hpp"
 #include "PartPlate.hpp"
+#include "FilamentSyncDialog.hpp"
+#include <wx/dcbuffer.h>
 
 #include <boost/log/trivial.hpp>
 #include <boost/log/core.hpp>
@@ -290,7 +292,7 @@ void ButtonsCtrl::SetSelection(int sel)
     if(-1!=sel && m_mapPageButtons.end() == m_mapPageButtons.find(sel))//not found
     {
         if (m_selection >= 0) {
-            wxColour   hover_bg = is_dark ? wxColour(76, 213, 130) : wxColour(68, 205, 122);
+            wxColour   hover_bg = is_dark ? wxColour(80, 160, 220) : wxColour(93, 173, 226);
             StateColor bg_color = StateColor(std::pair{hover_bg, (int) StateColor::Hovered},
                                              std::pair{is_dark ? wxColour(1, 1, 1) : wxColour(214, 214, 220), (int) StateColor::Normal});
             m_mapPageButtons[m_selection]->SetBackgroundColor(bg_color);
@@ -305,7 +307,7 @@ void ButtonsCtrl::SetSelection(int sel)
     if (-1 == sel) 
     {
         if (m_selection >= 0) {
-            wxColour   hover_bg = is_dark ? wxColour(76, 213, 130) : wxColour(68, 205, 122);
+            wxColour   hover_bg = is_dark ? wxColour(80, 160, 220) : wxColour(93, 173, 226);
             StateColor bg_color = StateColor(std::pair{hover_bg, (int) StateColor::Hovered},
                                              std::pair{is_dark ? wxColour(1, 1, 1) : wxColour(214, 214, 220), (int) StateColor::Normal});
             m_mapPageButtons[m_selection]->SetBackgroundColor(bg_color);
@@ -318,9 +320,9 @@ void ButtonsCtrl::SetSelection(int sel)
     }
 
     // BBS: change button color
-    wxColour selected_btn_bg("#009688"); // Gradient #009688
+    wxColour selected_btn_bg("#2E86C1"); // Gradient #2E86C1
     if (m_selection >= 0) {
-        wxColour   hover_bg = is_dark ? wxColour(76, 213, 130) : wxColour(68, 205, 122);
+        wxColour   hover_bg = is_dark ? wxColour(80, 160, 220) : wxColour(93, 173, 226);
         StateColor bg_color = StateColor(std::pair{hover_bg, (int) StateColor::Hovered},
                                          std::pair{is_dark ? wxColour(1, 1, 1) : wxColour(214, 214, 220), (int) StateColor::Normal});
         m_mapPageButtons[m_selection]->SetBackgroundColor(bg_color);
@@ -334,8 +336,8 @@ void ButtonsCtrl::SetSelection(int sel)
     m_mapPageButtons[m_selection]->SetSelected(true);
     ApplyButtonStyle(m_selection, true);
 
-    StateColor bg_color = StateColor(std::pair{ wxColour(68, 205, 122), (int)StateColor::Hovered },
-                                     std::pair{is_dark ? wxColour(31, 202, 99) : wxColour(21, 192, 89), (int) StateColor::Normal});
+    StateColor bg_color = StateColor(std::pair{ wxColour(93, 173, 226), (int)StateColor::Hovered },
+                                     std::pair{is_dark ? wxColour(65, 179, 224) : wxColour(52, 152, 219), (int) StateColor::Normal});
     m_mapPageButtons[m_selection]->SetBackgroundColor(bg_color);
     m_mapPageButtons[m_selection]->SetFocus();
 
@@ -371,7 +373,7 @@ void ButtonsCtrl::RefreshColor()
     wxColour default_btn_bg = Slic3r::GUI::wxGetApp().dark_mode() ? wxColour("#010101") : wxColour(214, 214, 220); // Gradient #414B4E
     SetBackgroundColour(default_btn_bg);
     for (auto& [index, button] : m_mapPageButtons) {
-        wxColour   hover_bg = is_dark ? wxColour(76, 213, 130) : wxColour(68, 205, 122);
+        wxColour   hover_bg = is_dark ? wxColour(80, 160, 220) : wxColour(93, 173, 226);
         StateColor bg_color = StateColor(std::pair{hover_bg, (int) StateColor::Hovered},
                                          std::pair{is_dark ? wxColour(1, 1, 1) : wxColour(214, 214, 220), (int) StateColor::Normal});
         button->SetCornerRadius(FromDIP(3));
@@ -382,8 +384,8 @@ void ButtonsCtrl::RefreshColor()
         if (m_selection == index)
         {
             button->SetSelected(true);
-            bg_color = StateColor(std::pair{wxColour(68, 205, 122), (int) StateColor::Hovered},
-                std::pair{is_dark ? wxColour(31, 202, 99) : wxColour(21, 192, 89), (int) StateColor::Normal});
+            bg_color = StateColor(std::pair{wxColour(93, 173, 226), (int) StateColor::Hovered},
+                std::pair{is_dark ? wxColour(65, 179, 224) : wxColour(52, 152, 219), (int) StateColor::Normal});
             button->SetBackgroundColor(bg_color);
             button->SetTextColor(DefaultTextColor(true));
         }
@@ -449,7 +451,7 @@ bool ButtonsCtrl::InsertPage(
     // BBS set size for button
     btn->SetMinSize({(text.empty() ? FromDIP(40) : FromDIP(100)), FromDIP(30)});
     bool is_dark = Slic3r::GUI::wxGetApp().dark_mode();
-    wxColour   hover_bg = is_dark ? wxColour(76, 213, 130) : wxColour(68, 205, 122);
+    wxColour   hover_bg = is_dark ? wxColour(80, 160, 220) : wxColour(93, 173, 226);
     StateColor bg_color = StateColor(std::pair{hover_bg, (int) StateColor::Hovered},
                                      std::pair{is_dark ? wxColour("1, 1, 1") : wxColour(214, 214, 220), (int) StateColor::Normal});
 
@@ -681,6 +683,7 @@ enum CUSTOM_ID
     ID_CONFIG_RELATE,
     ID_DOWNMANAGER,
     ID_LOGIN,
+    ID_FILAMENT_SYNC,
     ID_FEEDBACK_BTN,
     ID_TOP_MORE,
     ID_TOOL_BAR = 3200,
@@ -813,11 +816,12 @@ void BBLTopbarArt::DrawButton(wxDC& dc, wxWindow* wnd, const wxAuiToolBarItem& i
             (textHeight / 2);
     }
 
-    if (!(item.GetState() & wxAUI_BUTTON_STATE_DISABLED))
+    // The SP logo is purely decorative: no hover/pressed/checked highlight.
+    if (!(item.GetState() & wxAUI_BUTTON_STATE_DISABLED) && item.GetId() != ID_LOGO)
     {
         if (item.GetState() & wxAUI_BUTTON_STATE_PRESSED)
         {
-            dc.SetPen(wxPen(StateColor::darkModeColorFor("#15BF59"))); // ORCA
+            dc.SetPen(wxPen(StateColor::darkModeColorFor("#2E86C1"))); // ORCA
             dc.SetBrush(*wxTRANSPARENT_BRUSH);
             if (UPLOAD_BTN_CODE != item.GetUserData()) {
                 dc.DrawRoundedRectangle(rect, wnd->FromDIP(5));
@@ -825,13 +829,13 @@ void BBLTopbarArt::DrawButton(wxDC& dc, wxWindow* wnd, const wxAuiToolBarItem& i
         }
         else if ((item.GetState() & wxAUI_BUTTON_STATE_HOVER) || item.IsSticky())
         {
-            dc.SetPen(wxPen(StateColor::darkModeColorFor("#15BF59"))); // ORCA
+            dc.SetPen(wxPen(StateColor::darkModeColorFor("#2E86C1"))); // ORCA
             //dc.SetBrush(wxBrush(StateColor::darkModeColorFor("#009688"))); // ORCA
 
             // draw an even lighter background for checked item hovers (since
             // the hover background is the same color as the check background)
             if (item.GetState() & wxAUI_BUTTON_STATE_CHECKED)
-                dc.SetBrush(wxBrush(StateColor::darkModeColorFor("#009688"))); // ORCA
+                dc.SetBrush(wxBrush(StateColor::darkModeColorFor("#2E86C1"))); // ORCA
 
             // dc.DrawRoundedRectangle(rect, 3);
             wxGraphicsContext* gc = wxGraphicsContext::CreateFromUnknownDC(dc);
@@ -842,8 +846,7 @@ void BBLTopbarArt::DrawButton(wxDC& dc, wxWindow* wnd, const wxAuiToolBarItem& i
                 // path.AddRectangle(rect.x, rect.y, rect.width, rect.height);
                 path.AddRoundedRectangle(rect.x, rect.y, rect.width, rect.height, wnd->FromDIP(2));
 
-                // gc->SetBrush(*wxGREEN_BRUSH);
-                gc->SetPen(*wxGREEN_PEN);
+                gc->SetPen(wxPen(StateColor::darkModeColorFor("#2E86C1")));
                 gc->SetAntialiasMode(wxANTIALIAS_DEFAULT);
                 // gc->DrawRoundedRectangle(rect.x, rect.y, rect.width, rect.height, 3);
 
@@ -851,9 +854,6 @@ void BBLTopbarArt::DrawButton(wxDC& dc, wxWindow* wnd, const wxAuiToolBarItem& i
                 if (UPLOAD_BTN_CODE != item.GetUserData()) {
                     gc->StrokePath(path);
                 }
-
-                // Destroy the graphics context to free resources
-                delete gc;
             }
             else
             {
@@ -863,18 +863,20 @@ void BBLTopbarArt::DrawButton(wxDC& dc, wxWindow* wnd, const wxAuiToolBarItem& i
         else if (item.GetState() & wxAUI_BUTTON_STATE_CHECKED)
         {
             if (HOME_BTN_CODE_CHECKED == item.GetUserData()) {
-                dc.SetPen(wxPen(StateColor::darkModeColorFor("#15BF59")));     // ORCA
-                dc.SetBrush(wxBrush(StateColor::darkModeColorFor("#15BF59"))); // ORCA
+                dc.SetPen(wxPen(StateColor::darkModeColorFor("#2E86C1")));     // ORCA
+                dc.SetBrush(wxBrush(StateColor::darkModeColorFor("#2E86C1"))); // ORCA
                 dc.DrawRoundedRectangle(rect, wnd->FromDIP(5));
             } else {
                 // it's important to put this code in an else statement after the
                 // hover, otherwise hovers won't draw properly for checked items
-                dc.SetPen(wxPen(StateColor::darkModeColorFor("#009688"))); // ORCA
+                dc.SetPen(wxPen(StateColor::darkModeColorFor("#2E86C1"))); // ORCA
                 // dc.SetBrush(wxBrush(StateColor::darkModeColorFor("#009688"))); // ORCA
                 dc.DrawRectangle(rect);
             }
         }
     }
+
+    delete gc;
 
     if (bmp.IsOk())
         dc.DrawBitmap(bmp, bmpX, bmpY, true);
@@ -979,10 +981,10 @@ void BBLTopbar::Init(wxFrame* parent)
     };
     addDipSpacer(5);
 
+    // Static SP logo: purely decorative, no hover bitmap and no click handler
+    // (the Creality Cloud home screen it used to open is gone).
     wxBitmap logo_bitmap = create_scaled_bitmap("logo", this, (20));
-    wxBitmap logo_bitmap_checked = create_scaled_bitmap("logo_checked", this, (20));
     logo_item   = this->AddTool(ID_LOGO, "", logo_bitmap);
-    logo_item->SetHoverBitmap(logo_bitmap_checked);
 
     addDipSpacer(10);
     this->AddSeparator(); 
@@ -1055,7 +1057,7 @@ void BBLTopbar::Init(wxFrame* parent)
     //CX
     ButtonsCtrl* pCtr = new ButtonsCtrl(this);
     pCtr->InsertPage(MainFrame::tpAICreation, _L("AI Creation"), false, "tab_ai_creation");
-    pCtr->InsertPage(MainFrame::tpOnlineModel, _L("Online Models"), 0);
+    // "Online Models" tab removed: it opened the Creality Cloud model library.
     pCtr->InsertPage(MainFrame::tp3DEditor, _L("Prepare"), 0);
     pCtr->InsertPage(MainFrame::tpPreview, _L("Preview"), 0);
     pCtr->InsertPage(MainFrame::tpDeviceMgr, _L("Device"), 0);
@@ -1089,6 +1091,9 @@ void BBLTopbar::Init(wxFrame* parent)
 
     m_title_spacer_item = this->AddStretchSpacer(1);
 
+    // The feedback separator marks the RIGHT edge of the centered title/filename region
+    // (see GetTitleDisplayRect). It MUST come before the sync button: the title label is a floating
+    // child painted on top of the toolbar, and anything inside tab..separator gets covered by it.
     addDipSpacer(10);
     m_feedback_separator_item = this->AddSeparator();
     addDipSpacer(10);
@@ -1112,6 +1117,13 @@ void BBLTopbar::Init(wxFrame* parent)
     m_more_item = AddTool(ID_TOP_MORE, "", create_scaled_bitmap("toolbar_more", this, 20), _L("More"));
     m_more_item->SetKind(m_title_spacer_item->GetKind());
     m_more_item->SetSpacerPixels(0);
+
+    // Push-progress bar lives in a borderless child window (not a toolbar item, so it can never
+    // displace the window controls). Hidden until a sync runs.
+    m_sync_overlay = new wxWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE);
+    m_sync_overlay->SetBackgroundStyle(wxBG_STYLE_PAINT);
+    m_sync_overlay->Bind(wxEVT_PAINT, &BBLTopbar::OnSyncOverlayPaint, this);
+    m_sync_overlay->Hide();
 
 #if CUSTOM_CXCLOUD  
     //wxSize   targetSize(FromDIP(40), FromDIP(24));
@@ -1187,9 +1199,9 @@ void BBLTopbar::Init(wxFrame* parent)
     this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnUndo, this, wxID_UNDO);
     this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnModelStoreClicked, this, ID_MODEL_STORE);
     this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnPublishClicked, this, ID_PUBLISH);
+    this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnFilamentSync, this, ID_FILAMENT_SYNC);
     //this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnPreferences, this, ID_PREFERENCES);
     this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnConfigRelate, this, ID_CONFIG_RELATE);
-    this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnLogo, this, ID_LOGO);
     this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnDownMgr, this, ID_DOWNMANAGER);
     this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnLogin, this, ID_LOGIN);
 
@@ -1569,23 +1581,119 @@ void BBLTopbar::OnLogo(wxAuiToolBarEvent& evt)
 #endif
 }
 
+void BBLTopbar::OnFilamentSync(wxAuiToolBarEvent& evt)
+{
+    // Push custom filaments to the selected printers (same dialog the slice-overlay button used).
+    wxGetApp().CallAfter([]() {
+        FilamentSyncDialog dlg(wxGetApp().mainframe);
+        dlg.ShowModal();
+    });
+}
+
+// Position the push-progress overlay in the empty gap between the sync button and the window
+// controls. Computed from real tool rects so it tracks the live layout (resize / DPI).
+void BBLTopbar::layout_sync_overlay()
+{
+    if (!m_sync_overlay)
+        return;
+
+    const wxRect btn = this->GetToolRect(ID_FILAMENT_SYNC);
+    wxSizerItem* sep_item = m_feedback_separator_item ? m_feedback_separator_item->GetSizerItem() : nullptr;
+    const wxRect sep = sep_item ? sep_item->GetRect() : wxRect();
+
+    // Fail-safe: need both anchors to place the bar in the dedicated gap between them.
+    if (btn.GetWidth() <= 0 || sep.GetWidth() <= 0) {
+        m_sync_overlay->Hide();
+        return;
+    }
+
+    // Fill the dedicated gap: from just right of the separator to just left of the sync button.
+    // This can never overlap the separator, the button, or the title region (left of the separator).
+    const int pad  = FromDIP(8);
+    const int left = sep.GetRight() + pad;
+    const int w    = (btn.GetLeft() - pad) - left;
+    if (w < FromDIP(40)) { // no room
+        m_sync_overlay->Hide();
+        return;
+    }
+    const int h = FromDIP(16);
+    const int y = (this->GetSize().GetHeight() - h) / 2;
+    m_sync_overlay->SetSize(left, y, w, h);
+}
+
+void BBLTopbar::StartSyncProgress(int total)
+{
+    m_sync_active = true;
+    m_sync_total  = (total > 0) ? total : 1;
+    m_sync_done   = 0;
+    if (!m_sync_overlay)
+        return;
+    layout_sync_overlay();
+    m_sync_overlay->Show();
+    m_sync_overlay->Raise();
+    m_sync_overlay->Refresh();
+}
+
+void BBLTopbar::StepSyncProgress(int done)
+{
+    m_sync_done = done;
+    if (m_sync_overlay && m_sync_active)
+        m_sync_overlay->Refresh();
+}
+
+void BBLTopbar::FinishSyncProgress()
+{
+    m_sync_active = false;
+    if (m_sync_overlay)
+        m_sync_overlay->Hide();
+}
+
+void BBLTopbar::OnSyncOverlayPaint(wxPaintEvent& WXUNUSED(evt))
+{
+    wxAutoBufferedPaintDC dc(m_sync_overlay);
+    const wxSize sz = m_sync_overlay->GetClientSize();
+    if (sz.x <= 0 || sz.y <= 0)
+        return;
+
+    const bool     is_dark = Slic3r::GUI::wxGetApp().dark_mode();
+    const wxColour bg      = is_dark ? wxColour("#010101") : wxColour(214, 214, 220); // topbar bg
+    const wxColour track   = is_dark ? wxColour(60, 60, 68) : wxColour(196, 196, 202);
+    const wxColour fill    = wxColour(74, 144, 184);  // steel-blue, matches the device-card finish
+    const wxColour txtcol  = is_dark ? wxColour(207, 207, 210) : wxColour(60, 60, 60);
+
+    // clear to topbar background so the rounded track edges blend in
+    dc.SetPen(*wxTRANSPARENT_PEN);
+    dc.SetBrush(wxBrush(bg));
+    dc.DrawRectangle(0, 0, sz.x, sz.y);
+
+    const int radius = sz.y / 2;
+    dc.SetBrush(wxBrush(track));
+    dc.DrawRoundedRectangle(0, 0, sz.x, sz.y, radius);
+
+    double frac = (m_sync_total > 0) ? double(m_sync_done) / double(m_sync_total) : 0.0;
+    if (frac < 0.0) frac = 0.0;
+    if (frac > 1.0) frac = 1.0;
+    int fw = int(sz.x * frac);
+    if (fw > 0) {
+        if (fw < 2 * radius) fw = 2 * radius; // keep the rounded cap from collapsing
+        dc.SetBrush(wxBrush(fill));
+        dc.DrawRoundedRectangle(0, 0, fw, sz.y, radius);
+    }
+
+    wxFont f = m_sync_overlay->GetFont();
+    f.SetPointSize(8);
+    dc.SetFont(f);
+    const wxString t  = wxString::Format("%d/%d", m_sync_done, m_sync_total);
+    const wxSize   ts = dc.GetTextExtent(t);
+    dc.SetTextForeground(txtcol);
+    dc.DrawText(t, (sz.x - ts.x) / 2, (sz.y - ts.y) / 2);
+}
+
 void BBLTopbar::OnDownMgr(wxAuiToolBarEvent& evt) {}
 
 void BBLTopbar::OnLogin(wxAuiToolBarEvent& evt) {}
 
-void BBLTopbar::OnFeedback(wxAuiToolBarEvent& evt)
-{
-    AnalyticsEventPayload payload;
-    payload.type = AnalyticsDataEventType::ANALYTICS_GOTO_SUPPORT;
-    payload.data["entry"] = "toolbar";
-    AnalyticsDataUploadManager::getInstance().triggerUploadTasksWithPayload(payload);
-    AnalyticsDataUploadManager::uploadSlice822ClickEvent("user_feedback",2);
-    try {
-        wxLaunchDefaultBrowser(user_feedback_website(), wxBROWSER_NEW_WINDOW);
-    } catch (...) {
-        // Fallback: ignore errors silently
-    }
-}
+void BBLTopbar::OnFeedback(wxAuiToolBarEvent& evt) {}
 
 void BBLTopbar::SetFileMenu(wxMenu* file_menu)
 {
@@ -1758,7 +1866,6 @@ void BBLTopbar::Rescale(bool isResize) {
 #ifndef __APPLE__
     item = this->FindTool(ID_LOGO);
     item->SetBitmap(create_scaled_bitmap("logo", this, (20)));
-    item->SetHoverBitmap(create_scaled_bitmap("logo_checked", this, (20)));
     item = this->FindTool(ID_TOP_FILE_MENU);
     item->SetBitmap(create_scaled_bitmap(is_dark ? "file_down" : "file_down_light", this, (TOPBAR_ICON_SIZE)));
     item = this->FindTool(ID_TOP_DROPDOWN_MENU);
@@ -1822,19 +1929,6 @@ void BBLTopbar::Rescale(bool isResize) {
             item->SetBitmap(create_scaled_bitmap(is_dark ? "topbar_close" : "topbar_close_light", this, (TOPBAR_ICON_SIZE)));
     }
 #endif
-    // Update User Feedback button bitmaps to match current theme
-    {
-        wxAuiToolBarItem* feedback_item = this->FindTool(ID_FEEDBACK_BTN);
-        if (feedback_item) {
-            wxSize feedbackSize(FromDIP(24), FromDIP(24));
-            wxBitmap feedback_bitmap         = create_scaled_bitmap3(is_dark ? "user_feedback" : "user_feedback_light", this, (TOPBAR_ICON_SIZE), feedbackSize);
-            wxBitmap feedback_disable_bitmap = create_scaled_bitmap3("user_feedback_disable", this, (TOPBAR_ICON_SIZE), feedbackSize);
-            wxBitmap feedback_hover_bitmap   = create_scaled_bitmap3("user_feedback_hover", this, (TOPBAR_ICON_SIZE), feedbackSize);
-            feedback_item->SetBitmap(feedback_bitmap);
-            feedback_item->SetDisabledBitmap(feedback_disable_bitmap);
-            feedback_item->SetHoverBitmap(feedback_hover_bitmap);
-        }
-    }
     if (m_tabCtrol) {
         ButtonsCtrl* pCtr = dynamic_cast<ButtonsCtrl*>(m_tabCtrol);
         pCtr->RefreshColor();
@@ -2385,4 +2479,6 @@ void BBLTopbar::OnWindowResize(wxSizeEvent& event)
     event.Skip();
     UpdateResponsiveLayout(event.GetSize().GetWidth());
     ScheduleFileNameDisplayUpdate();
+    if (m_sync_active)
+        layout_sync_overlay();
 }

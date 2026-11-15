@@ -555,7 +555,7 @@ ChoosePresetDlg::ChoosePresetDlg(wxWindow* parent, const std::string& printerSet
     wxStaticText* tip = new wxStaticText(
         this,
         wxID_ANY,
-        _L("This project file is not from Creality Print. Please select the printer preset you want to use for slicing."),
+        _L("This project file is not from Sanity Print. Please select the printer preset you want to use for slicing."),
         wxDefaultPosition,
         wxSize(content_width, FromDIP(52)),
         wxST_NO_AUTORESIZE);
@@ -640,9 +640,9 @@ ChoosePresetDlg::ChoosePresetDlg(wxWindow* parent, const std::string& printerSet
     m_combo->SetToolTip(wxString::FromUTF8(m_printerPresetName));
     main_sizer->Add(m_combo, 0, wxEXPAND | wxLEFT | wxRIGHT, content_margin);
     Button* btnOk = new Button(this, _L("OK"));
-    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(21, 191, 89), StateColor::Pressed),
-                            std::pair<wxColour, int>(wxColour(21, 191, 89), StateColor::Hovered),
-                            std::pair<wxColour, int>(wxColour(21, 191, 89), StateColor::Normal));
+    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(52, 152, 219), StateColor::Pressed),
+                            std::pair<wxColour, int>(wxColour(52, 152, 219), StateColor::Hovered),
+                            std::pair<wxColour, int>(wxColour(52, 152, 219), StateColor::Normal));
 
     btnOk->SetBackgroundColor(btn_bg_green);
     btnOk->SetBorderColor(wxColour(255, 255, 255));

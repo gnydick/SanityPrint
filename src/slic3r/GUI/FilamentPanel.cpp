@@ -1572,7 +1572,7 @@ FilamentItem::FilamentItem(wxWindow* parent, const Data& data, const wxSize& siz
     std::string filament_color = m_preset_bundle->project_config.opt_string("filament_colour", (unsigned int) m_data.index);
     m_bk_color                 = Slic3r::GUI::FilamentColorAppearance::parse(filament_color);
 
-    m_checked_border_color = wxColour("#1FCA63");
+    m_checked_border_color = wxColour(93, 173, 226);
 
 	m_small_state = data.small_state;
 	wxSize sz(size);
@@ -4110,7 +4110,7 @@ void BoxColorPopPanel::OnFirstColumnButtonClicked(wxCommandEvent& event)
         }
 
         // 设置选中按钮的样式
-        button->SetBackgroundColour(wxColour(0, 225, 0)); // 设置选中按钮的背景色为绿色
+        button->SetBackgroundColour(wxColour(46, 134, 193)); // set the selected button's background color to green
         button->Refresh();
 
         // 使用 std::intptr_t 来存储指针值
@@ -4446,7 +4446,7 @@ void FilamentColorSelectionItem::OnPaint(wxPaintEvent& event)
     wxSize size = GetSize();
 
     // 绘制绿色边框
-    dc.SetPen(wxPen(wxColour(0, 255, 0), 2));  // 绿色边框，宽度为2
+    dc.SetPen(wxPen(wxColour(46, 134, 193), 2));  // green border, width 2
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
     dc.DrawRectangle(0, 0, size.GetWidth(), size.GetHeight());
 

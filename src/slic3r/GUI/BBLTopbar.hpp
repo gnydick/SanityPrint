@@ -42,6 +42,11 @@ public:
     void OnUndo(wxAuiToolBarEvent& event);
     void OnRedo(wxAuiToolBarEvent& event);
     void OnModelStoreClicked(wxAuiToolBarEvent& event);
+    void OnFilamentSync(wxAuiToolBarEvent& evt);
+    // Filament-sync push-progress bar (shown only while a sync runs).
+    void StartSyncProgress(int total);
+    void StepSyncProgress(int done);
+    void FinishSyncProgress();
     void OnPublishClicked(wxAuiToolBarEvent &event);
     void OnPreferences(wxAuiToolBarEvent& evt);
     void OnConfigRelate(wxAuiToolBarEvent& evt);
@@ -144,6 +149,15 @@ private:
     wxAuiToolBarItem* m_title_spacer_item{nullptr};
     wxControl* m_easy_mode_switch_ctrl{ nullptr };
     wxAuiToolBarItem* m_easy_mode_switch_item{ nullptr };
+    // Push-progress bar: a borderless child window painted into the empty topbar gap to the
+    // right of the sync button. It is NOT an AUI toolbar item, so it can never displace the
+    // window controls / save / undo / redo (which an AddControl'd widget did).
+    wxWindow*         m_sync_overlay = nullptr;
+    bool              m_sync_active  = false;
+    int               m_sync_total   = 0;
+    int               m_sync_done    = 0;
+    void OnSyncOverlayPaint(wxPaintEvent& evt);
+    void layout_sync_overlay();
     wxControl* m_tabCtrol;
     wxAuiToolBarItem* m_more_item{nullptr};
     std::vector<wxAuiToolBarItem*> m_action_spacer_items;

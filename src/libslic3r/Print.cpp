@@ -2410,11 +2410,11 @@ StringObjectException Print::check_multi_filament_valid(const Print& print)
 {
     const PrintConfig& print_config = print.config();
     const auto check_extruders = [&print_config](const std::vector<unsigned int>& extruders) {
-        std::vector<std::string> filament_types;
-        filament_types.reserve(extruders.size());
+        std::vector<int> filament_temp_types;
+        filament_temp_types.reserve(extruders.size());
         for (const unsigned int extruder_idx : extruders)
-            filament_types.push_back(print_config.filament_type.get_at(extruder_idx));
-        return creality::Filament::check_multi_filaments_compatibility(filament_types);
+            filament_temp_types.push_back(print_config.filament_temp_type.get_at(extruder_idx));
+        return creality::Filament::is_filaments_compatible(filament_temp_types);
     };
 
     bool compatible = true;
@@ -3240,7 +3240,7 @@ StringObjectException Print::validate(StringObjectException *warning, Polygons* 
                     warning_key = check_motion_ability_object_setting(jerk_to_check, max_jerk);
                if (!warning_key.empty()) {
                     warning->string = L(
-                        "The jerk setting exceeds the printer's maximum jerk (machine_max_jerk_x/machine_max_jerk_y).\nCrealityPrint will "
+                        "The jerk setting exceeds the printer's maximum jerk (machine_max_jerk_x/machine_max_jerk_y).\nSanityPrint will "
                         "automatically cap the jerk speed to ensure it doesn't surpass the printer's capabilities.\nYou can adjust the "
                         "maximum jerk setting in your printer's configuration to get higher speeds.");
                     warning->opt_key = warning_key;
@@ -3296,7 +3296,7 @@ StringObjectException Print::validate(StringObjectException *warning, Polygons* 
                warning_key = check_acceleration_setting(m_default_object_config, accel_to_check, max_accel, extruders);
                if (!warning_key.empty()) {
                     warning->string  = L("The acceleration setting exceeds the printer's maximum acceleration "
-                                          "(machine_max_acceleration_extruding).\nCrealityPrint will "
+                                          "(machine_max_acceleration_extruding).\nSanityPrint will "
                                           "automatically cap the acceleration speed to ensure it doesn't surpass the printer's "
                                           "capabilities.\nYou can adjust the "
                                           "machine_max_acceleration_extruding value in your printer's configuration to get higher speeds.");
@@ -3312,7 +3312,7 @@ StringObjectException Print::validate(StringObjectException *warning, Polygons* 
                         if (!warning_key.empty()) {
                             warning->string = L(
                                 "The travel acceleration setting exceeds the printer's maximum travel acceleration "
-                                "(machine_max_acceleration_travel).\nCrealityPrint will "
+                                "(machine_max_acceleration_travel).\nSanityPrint will "
                                 "automatically cap the travel acceleration speed to ensure it doesn't surpass the printer's "
                                 "capabilities.\nYou can adjust the "
                                 "machine_max_acceleration_travel value in your printer's configuration to get higher speeds.");
@@ -3360,7 +3360,7 @@ StringObjectException Print::validate(StringObjectException *warning, Polygons* 
                         }
                         if (!over_key.empty()) {
                             warning->string  = L("The acceleration setting exceeds the printer's maximum acceleration "
-                                                  "(machine_max_acceleration_extruding).\nCrealityPrint will "
+                                                  "(machine_max_acceleration_extruding).\nSanityPrint will "
                                                   "automatically cap the acceleration speed to ensure it doesn't surpass the printer's "
                                                   "capabilities.\nYou can adjust the "
                                                   "machine_max_acceleration_extruding value in your printer's configuration to get higher speeds.");
@@ -3373,7 +3373,7 @@ StringObjectException Print::validate(StringObjectException *warning, Polygons* 
                             if (limit_travel > 0 && !check_acceleration_setting(ocfg, {"travel_acceleration"}, limit_travel, object_filaments).empty()) {
                                 warning->string  = L(
                                     "The travel acceleration setting exceeds the printer's maximum travel acceleration "
-                                    "(machine_max_acceleration_travel).\nCrealityPrint will "
+                                    "(machine_max_acceleration_travel).\nSanityPrint will "
                                     "automatically cap the travel acceleration speed to ensure it doesn't surpass the printer's "
                                     "capabilities.\nYou can adjust the "
                                     "machine_max_acceleration_travel value in your printer's configuration to get higher speeds.");

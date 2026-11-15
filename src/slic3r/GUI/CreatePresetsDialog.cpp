@@ -20,6 +20,7 @@
 #include "MainFrame.hpp"
 #include "libslic3r_version.h"
 #include "libslic3r/common_header/common_header.h"
+#include "libslic3r/MaterialBehavior.hpp"
 #include "slic3r/GUI/PresetComboBoxes.hpp"
 #include "libslic3r/Time.hpp"
 #include <filesystem>
@@ -38,7 +39,7 @@
 #define STATIC_TEXT_COLOUR wxColour("#363636")
 #define PRINTER_LIST_COLOUR wxColour("#EEEEEE")
 #define FILAMENT_OPTION_COLOUR wxColour("#D9D9D9")
-#define SELECT_ALL_OPTION_COLOUR wxColour("#009688")
+#define SELECT_ALL_OPTION_COLOUR wxColour("#2E86C1")
 #define DEFAULT_PROMPT_TEXT_COLOUR wxColour("#ACACAC")
 
 namespace Slic3r { 
@@ -75,7 +76,7 @@ static const std::vector<std::string> printer_vendors =
     {"Anker",              "Anycubic",           "Artillery",          "Bambulab",           "BIQU",
      "Comgrow",            "Creality ENDER",      "Creality CR",    "Creality SERMOON",      "Custom Printer",     "Elegoo",             "Flashforge",
      "FLSun",              "FlyingBear",         "Folgertech",         "InfiMech",           "Kingroon",
-     "CrealityPrint Arena Printer", "Peopoly",            "Prusa",              "Qidi",               "Raise3D",
+     "SanityPrint Arena Printer", "Peopoly",            "Prusa",              "Qidi",               "Raise3D",
      "RatRig",             "SecKit",             "Snapmaker",          "Sovol",              "Tronxy",
      "TwoTrees",           "UltiMaker",          "Vivedino",           "Voron",              "Voxelab",
      "Vzbot",              "Wanhao",            "Morandi"};
@@ -371,6 +372,8 @@ static std::string get_machine_model(const std::string &preset_model)
  static wxBoxSizer *create_select_filament_preset_checkbox(wxWindow *                                    parent,
                                                            std::string &                                 compatible_printer,
                                                            std::vector<Preset *>                         presets,
+                                                           std::vector<Preset *>                         template_presets,
+                                                           const std::string &                           selected_filament_type,
                                                            std::unordered_map<::CheckBox *, std::pair<std::string, Preset *>> &machine_filament_preset)
  {
 
@@ -401,12 +404,21 @@ static std::string get_machine_model(const std::string &preset_model)
      std::string sModel = get_machine_model(compatible_printer);
      wxStaticText *machine_name_str = new wxStaticText(parent, wxID_ANY, wxString::FromUTF8(sModel));
      ComboBox *    combobox        = new ComboBox(parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(200, 20), 0, nullptr, wxCB_READONLY);
+     // Parallel to the combobox rows; nullptr marks an unselectable section delimiter.
+     auto row_presets    = std::make_shared<std::vector<Preset *>>();
+     auto last_valid_row = std::make_shared<int>(0);
      wxArrayString choices;
-     std::vector<Preset*> choice_presets;
-     auto add_filament_choice = [&choices, &choice_presets](Preset* preset) {
-         choices.Add(from_u8(MaterialListManager::instance().display_name_with_material_alias(*preset, true)));
-         choice_presets.push_back(preset);
+     auto add_row = [&choices, &row_presets](const wxString &label, Preset *preset) {
+         choices.Add(label);
+         row_presets->push_back(preset);
      };
+     auto add_filament_choice = [&add_row](Preset* preset) {
+         add_row(from_u8(MaterialListManager::instance().display_name_with_material_alias(*preset, true)), preset);
+     };
+     add_row(_L("------- Templates -------"), nullptr);
+     for (Preset *preset : template_presets)
+         add_row(wxString::FromUTF8(preset->name), preset);
+     add_row(_L("------- Existing presets -------"), nullptr);
 
      // Put user presets first.
      for (Preset* preset : presets) {
@@ -418,9 +430,9 @@ static std::string get_machine_model(const std::string &preset_model)
              add_filament_choice(preset);
      }
 
-     auto preset_from_combobox_selection = [combobox, choice_presets]() -> Preset* {
+     auto preset_from_combobox_selection = [combobox, row_presets]() -> Preset* {
          int selection = combobox->GetSelection();
-         return selection >= 0 && size_t(selection) < choice_presets.size() ? choice_presets[size_t(selection)] : nullptr;
+         return selection >= 0 && size_t(selection) < row_presets->size() ? (*row_presets)[size_t(selection)] : nullptr;
      };
 
      ::CheckBox* checkbox = new ::CheckBox(parent);
@@ -445,7 +457,12 @@ static std::string get_machine_model(const std::string &preset_model)
      combobox->SetBackgroundColor(*wxWHITE);
      combobox->SetBorderColor(PRINTER_LIST_COLOUR);
      combobox->SetLabel(_L("Select filament preset"));
-     combobox->Bind(wxEVT_COMBOBOX, [combobox, checkbox, preset_from_combobox_selection, &machine_filament_preset, compatible_printer](wxCommandEvent& e) {
+     combobox->Bind(wxEVT_COMBOBOX, [combobox, checkbox, preset_from_combobox_selection, last_valid_row, &machine_filament_preset, compatible_printer](wxCommandEvent& e) {
+         if (preset_from_combobox_selection() == nullptr) {
+             combobox->SetSelection(*last_valid_row); // delimiter rows are not selectable
+             return;
+         }
+         *last_valid_row = combobox->GetSelection();
          combobox->SetLabelColor(*wxBLACK);
          checkbox->SetValue(true);
          if (Preset* preset = preset_from_combobox_selection())
@@ -461,10 +478,26 @@ static std::string get_machine_model(const std::string &preset_model)
      combobox->Set(choices);
      for (unsigned int i = 0; i < choices.size(); ++i)
          combobox->SetItemTooltip(i, choices[i]);
-     if (choices.size()) {
-         combobox->SetSelection(0);
-         combobox->SetToolTip(choices[0]);
-     }
+
+     // Default: first existing preset matching the selected filament type, then a
+     // matching template, then the first selectable row.
+     auto type_of = [](Preset *preset) -> std::string {
+         auto *types = dynamic_cast<const ConfigOptionStrings *>(preset->config.option("filament_type"));
+         return (types && !types->values.empty()) ? types->values[0] : std::string();
+     };
+     int default_row = -1;
+     for (int i = (int) template_presets.size() + 2; i < (int) row_presets->size(); ++i)
+         if ((*row_presets)[i] && type_of((*row_presets)[i]) == selected_filament_type) { default_row = i; break; }
+     if (default_row < 0)
+         for (int i = 1; i <= (int) template_presets.size(); ++i)
+             if (type_of((*row_presets)[i]) == selected_filament_type) { default_row = i; break; }
+     if (default_row < 0)
+         for (int i = 0; i < (int) row_presets->size(); ++i)
+             if ((*row_presets)[i]) { default_row = i; break; }
+     combobox->SetSelection(default_row);
+     *last_valid_row = default_row;
+     if (default_row >= 0)
+         combobox->SetToolTip(choices[default_row]);
 
      //wxPanel* panel = new wxPanel(parent, wxID_ANY,wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL|wxBORDER_SIMPLE);
      wxPanel* panel = new wxPanel(parent, wxID_ANY,wxDefaultPosition, wxDefaultSize);
@@ -520,6 +553,23 @@ static std::string calculate_md5(const std::string &input)
 
     md5 = std::string(hexDigest);
     return md5;
+}
+
+// Mint a 5-char uppercase [A-Z0-9] id from a seed string, so user filament ids
+// fit the 5-char K2/CFS material-code namespace and are RFID-encodable. Using
+// the full alphanumeric alphabet across all positions spreads mints across 36^5
+// values, avoiding the Polymaker "P####" collision that the prior "P"+md5 scheme
+// caused (it funneled every mint into Polymaker's letter namespace).
+static std::string mint_filament_id(const std::string &seed)
+{
+    static const char *kAlphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    std::string        hex       = calculate_md5(seed); // 32 lowercase hex chars
+    std::string        id;
+    for (int i = 0; i < 5; ++i) {
+        unsigned int byte = static_cast<unsigned int>(std::stoul(hex.substr(i * 2, 2), nullptr, 16));
+        id += kAlphabet[byte % 36];
+    }
+    return id;
 }
 
 static std::string get_filament_id(std::string vendor_typr_serial)
@@ -593,7 +643,7 @@ static std::string get_filament_id(std::string vendor_typr_serial)
         }
     }
 
-    std::string user_filament_id = "P" + calculate_md5(vendor_typr_serial).substr(0, 7);
+    std::string user_filament_id = mint_filament_id(vendor_typr_serial);
 
     while (filament_id_to_filament_name.find(user_filament_id) != filament_id_to_filament_name.end()) {//find same filament id
         bool have_same_filament_name = false;
@@ -607,7 +657,7 @@ static std::string get_filament_id(std::string vendor_typr_serial)
             break;
         }
         else { //Different names correspond to the same filament id
-            user_filament_id = "P" + calculate_md5(vendor_typr_serial + get_curr_time()).substr(0, 7);
+            user_filament_id = mint_filament_id(vendor_typr_serial + get_curr_time());
         }
     }
     BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << " filament name is: " << vendor_typr_serial << "and create filament_id is: " << user_filament_id;
@@ -789,6 +839,13 @@ CreateFilamentPresetDialog::~CreateFilamentPresetDialog()
             p = nullptr;
         }
     }
+    for (std::pair<std::string, Preset *> preset : m_template_presets) {
+        Preset *p = preset.second;
+        if (p) {
+            delete p;
+            p = nullptr;
+        }
+    }
 }
 
 void CreateFilamentPresetDialog::on_dpi_changed(const wxRect &suggested_rect) {
@@ -930,7 +987,10 @@ wxBoxSizer *CreateFilamentPresetDialog::create_type_item()
     filament_type.Sort();
 
     wxBoxSizer *comboBoxSizer = new wxBoxSizer(wxVERTICAL);
-    m_filament_type_combobox  = new ComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, NAME_OPTION_COMBOBOX_SIZE, 0, nullptr, wxCB_READONLY);
+    // Editable (no wxCB_READONLY): the listed system types are suggestions, but the user may type
+    // an arbitrary custom type name. The typed value flows through GetLabel() to the saved
+    // filament_type; behavior comes from the per-preset material fields, seeded at save time.
+    m_filament_type_combobox  = new ComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, NAME_OPTION_COMBOBOX_SIZE, 0, nullptr, 0);
     m_filament_type_combobox->SetLabel(_L("Select Type"));
     m_filament_type_combobox->SetLabelColor(DEFAULT_PROMPT_TEXT_COLOUR);
     m_filament_type_combobox->Set(filament_type);
@@ -953,6 +1013,26 @@ wxBoxSizer *CreateFilamentPresetDialog::create_type_item()
         m_scrolled_preset_panel->SetSizerAndFit(m_scrolled_sizer);
 
         update_dialog_size();
+        e.Skip();
+    });
+
+    // The combobox is editable: when the user types a custom type, re-run the same refresh
+    // as a dropdown selection so the clone-source and printer lists update for the typed
+    // type. Trigger on Enter and on focus leaving the field (typing alone fires no
+    // wxEVT_COMBOBOX, which used to leave the printer panel empty).
+    auto refresh_for_typed_type = [this]() {
+        if (m_filament_type_combobox->GetLabel().IsEmpty() || m_filament_type_combobox->GetLabel() == _L("Select Type"))
+            return;
+        wxCommandEvent evt(wxEVT_COMBOBOX, m_filament_type_combobox->GetId());
+        evt.SetEventObject(m_filament_type_combobox);
+        m_filament_type_combobox->GetEventHandler()->ProcessEvent(evt);
+    };
+    m_filament_type_combobox->GetTextCtrl()->Bind(wxEVT_TEXT_ENTER, [refresh_for_typed_type](wxCommandEvent &e) {
+        refresh_for_typed_type();
+        e.Skip();
+    });
+    m_filament_type_combobox->GetTextCtrl()->Bind(wxEVT_KILL_FOCUS, [refresh_for_typed_type](wxFocusEvent &e) {
+        refresh_for_typed_type();
         e.Skip();
     });
 
@@ -1090,8 +1170,8 @@ wxBoxSizer *CreateFilamentPresetDialog::create_button_item()
     wxBoxSizer *bSizer_button = new wxBoxSizer(wxHORIZONTAL);
     bSizer_button->Add(0, 0, 1, wxEXPAND, 0);
 
-    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(0, 137, 123), StateColor::Pressed), std::pair<wxColour, int>(wxColour(38, 166, 154), StateColor::Hovered),
-                            std::pair<wxColour, int>(wxColour(0, 150, 136), StateColor::Normal));
+    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(26, 111, 163), StateColor::Pressed), std::pair<wxColour, int>(wxColour(93, 173, 226), StateColor::Hovered),
+                            std::pair<wxColour, int>(wxColour(46, 134, 193), StateColor::Normal));
 
     m_button_create = new Button(this, _L("Create"));
     m_button_create->SetBackgroundColor(btn_bg_green);
@@ -1199,6 +1279,23 @@ wxBoxSizer *CreateFilamentPresetDialog::create_button_item()
 
         std::string user_filament_id     = get_filament_id(filament_preset_name);
 
+        // Seed the parameterized material behavior fields from the chosen type so a
+        // cross-type clone (e.g. PLA seed for a TPU filament) starts with sensible
+        // values. Tables live in resources/profiles_template/material_behavior.json
+        // (shared with the GUI_App user-preset migration and
+        // scripts/migrate_builtin_filament_profiles.py); every field stays editable
+        // in the filament editor afterwards.
+        auto seed_material_behavior = [](DynamicConfig &cfg, const std::string &ft) {
+            cfg.set_key_value("filament_temp_type", new ConfigOptionInts({(int) MaterialBehavior::lookup("temp_type", ft, 3)}));
+            cfg.set_key_value("filament_cooling_smart_zone", new ConfigOptionBools({MaterialBehavior::contains("cooling_smart_zone_types", ft)}));
+            cfg.set_key_value("filament_bed_adhesion_strength", new ConfigOptionFloats({MaterialBehavior::lookup("bed_adhesion", ft, 0.02)}));
+            cfg.set_key_value("filament_thermal_length", new ConfigOptionFloats({MaterialBehavior::lookup("thermal_length", ft, 200.0)}));
+            cfg.set_key_value("filament_brim_adhesion_coeff", new ConfigOptionFloats({MaterialBehavior::lookup("brim_adhesion_coeff", ft, 1.0)}));
+            cfg.set_key_value("filament_small_island_threshold", new ConfigOptionFloats({MaterialBehavior::lookup("small_island_threshold", ft, 10.0)}));
+            cfg.set_key_value("filament_chamber_temp_limit", new ConfigOptionInts({(int) MaterialBehavior::lookup("chamber_temp_limit", ft, 0)}));
+            cfg.set_key_value("filament_is_flexible", new ConfigOptionBools({MaterialBehavior::contains("flexible_types", ft)}));
+        };
+
         const wxString &curr_create_type = curr_create_filament_type();
         
         if (curr_create_type == m_create_type.base_filament) {
@@ -1212,6 +1309,7 @@ wxBoxSizer *CreateFilamentPresetDialog::create_button_item()
                     dynamic_config.set_key_value("filament_vendor", new ConfigOptionStrings({vendor_name}));
                     dynamic_config.set_key_value("compatible_printers", new ConfigOptionStrings({compatible_printer_name}));
                     dynamic_config.set_key_value("filament_type", new ConfigOptionStrings({type_name}));
+                    seed_material_behavior(dynamic_config, type_name);
                     bool res = preset_bundle->filaments.clone_presets_for_filament(checked_preset, failures, filament_preset_name, user_filament_id, dynamic_config,
                                                                                    compatible_printer_name);
                     if (!res) {
@@ -1239,6 +1337,7 @@ wxBoxSizer *CreateFilamentPresetDialog::create_button_item()
                     dynamic_config.set_key_value("filament_vendor", new ConfigOptionStrings({vendor_name}));
                     dynamic_config.set_key_value("compatible_printers", new ConfigOptionStrings({compatible_printer_name}));
                     dynamic_config.set_key_value("filament_type", new ConfigOptionStrings({type_name}));
+                    seed_material_behavior(dynamic_config, type_name);
                     bool res = preset_bundle->filaments.clone_presets_for_filament(checked_preset, failures, filament_preset_name, user_filament_id, dynamic_config,
                                                                                    compatible_printer_name);
                     if (!res) {
@@ -1293,7 +1392,9 @@ wxArrayString CreateFilamentPresetDialog::get_filament_preset_choices()
     } else {
         type_name = into_u8(type_str);
     }
-
+    // Plain many-to-many: any base filament preset can serve as the clone source,
+    // including for custom type names that no existing preset declares. The chosen
+    // type and its behavior defaults are stamped onto the clone at save time.
     for (std::pair<std::string, Preset*> filament_presets : m_all_presets_map) {
         Preset *preset = filament_presets.second;
         auto    inherit = preset->config.option<ConfigOptionString>("inherits");
@@ -1302,7 +1403,7 @@ wxArrayString CreateFilamentPresetDialog::get_filament_preset_choices()
             continue;
         }
         auto fila_type = preset->config.option<ConfigOptionStrings>("filament_type");
-        if (!fila_type || fila_type->values.empty() || type_name != fila_type->values[0]) continue;
+        if (!fila_type || fila_type->values.empty()) continue;
         m_filament_choice_map[preset->filament_id].push_back(preset);
         BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << " base user preset is:" << preset->name;
     }
@@ -1421,10 +1522,10 @@ void CreateFilamentPresetDialog::get_filament_presets_by_machine()
     } else {
         type_name = into_u8(type_str);
     }
-    
+    const std::string filament_base = into_u8(m_filament_type_combobox->GetLabel());
+
     std::unordered_map<std::string, float>                 nozzle_diameter = nozzle_diameter_map;
     std::unordered_map<std::string, std::vector<Preset *>> machine_name_to_presets;
-    PresetBundle *                                         preset_bundle = wxGetApp().preset_bundle;
     for (std::pair<std::string, Preset*> filament_preset : m_all_presets_map) {
         Preset *    preset      = filament_preset.second;
         auto    compatible_printers = preset->config.option<ConfigOptionStrings>("compatible_printers", true);
@@ -1437,25 +1538,9 @@ void CreateFilamentPresetDialog::get_filament_presets_by_machine()
                 BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << " compatable printer is not visible and preset name is: " << preset->name;
                 continue;
             }
-            Preset *             inherit_preset = nullptr;
-            auto inherit = dynamic_cast<ConfigOptionString*>(preset->config.option(BBL_JSON_KEY_INHERITS,false));
-            if (inherit && !inherit->value.empty()) {
-                std::string inherits_value = inherit->value;
-                inherit_preset             = preset_bundle->filaments.find_preset(inherits_value, false, true);
-            }
-            ConfigOptionStrings *filament_types;
-            if (!inherit_preset) {
-                filament_types = dynamic_cast<ConfigOptionStrings *>(preset->config.option("filament_type"));
-            } else {
-                filament_types = dynamic_cast<ConfigOptionStrings *>(inherit_preset->config.option("filament_type"));
-            }
-
-            if (filament_types && filament_types->values.empty()) continue;
-            const std::string filament_type = filament_types->values[0];
-            if (filament_type != type_name) {
-                BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << " preset type is not selected type and preset name is: " << preset->name;
-                continue;
-            }
+            // Printer-filament association is a plain many-to-many: every visible
+            // printer is offered regardless of the selected filament type. The type
+            // only influences which preset seeds the clone (see sort below).
             std::string nozzle = get_printer_nozzle_diameter(compatible_printer_name);
             if (nozzle_diameter[nozzle] == 0) {
                 BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << " compatible printer nozzle encounter exception and name is: " << compatible_printer_name;
@@ -1464,16 +1549,42 @@ void CreateFilamentPresetDialog::get_filament_presets_by_machine()
             machine_name_to_presets[compatible_printer_name].push_back(preset);
         }
     }
+    // Prefer presets whose filament_type matches the selected type as the clone
+    // seed; any preset works, the match just gives more sensible starting values.
+    auto preset_type_matches = [&filament_base](const Preset* preset) {
+        const auto* types = dynamic_cast<const ConfigOptionStrings*>(preset->config.option("filament_type"));
+        return types && !types->values.empty() && types->values[0] == filament_base;
+    };
+    for (auto& machine_filament_presets : machine_name_to_presets) {
+        std::stable_sort(machine_filament_presets.second.begin(), machine_filament_presets.second.end(),
+                         [&preset_type_matches](const Preset* a, const Preset* b) {
+                             return preset_type_matches(a) && !preset_type_matches(b);
+                         });
+    }
+
     std::vector<std::pair<std::string, std::vector<Preset *>>> printer_name_to_filament_presets;
     for (std::pair<std::string, std::vector<Preset *>> machine_filament_presets : machine_name_to_presets) {
         printer_name_to_filament_presets.push_back(machine_filament_presets);
     }
     sort_printer_by_nozzle(printer_name_to_filament_presets);
+
+    // Templates: same list for every printer, sorted by filament type A->Z, then name.
+    std::vector<Preset *> sorted_templates;
+    for (auto &template_entry : m_template_presets) sorted_templates.push_back(template_entry.second);
+    auto template_type = [](Preset *preset) -> std::string {
+        auto *types = dynamic_cast<const ConfigOptionStrings *>(preset->config.option("filament_type"));
+        return (types && !types->values.empty()) ? types->values[0] : std::string();
+    };
+    std::sort(sorted_templates.begin(), sorted_templates.end(), [&template_type](Preset *a, Preset *b) {
+        std::string ta = template_type(a), tb = template_type(b);
+        return ta != tb ? ta < tb : a->name < b->name;
+    });
+
     m_filament_preset_panel->Freeze();
     for (std::pair<std::string, std::vector<Preset *>> machine_filament_presets : printer_name_to_filament_presets) {
         std::string            compatible_printer = machine_filament_presets.first;
         std::vector<Preset *> &presets      = machine_filament_presets.second;
-        m_filament_presets_sizer->Add(create_select_filament_preset_checkbox(m_filament_preset_panel, compatible_printer, presets, m_machint_filament_preset), 0, wxEXPAND | wxALL, FromDIP(5));
+        m_filament_presets_sizer->Add(create_select_filament_preset_checkbox(m_filament_preset_panel, compatible_printer, presets, sorted_templates, type_name, m_machint_filament_preset), 0, wxEXPAND | wxALL, FromDIP(5));
     }
     m_filament_preset_panel->Thaw();
 }
@@ -1509,6 +1620,17 @@ void CreateFilamentPresetDialog::get_all_filament_presets()
         Preset *filament_preset                 = new Preset(preset);
         m_all_presets_map[filament_preset_name] = filament_preset;
         BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << " loaded preset name is: " << filament_preset->name;
+    }
+
+    // Template-vendor base filaments: id-less and invisible, so the loops above
+    // skip them. Collect them separately and let them extend the type list —
+    // authoring a template for a new material makes that type selectable.
+    for (const Preset &preset : preset_bundle->filaments.get_presets()) {
+        if (!preset.is_system || !preset.vendor || preset.vendor->id != PRESET_TEMPLATE_DIR) continue;
+        auto *filament_types = preset.config.option<ConfigOptionStrings>("filament_type");
+        if (filament_types && !filament_types->values.empty())
+            m_system_filament_types_set.insert(filament_types->values[0]);
+        m_template_presets[preset.name] = new Preset(preset);
     }
 }
 
@@ -2687,7 +2809,7 @@ wxBoxSizer *CreatePrinterPresetDialog::create_hot_bed_stl_item(wxWindow *parent)
     StateColor flush_bg_col(std::pair<wxColour, int>(wxColour(219, 253, 231), StateColor::Pressed), std::pair<wxColour, int>(wxColour(238, 238, 238), StateColor::Hovered),
                             std::pair<wxColour, int>(wxColour(238, 238, 238), StateColor::Normal));
 
-    StateColor flush_bd_col(std::pair<wxColour, int>(wxColour(0, 150, 136), StateColor::Pressed), std::pair<wxColour, int>(wxColour(0, 150, 136), StateColor::Hovered),
+    StateColor flush_bd_col(std::pair<wxColour, int>(wxColour(46, 134, 193), StateColor::Pressed), std::pair<wxColour, int>(wxColour(46, 134, 193), StateColor::Hovered),
                             std::pair<wxColour, int>(wxColour(172, 172, 172), StateColor::Normal));
 
     m_button_bed_stl = new Button(parent, _L("Load stl"));
@@ -2724,7 +2846,7 @@ wxBoxSizer *CreatePrinterPresetDialog::create_hot_bed_svg_item(wxWindow *parent)
     StateColor flush_bg_col(std::pair<wxColour, int>(wxColour(219, 253, 231), StateColor::Pressed), std::pair<wxColour, int>(wxColour(238, 238, 238), StateColor::Hovered),
                             std::pair<wxColour, int>(wxColour(238, 238, 238), StateColor::Normal));
 
-    StateColor flush_bd_col(std::pair<wxColour, int>(wxColour(0, 150, 136), StateColor::Pressed), std::pair<wxColour, int>(wxColour(0, 150, 136), StateColor::Hovered),
+    StateColor flush_bd_col(std::pair<wxColour, int>(wxColour(46, 134, 193), StateColor::Pressed), std::pair<wxColour, int>(wxColour(46, 134, 193), StateColor::Hovered),
                             std::pair<wxColour, int>(wxColour(172, 172, 172), StateColor::Normal));
 
     m_button_bed_svg = new Button(parent, _L("Load svg"));
@@ -2833,8 +2955,8 @@ wxBoxSizer *CreatePrinterPresetDialog::create_page1_btns_item(wxWindow *parent)
     wxBoxSizer *bSizer_button = new wxBoxSizer(wxHORIZONTAL);
     bSizer_button->Add(0, 0, 1, wxEXPAND, 0);
 
-    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(0, 137, 123), StateColor::Pressed), std::pair<wxColour, int>(wxColour(38, 166, 154), StateColor::Hovered),
-                            std::pair<wxColour, int>(wxColour(0, 150, 136), StateColor::Normal));
+    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(26, 111, 163), StateColor::Pressed), std::pair<wxColour, int>(wxColour(93, 173, 226), StateColor::Hovered),
+                            std::pair<wxColour, int>(wxColour(46, 134, 193), StateColor::Normal));
 
     m_button_OK = new Button(parent, _L("OK"));
     m_button_OK->SetBackgroundColor(btn_bg_green);
@@ -3463,8 +3585,8 @@ wxBoxSizer *CreatePrinterPresetDialog::create_page2_btns_item(wxWindow *parent)
     wxBoxSizer *bSizer_button = new wxBoxSizer(wxHORIZONTAL);
     bSizer_button->Add(0, 0, 1, wxEXPAND, 0);
 
-    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(0, 137, 123), StateColor::Pressed), std::pair<wxColour, int>(wxColour(38, 166, 154), StateColor::Hovered),
-                            std::pair<wxColour, int>(wxColour(0, 150, 136), StateColor::Normal));
+    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(26, 111, 163), StateColor::Pressed), std::pair<wxColour, int>(wxColour(93, 173, 226), StateColor::Hovered),
+                            std::pair<wxColour, int>(wxColour(46, 134, 193), StateColor::Normal));
 
     StateColor btn_bg_white(std::pair<wxColour, int>(wxColour(206, 206, 206), StateColor::Pressed), std::pair<wxColour, int>(wxColour(238, 238, 238), StateColor::Hovered),
                             std::pair<wxColour, int>(*wxWHITE, StateColor::Normal));
@@ -4722,8 +4844,8 @@ CreatePresetSuccessfulDialog::CreatePresetSuccessfulDialog(wxWindow *parent, con
     case FILAMENT: m_button_ok = sync_user_preset_need_enabled ? new Button(this, _L("Sync user presets")) : new Button(this, _L("OK"));
         break;
     }
-    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(0, 137, 123), StateColor::Pressed), std::pair<wxColour, int>(wxColour(38, 166, 154), StateColor::Hovered),
-                            std::pair<wxColour, int>(wxColour(0, 150, 136), StateColor::Normal));
+    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(26, 111, 163), StateColor::Pressed), std::pair<wxColour, int>(wxColour(93, 173, 226), StateColor::Hovered),
+                            std::pair<wxColour, int>(wxColour(46, 134, 193), StateColor::Normal));
 
     StateColor btn_bg_white(std::pair<wxColour, int>(wxColour(206, 206, 206), StateColor::Pressed), std::pair<wxColour, int>(wxColour(238, 238, 238), StateColor::Hovered),
                             std::pair<wxColour, int>(*wxWHITE, StateColor::Normal));
@@ -4834,7 +4956,7 @@ int ParamCheckbox::s_proportion = 1;
 ParamCheckbox::ParamCheckbox(wxWindow* parent, Preset* preset) : wxPanel(parent, wxID_ANY)
 {
     this->SetMinSize(wxSize(FromDIP(124), FromDIP(48)));
-    this->SetBackgroundColour(wxColour("#18CC5C"));
+    this->SetBackgroundColour(wxColour("#2E86C1"));
     wxBoxSizer* mainBoxSize = new wxBoxSizer(wxHORIZONTAL);
     this->SetSizer(mainBoxSize);
     ::CheckBox* checkbox = new ::CheckBox(this);
@@ -4935,9 +5057,9 @@ public:
             m_bkColour = this->GetBackgroundColour();
             memDC.SetBrush(wxBrush(m_bkColour, wxBRUSHSTYLE_SOLID));
             if (m_bHoved || m_bSelected)
-                memDC.SetPen(wxPen(wxColour("#17CC5F"), 1, wxPENSTYLE_SOLID));
+                memDC.SetPen(wxPen(wxColour("#3498DB"), 1, wxPENSTYLE_SOLID));
             else
-                memDC.SetPen(wxPen(wxColour("#17CC5F"), 1, wxTRANSPARENT));
+                memDC.SetPen(wxPen(wxColour("#3498DB"), 1, wxTRANSPARENT));
             memDC.DrawRectangle(wxRect(0, 0, width, height));
 
             // 画checkbox
@@ -4948,7 +5070,7 @@ public:
                         gc->SetPen(wxPen(wxColour("#6E6E72"), 1, wxPENSTYLE_SOLID));
                         gc->DrawRoundedRectangle(m_rtCheckbox.x, m_rtCheckbox.y, m_rtCheckbox.width, m_rtCheckbox.height, m_round);
                     } else if (m_state == 1) {
-                        gc->SetBrush(wxBrush(wxColour("#17CC5F"), wxBRUSHSTYLE_SOLID));
+                        gc->SetBrush(wxBrush(wxColour("#3498DB"), wxBRUSHSTYLE_SOLID));
                         gc->DrawRoundedRectangle(m_rtCheckbox.x, m_rtCheckbox.y, m_rtCheckbox.width, m_rtCheckbox.height, m_round);
                         gc->SetPen(wxPen(wxColour("#FFFFFF"), 2, wxPENSTYLE_SOLID));
                         wxPoint2DDouble points[3] = {{m_rtCheckbox.x + 3.007, m_rtCheckbox.y + 7.147},
@@ -4962,7 +5084,7 @@ public:
                 if (m_state == 0) {
                     memDC.SetPen(wxPen(wxColour("#6E6E72"), 2, wxPENSTYLE_SOLID));
                 } else if (m_state == 1) {
-                    memDC.SetBrush(wxBrush(wxColour("#17CC5F"), wxBRUSHSTYLE_SOLID));
+                    memDC.SetBrush(wxBrush(wxColour("#3498DB"), wxBRUSHSTYLE_SOLID));
                 }
                 memDC.DrawRectangle(m_rtCheckbox);
             }
@@ -4970,7 +5092,7 @@ public:
             //wxFont font(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
             //memDC.SetFont(font);
             if (m_state == 1) {
-                memDC.SetTextForeground(wxColour("#17CC5F"));
+                memDC.SetTextForeground(wxColour("#3498DB"));
             } else {
                 memDC.SetTextForeground(export_text_colour());
             }
@@ -5995,7 +6117,7 @@ void ExportRightPanel::setExportBtnState(bool bCanExport)
 {
     if (bCanExport) {
         m_bCanExport = true;
-        m_pBtnExport->SetBackgroundColor(wxColour("#18CC5C"));
+        m_pBtnExport->SetBackgroundColor(wxColour("#2E86C1"));
         m_pBtnExport->SetTextColor(*wxWHITE);
 
     } else {
@@ -6015,7 +6137,7 @@ ExportConfigsDialog::ExportConfigsDialog(wxWindow* parent, const wxString& expor
     : DPIDialog(parent ? parent : nullptr, wxID_ANY, _L("Export Preset Bundle"), wxDefaultPosition, wxDefaultSize, wxCAPTION | wxCLOSE_BOX)
     , m_cur_export_type(export_type)
 {
-    m_exprot_type.preset_bundle   = _L("Printer config bundle(.creality_printer)");
+    m_exprot_type.preset_bundle   = _L("Printer config bundle(.sanity_printer)");
     m_exprot_type.filament_bundle = _L("Filament bundle(.creality_filament)");
     m_exprot_type.printer_preset  = _L("Printer presets(.zip)");
     m_exprot_type.filament_preset = _L("Filament presets(.zip)");
@@ -6121,7 +6243,7 @@ void ExportConfigsDialog::exportPresets()
     onBtnPrinterClicked();
     m_stPrinterPresets.bClicked = true;
     m_stPrinterPresets.pBtnPresets->SetTextColor(export_button_text_colour(true));
-    m_stPrinterPresets.pBtnPresets->SetBackgroundColor(wxColour("#18CC5C"));
+    m_stPrinterPresets.pBtnPresets->SetBackgroundColor(wxColour("#2E86C1"));
 
     this->Center();
     this->ShowModal();
@@ -6477,7 +6599,7 @@ ExportConfigsDialog::ExportCase ExportConfigsDialog::archive_preset_bundle_to_fi
             json process_configs  = json::array();
 
             mz_zip_archive zip_archive;
-            mz_bool        status = initial_zip_archive(zip_archive, export_path + "/" + printer_preset->name + ".creality_printer");
+            mz_bool        status = initial_zip_archive(zip_archive, export_path + "/" + printer_preset->name + ".sanity_printer");
             if (MZ_FALSE == status) {
                 BOOST_LOG_TRIVIAL(info) << "Failed to initialize ZIP archive";
                 return ExportCase::INITIALIZE_FAIL;
@@ -6820,7 +6942,7 @@ wxBoxSizer* ExportConfigsDialog::create_left_navigation(wxWindow* parent)
         button->Bind(wxEVT_BUTTON, [this, button, on_click](wxCommandEvent&) {
             for (STPresets* item : {&m_stPrinterPresets, &m_stFilamentPresets, &m_stProcessPresets}) {
                 item->bClicked = item->pBtnPresets == button;
-                item->pBtnPresets->SetBackgroundColor(item->bClicked ? wxColour("#18CC5C") : export_panel_colour());
+                item->pBtnPresets->SetBackgroundColor(item->bClicked ? wxColour("#2E86C1") : export_panel_colour());
                 item->pBtnPresets->SetTextColor(export_button_text_colour(item->bClicked));
             }
             (this->*on_click)();
@@ -7015,12 +7137,12 @@ ExportConfigsDialog::ExportCase ExportConfigsDialog::archivePresetToFile() {
         //    return ExportCase::EXPORT_CANCEL;
 
         if (m_index == 0) {
-            export_file_format = "creality_printer";
+            export_file_format = "sanity_printer";
             std::list<std::shared_ptr<ExportMidPanel::STLineDataNode>> lstCheckedPrinterPresets;
             m_exportMidPanel->getCheckedPrinterPresets(lstCheckedPrinterPresets);
 
             for (const auto& item : lstCheckedPrinterPresets) {
-                export_file = initial_file_name(path, item->name) + ".creality_printer";
+                export_file = initial_file_name(path, item->name) + ".sanity_printer";
 
                 json        bundle_structure;
                 std::string clock                       = get_curr_timestmp();
@@ -7239,8 +7361,8 @@ wxBoxSizer *ExportConfigsDialog::create_button_item(wxWindow* parent)
     wxBoxSizer *bSizer_button = new wxBoxSizer(wxHORIZONTAL);
     bSizer_button->Add(0, 0, 1, wxEXPAND, 0);
 
-    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(0, 137, 123), StateColor::Pressed), std::pair<wxColour, int>(wxColour(38, 166, 154), StateColor::Hovered),
-                            std::pair<wxColour, int>(wxColour(0, 150, 136), StateColor::Normal));
+    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(26, 111, 163), StateColor::Pressed), std::pair<wxColour, int>(wxColour(93, 173, 226), StateColor::Hovered),
+                            std::pair<wxColour, int>(wxColour(46, 134, 193), StateColor::Normal));
 
     m_button_ok = new Button(this, _L("OK"));
     m_button_ok->SetBackgroundColor(btn_bg_green);
@@ -7862,7 +7984,7 @@ wxBoxSizer *EditFilamentPresetDialog::create_add_filament_btn()
     StateColor flush_fg_col(std::pair<wxColour, int>(wxColour(107, 107, 106), StateColor::Pressed), std::pair<wxColour, int>(wxColour(107, 107, 106), StateColor::Hovered),
                             std::pair<wxColour, int>(wxColour(107, 107, 106), StateColor::Normal));
 
-    StateColor flush_bd_col(std::pair<wxColour, int>(wxColour(0, 150, 136), StateColor::Pressed), std::pair<wxColour, int>(wxColour(0, 150, 136), StateColor::Hovered),
+    StateColor flush_bd_col(std::pair<wxColour, int>(wxColour(46, 134, 193), StateColor::Pressed), std::pair<wxColour, int>(wxColour(46, 134, 193), StateColor::Hovered),
                             std::pair<wxColour, int>(wxColour(172, 172, 172), StateColor::Normal));
 
     m_add_filament_btn->SetBackgroundColor(flush_bg_col);
@@ -7921,8 +8043,8 @@ wxBoxSizer *EditFilamentPresetDialog::create_button_sizer()
 
     bSizer_button->Add(0, 0, 1, wxEXPAND, 0);
 
-    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(0, 137, 123), StateColor::Pressed), std::pair<wxColour, int>(wxColour(38, 166, 154), StateColor::Hovered),
-                            std::pair<wxColour, int>(wxColour(0, 150, 136), StateColor::Normal));
+    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(26, 111, 163), StateColor::Pressed), std::pair<wxColour, int>(wxColour(93, 173, 226), StateColor::Hovered),
+                            std::pair<wxColour, int>(wxColour(46, 134, 193), StateColor::Normal));
 
     m_ok_btn = new Button(this, _L("OK"));
     m_ok_btn->SetBackgroundColor(btn_bg_green);
@@ -8128,8 +8250,8 @@ wxBoxSizer *CreatePresetForPrinterDialog::create_button_sizer()
 
     bSizer_button->Add(0, 0, 1, wxEXPAND, 0);
 
-    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(0, 137, 123), StateColor::Pressed), std::pair<wxColour, int>(wxColour(38, 166, 154), StateColor::Hovered),
-                            std::pair<wxColour, int>(wxColour(0, 150, 136), StateColor::Normal));
+    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(26, 111, 163), StateColor::Pressed), std::pair<wxColour, int>(wxColour(93, 173, 226), StateColor::Hovered),
+                            std::pair<wxColour, int>(wxColour(46, 134, 193), StateColor::Normal));
 
     m_ok_btn = new Button(this, _L("OK"));
     m_ok_btn->SetBackgroundColor(btn_bg_green);
@@ -8275,11 +8397,11 @@ wxPanel *PresetTree::get_child_item(wxPanel *parent, std::shared_ptr<Preset> pre
     StateColor flush_fg_col(std::pair<wxColour, int>(wxColour(107, 107, 106), StateColor::Pressed), std::pair<wxColour, int>(wxColour(107, 107, 106), StateColor::Hovered),
                             std::pair<wxColour, int>(wxColour(107, 107, 106), StateColor::Normal));
 
-    StateColor flush_bd_col(std::pair<wxColour, int>(wxColour(0, 150, 136), StateColor::Pressed), std::pair<wxColour, int>(wxColour(0, 150, 136), StateColor::Hovered),
+    StateColor flush_bd_col(std::pair<wxColour, int>(wxColour(46, 134, 193), StateColor::Pressed), std::pair<wxColour, int>(wxColour(46, 134, 193), StateColor::Hovered),
                             std::pair<wxColour, int>(wxColour(172, 172, 172), StateColor::Normal));
 
-    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(0, 137, 123), StateColor::Pressed), std::pair<wxColour, int>(wxColour(38, 166, 154), StateColor::Hovered),
-                            std::pair<wxColour, int>(wxColour(0, 150, 136), StateColor::Normal));
+    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(26, 111, 163), StateColor::Pressed), std::pair<wxColour, int>(wxColour(93, 173, 226), StateColor::Hovered),
+                            std::pair<wxColour, int>(wxColour(46, 134, 193), StateColor::Normal));
 
     Button *edit_preset_btn = new Button(panel, _L("Edit Preset"));
     edit_preset_btn->SetFont(Label::Body_10);

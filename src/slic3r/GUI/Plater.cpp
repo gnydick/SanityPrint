@@ -3788,7 +3788,7 @@ void Sidebar::sync_ams_list()
     wxGetApp().app_config->set("ams_filament_ids", p->ams_list_device, ams_filament_ids);
     if (unknowns > 0) {
         MessageDialog dlg(this,
-                          _L("There are some unknown filaments mapped to generic preset. Please update Creality Print or restart Creality "
+                          _L("There are some unknown filaments mapped to generic preset. Please update Sanity Print or restart Creality "
                              "Print to check if there is an update to system presets."),
                           _L("Sync filaments with CFS"), wxOK);
         dlg.ShowModal();
@@ -8671,14 +8671,14 @@ std::vector<size_t> Plater::priv::load_files(const std::vector<fs::path>& input_
 
                     // BBS: version check
                     ParsedCrealityVersion parsed_app_version = parse_creality_version(
-                        std::string(CREALITYPRINT_VERSION), parse_build_id_string(std::string(SLIC3R_BUILD_ID)));
+                        std::string(SANITYPRINT_VERSION), parse_build_id_string(std::string(SLIC3R_BUILD_ID)));
                     Semver app_version = parsed_app_version.valid() ? parsed_app_version.semver : Semver();
                     if (en_3mf_file_type == En3mfType::From_Prusa) {
                         // do not reset the model config
                         load_config = false;
 #if !AUTOMATION_TOOL || !AUTO_CONVERT_3MF
                         if (load_type != LoadType::LoadGeometry)
-                            show_info(q, _L("The 3mf is not supported by CrealityPrint, load geometry data only."), _L("Load 3mf"));
+                            show_info(q, _L("The 3mf is not supported by SanityPrint, load geometry data only."), _L("Load 3mf"));
 #endif
                     }
                     // else if (load_config && (file_version.maj() != app_version.maj())) {
@@ -14273,7 +14273,7 @@ void Plater::priv::on_process_completed(SlicingProcessCompletedEvent& evt)
     if (AutomationMgr::enabled()) {
         PartPlateList& plate_list = wxGetApp().plater()->get_partplate_list();
         if (!plate_list.get_plate(m_cur_slice_plate)->can_slice()) {
-            std::string logContent = "鐩? + std::to_string(m_cur_slice_plate + 1) + "涓嶈兘鍒囩墖";
+            std::string logContent = "Plate " + std::to_string(m_cur_slice_plate + 1) + " cannot be sliced";
             AutomationMgr::outputLog(logContent, 1);
             AutomationMgr::endFunction();
         }
@@ -15317,7 +15317,7 @@ void Plater::priv::set_project_name(const wxString& project_name)
     m_project_name = project_name;
     // update topbar title
 #ifdef __WINDOWS__
-    wxGetApp().mainframe->SetTitle(m_project_name + " - CrealityPrint");
+    wxGetApp().mainframe->SetTitle(m_project_name + " - SanityPrint");
     wxGetApp().mainframe->topbar()->SetTitle(m_project_name);
 #else
     wxGetApp().mainframe->SetTitle(m_project_name);
@@ -17510,7 +17510,7 @@ void Plater::import_model_id(wxString download_info)
                     BOOST_LOG_TRIVIAL(error) << format("Error getting: `%1%`: HTTP %2%, %3%", body, http_status, error);
 
                     if (retry_count == max_retries) {
-                        msg  = _L("Importing to Creality Print failed. Please download the file and manually import it.");
+                        msg  = _L("Importing to Sanity Print failed. Please download the file and manually import it.");
                         cont = false;
                     }
                 })
@@ -19769,9 +19769,9 @@ ProjectDropDialog::ProjectDropDialog(const std::string& filename)
     wxBoxSizer* m_sizer_right = new wxBoxSizer(wxHORIZONTAL);
 
     m_confirm = new Button(this, _L("OK"));
-    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(21, 191, 89), StateColor::Pressed),
-                            std::pair<wxColour, int>(wxColour(21, 191, 89), StateColor::Hovered),
-                            std::pair<wxColour, int>(wxColour(21, 191, 89), StateColor::Normal));
+    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(52, 152, 219), StateColor::Pressed),
+                            std::pair<wxColour, int>(wxColour(52, 152, 219), StateColor::Hovered),
+                            std::pair<wxColour, int>(wxColour(52, 152, 219), StateColor::Normal));
 
     m_confirm->SetBackgroundColor(btn_bg_green);
     m_confirm->SetBorderColor(wxColour(255, 255, 255));

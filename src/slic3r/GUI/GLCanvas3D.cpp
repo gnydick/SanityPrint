@@ -33,6 +33,7 @@
 #include "Plater.hpp"
 #include "MainFrame.hpp"
 #include "GUI_App.hpp"
+#include "FilamentSyncDialog.hpp"
 #include "GUI_ObjectList.hpp"
 #include "GUI_Colors.hpp"
 #include "FilamentPanel.h"
@@ -461,8 +462,8 @@ void GLCanvas3D::LayersEditing::render_variable_layer_height_dialog(const GLCanv
 
     ImGui::PushItemWidth(input_box_width);
     ImGui::PushStyleColor(ImGuiCol_BorderActive, ImGuiWrapper::COL_CREALITY);
-    ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.090f, 0.80f, 0.373f, 0.00f));
-    ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.090f, 0.80f, 0.373f, 0.00f));
+    ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.180f, 0.525f, 0.757f, 0.00f));
+    ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.180f, 0.525f, 0.757f, 0.00f));
     // if (ImGui::BBLDragScalar("##radius_input", ImGuiDataType_S32, &radius, 1, &v_min, &v_max))
     bool radius_changed = wxGetApp().plater()->get_view3D_canvas3D()->draw_input_int("##radius_input", &radius, 1, &v_min, &v_max,
                                                                                      Vec2d(input_box_width, 30.f));
@@ -541,8 +542,8 @@ void GLCanvas3D::LayersEditing::render_variable_layer_height_dialog(const GLCanv
     ImGui::SetCursorPosX(input_align);
     ImGui::PushItemWidth(input_box_width);
     ImGui::PushStyleColor(ImGuiCol_BorderActive, ImGuiWrapper::COL_CREALITY);
-    ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.090f, 0.80f, 0.373f, 0.00f));
-    ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.090f, 0.80f, 0.373f, 0.00f));
+    ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.180f, 0.525f, 0.757f, 0.00f));
+    ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.180f, 0.525f, 0.757f, 0.00f));
     ImGui::BBLDragScalar("##radius_input", ImGuiDataType_S32, &radius, 1, &v_min, &v_max);
     ImGui::PopStyleColor(3);
 
@@ -7354,7 +7355,7 @@ bool GLCanvas3D::_render_object_clone_options(float left, float right, float bot
     ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(238 / 255.0f, 238 / 255.0f, 238 / 255.0f, 0.00f));
     ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(238 / 255.0f, 238 / 255.0f, 238 / 255.0f, 0.00f));
     ImGui::PushStyleColor(ImGuiCol_SliderGrab, ImVec4(0.81f, 0.81f, 0.81f, 1.0f));
-    const ImVec4 COL_CREALITY = ImVec4{0.090f, 0.80f, 0.373, 1.0f};
+    const ImVec4 COL_CREALITY = ImVec4{0.180f, 0.525f, 0.757f, 1.0f};
     ImGui::PushStyleColor(ImGuiCol_SliderGrabActive, COL_CREALITY);
 
     // bool slider_number_change = imgui->bbl_slider_int_style("##Number of copies:", &m_clone_settings.clone_num, 1, 100, "%d", true,
@@ -8044,7 +8045,7 @@ static float       identityMatrix[16]   = {1.f, 0.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.
 static const float cameraProjection[16] = {1.f, 0.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 0.f, 1.f};
 
 #define TEXT_SELECT_COLOR 1, 1, 1
-#define FACE_SELECT_COLOR 23 / 255.f, 204 / 255.f, 95 / 255.f
+#define FACE_SELECT_COLOR 46 / 255.f, 134 / 255.f, 193 / 255.f
 
 #define TEXT_UNSELECT_DATK 207 / 255.f, 207 / 255.f, 212 / 255.f
 #define TEXT_UNSELECT_UNDARK 110 / 255.f, 110 / 255.f, 114 / 255.f
@@ -10784,7 +10785,7 @@ void GLCanvas3D::_render_slice_control() const
                                    (main_click_pending && ImGui::IsMouseDown(ImGuiMouseButton_Left))) &&
                                   en != 1;
             ImVec4 main_bg      = en == 2 ? config.getColor(bigcfg.fg) : config.getColor(bigcfg.bg);
-            ImVec4 main_hv      = ImVec4(68.f / 255.f, 205.f / 255.f, 122.f / 255.f, 1.0f);
+            ImVec4 main_hv      = ImVec4(93.f / 255.f, 173.f / 255.f, 226.f / 255.f, 1.0f);
             ImVec4 main_ac      = config.getColor(bigcfg.fg);
             ImVec4 main_col     = main_active ? main_ac : (main_hovered ? main_hv : main_bg);
             float  main_round   = 4.0f * scale;
@@ -10822,7 +10823,7 @@ void GLCanvas3D::_render_slice_control() const
             bool   drop_hovered = ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenBlockedByPopup);
             bool   drop_active  = ImGui::IsItemActive();
             ImVec4 sm_bg        = (en == 2 ? config.getColor(bigcfg.fg) : config.getColor(bigcfg.bg));
-            ImVec4 sm_hv        = ImVec4(68.f / 255.f, 205.f / 255.f, 122.f / 255.f, 1.0f);
+            ImVec4 sm_hv        = ImVec4(93.f / 255.f, 173.f / 255.f, 226.f / 255.f, 1.0f);
             ImVec4 sm_ac        = config.getColor(smallcfg.fg);
             ImVec4 drop_col     = drop_active ? sm_ac : (drop_hovered ? sm_hv : sm_bg);
             float  drop_round   = 4.0f * scale;
@@ -11103,7 +11104,7 @@ void GLCanvas3D::_render_slice_control() const
                 ImVec4 list_bg = wxGetApp().dark_mode() ? ImVec4(0x59 / 255.f, 0x59 / 255.f, 0x5D / 255.f, 1.0f) :
                                                           config.getColor(DispConfig::e_ct_white);
                 ImVec4 list_ac = config.getColor(bigcfg.fg);
-                ImVec4 list_hv = ImVec4(68.f / 255.f, 205.f / 255.f, 122.f / 255.f, 1.0f);
+                ImVec4 list_hv = ImVec4(93.f / 255.f, 173.f / 255.f, 226.f / 255.f, 1.0f);
                 ImGui::PushStyleColor(ImGuiCol_Button, list_bg);
                 ImGui::PushStyleColor(ImGuiCol_ButtonHovered, list_hv);
                 ImGui::PushStyleColor(ImGuiCol_ButtonActive, list_ac);
@@ -11266,7 +11267,7 @@ void GLCanvas3D::_render_slice_control() const
                 bool   drop_hovered_p = ImGui::IsItemHovered();
                 bool   drop_active_p  = ImGui::IsItemActive();
                 ImVec4 smp_bg         = (enprint ? config.getColor(bigcfg.fg) : config.getColor(bigcfg.bg));
-                ImVec4 smp_hv         = ImVec4(68.f / 255.f, 205.f / 255.f, 122.f / 255.f, 1.0f);
+                ImVec4 smp_hv         = ImVec4(93.f / 255.f, 173.f / 255.f, 226.f / 255.f, 1.0f);
                 ImVec4 smp_ac         = config.getColor(smallcfg.fg);
                 ImVec4 drop_col_p     = drop_active_p ? smp_ac : (drop_hovered_p ? smp_hv : smp_bg);
                 float  drop_round_p   = 4.0f * scale;
@@ -11324,7 +11325,7 @@ void GLCanvas3D::_render_slice_control() const
                     ImVec4 list_bg = wxGetApp().dark_mode() ? ImVec4(0x59 / 255.f, 0x59 / 255.f, 0x5D / 255.f, 1.0f) :
                                                               config.getColor(DispConfig::e_ct_white);
                     ImVec4 list_ac = config.getColor(bigcfg.fg);
-                    ImVec4 list_hv = ImVec4(68.f / 255.f, 205.f / 255.f, 122.f / 255.f, 1.0f);
+                    ImVec4 list_hv = ImVec4(93.f / 255.f, 173.f / 255.f, 226.f / 255.f, 1.0f);
                     ImGui::PushStyleColor(ImGuiCol_Button, list_bg);
                     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, list_hv);
                     ImGui::PushStyleColor(ImGuiCol_ButtonActive, list_ac);
@@ -12238,7 +12239,7 @@ void GLCanvas3D::_render_imgui_select_plate_toolbar()
             }
         }
 
-        ImVec4      text_clr = m_is_dark ? ImVec4(0.0f, 150.f / 255.0f, 136.0f / 255, 1.0f) :
+        ImVec4      text_clr = m_is_dark ? ImVec4(46.0f / 255.0f, 134.0f / 255.0f, 193.0f / 255.0f, 1.0f) :
                                            ImVec4(48.0f / 255.0f, 55.0f / 255.0f, 61.0f / 255.0f, 1.0f);
         ImTextureID btn_texture_id;
         if (all_plates_stats_item->slice_state == IMToolbarItem::SliceState::UNSLICED ||

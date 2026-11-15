@@ -84,7 +84,7 @@ enum class NoiseType {
 };
 
 enum PrintHostType {
-    htPrusaLink, htPrusaConnect, htOctoPrint, htDuet, htFlashAir, htAstroBox, htRepetier, htMKS, htESP3D, htObico, htFlashforge, htSimplyPrint, htCrealityPrint
+    htPrusaLink, htPrusaConnect, htOctoPrint, htDuet, htFlashAir, htAstroBox, htRepetier, htMKS, htESP3D, htObico, htFlashforge, htSimplyPrint, htSanityPrint
 };
 
 enum AuthorizationType {
@@ -1458,6 +1458,15 @@ PRINT_CONFIG_CLASS_DEFINE(
     ((ConfigOptionFloatsNullable,      hotend_cooling_rate))
     ((ConfigOptionFloatsNullable,      hotend_heating_rate))
     ((ConfigOptionIntsNullable,        nozzle_flush_dataset))
+    // Parameterized filament behavior fields (replaces hardcoded type switches)
+    ((ConfigOptionInts,                filament_temp_type))
+    ((ConfigOptionBools,               filament_cooling_smart_zone))
+    ((ConfigOptionFloats,              filament_bed_adhesion_strength))
+    ((ConfigOptionFloats,              filament_thermal_length))
+    ((ConfigOptionFloats,              filament_brim_adhesion_coeff))
+    ((ConfigOptionFloats,              filament_small_island_threshold))
+    ((ConfigOptionInts,                filament_chamber_temp_limit))
+    ((ConfigOptionBools,               filament_is_flexible))
     // BBS
     ((ConfigOptionBool,                scan_first_layer))
     ((ConfigOptionPoints,              thumbnail_size))

@@ -1107,7 +1107,11 @@ static std::vector<std::string> s_Preset_filament_options {
     "filament_cooling_initial_speed","filament_cooling_final_speed", "filament_ramming_parameters",
     "filament_multitool_ramming", "filament_multitool_ramming_volume", "filament_multitool_ramming_flow", "activate_chamber_temp_control","activate_chamber_layer",
     "filament_long_retractions_when_cut", "filament_retraction_distances_when_cut", "idle_temperature",
-    "filament_extruder_variant", "filament_nozzle_variant"
+    "filament_extruder_variant", "filament_nozzle_variant",
+    // Parameterized filament behavior fields
+    "filament_temp_type", "filament_cooling_smart_zone", "filament_bed_adhesion_strength",
+    "filament_thermal_length", "filament_brim_adhesion_coeff", "filament_small_island_threshold",
+    "filament_chamber_temp_limit", "filament_is_flexible"
     };
 
 static std::vector<std::string> s_Preset_machine_limits_options {
@@ -3030,7 +3034,7 @@ bool PresetCollection::clone_presets_for_filament(Preset const *const &     pres
     return clone_presets(presets, failures, [&filament_name, &filament_id, &dynamic_config, &compatible_printers](Preset &preset, Preset::Type &type) {
         preset.name        = filament_name + " @" + compatible_printers;
         if (type == Preset::TYPE_FILAMENT) {
-            preset.config.apply_only(dynamic_config, {"filament_vendor", "compatible_printers", "filament_type"},true);
+            preset.config.apply_only(dynamic_config, dynamic_config.keys(), true);
 
             preset.filament_id = filament_id;
             BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << " " << __LINE__ << preset.name << " is cloned and filament_id: " << filament_id;

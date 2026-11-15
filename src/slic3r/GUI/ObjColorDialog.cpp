@@ -71,9 +71,9 @@ static const int g_max_color = static_cast<int>(Slic3r::CONST_FILAMENTS.size() -
 // Color distance threshold for "close match" (DeltaE76 in LAB color space)
 // Values < 10.0 are considered close matches to existing filaments
 static const float COLOR_CLOSE_MATCH_THRESHOLD = 10.0f;
-const  StateColor ok_btn_bg(std::pair<wxColour, int>(wxColour(0, 137, 123), StateColor::Pressed),
-                     std::pair<wxColour, int>(wxColour(38, 166, 154), StateColor::Hovered),
-                     std::pair<wxColour, int>(wxColour(0, 150, 136), StateColor::Normal));
+const  StateColor ok_btn_bg(std::pair<wxColour, int>(wxColour(26, 111, 163), StateColor::Pressed),
+                     std::pair<wxColour, int>(wxColour(93, 173, 226), StateColor::Hovered),
+                     std::pair<wxColour, int>(wxColour(46, 134, 193), StateColor::Normal));
 const StateColor  ok_btn_disable_bg(std::pair<wxColour, int>(wxColour(205, 201, 201), StateColor::Pressed),
                                    std::pair<wxColour, int>(wxColour(205, 201, 201), StateColor::Hovered),
                                    std::pair<wxColour, int>(wxColour(205, 201, 201), StateColor::Normal));
@@ -83,7 +83,7 @@ wxBoxSizer* ObjColorDialog::create_btn_sizer(long flags)
     btn_sizer->AddStretchSpacer();
 
     StateColor ok_btn_bd(
-        std::pair<wxColour, int>(wxColour(0, 150, 136), StateColor::Normal)
+        std::pair<wxColour, int>(wxColour(46, 134, 193), StateColor::Normal)
     );
     StateColor ok_btn_text(
         std::pair<wxColour, int>(wxColour(255, 255, 254), StateColor::Normal)
@@ -101,12 +101,12 @@ wxBoxSizer* ObjColorDialog::create_btn_sizer(long flags)
         std::pair<wxColour, int>(wxColour(38, 46, 48), StateColor::Normal)
     );
     StateColor calc_btn_bg(
-        std::pair<wxColour, int>(wxColour(0, 137, 123), StateColor::Pressed),
-        std::pair<wxColour, int>(wxColour(38, 166, 154), StateColor::Hovered),
-        std::pair<wxColour, int>(wxColour(0, 150, 136), StateColor::Normal)
+        std::pair<wxColour, int>(wxColour(26, 111, 163), StateColor::Pressed),
+        std::pair<wxColour, int>(wxColour(93, 173, 226), StateColor::Hovered),
+        std::pair<wxColour, int>(wxColour(46, 134, 193), StateColor::Normal)
     );
     StateColor calc_btn_bd(
-        std::pair<wxColour, int>(wxColour(0, 150, 136), StateColor::Normal)
+        std::pair<wxColour, int>(wxColour(46, 134, 193), StateColor::Normal)
     );
     StateColor calc_btn_text(
         std::pair<wxColour, int>(wxColour(255, 255, 254), StateColor::Normal)

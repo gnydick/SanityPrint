@@ -787,40 +787,9 @@ wxBoxSizer *PreferencesDialog::create_item_checkbox(wxString title, wxWindow *pa
     m_sizer_checkbox->Add(checkbox_title, 0, wxALIGN_CENTER | wxALL, 3);
 
     if (param == "user_exp") {
-        wxPanel* panel = new wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0);
-        //panel->SetBackgroundColour(DESIGN_GRAY400_COLOR); // 设置面板背景颜色
-        bool     is_dark = Slic3r::GUI::wxGetApp().dark_mode();
-        wxColour color   = is_dark ? wxColor("#4b4b4d") : wxColour(255, 255, 255);
-        wxColour textColor = is_dark ? wxColor("#4287FF") : wxColour("#387DFF");
-
-        wxString text = _L("(Content of the collected data)");
-        std::string default_url = "https://wiki.creality.com/en/software/6-0/privacy";
-        if (wxGetApp().app_config->get("language").find("zh") == 0) {
-            default_url = "https://wiki.creality.com/zh/software/6-0/privacy";
-        }
-
-        wxHyperlinkCtrl* link = new wxHyperlinkCtrl(panel, wxID_ANY, text, wxString::FromUTF8(default_url.c_str()),
-                                                    wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE);
-        link->SetFont(::Label::Body_13);
-        link->SetBackgroundColour(color);
-        link->SetNormalColour(textColor);
-        link->SetHoverColour(textColor);
-        link->SetVisitedColour(textColor);
-        link->Bind(wxEVT_HYPERLINK, [=](wxHyperlinkEvent&) {
-            std::string url = "https://wiki.creality.com/en/software/6-0/privacy";
-            if (wxGetApp().app_config->get("language").find("zh") == 0) {
-                 url = "https://wiki.creality.com/zh/software/6-0/privacy";
-            }
-            wxGetApp().open_browser_with_warning_dialog(url);
-        });
-
-        wxBoxSizer* sizer = new wxBoxSizer(wxHORIZONTAL);
-        sizer->Add(link, 0, wxALL, FromDIP(5));
-        panel->SetSizer(sizer);
-
-        m_sizer_checkbox->Add(panel, 0, wxALIGN_CENTER | wxALL, 3);
+        // "(Content of the collected data)" link removed: it opened the Creality privacy wiki.
         boost::filesystem::path device_file = boost::filesystem::path(Slic3r::data_dir()) / "privacyInfo.json";
-        std::string             version     = std::string(CREALITYPRINT_VERSION);
+        std::string             version     = std::string(SANITYPRINT_VERSION);
         boost::nowide::ifstream t(device_file.string());
         std::stringstream       buffer;
         buffer << t.rdbuf();
@@ -1148,7 +1117,7 @@ wxWindow *PreferencesDialog ::create_item_radiobox(wxString title, wxWindow *par
 wxBoxSizer* PreferencesDialog::create_item_link_association(wxWindow* parent, wxString url_prefix, wxString website_name)
 {
     wxString title = _L("Associate") + (boost::format(" %1%://") % url_prefix.c_str()).str();
-    wxString tooltip = _L("Associate") + " " + url_prefix + ":// " + _L("with CrealityPrint so that CrealityPrint can open models from") + " " + website_name;
+    wxString tooltip = _L("Associate") + " " + url_prefix + ":// " + _L("with SanityPrint so that SanityPrint can open models from") + " " + website_name;
 
     std::wstring registered_bin; // not used, just here to provide a ref to check fn
     bool reg_to_current_instance = wxGetApp().check_url_association(url_prefix.ToStdWstring(), registered_bin);

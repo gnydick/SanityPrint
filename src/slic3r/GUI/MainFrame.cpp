@@ -142,10 +142,10 @@ enum class ERescaleTarget
 };
 
 #ifdef __APPLE__
-class CrealityPrintTaskBarIcon : public wxTaskBarIcon
+class SanityPrintTaskBarIcon : public wxTaskBarIcon
 {
 public:
-    CrealityPrintTaskBarIcon(wxTaskBarIconType iconType = wxTBI_DEFAULT_TYPE) : wxTaskBarIcon(iconType) {}
+    SanityPrintTaskBarIcon(wxTaskBarIconType iconType = wxTBI_DEFAULT_TYPE) : wxTaskBarIcon(iconType) {}
     wxMenu *CreatePopupMenu() override {
         wxMenu *menu = new wxMenu;
         if (wxGetApp().app_config->get("single_instance") == "false") {
@@ -314,8 +314,8 @@ MainFrame::MainFrame()
     switch (wxGetApp().get_app_mode()) {
     default:
     case GUI_App::EAppMode::Editor:
-        m_taskbar_icon = std::make_unique<CrealityPrintTaskBarIcon>(wxTBI_DOCK);
-        m_taskbar_icon->SetIcon(wxIcon(Slic3r::var("CrealityPrint-mac_256px.ico"), wxBITMAP_TYPE_ICO), "CrealityPrint");
+        m_taskbar_icon = std::make_unique<SanityPrintTaskBarIcon>(wxTBI_DOCK);
+        m_taskbar_icon->SetIcon(wxIcon(Slic3r::var("SanityPrint-mac_256px.ico"), wxBITMAP_TYPE_ICO), "SanityPrint");
         break;
     case GUI_App::EAppMode::GCodeViewer:
         break;
@@ -1129,7 +1129,7 @@ void MainFrame::update_layout()
 
     // From the very beginning the Print settings should be selected
     //m_last_selected_tab = m_layout == ESettingsLayout::Dlg ? 0 : 1;
-    m_last_selected_tab = 1;
+    m_last_selected_tab = tp3DEditor;
 
     // Set new settings
     switch (m_layout)
@@ -1535,7 +1535,7 @@ void MainFrame::init_tabpanel() {
 
         m_param_panel = new ProcessParamsPanel(m_tabpanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBK_LEFT | wxTAB_TRAVERSAL);
         //m_param_panel->create_image_tooltip_panel();
-        m_param_panel->set_border_panel_color(wxColour(49, 139, 86));
+        m_param_panel->set_border_panel_color(wxColour(46, 134, 193));
     }
 
     m_plater = new Plater(this, this);
@@ -2643,9 +2643,9 @@ void MainFrame::update_side_button_style()
     m_slice_btn->SetExtraSize(wxSize(FromDIP(38), FromDIP(10)));
     m_slice_btn->SetBottomColour(wxColour(0x3B4446));*/
     StateColor m_btn_bg_enable = StateColor(
-        std::pair<wxColour, int>(wxColour(0, 137, 123), StateColor::Pressed), 
-        std::pair<wxColour, int>(wxColour(48, 221, 112), StateColor::Hovered),
-        std::pair<wxColour, int>(wxColour(0, 150, 136), StateColor::Normal)
+        std::pair<wxColour, int>(wxColour(26, 111, 163), StateColor::Pressed), 
+        std::pair<wxColour, int>(wxColour(93, 173, 226), StateColor::Hovered),
+        std::pair<wxColour, int>(wxColour(46, 134, 193), StateColor::Normal)
     );
 
     // m_publish_btn->SetMinSize(wxSize(FromDIP(125), FromDIP(24)));
@@ -2933,21 +2933,6 @@ static wxMenu* generate_help_menu(MainFrame* mainframe)
     helpMenu->AppendSeparator();
 #endif
 
-    // use course
-    append_menu_item(helpMenu, wxID_ANY, _L("Use Course"), _L("Use Course"), [](wxCommandEvent&) {
-            std::string url = "https://wiki.creality.com/en/software/update-released";
-            // if (const std::string country_code = wxGetApp().app_config->get_country_code(); country_code == "CN") {
-            //     url = "https://wiki.creality.com/zh/software/update-released";
-            // }
-             if (wxGetApp().app_config->get("language") == "zh_CN"){
-                url = "https://wiki.creality.com/zh/software/6-0";
-             }
-             else {
-                 url = "https://wiki.creality.com/en/software/6-0";
-             }
-            wxLaunchDefaultBrowser(url, wxBROWSER_NEW_WINDOW);
-        });
-
     // About
 #ifndef __APPLE__
     #if !defined(CUSTOMIZED) || defined(CUSTOM_ABOUTUS_ENABLED)
@@ -2964,15 +2949,6 @@ static wxMenu* generate_help_menu(MainFrame* mainframe)
                                            : "https://wiki.creality.com/en/software/6-0/privacy";
         wxLaunchDefaultBrowser(url, wxBROWSER_NEW_WINDOW);
     });
-#if !defined(CUSTOMIZED) || defined(CUSTOM_FEEDBOOK_ENABLED)
-    append_menu_item(helpMenu, wxID_ANY, _L("User Feedback"), _L("User Feedback"), [](wxCommandEvent&) {
-        AnalyticsEventPayload payload;
-        payload.type = AnalyticsDataEventType::ANALYTICS_GOTO_SUPPORT;
-        payload.data["entry"] = "menu";
-        AnalyticsDataUploadManager::getInstance().triggerUploadTasksWithPayload(payload);
-        wxLaunchDefaultBrowser(user_feedback_website(), wxBROWSER_NEW_WINDOW);
-    });
-#endif
     append_menu_item(helpMenu, wxID_ANY, _L("Log View"), _L("Log View"), [](wxCommandEvent&) {
         auto LogFilePath = (boost::filesystem::path(Slic3r::data_dir()) / "log").make_preferred().string();
         desktop_open_any_folder(LogFilePath);
@@ -3269,13 +3245,7 @@ void MainFrame::init_menubar_as_editor()
 
         append_submenu(fileMenu, export_menu, wxID_ANY, _L("Export"), "");
 
-        append_menu_item(
-            fileMenu, wxID_ANY, _L("Upload (3mf) to CrealityCloud"), _L("Upload current project to cloud storage"),
-            [this](wxCommandEvent&) {
-                wxGetApp().open_upload_3mf();
-            }, "", nullptr,
-            [this]() { return m_plater != nullptr && !m_plater->model().objects.empty(); }, this);
-
+        // "Upload (3mf) to CrealityCloud" menu item removed: cloud connectivity is disabled.
         fileMenu->AppendSeparator();
 
 #ifndef __APPLE__
@@ -3962,20 +3932,6 @@ void MainFrame::init_menubar_as_editor()
             },
             this);
     }
-        append_menu_item(calibMenu, wxID_ANY, _L("Tutorial"), _L("Calibration help"),
-        [this](wxCommandEvent&) {
-            std::string url = "https://wiki.creality.com/zh/software/update-released/Basic-introduction/calibration-tutorial";
-            if (wxGetApp().app_config->get("language") != "zh_CN" && wxGetApp().app_config->get("language") != "zh_TW")
-            {
-                url = "https://wiki.creality.com/en/software/update-released/Basic-introduction/calibration-tutorial";
-            }
-        /*    if (const std::string country_code = wxGetApp().app_config->get_country_code(); country_code == "CN") {
-                url = "https://wiki.creality.com/zh/Software/creality-print/CalibrationTutorial";
-            }*/
-            wxLaunchDefaultBrowser(url, wxBROWSER_NEW_WINDOW);
-        }, "", nullptr,
-        [this]() {return m_plater->is_view3D_shown();; }, this);
-
     // Help menu
     auto helpMenu = generate_help_menu(this);
 
@@ -4233,7 +4189,7 @@ public:
         pBtnCreateCopy->SetSize(wxSize(FromDIP(128), FromDIP(32)));
         pBtnCreateCopy->SetMinSize(wxSize(FromDIP(128), FromDIP(32)));
         pBtnCreateCopy->SetForegroundColour(wxColour("#FFFFFF"));
-        pBtnCreateCopy->SetBackgroundColour(wxColour("#18CC5C"));
+        pBtnCreateCopy->SetBackgroundColour(wxColour("#2E86C1"));
         pBtnCreateCopy->Bind(wxEVT_LEFT_DOWN, [this](wxMouseEvent& e) {
             m_nClickedButtonValue = 4;
             EndModal(wxID_OK);
@@ -4335,7 +4291,7 @@ public:
         pBtnCreateCopy->SetSize(wxSize(FromDIP(128), FromDIP(32)));
         pBtnCreateCopy->SetMinSize(wxSize(FromDIP(128), FromDIP(32)));
         pBtnCreateCopy->SetForegroundColour(wxColour("#FFFFFF"));
-        pBtnCreateCopy->SetBackgroundColour(wxColour("#18CC5C"));
+        pBtnCreateCopy->SetBackgroundColour(wxColour("#2E86C1"));
         pBtnCreateCopy->Bind(wxEVT_LEFT_DOWN, [this](wxMouseEvent& e) {
             m_nClickedButtonValue = 4;
             EndModal(wxID_OK);
@@ -4531,7 +4487,7 @@ void MainFrame::load_config_file()
  //       return;
     wxFileDialog dlg(this, _L("Select profile to load:"),
         !m_last_config.IsEmpty() ? get_dir_name(m_last_config) : wxGetApp().app_config->get_last_dir(),
-        "config.json", "Config files (*.json;*.zip;*.creality_printer;*.creality_filament)|*.json;*.zip;*.creality_printer;*.creality_filament", wxFD_OPEN | wxFD_MULTIPLE | wxFD_FILE_MUST_EXIST);
+        "config.json", "Config files (*.json;*.zip;*.sanity_printer;*.creality_filament)|*.json;*.zip;*.sanity_printer;*.creality_filament", wxFD_OPEN | wxFD_MULTIPLE | wxFD_FILE_MUST_EXIST);
      wxArrayString files;
     if (dlg.ShowModal() != wxID_OK)
         return;
@@ -4819,6 +4775,11 @@ void MainFrame::jump_to_multipage()
 //BBS GUI refactor: remove unused layout new/dlg
 void MainFrame::select_tab(size_t tab/* = size_t(-1)*/)
 {
+    // The Creality Cloud home and online-model screens are gone; any request to
+    // show them lands on the 3D editor instead.
+    if (tab == tpHome || tab == tpOnlineModel)
+        tab = tp3DEditor;
+
     //bool tabpanel_was_hidden = false;
 
     // Controls on page are created on active page of active tab now.

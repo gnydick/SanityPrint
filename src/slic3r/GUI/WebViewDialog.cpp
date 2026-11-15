@@ -238,6 +238,10 @@ WebViewPanel::WebViewPanel(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefau
 
 wxString WebViewPanel::GetURL()
 {
+    // SanityPrint: the Creality Cloud community home page is removed; the
+    // hidden home tab stays blank.
+    return wxString("about:blank");
+
     // alpha/beta/dev 对社区的影响：社区使用不同的创想云服务环境
     // alpha：预发布环境（pre）+ cpp 启动的本地 http 服务
     // beta：生产环境 + c++ 启动的本地 http 服务
@@ -256,7 +260,7 @@ wxString WebViewPanel::GetURL()
     std::string type = std::string(PROJECT_VERSION_EXTRA);
     type.erase(std::remove(type.begin(), type.end(), ' '), type.end());
 
-    std::string version = std::string(CREALITYPRINT_VERSION);
+    std::string version = std::string(SANITYPRINT_VERSION);
     version.erase(std::remove(version.begin(), version.end(), ' '), version.end());
 
     std::string region = wxGetApp().app_config->get("region");
@@ -634,9 +638,9 @@ void WebViewPanel::OpenModelDetail(std::string id, NetworkAgent* agent)
     std::string url;
     if ((agent ? agent->get_model_mall_detail_url(&url, id) : get_model_mall_detail_url(&url, id)) == 0) {
         if (url.find("?") != std::string::npos) {
-            url += "&from=crealityprint";
+            url += "&from=sanityprint";
         } else {
-            url += "?from=crealityprint";
+            url += "?from=sanityprint";
         }
 
         wxLaunchDefaultBrowser(url);
