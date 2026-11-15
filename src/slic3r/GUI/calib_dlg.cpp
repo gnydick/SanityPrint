@@ -52,42 +52,42 @@ PA_Calibration_Dlg::PA_Calibration_Dlg(wxWindow* parent, wxWindowID id, Plater* 
 
     bool        is_dark      = wxGetApp().dark_mode();
 
-    // Define colors: white text + dark gray background
-    wxColour textColor = is_dark ?  wxColour(0, 0, 0) : wxColour(51, 51, 51); // white
-    wxColour bgColor(75, 75, 77); // dark gray (#404040)
-     // ---------------------- Left side: extruder type ----------------------
+    // 定义颜色：白色文字 + 深灰色背景
+    wxColour textColor = is_dark ?  wxColour(0, 0, 0) : wxColour(51, 51, 51); // 白色
+    wxColour bgColor(75, 75, 77); // 深灰色（#404040）
+     // ---------------------- 左侧：挤出机类型 ----------------------
     extruderBox                     = new wxStaticBox(this, wxID_ANY, _L("Extruder type"));
     wxStaticBoxSizer* extruderSizer = new wxStaticBoxSizer(extruderBox, wxHORIZONTAL);
-    // Radio button: direct drive extruder (set as group head, wxRB_GROUP)
+    // 单选按钮：近程挤出机（设为组首，wxRB_GROUP）
     m_radioNear = new wxRadioButton(extruderBox, wxID_ANY, _L("DDE"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
-    // Radio button: Bowden extruder
+    // 单选按钮：远程挤出机
     m_radioFar = new wxRadioButton(extruderBox, wxID_ANY, _L("Bowden"));
-    // Add to layout
+    // 添加到布局
     extruderSizer->Add(m_radioNear, 0, wxALL, 5);
     extruderSizer->Add(m_radioFar, 0, wxALL, 5);
-    // Set colors (static box title + radio buttons)
-    extruderBox->SetForegroundColour(textColor); // title text color
-    extruderBox->SetBackgroundColour(bgColor);   // static box background
-    m_radioNear->SetForegroundColour(textColor); // button text color
-    m_radioNear->SetBackgroundColour(bgColor);   // button background
+    // 设置颜色（静态框标题 + 单选按钮）
+    extruderBox->SetForegroundColour(textColor); // 标题文字颜色
+    extruderBox->SetBackgroundColour(bgColor);   // 静态框背景
+    m_radioNear->SetForegroundColour(textColor); // 按钮文字颜色
+    m_radioNear->SetBackgroundColour(bgColor);   // 按钮背景
     m_radioFar->SetForegroundColour(textColor);
     m_radioFar->SetBackgroundColour(bgColor);       
     choice_sizer->Add(extruderSizer, 0, wxALL, 5);
 
-    // ---------------------- Right side: method ----------------------
+    // ---------------------- 右侧：方法 ----------------------
     methodBox                     = new wxStaticBox(this, wxID_ANY, _L("Method"));
     wxStaticBoxSizer* methodSizer = new wxStaticBoxSizer(methodBox, wxHORIZONTAL);
-    // Radio button: PA tower (group head)
+    // 单选按钮：PA塔（组首
     m_radioPA = new wxRadioButton(methodBox, wxID_ANY, _L("PA Tower"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
-    // Radio button: line mode
+    // 单选按钮：划线模式
     m_radioLine = new wxRadioButton(methodBox, wxID_ANY, _L("PA Line"));
-    // Radio button: V-shape mode
+    // 单选按钮：V形模式
     m_radioV = new wxRadioButton(methodBox, wxID_ANY, _L("PA Pattern"));
-    // Add to layout
+    // 添加到布局
     methodSizer->Add(m_radioPA, 0, wxALL, 5);
     methodSizer->Add(m_radioLine, 0, wxALL, 5);
     methodSizer->Add(m_radioV, 0, wxALL, 5);
-    // Set colors
+    // 设置颜色
     methodBox->SetForegroundColour(textColor);
     methodBox->SetBackgroundColour(bgColor);
     m_radioPA->SetForegroundColour(textColor);
@@ -205,28 +205,28 @@ PA_Calibration_Dlg::~PA_Calibration_Dlg() {
     m_btnStart->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PA_Calibration_Dlg::on_start), NULL, this);
 }
 
-// Function to get the selected state
+// 获取选中状态的函数
 int PA_Calibration_Dlg::GetSelectedMethod()
 {
     if (m_radioPA->GetValue()) {
-        return m_selectedMethod = 0; // PA tower
+        return m_selectedMethod = 0; // PA塔
     } else if (m_radioLine->GetValue()) {
-        return m_selectedMethod = 1; // line mode
+        return m_selectedMethod = 1; // 划线模式
     } else if (m_radioV->GetValue()) {
-        return m_selectedMethod = 2; // V-shape mode
+        return m_selectedMethod = 2; // V形模式
     }
-    return -1; // nothing selected (should not happen in theory)
+    return -1; // 无选中（理论上不会发生）
 }
 
-// Function to get the selected state
+// 获取选中状态的函数
 int PA_Calibration_Dlg::GetSelectedExtruderType()
 {
     if (m_radioNear->GetValue()) {
-        return m_selectedExtruderType=0; // direct drive extruder
+        return m_selectedExtruderType=0; // 近程挤出机
     } else if (m_radioFar->GetValue()) {
-        return m_selectedExtruderType = 1; // Bowden extruder
+        return m_selectedExtruderType = 1; // 远程挤出机
     }
-    return -1; // nothing selected (should not happen in theory)
+    return -1; // 无选中（理论上不会发生）
 }
 
 
@@ -275,12 +275,12 @@ void PA_Calibration_Dlg::reset_params()
         case 1:
             m_params.mode = CalibMode::Calib_PA_Line;
             if (m_selectedExtruderType != iExtruderTypeSeletion || m_selectedMethod != imethod || isempty) {
-                if (m_selectedExtruderType == 0) { //direct drive
+                if (m_selectedExtruderType == 0) { //近端
                     m_tiStartPA->GetTextCtrl()->SetValue(wxString::FromDouble(0.0));
                     m_tiEndPA->GetTextCtrl()->SetValue(wxString::FromDouble(0.1));
                     m_tiPAStep->GetTextCtrl()->SetValue(wxString::FromDouble(0.002));
-                }
-                else { //Bowden
+                } 
+                else { //远端
                     m_tiStartPA->GetTextCtrl()->SetValue(wxString::FromDouble(0.0));
                     m_tiEndPA->GetTextCtrl()->SetValue(wxString::FromDouble(1.0));
                     m_tiPAStep->GetTextCtrl()->SetValue(wxString::FromDouble(0.02));
@@ -292,11 +292,11 @@ void PA_Calibration_Dlg::reset_params()
         case 2:
             m_params.mode = CalibMode::Calib_PA_Pattern;
             if (m_selectedExtruderType != iExtruderTypeSeletion || m_selectedMethod != imethod || isempty) {
-                if (m_selectedExtruderType == 0) { //direct drive
+                if (m_selectedExtruderType == 0) { //近端
                     m_tiStartPA->GetTextCtrl()->SetValue(wxString::FromDouble(0.0));
                     m_tiEndPA->GetTextCtrl()->SetValue(wxString::FromDouble(0.08));
                     m_tiPAStep->GetTextCtrl()->SetValue(wxString::FromDouble(0.005));
-                } else { //Bowden
+                } else { //远端
                     m_tiStartPA->GetTextCtrl()->SetValue(wxString::FromDouble(0.0));
                     m_tiEndPA->GetTextCtrl()->SetValue(wxString::FromDouble(1.0));
                     m_tiPAStep->GetTextCtrl()->SetValue(wxString::FromDouble(0.05));
@@ -308,11 +308,11 @@ void PA_Calibration_Dlg::reset_params()
         default:
             m_params.mode = CalibMode::Calib_PA_Tower;
             if (m_selectedExtruderType != iExtruderTypeSeletion || m_selectedMethod != imethod || isempty) {
-                if (m_selectedExtruderType == 0) { //direct drive
+                if (m_selectedExtruderType == 0) { //近端
                     m_tiStartPA->GetTextCtrl()->SetValue(wxString::FromDouble(0.0));
                     m_tiEndPA->GetTextCtrl()->SetValue(wxString::FromDouble(0.1));
                     m_tiPAStep->GetTextCtrl()->SetValue(wxString::FromDouble(0.002));
-                } else { //Bowden
+                } else { //远端
                     m_tiStartPA->GetTextCtrl()->SetValue(wxString::FromDouble(0.0));
                     m_tiEndPA->GetTextCtrl()->SetValue(wxString::FromDouble(1.0));
                     m_tiPAStep->GetTextCtrl()->SetValue(wxString::FromDouble(0.02));

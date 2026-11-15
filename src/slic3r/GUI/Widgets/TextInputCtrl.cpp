@@ -41,7 +41,7 @@ TextInputCtrl::TextInputCtrl(wxWindow* parent, int id, wxString text, const wxPo
             e.Skip();
             return;
         }
-        // synchronous local dispatch keeps the original flow
+        // 同步本地分发保持原有流程
         e.SetId(GetId());
         ProcessEventLocally(e);
         e.Skip();

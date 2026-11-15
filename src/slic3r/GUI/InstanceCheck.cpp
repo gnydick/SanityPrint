@@ -621,7 +621,7 @@ namespace MessageHandlerDBusInternal
 	    dbus_connection_send(connection, reply, NULL);
 	    dbus_message_unref(reply);
 	}
-	//method AnotherInstance receives message from another SanityPrint instance 
+	//method AnotherInstance receives message from another CrealityPrint instance 
 	static void handle_method_another_instance(DBusConnection *connection, DBusMessage *request)
 	{
 	    DBusError     err;

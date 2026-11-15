@@ -432,7 +432,7 @@ static t_config_enum_values s_keys_map_PrintHostType {
     { "obico",          htObico },
     { "flashforge",     htFlashforge },
     { "simplyprint",    htSimplyPrint },
-    { "crealityprint",    htCrealityPrint },
+    { "sanityprint",    htSanityPrint },
 };
 CONFIG_OPTION_ENUM_DEFINE_STATIC_MAPS(PrintHostType)
 
@@ -1055,7 +1055,7 @@ void PrintConfigDef::init_common_params()
 
     def = this->add("print_host", coString);
     def->label = L("Hostname, IP or URL");
-    def->tooltip = L("Creality Print can upload G-code files to a printer host. This field should contain "
+    def->tooltip = L("Sanity Print can upload G-code files to a printer host. This field should contain "
         "the hostname, IP address or URL of the printer host instance. "
         "Print host behind HAProxy with basic auth enabled can be accessed by putting the user name and password into the URL "
         "in the following format: https://username:password@your-octopi-address/");
@@ -1072,7 +1072,7 @@ void PrintConfigDef::init_common_params()
 
     def = this->add("printhost_apikey", coString);
     def->label = L("API Key / Password");
-    def->tooltip = L("Creality Print can upload G-code files to a printer host. This field should contain "
+    def->tooltip = L("Sanity Print can upload G-code files to a printer host. This field should contain "
         "the API Key or the password required for authentication.");
     def->mode = comAdvanced;
     def->cli = ConfigOptionDef::nocli;
@@ -2259,7 +2259,7 @@ void PrintConfigDef::init_fff_params()
     def->tooltip = L(
         "This option sets the min point for the allowed bed mesh area. Due to the probe's XY offset, most printers are unable to probe the "
         "entire bed. To ensure the probe point does not go outside the bed area, the minimum and maximum points of the bed mesh should be "
-        "set appropriately. CrealityPrint ensures that adaptive_bed_mesh_min/adaptive_bed_mesh_max values do not exceed these min/max "
+        "set appropriately. SanityPrint ensures that adaptive_bed_mesh_min/adaptive_bed_mesh_max values do not exceed these min/max "
         "points. This information can usually be obtained from your printer manufacturer. The default setting is (-99999, -99999), which "
         "means there are no limits, thus allowing probing across the entire bed.");
     def->sidetext = L("mm");
@@ -2271,7 +2271,7 @@ void PrintConfigDef::init_fff_params()
     def->tooltip = L(
         "This option sets the max point for the allowed bed mesh area. Due to the probe's XY offset, most printers are unable to probe the "
         "entire bed. To ensure the probe point does not go outside the bed area, the minimum and maximum points of the bed mesh should be "
-        "set appropriately. CrealityPrint ensures that adaptive_bed_mesh_min/adaptive_bed_mesh_max values do not exceed these min/max "
+        "set appropriately. SanityPrint ensures that adaptive_bed_mesh_min/adaptive_bed_mesh_max values do not exceed these min/max "
         "points. This information can usually be obtained from your printer manufacturer. The default setting is (99999, 99999), which "
         "means there are no limits, thus allowing probing across the entire bed.");
     def->sidetext = L("mm");
@@ -2488,6 +2488,64 @@ void PrintConfigDef::init_fff_params()
     def->mode    = comAdvanced;
     def->set_default_value(new ConfigOptionInts{0});
 
+    // Parameterized filament behavior fields
+    // 0=HighTemp, 1=LowTemp, 2=HighLowCompatible, 3=Undefine
+    def          = this->add("filament_temp_type", coInts);
+    def->label   = L("Temperature type");
+    def->tooltip = L("Multi-material temperature compatibility class. 0=HighTemp, 1=LowTemp, 2=HighLowCompatible, 3=Undefine.");
+    def->min     = 0;
+    def->max     = 3;
+    def->mode    = comAdvanced;
+    def->set_default_value(new ConfigOptionInts{3});
+
+    def          = this->add("filament_cooling_smart_zone", coBools);
+    def->label   = L("Smart cooling zone");
+    def->tooltip = L("Enable smart cooling slowdown zones for this filament.");
+    def->mode    = comAdvanced;
+    def->set_default_value(new ConfigOptionBools{false});
+
+    def          = this->add("filament_bed_adhesion_strength", coFloats);
+    def->label   = L("Bed adhesion strength");
+    def->tooltip = L("Bed adhesion yield strength in MPa used for support-spot generation. Engine multiplies by 1e6 internally.");
+    def->min     = 0;
+    def->mode    = comAdvanced;
+    def->set_default_value(new ConfigOptionFloats{0.02});
+
+    def          = this->add("filament_thermal_length", coFloats);
+    def->label   = L("Thermal length");
+    def->tooltip = L("Characteristic thermal length (mm) used for brim/warp estimation.");
+    def->min     = 0;
+    def->mode    = comAdvanced;
+    def->set_default_value(new ConfigOptionFloats{200.0});
+
+    def          = this->add("filament_brim_adhesion_coeff", coFloats);
+    def->label   = L("Brim adhesion coefficient");
+    def->tooltip = L("Multiplier applied to brim width for adhesion estimation. Higher = wider brim generated.");
+    def->min     = 0;
+    def->mode    = comAdvanced;
+    def->set_default_value(new ConfigOptionFloats{1.0});
+
+    def          = this->add("filament_small_island_threshold", coFloats);
+    def->label   = L("Small island threshold");
+    def->tooltip = L("Area threshold (mm²) below which a slice island is treated as small.");
+    def->min     = 0;
+    def->mode    = comAdvanced;
+    def->set_default_value(new ConfigOptionFloats{10.0});
+
+    def          = this->add("filament_chamber_temp_limit", coInts);
+    def->label   = L("Chamber temperature limit");
+    def->tooltip = L("Maximum safe chamber temperature (°C) for this filament. 0 = no limit / no warning.");
+    def->min     = 0;
+    def->max     = 300;
+    def->mode    = comAdvanced;
+    def->set_default_value(new ConfigOptionInts{0});
+
+    def          = this->add("filament_is_flexible", coBools);
+    def->label   = L("Flexible filament");
+    def->tooltip = L("Mark this filament as flexible (e.g. TPU). Used to suggest appropriate support filament.");
+    def->mode    = comAdvanced;
+    def->set_default_value(new ConfigOptionBools{false});
+
     def = this->add("filament_max_volumetric_speed", coFloats);
     def->label = L("Max volumetric speed");
     def->tooltip = L("This setting stands for how much volume of filament can be melted and extruded per second. "
@@ -2672,7 +2730,7 @@ void PrintConfigDef::init_fff_params()
     def->label = L("Minimal purge on wipe tower");
     def->tooltip = L("After a tool change, the exact position of the newly loaded filament inside "
                      "the nozzle may not be known, and the filament pressure is likely not yet stable. "
-                     "Before purging the print head into an infill or a sacrificial object, Creality Print will always prime "
+                     "Before purging the print head into an infill or a sacrificial object, Sanity Print will always prime "
                      "this amount of material into the wipe tower to produce successive infill or sacrificial object extrusions reliably.");
     def->sidetext = L("mm³");
     def->min = 0;
@@ -3186,7 +3244,7 @@ void PrintConfigDef::init_fff_params()
     def->label = L("Sparse infill anchor length");
     def->category = L("Strength");
     def->tooltip = L("Connect an infill line to an internal perimeter with a short segment of an additional perimeter. "
-                     "If expressed as percentage (example: 15%) it is calculated over infill extrusion width. Creality Print tries to connect two close infill lines to a short perimeter segment. If no such perimeter segment "
+                     "If expressed as percentage (example: 15%) it is calculated over infill extrusion width. Sanity Print tries to connect two close infill lines to a short perimeter segment. If no such perimeter segment "
                      "shorter than infill_anchor_max is found, the infill line is connected to a perimeter segment at just one side "
                      "and the length of the perimeter segment taken is limited to this parameter, but no longer than anchor_length_max. "
                      "\nSet this parameter to zero to disable anchoring perimeters connected to a single infill line.");
@@ -3213,7 +3271,7 @@ void PrintConfigDef::init_fff_params()
     def->label = L("Maximum length of the infill anchor");
     def->category = L("Strength");
     def->tooltip = L("Connect an infill line to an internal perimeter with a short segment of an additional perimeter. "
-                     "If expressed as percentage (example: 15%) it is calculated over infill extrusion width. Creality Print tries to connect two close infill lines to a short perimeter segment. If no such perimeter segment "
+                     "If expressed as percentage (example: 15%) it is calculated over infill extrusion width. Sanity Print tries to connect two close infill lines to a short perimeter segment. If no such perimeter segment "
                      "shorter than this parameter is found, the infill line is connected to a perimeter segment at just one side "
                      "and the length of the perimeter segment taken is limited to infill_anchor, but no longer than this parameter. "
                      "\nIf set to 0, the old algorithm for infill connection will be used, it should create the same result as with 1000 & 0.");
@@ -4932,7 +4990,7 @@ void PrintConfigDef::init_fff_params()
 
     def = this->add("host_type", coEnum);
     def->label = L("Host Type");
-    def->tooltip = L("Creality Print can upload G-code files to a printer host. This field must contain "
+    def->tooltip = L("Sanity Print can upload G-code files to a printer host. This field must contain "
                    "the kind of the host.");
     def->enum_keys_map = &ConfigOptionEnum<PrintHostType>::get_enum_values();
     def->enum_values.push_back("prusalink");
@@ -4960,7 +5018,7 @@ void PrintConfigDef::init_fff_params()
     def->enum_labels.push_back("Obico");
     def->enum_labels.push_back("Flashforge");
     def->enum_labels.push_back("SimplyPrint");
-    def->enum_labels.push_back("CrealityPrint");
+    def->enum_labels.push_back("SanityPrint");
     def->mode = comAdvanced;
     def->cli = ConfigOptionDef::nocli;
     def->set_default_value(new ConfigOptionEnum<PrintHostType>(htOctoPrint));
@@ -5206,7 +5264,7 @@ void PrintConfigDef::init_fff_params()
     def->tooltip = L("If you want to process the output G-code through custom scripts, "
                    "just list their absolute paths here. Separate multiple scripts with a semicolon. "
                    "Scripts will be passed the absolute path to the G-code file as the first argument, "
-                   "and they can access the Creality Print config settings by reading environment variables.");
+                   "and they can access the Sanity Print config settings by reading environment variables.");
     def->gui_flags = "serialized";
     def->multiline = true;
     def->full_width = true;

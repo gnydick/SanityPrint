@@ -10975,8 +10975,7 @@ LayerResult GCode::process_layer(
                             continue;
                         }
                         double_t total_area = 0.0;
-                        const std::string filament_type = m_config.filament_type.get_at(extruder_id);
-                        double_t slice_threshold = (filament_type == "PETG") ? 20.0 : 10.0;
+                        double_t slice_threshold = m_config.filament_small_island_threshold.get_at(extruder_id);
                         for (const auto& lslice : layer.lslices) {
                             double slice_area = unscale_(unscale_(area(lslice)));
                             //CP: small island should coolling slow down, slice_area must be larger than 1 to ignore the print area of ??a single point

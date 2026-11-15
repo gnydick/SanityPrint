@@ -357,7 +357,7 @@ PrinterMgrView::PrinterMgrView(wxWindow *parent)
     RegisterHandler("set_user_custom_color_list", [this](const nlohmann::json& json_data) {
         this->handle_set_user_custom_color_list(json_data);
     });
-    std::string version = std::string(CREALITYPRINT_VERSION);
+    std::string version = std::string(SANITYPRINT_VERSION);
     std::string os = wxGetOsDescription().ToStdString();
     std::string type = std::string(PROJECT_VERSION_EXTRA);
     int port = wxGetApp().get_server_port();
@@ -650,7 +650,7 @@ void PrinterMgrView::OnError(wxWebViewEvent &evt)
             wxString restart_cmd = wxString::Format("\"%s\"", exe_path);
             long pid = wxExecute(restart_cmd, wxEXEC_ASYNC);
             if (pid <= 0)
-                BOOST_LOG_TRIVIAL(error) << "[WebViewRuntime] Failed to relaunch Creality Print after enabling single-process.";
+                BOOST_LOG_TRIVIAL(error) << "[WebViewRuntime] Failed to relaunch Sanity Print after enabling single-process.";
             if (Slic3r::GUI::wxGetApp().mainframe)
                 Slic3r::GUI::wxGetApp().mainframe->Close(true);
             else

@@ -371,7 +371,7 @@ public:
     void show_device(bool bBBLPrinter);
 
     void set_content_visible(bool visiable);
-    // Refresh the device management page (triggers the front-end refresh_all_device)
+    // 刷新设备管理页（触发前端 refresh_all_device）
     void refresh_device_page();
 
     void switch_to_device_page();

@@ -6901,7 +6901,7 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
             }
 			const std::string& temp_path = parameter.work_directory;
 			std::string temp_file = temp_path + std::string("/") + "_temp_xxxx.config";
-			std::string        version{ CREALITYPRINT_VERSION };
+			std::string        version{ SANITYPRINT_VERSION };
 			parameter.config->save_to_json(temp_file, std::string("project_settings"), std::string("project"), version);
 			if (!_add_file_to_archive(archive, BBS_PROJECT_CONFIG_FILE, temp_file))
 			{
@@ -6930,8 +6930,8 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
 			stream << "<" << CONFIG_TAG << ">\n";
 			// save slice header for debug
 			stream << "  <" << SLICE_HEADER_TAG << ">\n";		
-			stream << "    <" << SLICE_HEADER_ITEM_TAG << " " << KEY_ATTR << "=\"" << "X-CX-Client-Type" << "\" " << VALUE_ATTR << "=\"" << "creality_print" << "\"/>\n";
-			stream << "    <" << SLICE_HEADER_ITEM_TAG << " " << KEY_ATTR << "=\"" << "X-CX-Client-Version" << "\" " << VALUE_ATTR << "=\"" << convert_to_full_version(CREALITYPRINT_VERSION) << "\"/>\n";
+			stream << "    <" << SLICE_HEADER_ITEM_TAG << " " << KEY_ATTR << "=\"" << "X-CX-Client-Type" << "\" " << VALUE_ATTR << "=\"" << "sanity_print" << "\"/>\n";
+			stream << "    <" << SLICE_HEADER_ITEM_TAG << " " << KEY_ATTR << "=\"" << "X-CX-Client-Version" << "\" " << VALUE_ATTR << "=\"" << convert_to_full_version(SANITYPRINT_VERSION) << "\"/>\n";
 			stream << "  </" << SLICE_HEADER_TAG << ">\n";
 			stream << "</" << CONFIG_TAG << ">\n";
 
@@ -6964,7 +6964,7 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
             metadata_item_map["cloud_model_user"]      = parameter.model_user;
             metadata_item_map["cloud_model_copyright"] = parameter.model_copyright;
 
-			metadata_item_map[BBL_APPLICATION_TAG] = (boost::format("%1% V%2% %3%") % "Creality_Print" % CREALITYPRINT_VERSION % PROJECT_VERSION_EXTRA).str();
+			metadata_item_map[BBL_APPLICATION_TAG] = (boost::format("%1% V%2% %3%") % "Creality_Print" % SANITYPRINT_VERSION % PROJECT_VERSION_EXTRA).str();
 
 			for (auto item : metadata_item_map) 
             {
@@ -8035,7 +8035,7 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
                 std::string application_tag;
                 switch (type_3mf) {
                 case Slic3r::En3mfType::From_Creality: {
-                    application_tag = (boost::format("%1% V%2% %3%") % "Creality_Print" % CREALITYPRINT_VERSION % PROJECT_VERSION_EXTRA).str();
+                    application_tag = (boost::format("%1% V%2% %3%") % "Creality_Print" % SANITYPRINT_VERSION % PROJECT_VERSION_EXTRA).str();
                     break;
                 }
                 case Slic3r::En3mfType::From_Orca: {
@@ -8933,7 +8933,7 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
 
         const std::string& temp_path = model.get_backup_path();
         std::string temp_file = temp_path + std::string("/") + "_temp_1.config";
-        std::string        version{CREALITYPRINT_VERSION};
+        std::string        version{SANITYPRINT_VERSION};
         switch (type_3mf) {
         case Slic3r::En3mfType::From_BBS: {
             version = COMATIBLE_BAMBU_3MF_VERSION;
@@ -9326,8 +9326,8 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
         // save slice header for debug
         stream << "  <" << SLICE_HEADER_TAG << ">\n";
         if (type_3mf == En3mfType::From_Creality) {
-            stream << "    <" << SLICE_HEADER_ITEM_TAG << " " << KEY_ATTR << "=\"" << "X-CX-Client-Type"    << "\" " << VALUE_ATTR << "=\"" << "creality_print" << "\"/>\n";
-            stream << "    <" << SLICE_HEADER_ITEM_TAG << " " << KEY_ATTR << "=\"" << "X-CX-Client-Version" << "\" " << VALUE_ATTR << "=\"" << convert_to_full_version(CREALITYPRINT_VERSION) << "\"/>\n";
+            stream << "    <" << SLICE_HEADER_ITEM_TAG << " " << KEY_ATTR << "=\"" << "X-CX-Client-Type"    << "\" " << VALUE_ATTR << "=\"" << "sanity_print" << "\"/>\n";
+            stream << "    <" << SLICE_HEADER_ITEM_TAG << " " << KEY_ATTR << "=\"" << "X-CX-Client-Version" << "\" " << VALUE_ATTR << "=\"" << convert_to_full_version(SANITYPRINT_VERSION) << "\"/>\n";
         }
 		else if (type_3mf == En3mfType::From_BBS || type_3mf == En3mfType::From_Orca) {
         stream << "    <" << SLICE_HEADER_ITEM_TAG << " " << KEY_ATTR << "=\"" << "X-BBL-Client-Type"    << "\" " << VALUE_ATTR << "=\"" << "slicer" << "\"/>\n";
@@ -9450,7 +9450,7 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
                << "\" " << VALUE_ATTR << "=\"" << appName3mf << "\"/>\n";
         stream << "    <" << METADATA_TAG << " " << KEY_ATTR << "=\""
                << "AppVersion"
-               << "\" " << VALUE_ATTR << "=\"" << std::string(CREALITYPRINT_VERSION) << "\"/>\n";
+               << "\" " << VALUE_ATTR << "=\"" << std::string(SANITYPRINT_VERSION) << "\"/>\n";
         stream << "    <" << METADATA_TAG << " " << KEY_ATTR << "=\""
                << "AppStage"
                << "\" " << VALUE_ATTR << "=\"" << std::string(PROJECT_VERSION_EXTRA) << "\"/>\n";
@@ -9704,7 +9704,7 @@ bool update_file_modification_time(const fs::path& file_path, const std::time_t&
         return false;
     }
     catch (const fs::filesystem_error& e) {
-        std::cerr << "操作失败 (" << file_path << "): " << e.what() << std::endl;
+        std::cerr << "Operation failed (" << file_path << "): " << e.what() << std::endl;
         return false;
     }
 }
@@ -9714,7 +9714,7 @@ void recursive_update_directory(const fs::path& dir_path, const std::time_t& new
                                int& updated_count, int& error_count) {
     try {
         if (!fs::exists(dir_path) || !fs::is_directory(dir_path)) {
-            std::cerr << "无效文件夹: " << dir_path << std::endl;
+            std::cerr << "Invalid folder: " << dir_path << std::endl;
             return;
         }
 
@@ -9729,20 +9729,20 @@ void recursive_update_directory(const fs::path& dir_path, const std::time_t& new
                 else if (fs::is_regular_file(iter->status())) {
                     if (update_file_modification_time(iter->path(), new_time)) {
                         updated_count++;
-                        std::cout << "已更新: " << iter->path() << std::endl;
+                        std::cout << "Updated: " << iter->path() << std::endl;
                     } else {
                         error_count++;
                     }
                 }
             }
             catch (const fs::filesystem_error& e) {
-                std::cerr << "处理失败 (" << iter->path() << "): " << e.what() << std::endl;
+                std::cerr << "Processing failed (" << iter->path() << "): " << e.what() << std::endl;
                 error_count++;
             }
         }
     }
     catch (const fs::filesystem_error& e) {
-        std::cerr << "文件夹操作失败: " << e.what() << std::endl;
+        std::cerr << "Folder operation failed: " << e.what() << std::endl;
         error_count++;
     }
 }

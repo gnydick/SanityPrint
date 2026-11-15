@@ -6753,7 +6753,7 @@ void TabFilament::create_preset_tab()
         wxTR_NO_BUTTONS | wxTR_HIDE_ROOT | wxTR_SINGLE | wxTR_NO_LINES | wxBORDER_NONE | wxWANTS_CHARS | wxTR_FULL_ROW_HIGHLIGHT);
     m_tabctrl->Bind(wxEVT_RIGHT_DOWN, [this](auto& e) {}); // disable right select
     m_tabctrl->SetFont(Label::Body_14);
-    //m_tabctrl->SetBackgroundColor(wxColor(46, 134, 193));
+    //m_tabctrl->SetBackgroundColor(wxColor(0, 255, 0));
     //m_left_sizer->Add(m_tabctrl, 1, wxEXPAND);
     const int img_sz = int(32 * scale_factor + 0.5f);
     m_icons = new wxImageList(img_sz, img_sz, false, 1);
@@ -10071,7 +10071,7 @@ void TabPrinter::create_preset_tab()
         wxTR_NO_BUTTONS | wxTR_HIDE_ROOT | wxTR_SINGLE | wxTR_NO_LINES | wxBORDER_NONE | wxWANTS_CHARS | wxTR_FULL_ROW_HIGHLIGHT);
     m_tabctrl->Bind(wxEVT_RIGHT_DOWN, [this](auto& e) {}); // disable right select
     m_tabctrl->SetFont(Label::Body_14);
-    //m_tabctrl->SetBackgroundColor(wxColor(46, 134, 193));
+    //m_tabctrl->SetBackgroundColor(wxColor(0, 255, 0));
     //m_left_sizer->Add(m_tabctrl, 1, wxEXPAND);
     const int img_sz = int(32 * scale_factor + 0.5f);
     m_icons = new wxImageList(img_sz, img_sz, false, 1);

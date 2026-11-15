@@ -67,7 +67,7 @@ void TextInput::Create(wxWindow *     parent,
     text_ctrl->SetForegroundColour(text_color.colorForStates(state_handler.states()));
     state_handler.attach_child(text_ctrl);
     text_ctrl->Bind(wxEVT_KILL_FOCUS, [this](auto &e) {
-        // guard: stop forwarding events once the window is being destroyed
+        // 防护：窗口正在销毁则不再转发事件
         if (this->IsBeingDeleted()) {
             wxString value_del = text_ctrl ? text_ctrl->GetValue() : wxString();
             BOOST_LOG_TRIVIAL(warning) << __FUNCTION__ << " TextInput(KILL_FOCUS): window being deleted, skip (id=" << GetId() << ") value='" << value_del.ToStdString() << "'";
@@ -75,7 +75,7 @@ void TextInput::Create(wxWindow *     parent,
             return;
         }
 
-        // OnEdit defensive execution
+        // OnEdit 保护性执行
         try {
             OnEdit();
         } catch (const std::exception &ex) {
@@ -86,7 +86,7 @@ void TextInput::Create(wxWindow *     parent,
             BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << " TextInput(KILL_FOCUS): OnEdit threw unknown error value='" << value.ToStdString() << "'";
         }
 
-        // secondary guard: if OnEdit caused the window to start destroying, skip local dispatch
+        // 二次防护：若 OnEdit 导致窗口进入销毁，则不再进行本地分发
         if (this->IsBeingDeleted()) {
             wxString value = text_ctrl ? text_ctrl->GetValue() : wxString();
             BOOST_LOG_TRIVIAL(warning) << __FUNCTION__ << " TextInput(KILL_FOCUS): window deleted during OnEdit, skip (id=" << GetId() << ") value='" << value.ToStdString() << "'";
@@ -94,7 +94,7 @@ void TextInput::Create(wxWindow *     parent,
             return;
         }
 
-        // synchronous local dispatch, preserving the original business flow
+        // 同步本地分发，保持原有业务流程
         e.SetId(GetId());
         ProcessEventLocally(e);
         e.Skip();
@@ -256,7 +256,7 @@ void TextInput::paintEvent(wxPaintEvent &evt)
     // depending on your system you may need to look at double-buffered dcs
     wxPaintDC dc(this);
     auto      checkDCstate = [this](const wxDC& dc, const char* caller = nullptr) -> bool {
-        bool ok = true; // overall status: defaults to pass
+        bool ok = true; // 整体状态：默认通过
 
         // ===== 1. DC State Check =====
         if (!dc.IsOk()) {
@@ -276,12 +276,12 @@ void TextInput::paintEvent(wxPaintEvent &evt)
 #ifdef __WXMSW__
         if (dc.GetHDC() == nullptr) {
             ok             = false;
-            DWORD winError = ::GetLastError(); // must capture the error code first
+            DWORD winError = ::GetLastError(); // 必须先取错误码
             try {
-                // core error code
+                // 核心错误码
                 BOOST_LOG_TRIVIAL(error) << (caller ? caller : "") << " - HDC_NULL | WinErr: " << winError;
 
-                // Self window state
+                // Self 窗口状态
                 if (HWND selfHwnd = (HWND) GetHandle(); selfHwnd != nullptr) {
                     BOOST_LOG_TRIVIAL(error) << (caller ? caller : "") << " - Self: hwnd=0x" << std::hex << selfHwnd << std::dec
                                              << " | IsWindow=" << (::IsWindow(selfHwnd) ? 1 : 0)
@@ -290,7 +290,7 @@ void TextInput::paintEvent(wxPaintEvent &evt)
                     BOOST_LOG_TRIVIAL(error) << (caller ? caller : "") << " - Self: NULL_HANDLE";
                 }
 
-                // resource state
+                // 资源状态
                 try {
                     DWORD gdiCount  = GetGuiResources(GetCurrentProcess(), GR_GDIOBJECTS);
                     DWORD userCount = GetGuiResources(GetCurrentProcess(), GR_USEROBJECTS);
@@ -299,13 +299,13 @@ void TextInput::paintEvent(wxPaintEvent &evt)
                     BOOST_LOG_TRIVIAL(error) << (caller ? caller : "") << " - ResourceCheckFailed";
                 }
 
-                // thread validation
+                // 线程验证
                 BOOST_LOG_TRIVIAL(error) << (caller ? caller : "") << " - Thread: current=" << GetCurrentThreadId()
                                          << " | main=" << wxThread::GetMainId();
 
                 boost::log::core::get()->flush();
 
-                // parent window state
+                // 父窗口状态
                 if (wxWindow* parent = GetParent()) {
                     if (HWND parentHwnd = (HWND) parent->GetHandle(); parentHwnd != nullptr) {
                         BOOST_LOG_TRIVIAL(error) << (caller ? caller : "") << " - Parent: hwnd=0x" << std::hex << parentHwnd << std::dec
@@ -319,7 +319,7 @@ void TextInput::paintEvent(wxPaintEvent &evt)
                 }
                 boost::log::core::get()->flush();
 
-                // error description
+                // 错误描述
                 if (winError != 0) {
                     char  errBuf[256] = {0};
                     DWORD fmtRet = ::FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, winError, 0, errBuf,
@@ -345,7 +345,7 @@ void TextInput::paintEvent(wxPaintEvent &evt)
 #endif
 
         boost::log::core::get()->flush();
-        return ok; // return the status once the whole flow is complete
+        return ok; // 全部流程完成后统一返回状态
     };
     bool res = checkDCstate(dc, __FUNCTION__);
     if (!res) {

@@ -277,7 +277,7 @@ namespace DM{
         CloseHandle(pi.hThread);
 
         // 解析输出
-        size_t pos = output.find(encode_path(std::string("平均 =").c_str()));
+        size_t pos = output.find(encode_path(std::string("Average =").c_str()));
         
         if (pos == std::string::npos) {
             pos = output.find("Average =");

@@ -487,7 +487,7 @@ int UploadFile::uploadFileToAliyun(const std::string& local_path, const std::str
     boost::nowide::ifstream file_in(local_path, std::ios_base::binary);
         if (!file_in)
         {
-            std::cerr << "无法打开输入文件。" << std::endl;
+            std::cerr << "Failed to open input file." << std::endl;
             return 1;
         }
         auto call_back = std::bind(&UploadFile::UploadProgressCallback, this,
@@ -503,7 +503,7 @@ int UploadFile::uploadFileToAliyun(const std::string& local_path, const std::str
         boost::nowide::ofstream file_out(joined_path.string(), boost::nowide::ofstream::binary);
         if (!file_out)
         {
-            std::cerr << "无法打开输出文件。" << std::endl;
+            std::cerr << "Failed to open output file." << std::endl;
             return 1;
         }
         // Compress in bounded chunks so a close/cancel request can release the

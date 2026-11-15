@@ -821,7 +821,7 @@ UnsavedChangesDialog::UnsavedChangesDialog(Preset::Type type, PresetCollection *
         m_buttons &= ~ActionButtons::TRANSFER;
     build(type, dependent_presets, new_selected_preset);
     this->CenterOnScreen();
-    // Bind the window close event
+    // 绑定窗口关闭事件
     Bind(wxEVT_CLOSE_WINDOW, &UnsavedChangesDialog::OnClose, this);
     wxGetApp().UpdateDlgDarkUI(this);
 }
@@ -1143,13 +1143,13 @@ void UnsavedChangesDialog::close(Action action)
 
 void UnsavedChangesDialog::OnClose(wxCloseEvent& event)
 {
-    // Handle the logic for when the window is closed here
+    // 在这里处理窗口关闭时的逻辑
     if (event.CanVeto()) {
-        // If you need to prevent closing, you can call event.Veto()
+        // 如果需要阻止关闭，可以调用event.Veto()
         // event.Veto();
     }
 
-    // Invoke the default close handling
+    // 调用默认的关闭处理
     event.Skip();
 }
 

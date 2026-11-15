@@ -53,7 +53,7 @@
 #include "CommunicateWithCXCloud.hpp"
 
 namespace ConfigRelateGUI {
-    static wxColour green = wxColour("#17CC5F");
+    static wxColour green = wxColour("#3498DB");
     static wxColour white = wxColour("#FFFFFF");
     static wxSize   windowSize = wxSize(1112, 734);
     static wxSize   contentSize = wxSize(1112, 706);
@@ -1747,7 +1747,7 @@ private:
             wxBoxSizer* mainSizer = new wxBoxSizer(wxHORIZONTAL);
 
             // 打印机选择
-            wxStaticText* printerLabel = new wxStaticText(this, wxID_ANY, L"打印机选择", wxDefaultPosition, wxSize(80, 28), wxALIGN_CENTER);
+            wxStaticText* printerLabel = new wxStaticText(this, wxID_ANY, L"Select Printer", wxDefaultPosition, wxSize(80, 28), wxALIGN_CENTER);
             mainSizer->Add(printerLabel, 1, wxALIGN_CENTER_HORIZONTAL | wxTOP, 5);
 
             {

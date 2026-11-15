@@ -3538,7 +3538,7 @@ void GLGizmoCut3D::perform_cut(const Selection& selection)
         synchronize_model_after_cut(plater->model(), cut_id);
     }
     
-    // [Added] Mark geometry as modified (marked as soon as the operation completes)
+    // 【新增】标记几何体修改（操作完成即标记）
     AnalyticsDataUploadManager::ProjectModificationTracker::getInstance()
         .mark_modified(AnalyticsDataUploadManager::ModelModifyType::CUT);
 }

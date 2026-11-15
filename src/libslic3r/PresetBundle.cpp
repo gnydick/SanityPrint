@@ -597,7 +597,7 @@ VendorType PresetBundle::get_current_vendor_type()
             t = VendorType::Creality;
     }
 #ifdef CUSTOMIZED
-    //Customized platform plate rendering, using cx's directly.  custom,texture,smmoth
+    //定制的 平台板渲染，直接用cx的。  custom,texture,smmoth
     t = VendorType::Creality;
 #endif
     return t;

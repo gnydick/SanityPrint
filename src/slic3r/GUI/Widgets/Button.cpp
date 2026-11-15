@@ -420,16 +420,16 @@ void RoundedButton::Render(wxDC& dc)
     if (gc) {
         wxRect rect = GetClientRect();
 
-        // clear the default background
+        // 清除默认背景
         wxColour default_btn_bg = Slic3r::GUI::wxGetApp().dark_mode() ? wxColour("#010101") : wxColour(214, 214, 220);
         wxButton::SetBackgroundColour(default_btn_bg);
 
-        // draw the rounded-corner background
+        // 绘制圆角背景
         gc->SetBrush(wxBrush(m_bgColor));
         gc->SetPen(*wxTRANSPARENT_PEN);
         gc->DrawRoundedRectangle(rect.x, rect.y, rect.width, rect.height, m_cornerRadius);
 
-        // draw the icon (if present)
+        // 绘制图标（如果存在）
         if (m_icon.IsOk()) {
             wxDouble iconWidth  = m_icon.GetWidth();
             wxDouble iconHeight = m_icon.GetHeight();
@@ -438,7 +438,7 @@ void RoundedButton::Render(wxDC& dc)
             gc->DrawBitmap(m_icon, iconX, iconY, iconWidth, iconHeight);
         }
 
-        // draw the text
+        // 绘制文字
         wxFont font = GetFont();
         gc->SetFont(font, m_textColor);
         wxDouble textWidth, textHeight;

@@ -1109,7 +1109,7 @@ int ConfigBase::load_from_json(const std::string &file, ConfigSubstitutionContex
 
                             if (use_comma)
                             {
-                                //non-string-type values cannot have empty strings
+                                //非字符串类型的值不能有空字符串
                                 std::string tvalue = iter.value();
                                 if(tvalue.empty())
                                 {
@@ -1554,7 +1554,7 @@ ConfigSubstitutions ConfigBase::load_from_gcode_file(const std::string &file, Fo
     // Read a 64k block from the end of the G-code.
 	boost::nowide::ifstream ifs(file);
     BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(":  before parse_file %1%") % file.c_str();
-    // Look for Slic3r or SanityPrint header.
+    // Look for Slic3r or CrealityPrint header.
     // Look for the header across the whole file as the G-code may have been extended at the start by a post-processing script or the user.
     //BBS
     bool has_delimiters = true;

@@ -291,32 +291,32 @@ void ModelObject::clear_volumes()
 bool ModelObject::is_fdm_support_painted() const
 {
     try {
-        // Critical safety check: verify that the current ModelObject's ObjectID is still valid
-        // This can detect whether the object has already been freed or invalidated
+        // 关键安全检查：验证当前ModelObject的ObjectID是否仍然有效
+        // 这可以检测到对象是否已被释放或无效化
         if (!this->id().valid()) {
             BOOST_LOG_TRIVIAL(error) << "is_fdm_support_painted: ModelObject has invalid ObjectID, object may have been deleted";
             return false;
         }
         
-        // Safety check: ensure the volumes container is valid
+        // 安全检查：确保volumes容器有效
         if (this->volumes.empty()) {
             return false;
         }
         
         return std::any_of(this->volumes.cbegin(), this->volumes.cend(), [this](const ModelVolume *mv) { 
-            // Safety check: ensure the ModelVolume pointer is valid
+            // 安全检查：确保ModelVolume指针有效
             if (!mv) {
                 BOOST_LOG_TRIVIAL(error) << "is_fdm_support_painted: ModelVolume pointer is null";
                 return false;
             }
             
-            // Verify whether the ModelVolume's ObjectID is valid
+            // 验证ModelVolume的ObjectID是否有效
             if (!mv->id().valid()) {
                 BOOST_LOG_TRIVIAL(error) << "is_fdm_support_painted: ModelVolume has invalid ObjectID, volume may have been deleted";
                 return false;
             }
             
-            // Re-verify that the parent object is still valid before accessing child objects
+            // 再次验证父对象在访问子对象前仍然有效
             if (!this->id().valid()) {
                 BOOST_LOG_TRIVIAL(error) << "is_fdm_support_painted: ModelObject ObjectID became invalid during volume iteration";
                 return false;

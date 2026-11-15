@@ -701,7 +701,7 @@ void AppUpdater::install_update()
     // Execute the installer or updater
 #ifdef _WIN32
     if (m_is_hot_update) {
-         // Logic adapted from ReleaseNote.cpp run_sanityprint_updater
+         // Logic adapted from ReleaseNote.cpp run_crealityprint_updater
          // but using the versioned cache directory.
          
          std::string cache_dir = get_cache_dir(m_version);

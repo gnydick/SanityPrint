@@ -1115,7 +1115,7 @@ std::string Model::get_backup_path()
         std::time_t t = std::time(0);
         std::tm* now_time = std::localtime(&t);
         std::stringstream buf;
-        buf << "/crealityprint_model/";
+        buf << "/sanityprint_model/";
         buf << std::put_time(now_time, "%a_%b_%d/%H_%M_%S#");
         buf << pid << "#";
         buf << this->id().id;
@@ -1344,8 +1344,12 @@ void Model::setExtruderParams(const DynamicPrintConfig& config, int extruders_co
             bedTemp = config.opt_int(get_bed_temp_key(curr_bed_type), i);
         }
 #endif
-        if (i == 0) extruderParamsMap.insert({ i,{matName, bedTemp, endTemp} });
-        extruderParamsMap.insert({ i + 1,{matName, bedTemp, endTemp} });
+        double thermalLength     = config.has("filament_thermal_length")      ? config.opt_float("filament_thermal_length", i)      : 200.0;
+        double brimAdhCoeff      = config.has("filament_brim_adhesion_coeff") ? config.opt_float("filament_brim_adhesion_coeff", i) : 1.0;
+        double bedAdhStrength    = config.has("filament_bed_adhesion_strength") ? config.opt_float("filament_bed_adhesion_strength", i) : 0.02;
+        ExtruderParams ep{matName, bedTemp, endTemp, thermalLength, brimAdhCoeff, bedAdhStrength};
+        if (i == 0) extruderParamsMap.insert({ i, ep });
+        extruderParamsMap.insert({ i + 1, ep });
     }
 }
 
@@ -1549,23 +1553,10 @@ double Model::findMaxSpeed(const ModelObject* object) {
 
 // BBS: thermal length is calculated according to the material of a volume
 double Model::getThermalLength(const ModelVolume* modelVolumePtr) {
-    double thermalLength = 200.;
     auto aa = modelVolumePtr->extruder_id();
-    if (Model::extruderParamsMap.find(aa) != Model::extruderParamsMap.end()) {
-        if (Model::extruderParamsMap.at(aa).materialName == "ABS" ||
-            Model::extruderParamsMap.at(aa).materialName == "PA-CF" ||
-            Model::extruderParamsMap.at(aa).materialName == "PET-CF") {
-            thermalLength = 100;
-        }
-        if (Model::extruderParamsMap.at(aa).materialName == "PC") {
-            thermalLength = 40;
-        }
-        if (Model::extruderParamsMap.at(aa).materialName == "TPU") {
-            thermalLength = 1000;
-        }
-
-    }
-    return thermalLength;
+    if (Model::extruderParamsMap.find(aa) != Model::extruderParamsMap.end())
+        return Model::extruderParamsMap.at(aa).thermalLength;
+    return 200.;
 }
 
 // BBS: thermal length calculation for a group of volumes

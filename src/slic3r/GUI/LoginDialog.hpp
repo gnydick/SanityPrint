@@ -21,7 +21,7 @@ public:
     LoginDialog(wxWindow* parent, const wxString& title = _L("Login"));
     virtual ~LoginDialog();
 
-    // Show the login dialog
+    // 显示登录对话框
     void ShowLoginDialog(const wxString& loginUrl = wxEmptyString);
     void MarkLoginSucceeded();
 
@@ -30,7 +30,7 @@ public:
     void CloseModalOnce(int code);
 
 private:
-    // Event handlers
+    // 事件处理函数
     void OnWebViewNavigating(wxWebViewEvent& evt);
     void OnWebViewNewWindow(wxWebViewEvent& evt);
     void OnWebViewLoaded(wxWebViewEvent& evt);
@@ -43,14 +43,14 @@ private:
     void OnLinkMouseEnter(wxMouseEvent& evt);
     void OnLinkMouseLeave(wxMouseEvent& evt);
     
-    // Initialize the UI
+    // 初始化UI
     void InitializeUI();
-
-    // Get the login URL
+    
+    // 获取登录URL
     wxString GetLoginUrl();
 
 protected:
-    // Implements the DPIAware pure virtual function
+    // 实现DPIAware的纯虚函数
     void on_dpi_changed(const wxRect &suggested_rect) override;
 
 private:
@@ -68,7 +68,7 @@ private:
     // 未注册绑定流程进行中：期间 WebView 所有导航留在对话框内
     bool     m_bind_flow_web { false };
     
-    // Declare the event table
+    // 声明事件表
     wxDECLARE_EVENT_TABLE();
 };
 

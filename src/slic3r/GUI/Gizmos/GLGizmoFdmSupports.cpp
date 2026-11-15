@@ -314,7 +314,7 @@ void GLGizmoFdmSupports::on_render_input_window(float x, float y, float bottom_l
             }
         }
     }
-    // Disable the current page
+    // 禁用当前页面
     ImGui::PushItemFlag(ImGuiItemFlags_Disabled, !m_IsSupport);
     const bool is_changed = render_combo(_u8L("Type"), m_SupportTypes, m_CurType);
 
@@ -581,7 +581,7 @@ void GLGizmoFdmSupports::on_render_input_window(float x, float y, float bottom_l
 
     // BBS
     ImGuiWrapper::pop_toolbar_style();
-    // Restore the control state
+    // 恢复控件状态
     ImGui::PopItemFlag();
 }
 

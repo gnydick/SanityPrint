@@ -645,7 +645,7 @@ std::string get_vertion_type()
 	//｝
 	//else if(version == "Beta" || version == "beta")
 
-    // When PROJECT_VERSION_EXTRA is Dev, all logic except community and cloud interactions is handled as Alpha
+    // 当 PROJECT_VERSION_EXTRA 为 Dev 时，除社区与云端交互外，其它逻辑按 Alpha 处理
     bool is_alpha = boost::algorithm::icontains(version, "alpha") || boost::algorithm::icontains(version, "dev");
     //bool is_beta = false;
     bool is_beta =	boost::algorithm::icontains(version, "beta");
@@ -657,7 +657,7 @@ std::string get_cloud_api_url()
     std::string url;
     std::string version_type = get_vertion_type();
     std::string country_code = wxGetApp().app_config->get_country_code();
-    // When PROJECT_VERSION_EXTRA is Dev, cloud interactions all point to the Dev endpoint
+    // 当 PROJECT_VERSION_EXTRA 为 Dev 时，云端交互统一指向 Dev 接口
     {
         std::string extra = std::string(PROJECT_VERSION_EXTRA);
         if (boost::algorithm::iequals(extra, std::string("Dev"))) {
@@ -808,7 +808,7 @@ std::string user_feedback_website()
      }
     website += "&software=SanityPrint";
 
-	// std::string versionNum = SanityPrint_VERSION;
+	// std::string versionNum = CrealityPrint_VERSION;
 	Semver semver(SLIC3R_VERSION);
 	std::string versionNum = "&version=" + std::to_string(semver.maj()) + "." + std::to_string(semver.min()) + "." + std::to_string(semver.patch());
 
