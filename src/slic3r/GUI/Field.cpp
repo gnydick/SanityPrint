@@ -1401,6 +1401,9 @@ void Choice::BUILD()
             && m_list == nullptr) {
         m_is_editable = true;
         static Builder<choice_ctrl> builder1;
+        // filament_type stays a select-only dropdown (wxCB_READONLY) in the filament editor:
+        // arbitrary/custom type names are entered when *creating* a new filament, not when editing
+        // an existing one, so the two surfaces stay consistent. Other open enums remain typeable.
         if ("filament_type" == m_opt_id)
         {
             temp = builder1.build(m_parent, wxID_ANY, wxString(""), wxDefaultPosition, size, 0, nullptr, wxCB_READONLY);

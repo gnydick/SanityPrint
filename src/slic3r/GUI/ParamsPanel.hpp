@@ -342,7 +342,7 @@ class ParamsPanel : public wxPanel
         //wxTreeItemId                                                   m_curItem;
 
         wxColor m_normal_color = wxColor(110, 110, 115);
-        wxColor m_hover_color = wxColor(23, 204, 95);
+        wxColor m_hover_color = wxColor(52, 152, 219);
 
         bool            m_IsNeed          = true;
         PageState m_ps = PS_SYSTEM;

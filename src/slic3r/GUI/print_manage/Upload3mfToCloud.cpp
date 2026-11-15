@@ -218,8 +218,8 @@ Upload3mfToCloudDialog::Upload3mfToCloudDialog(Plater* plater)
     SetDoubleBuffered(true);
 #endif //__WINDOWS__
     
-    wxSize minSize = wxSize(FromDIP(500), FromDIP(300)); // 设置最小尺寸
-    // wxSize initialSize = wxSize(1024, 768); // 设置初始尺寸
+    wxSize minSize = wxSize(FromDIP(500), FromDIP(300)); // set the minimum size
+    // wxSize initialSize = wxSize(1024, 768); // set the initial size
     wxSize initialSize = wxSize(FromDIP(770), FromDIP(721));
     SetMinSize(minSize);
     SetSize(initialSize);
@@ -835,7 +835,7 @@ void Upload3mfToCloudDialog::get_current_plate_color()
         wrapSizer->Add(panel1, 1, wxALL, 5);
     }
     scrolledWindow1->SetSizer(wrapSizer);
-    scrolledWindow1->SetScrollRate(0, 10); // 设置垂直滚动速率
+    scrolledWindow1->SetScrollRate(0, 10); // set the vertical scroll rate
     scrolledWindow1->Layout();
     m_sizer_scrollable_region->Add(scrolledWindow1);
 
@@ -1491,7 +1491,7 @@ void Upload3mfToCloudDialog::show_status(PrintDialogStatus status, std::vector<w
         Enable_Send_Button(false);
         Enable_Refresh_Button(true);
     } else if (status == PrintDialogStatus::PrintStatusNotOnTheSameLAN) {
-        wxString msg_text = _L("The printer is required to be in the same LAN as Creality Print");
+        wxString msg_text = _L("The printer is required to be in the same LAN as Sanity Print");
         update_print_status_msg(msg_text, true, true);
         Enable_Send_Button(false);
         Enable_Refresh_Button(true);

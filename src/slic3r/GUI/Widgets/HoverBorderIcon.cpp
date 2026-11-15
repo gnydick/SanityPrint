@@ -46,7 +46,7 @@ void HoverBorderIcon::Create(wxWindow* parent, const wxString& text, const wxStr
 
     StaticBox::SetFont(Label::Body_13);
     StaticBox::SetBorderColor(StateColor(std::make_pair(is_dark ? 0x4B4B4D : 0xFFFFFF, (int) StateColor::Disabled),
-                                         std::make_pair(0x15BF59, (int) StateColor::Hovered),
+                                         std::make_pair(0x2E86C1, (int) StateColor::Hovered),
                                          std::make_pair(is_dark ?  0x4B4B4D : 0xFFFFFF, (int) StateColor::Normal)));
     StaticBox::SetBackgroundColor(
         StateColor(std::make_pair(is_dark ? 0x4B4B4D : 0xF0F0F1, (int) StateColor::Disabled),
@@ -156,7 +156,7 @@ void HoverBorderIcon::OnBusyTimer(wxTimerEvent&)
 void HoverBorderIcon::on_sys_color_changed(bool is_dark_mode)
 {
     StaticBox::SetBorderColor(StateColor(std::make_pair(is_dark_mode ? 0x4B4B4D : 0xFFFFFF, (int) StateColor::Disabled),
-                                         std::make_pair(0x15BF59, (int) StateColor::Hovered),
+                                         std::make_pair(0x2E86C1, (int) StateColor::Hovered),
                                          std::make_pair(is_dark_mode ? 0x4B4B4D : 0xFFFFFF, (int) StateColor::Normal)));
 
     StaticBox::SetBackgroundColor(
@@ -355,8 +355,8 @@ void ImgBtn::Create(wxWindow* parent, const wxString& text, const wxString& icon
 
     StaticBox::SetFont(Label::Body_13);
     StaticBox::SetBorderColor(StateColor(std::make_pair(parent->GetBackgroundColour(), (int) StateColor::Disabled),
-                                         std::make_pair(0x15BF59, (int) StateColor::Checked),
-                                         std::make_pair(0x15BF59, (int) StateColor::Hovered),
+                                         std::make_pair(0x2E86C1, (int) StateColor::Checked),
+                                         std::make_pair(0x2E86C1, (int) StateColor::Hovered),
                                          std::make_pair(parent->GetBackgroundColour(), (int) StateColor::Normal)));
     StaticBox::SetBackgroundColor(
         StateColor(std::make_pair(0xF0F0F1, (int) StateColor::Disabled),

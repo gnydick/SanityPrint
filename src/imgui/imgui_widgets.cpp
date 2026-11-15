@@ -123,7 +123,7 @@ static const ImU64          IM_U64_MAX = (2ULL * 9223372036854775807LL + 1);
 #endif
 
 
-static const ImVec4 RGBA_CREALITY = ImVec4(0.090f, 0.80f, 0.373, 1.00f);
+static const ImVec4 RGBA_CREALITY = ImVec4(0.180f, 0.525f, 0.757f, 1.00f);
 
 //-------------------------------------------------------------------------
 // [SECTION] Forward Declarations

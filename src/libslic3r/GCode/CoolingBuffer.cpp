@@ -728,12 +728,8 @@ std::vector<PerExtruderAdjustments> GCodeEditor::parse_layer_gcode(
         adj.cooling_slowdown_non_slow_outer_wall = adj.cooling_slowdown_logic == CoolingSlowdownLogicType::NonSlowOuterWalls;
         adj.cooling_slowdown_smart_zone          = adj.cooling_slowdown_logic == CoolingSlowdownLogicType::SmartCoolingZones;
       
-        const std::string filament_type = m_config.filament_type.get_at(extruder_id);
-        if (adj.cooling_slowdown_logic == CoolingSlowdownLogicType::SmartCoolingZones) {
-            if (filament_type == "PLA" || filament_type == "PETG" || filament_type == "ABS") {
-                adj.cooling_slowdown_smart_zone = true;
-            }
-        }
+        if (adj.cooling_slowdown_logic == CoolingSlowdownLogicType::SmartCoolingZones)
+            adj.cooling_slowdown_smart_zone = m_config.filament_cooling_smart_zone.get_at(extruder_id);
         map_extruder_to_per_extruder_adjustment[extruder_id] = i;
     }
 

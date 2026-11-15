@@ -191,13 +191,13 @@ void ModelDownloader::start_download_3mf_group(const std::string& full_url,
          fs::create_directories(target_path);
      }*/
 
-    // 生成唯一文件名：若 fileId 不同且 name 相同，则使用 "name (n).ext" 规则
+    // Generate a unique file name: if the fileId differs but the name is the same, use the "name (n).ext" rule
     std::string base_name = filterInvalidFileNameChars(name);
     std::string ext       = fileFormat;
     if (!ext.empty() && ext.front() != '.')
         ext = "." + ext;
 
-    // 如果该 fileId 之前已有路径，优先复用原文件名，确保重复下载保持一致
+    // If this fileId already had a path before, reuse the original file name first to keep repeated downloads consistent
     std::string existing_filename_for_this_id;
     int         same_name_count = 0;
     {
@@ -217,7 +217,7 @@ void ModelDownloader::start_download_3mf_group(const std::string& full_url,
     }
                         }
                     } else if (fname == name) {
-                        // 同名但不同 fileId 的数量，用于决定后缀序号
+                        // count of entries with the same name but a different fileId, used to decide the suffix number
                         ++same_name_count;
                     }
                 } catch (...) {}

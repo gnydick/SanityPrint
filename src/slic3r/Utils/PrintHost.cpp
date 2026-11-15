@@ -65,7 +65,7 @@ PrintHost* PrintHost::get_print_host(DynamicPrintConfig *config)
             case htObico:     return new Obico(config);
             case htFlashforge: return new Flashforge(config);
             case htSimplyPrint: return new SimplyPrint(config);
-            case htCrealityPrint: return new CrealityPrint(config);
+            case htSanityPrint: return new SanityPrint(config);
             default:          return nullptr;
         }
     } else {

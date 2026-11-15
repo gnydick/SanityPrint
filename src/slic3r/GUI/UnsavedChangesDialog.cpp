@@ -821,7 +821,7 @@ UnsavedChangesDialog::UnsavedChangesDialog(Preset::Type type, PresetCollection *
         m_buttons &= ~ActionButtons::TRANSFER;
     build(type, dependent_presets, new_selected_preset);
     this->CenterOnScreen();
-    // 绑定窗口关闭事件
+    // Bind the window close event
     Bind(wxEVT_CLOSE_WINDOW, &UnsavedChangesDialog::OnClose, this);
     wxGetApp().UpdateDlgDarkUI(this);
 }
@@ -999,8 +999,8 @@ void UnsavedChangesDialog::build(Preset::Type type, PresetCollection *dependent_
     wxFont      btn_font = this->GetFont().Scaled(1.4f);
 
     StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(206, 206, 206), StateColor::Disabled),
-        std::pair<wxColour, int>(wxColour(21, 191, 89), StateColor::Pressed),
-        std::pair<wxColour, int>(wxColour(21, 191, 89), StateColor::Hovered),
+        std::pair<wxColour, int>(wxColour(52, 152, 219), StateColor::Pressed),
+        std::pair<wxColour, int>(wxColour(52, 152, 219), StateColor::Hovered),
         std::pair<wxColour, int>(wxColour(110, 110, 115), StateColor::Normal));
 
     auto add_btn = [this, m_sizer_button, btn_font, dependent_presets, btn_bg_green](Button **btn, int &btn_id, const std::string &icon_name, Action close_act, const wxString &label,
@@ -1143,13 +1143,13 @@ void UnsavedChangesDialog::close(Action action)
 
 void UnsavedChangesDialog::OnClose(wxCloseEvent& event)
 {
-    // 在这里处理窗口关闭时的逻辑
+    // Handle the logic for when the window is closed here
     if (event.CanVeto()) {
-        // 如果需要阻止关闭，可以调用event.Veto()
+        // If you need to prevent closing, you can call event.Veto()
         // event.Veto();
     }
 
-    // 调用默认的关闭处理
+    // Invoke the default close handling
     event.Skip();
 }
 
@@ -2106,7 +2106,7 @@ void DiffPresetDialog::create_buttons()
 
     // Transfer 
     m_transfer_btn = new Button(this, L("Transfer"));
-    m_transfer_btn->SetBorderColor(wxColour(0, 150, 136));
+    m_transfer_btn->SetBorderColor(wxColour(46, 134, 193));
     m_transfer_btn->SetTextColor(wxColour("#FFFFFE"));
     m_transfer_btn->SetMinSize(wxSize(-1, -1));
     m_transfer_btn->SetCornerRadius(FromDIP(12));

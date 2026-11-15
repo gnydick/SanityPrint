@@ -84,7 +84,7 @@ private:
 
 int ZUserLogin::web_sequence_id = 20000;
 
-ZUserLogin::ZUserLogin() : wxDialog((wxWindow *) (wxGetApp().mainframe), wxID_ANY, "CrealityPrint")
+ZUserLogin::ZUserLogin() : wxDialog((wxWindow *) (wxGetApp().mainframe), wxID_ANY, "SanityPrint")
 {
     SetBackgroundColour(*wxWHITE);
     // Url

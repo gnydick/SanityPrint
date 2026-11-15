@@ -597,7 +597,7 @@ VendorType PresetBundle::get_current_vendor_type()
             t = VendorType::Creality;
     }
 #ifdef CUSTOMIZED
-    //定制的 平台板渲染，直接用cx的。  custom,texture,smmoth
+    //Customized platform plate rendering, using cx's directly.  custom,texture,smmoth
     t = VendorType::Creality;
 #endif
     return t;
@@ -1034,7 +1034,7 @@ PresetsConfigSubstitutions PresetBundle::import_presets(std::vector<std::string>
             import_json_presets(substitutions, file, override_confirm, rule, overwrite, result);
         }
         // Determine if it is a preset bundle
-        if (boost::iends_with(file, ".creality_printer") || boost::iends_with(file, ".creality_filament") || boost::iends_with(file, ".zip")) {
+        if (boost::iends_with(file, ".sanity_printer") || boost::iends_with(file, ".creality_filament") || boost::iends_with(file, ".zip")) {
             boost::system::error_code ec;
             // create user folder
             fs::path user_folder(data_dir() + "/" + PRESET_USER_DIR);
@@ -1372,7 +1372,7 @@ PresetsConfigSubstitutions PresetBundle::import_presets_multifile(std::vector<st
             delete item;
         }
         lstOverrideConfirmFile.clear();
-        m_isCrealityPrinter  = false;
+        m_isSanityPrinter  = false;
         m_isCrealityFilament = false;
 
         STOverrideConfirmFile* pSTOverrideConfirmFile = new STOverrideConfirmFile;
@@ -1403,10 +1403,10 @@ PresetsConfigSubstitutions PresetBundle::import_presets_multifile(std::vector<st
                 }, rule, overwrite, result);
         }
         // Determine if it is a preset bundle
-        if (boost::iends_with(file, ".creality_printer") || boost::iends_with(file, ".creality_filament") ||
+        if (boost::iends_with(file, ".sanity_printer") || boost::iends_with(file, ".creality_filament") ||
             boost::iends_with(file, ".zip")) {
-            if (boost::iends_with(file, ".creality_printer"))
-                m_isCrealityPrinter = true;
+            if (boost::iends_with(file, ".sanity_printer"))
+                m_isSanityPrinter = true;
             if (boost::iends_with(file, ".creality_filament"))
                 m_isCrealityFilament = true;
 
@@ -2020,6 +2020,41 @@ std::pair<PresetsConfigSubstitutions, std::string> PresetBundle::load_system_pre
 		this->reset(false);
 	}
 
+    // SanityPrint: load the Template vendor (printer-agnostic base filaments)
+    // directly from resources so template edits go live on restart, bypassing
+    // the version-gated data_dir/system copy. The "Template" vendor name is
+    // exempted from the instantiation and filament_id gates below, so its
+    // non-instantiated bases load as real (hidden) presets that user filament
+    // presets can inherit from.
+    {
+        boost::filesystem::path template_dir =
+            (boost::filesystem::path(resources_dir()) / PRESET_PROFILES_TEMOLATE_DIR).make_preferred();
+        if (boost::filesystem::exists(template_dir / (std::string(PRESET_TEMPLATE_DIR) + ".json"))) {
+            try {
+                PresetBundle other;
+                append(substitutions,
+                       other.load_vendor_configs_from_json(template_dir.string(), PRESET_TEMPLATE_DIR,
+                                                           PresetBundle::LoadSystem, compatibility_rule).first);
+                std::vector<std::string> duplicates = this->merge_presets(std::move(other));
+                for (const std::string &dup : duplicates)
+                    BOOST_LOG_TRIVIAL(error) << "Template vendor preset duplicates existing preset: " << dup;
+                // Force templates hidden: they are seed/inheritance bases only and
+                // must never appear in the filament picker or be auto-selected.
+                // Default is_visible is true, and the appconfig-based hide only
+                // kicks in once a [filaments] section exists, so they would leak
+                // on a fresh install without this.
+                PresetCollection &fil = this->filaments;
+                for (size_t i = 0; i < fil.get_presets().size(); ++i) {
+                    const Preset &p = fil.get_presets()[i];
+                    if (p.is_system && p.vendor && p.vendor->id == PRESET_TEMPLATE_DIR)
+                        fil.preset(i, true).is_visible = false;
+                }
+            } catch (const std::exception &err) {
+                BOOST_LOG_TRIVIAL(error) << "Failed loading Template vendor: " << err.what();
+            }
+        }
+    }
+
 	this->update_system_maps();
     //BBS: add config related logs
     BOOST_LOG_TRIVIAL(debug) << __FUNCTION__ << boost::format(" finished, errors_cummulative %1%")%errors_cummulative;
@@ -2260,8 +2295,7 @@ const int PresetBundle::get_required_hrc_by_filament_type(const std::string& fil
     auto iter = filament_type_to_hrc.find(filament_type);
     if (iter != filament_type_to_hrc.end())
         return iter->second;
-    else
-        return 0;
+    return 0;
 }
 
 //BBS: add project embedded preset logic

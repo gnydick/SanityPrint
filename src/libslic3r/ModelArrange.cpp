@@ -194,14 +194,11 @@ ArrangePolygon get_instance_arrange_poly(ModelInstance* instance, const Slic3r::
     }
 
     // get filament temp types
-    auto* filament_types_opt = dynamic_cast<const ConfigOptionStrings*>(config.option("filament_type"));
-    if (filament_types_opt) {
+    auto* filament_temp_type_opt = dynamic_cast<const ConfigOptionInts*>(config.option("filament_temp_type"));
+    if (filament_temp_type_opt) {
         std::set<int> filament_temp_types;
-        for (auto i : ap.extrude_ids) {
-            std::string type_str = filament_types_opt->get_at(i-1);
-            int temp_type = creality::Filament::get_filament_temp_type(type_str);
-            filament_temp_types.insert(temp_type);
-        }
+        for (auto i : ap.extrude_ids)
+            filament_temp_types.insert(filament_temp_type_opt->get_at(i - 1));
         ap.filament_temp_type = creality::Filament::get_compatible_filament_type(filament_temp_types);
     }
 

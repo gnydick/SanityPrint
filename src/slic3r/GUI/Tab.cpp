@@ -1062,7 +1062,7 @@ void Tab::create_preset_tab()
         rebuild_page_tree();
 
     m_completed = true;
-    m_tabctrl->SetBackgroundColor(wxColor(0, 255, 0));
+    m_tabctrl->SetBackgroundColor(wxColor(46, 134, 193));
 }
 
 void Tab::add_scaled_button(wxWindow* parent,
@@ -2837,8 +2837,9 @@ void Tab::on_value_change(const std::string& opt_key, const boost::any& value)
             Slic3r::Preset* filament = filaments.find_preset(filament_presets[filament_id]);
             if (filament)
             {
-                std::string filament_type = filament->config.option<ConfigOptionStrings>("filament_type")->values[0];
-                support_TPU = filament_type == "PLA" && has_filaments({ "TPU", "TPU-AMS" });
+                bool is_flexible = filament->config.has("filament_is_flexible")
+                    && filament->config.option<ConfigOptionBools>("filament_is_flexible")->get_at(0);
+                support_TPU = !is_flexible && has_filaments({ "TPU", "TPU-AMS" });
             }
         }
 
@@ -2912,8 +2913,9 @@ void Tab::on_value_change(const std::string& opt_key, const boost::any& value)
             Slic3r::Preset* filament = filaments.find_preset(filament_presets[interface_filament_id]);
             if (filament)
             {
-                std::string filament_type = filament->config.option<ConfigOptionStrings>("filament_type")->values[0];
-                support_TPU = filament_type == "PLA" && has_filaments({ "TPU", "TPU-AMS" });
+                bool is_flexible = filament->config.has("filament_is_flexible")
+                    && filament->config.option<ConfigOptionBools>("filament_is_flexible")->get_at(0);
+                support_TPU = !is_flexible && has_filaments({ "TPU", "TPU-AMS" });
             }
         }
 
@@ -4106,7 +4108,7 @@ wxSizer* TabPrint::create_limit_mess_enable_widget(const std::string& title, wxW
                                        std::pair<wxColour, int>(wxColour(is_dark ? 0x4B4B4D : 0xFFFFFF), StateColor::Hovered),
                                        std::pair<wxColour, int>(wxColour(is_dark ? 0x4B4B4D : 0xFFFFFF), StateColor::Normal)));
     btn->Bind(wxEVT_ENTER_WINDOW, [=](wxMouseEvent& e) {
-        btn->SetBorderColor(wxColour("#18CC5C"));
+        btn->SetBorderColor(wxColour("#2E86C1"));
     });
     btn->Bind(wxEVT_LEAVE_WINDOW, [=](wxMouseEvent& e) {
         btn->SetBorderColor(wxColour("#DBDBDB"));
@@ -5970,6 +5972,16 @@ void TabFilament::build()
         };
 
 
+        optgroup = page->new_optgroup(L("Material properties"), L"param_material_properties");
+        optgroup->append_single_option_line("filament_temp_type");
+        optgroup->append_single_option_line("filament_cooling_smart_zone");
+        optgroup->append_single_option_line("filament_bed_adhesion_strength");
+        optgroup->append_single_option_line("filament_thermal_length");
+        optgroup->append_single_option_line("filament_brim_adhesion_coeff");
+        optgroup->append_single_option_line("filament_small_island_threshold");
+        optgroup->append_single_option_line("filament_chamber_temp_limit");
+        optgroup->append_single_option_line("filament_is_flexible");
+
         optgroup = page->new_optgroup(L("Print chamber temperature"), L"param_chamber_temp");
         optgroup->append_single_option_line("chamber_temperature", "chamber-temperature");
         optgroup->append_single_option_line("activate_chamber_temp_control", "chamber-temperature");
@@ -6741,7 +6753,7 @@ void TabFilament::create_preset_tab()
         wxTR_NO_BUTTONS | wxTR_HIDE_ROOT | wxTR_SINGLE | wxTR_NO_LINES | wxBORDER_NONE | wxWANTS_CHARS | wxTR_FULL_ROW_HIGHLIGHT);
     m_tabctrl->Bind(wxEVT_RIGHT_DOWN, [this](auto& e) {}); // disable right select
     m_tabctrl->SetFont(Label::Body_14);
-    //m_tabctrl->SetBackgroundColor(wxColor(0, 255, 0));
+    //m_tabctrl->SetBackgroundColor(wxColor(46, 134, 193));
     //m_left_sizer->Add(m_tabctrl, 1, wxEXPAND);
     const int img_sz = int(32 * scale_factor + 0.5f);
     m_icons = new wxImageList(img_sz, img_sz, false, 1);
@@ -10059,7 +10071,7 @@ void TabPrinter::create_preset_tab()
         wxTR_NO_BUTTONS | wxTR_HIDE_ROOT | wxTR_SINGLE | wxTR_NO_LINES | wxBORDER_NONE | wxWANTS_CHARS | wxTR_FULL_ROW_HIGHLIGHT);
     m_tabctrl->Bind(wxEVT_RIGHT_DOWN, [this](auto& e) {}); // disable right select
     m_tabctrl->SetFont(Label::Body_14);
-    //m_tabctrl->SetBackgroundColor(wxColor(0, 255, 0));
+    //m_tabctrl->SetBackgroundColor(wxColor(46, 134, 193));
     //m_left_sizer->Add(m_tabctrl, 1, wxEXPAND);
     const int img_sz = int(32 * scale_factor + 0.5f);
     m_icons = new wxImageList(img_sz, img_sz, false, 1);

@@ -256,26 +256,26 @@ std::string AppUpdater::get_cache_dir(const std::string& version)
     // Cache directory should be based on the current app version (installed version),
     // not the update target version received from the server.
     (void)version;
-    std::string safe_version = std::string(CREALITYPRINT_VERSION);
+    std::string safe_version = std::string(SANITYPRINT_VERSION);
     fs::path cache_dir;
 
 #ifdef _WIN32
     wxString local_appdata;
     if (wxGetEnv("LOCALAPPDATA", &local_appdata) && !local_appdata.IsEmpty()) {
-        cache_dir = fs::path(local_appdata.ToUTF8().data()) / "crealityprint_squirrel" / safe_version;
+        cache_dir = fs::path(local_appdata.ToUTF8().data()) / "sanityprint_squirrel" / safe_version;
     } else {
         wchar_t path[MAX_PATH];
         if (SUCCEEDED(SHGetFolderPathW(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, path))) {
-            cache_dir = fs::path(path) / "crealityprint_squirrel" / safe_version;
+            cache_dir = fs::path(path) / "sanityprint_squirrel" / safe_version;
         }
     }
 #endif
 
     if (cache_dir.empty()) {
 #ifdef _WIN32
-        cache_dir = fs::path(wxStandardPaths::Get().GetUserDataDir().ToStdWstring()) / "crealityprint_squirrel" / safe_version;
+        cache_dir = fs::path(wxStandardPaths::Get().GetUserDataDir().ToStdWstring()) / "sanityprint_squirrel" / safe_version;
 #else
-        cache_dir = fs::path(wxStandardPaths::Get().GetUserDataDir().ToStdString()) / "crealityprint_squirrel" / safe_version;
+        cache_dir = fs::path(wxStandardPaths::Get().GetUserDataDir().ToStdString()) / "sanityprint_squirrel" / safe_version;
 #endif
     }
 
@@ -701,7 +701,7 @@ void AppUpdater::install_update()
     // Execute the installer or updater
 #ifdef _WIN32
     if (m_is_hot_update) {
-         // Logic adapted from ReleaseNote.cpp run_crealityprint_updater
+         // Logic adapted from ReleaseNote.cpp run_sanityprint_updater
          // but using the versioned cache directory.
          
          std::string cache_dir = get_cache_dir(m_version);
@@ -747,9 +747,9 @@ void AppUpdater::install_update()
          // Arguments: --install-dir="<install_dir>" --current-version="<current_version>"
          // Use 3-part version for Squirrel compatibility
          
-         std::string current_version = std::string(CREALITYPRINT_VERSION_MAJOR) + "." + 
-                                        std::string(CREALITYPRINT_VERSION_MINOR) + "." + 
-                                        std::string(CREALITYPRINT_VERSION_PATCH);
+         std::string current_version = std::string(SANITYPRINT_VERSION_MAJOR) + "." + 
+                                        std::string(SANITYPRINT_VERSION_MINOR) + "." + 
+                                        std::string(SANITYPRINT_VERSION_PATCH);
          std::string version_extra = std::string(PROJECT_VERSION_EXTRA);
          
          // Convert version extra to lowercase for Squirrel compatibility
@@ -764,14 +764,8 @@ void AppUpdater::install_update()
          std::wstring winstall_dir = boost::nowide::widen(install_dir.string());
          std::wstring wversion = boost::nowide::widen(current_version);
 
-         std::string manual_url;
-         if (!m_manual_url.empty()) {
-             manual_url = m_manual_url;
-         } else {
-             manual_url = (wxGetApp().app_config->get("language") == "zh_CN")
-                 ? "https://wiki.creality.com/zh/software/update-released"
-                 : "https://wiki.creality.com/en/software/update-released";
-         }
+         // No fallback manual URL: the release-notes link to the Creality wiki was removed.
+         std::string manual_url = m_manual_url;
          std::wstring wmanual_url = boost::nowide::widen(manual_url);
          std::string dark_mode = (wxGetApp().app_config->get("dark_color_mode") == "1") ? "1" : "0";
          std::wstring wdark_mode = boost::nowide::widen(dark_mode);

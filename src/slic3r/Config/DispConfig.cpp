@@ -290,7 +290,7 @@ ImVec2 DispConfig::getWindowSize(WindowType tp, float scale) {
         winsize = { 20, 17 };
         break;
     case DispConfig::e_wt_slice:
-        winsize = { 202, 82 };
+        winsize = { 202, 116 }; // three rows: sync filaments, slice, send/print
         break;
     case DispConfig::e_wt_msg:
         winsize = { 300, 85 };
@@ -472,11 +472,11 @@ ImVec2 DispConfig::boldTextWrapped(const std::string& str, float scale, float wr
 {
     Loc_pushBoldStyle(scale);
     ImGui::SetCursorPosX(ImGui::GetCursorPosX());
-    ImGui::PushTextWrapPos(wrap_start_x); // 设置换行起点
+    ImGui::PushTextWrapPos(wrap_start_x); // set the wrap start position
     ImGui::TextWrapped("%s", str.c_str());
     ImGui::PopTextWrapPos();
     Loc_popBoldStyle(scale);
-    return ImGui::CalcTextSize(str.c_str()); //  注意：TextWrapped 不返回实际尺寸
+    return ImGui::CalcTextSize(str.c_str()); //  note: TextWrapped does not return the actual size
 }
 
 
@@ -494,7 +494,7 @@ ImU32 DispConfig::getColorImU32(ColorType ct) {
         ret = IM_COL32(255, 0, 0, 255);
         break;
     case Slic3r::GUI::DispConfig::e_ct_hyperText:
-        ret = IM_COL32(23, 204, 95, 255);
+        ret = IM_COL32(52, 152, 219, 255);
         break;
     case Slic3r::GUI::DispConfig::e_ct_line:
         ret = IM_COL32(67, 67, 70, 255);
@@ -515,7 +515,7 @@ ImU32 DispConfig::getColorImU32(ColorType ct) {
         ret = s_isDark ? IM_COL32(110, 110, 115, 255) : IM_COL32(242, 242, 245,255);
         break;
     case Slic3r::GUI::DispConfig::e_ct_btnBgSel:
-        ret = IM_COL32(23, 204, 95, 255);
+        ret = IM_COL32(52, 152, 219, 255);
         break;
     case Slic3r::GUI::DispConfig::e_ct_text:
         ret = s_isDark ? IM_COL32(255, 255, 255, 255) : IM_COL32(51, 51, 51,255);
@@ -524,16 +524,16 @@ ImU32 DispConfig::getColorImU32(ColorType ct) {
         ret = s_isDark ? IM_COL32(74, 74, 77,255) : IM_COL32(206, 206, 207,255);
         break;
     case Slic3r::GUI::DispConfig::e_ct_sliderSel:
-        ret = IM_COL32(23, 204, 95,255);
+        ret = IM_COL32(52, 152, 219,255);
         break;
     case Slic3r::GUI::DispConfig::e_ct_slider_hand:
-        ret = IM_COL32(0, 255, 101,255);
+        ret = IM_COL32(46, 134, 193,255);
         break;
     case Slic3r::GUI::DispConfig::e_ct_sliderTip:
         ret = s_isDark ? IM_COL32(66, 75, 81,255) : IM_COL32(78, 89, 105, 255);
         break;
     case Slic3r::GUI::DispConfig::e_ct_normalTip:
-        ret = IM_COL32(23, 204, 95, 255);
+        ret = IM_COL32(52, 152, 219, 255);
         break;
     case Slic3r::GUI::DispConfig::e_ct_selectBox:
         ret = IM_COL32(255, 255, 255, 255);

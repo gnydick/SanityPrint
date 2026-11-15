@@ -30,7 +30,7 @@ Button::Button()
     background_color = StateColor(
         std::make_pair(0xF0F0F1, (int) StateColor::Disabled),
         std::make_pair(0x52c7b8, (int) StateColor::Hovered | StateColor::Checked),
-        std::make_pair(0x009688, (int) StateColor::Checked),
+        std::make_pair(0x2E86C1, (int) StateColor::Checked),
         std::make_pair(*wxLIGHT_GREY, (int) StateColor::Hovered), 
         std::make_pair(*wxWHITE, (int) StateColor::Normal));
     text_color       = StateColor(
@@ -420,16 +420,16 @@ void RoundedButton::Render(wxDC& dc)
     if (gc) {
         wxRect rect = GetClientRect();
 
-        // 清除默认背景
+        // clear the default background
         wxColour default_btn_bg = Slic3r::GUI::wxGetApp().dark_mode() ? wxColour("#010101") : wxColour(214, 214, 220);
         wxButton::SetBackgroundColour(default_btn_bg);
 
-        // 绘制圆角背景
+        // draw the rounded-corner background
         gc->SetBrush(wxBrush(m_bgColor));
         gc->SetPen(*wxTRANSPARENT_PEN);
         gc->DrawRoundedRectangle(rect.x, rect.y, rect.width, rect.height, m_cornerRadius);
 
-        // 绘制图标（如果存在）
+        // draw the icon (if present)
         if (m_icon.IsOk()) {
             wxDouble iconWidth  = m_icon.GetWidth();
             wxDouble iconHeight = m_icon.GetHeight();
@@ -438,7 +438,7 @@ void RoundedButton::Render(wxDC& dc)
             gc->DrawBitmap(m_icon, iconX, iconY, iconWidth, iconHeight);
         }
 
-        // 绘制文字
+        // draw the text
         wxFont font = GetFont();
         gc->SetFont(font, m_textColor);
         wxDouble textWidth, textHeight;
@@ -554,7 +554,7 @@ CustomRoundCornerButton::CustomRoundCornerButton(wxWindow* parent, wxWindowID id
     : wxPanel(parent),
     m_label(label),
     m_radiusTopLeft(10), m_radiusTopRight(10), m_radiusBottomLeft(0), m_radiusBottomRight(0),
-    m_normalColor(wxColor("#4b4b4d")), m_hoverColor("#17cc5f"), m_pressedColor("#17cc5f"), m_borderColor("#6e6e72"),
+    m_normalColor(wxColor("#4b4b4d")), m_hoverColor("#3498db"), m_pressedColor("#3498db"), m_borderColor("#6e6e72"),
     m_isHovered(false), m_isPressed(false), m_isChecked(false){
     Bind(wxEVT_PAINT, &CustomRoundCornerButton::OnPaint, this);
     Bind(wxEVT_ENTER_WINDOW, &CustomRoundCornerButton::OnMouseEnter, this);

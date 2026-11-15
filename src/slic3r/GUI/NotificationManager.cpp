@@ -1260,7 +1260,7 @@ void NotificationManager::ProgressBarNotification::render_bar(ImGuiWrapper& imgu
 
     int alpha = (int)(255 * m_current_fade_opacity);
     ImColor bg_color(74, 74, 77, alpha);   
-    ImColor fg_color(23, 204, 95, alpha);  
+    ImColor fg_color(52, 152, 219, alpha);  
 
     ImVec4 orange_color         = ImVec4(0, 0.588, 0.533, 1);
     ImVec4 gray_color           = ImVec4(.7f, .7f, .7f, 1.0f);
@@ -1654,8 +1654,8 @@ void NotificationManager::PrintHostUploadNotification::render_bar(ImGuiWrapper& 
         ImVec2 ws = ImGui::GetWindowSize();
         const float parent_win_size_x = ws.x;
         const float parent_win_size_y = ws.y;
-        const float parent_win_pos_x  = wp.x + ws.x; // 右边界
-        const float parent_win_pos_y  = wp.y;        // 顶部
+        const float parent_win_pos_x  = wp.x + ws.x; // right edge
+        const float parent_win_pos_y  = wp.y;        // top
 
         ProgressBarNotification::render_bar(imgui, parent_win_size_x,parent_win_size_y,parent_win_pos_x, parent_win_pos_y);
 
