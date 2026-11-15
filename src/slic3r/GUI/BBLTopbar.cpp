@@ -854,6 +854,9 @@ void BBLTopbarArt::DrawButton(wxDC& dc, wxWindow* wnd, const wxAuiToolBarItem& i
                 if (UPLOAD_BTN_CODE != item.GetUserData()) {
                     gc->StrokePath(path);
                 }
+
+                // Destroy the graphics context to free resources
+                delete gc;
             }
             else
             {
@@ -875,8 +878,6 @@ void BBLTopbarArt::DrawButton(wxDC& dc, wxWindow* wnd, const wxAuiToolBarItem& i
             }
         }
     }
-
-    delete gc;
 
     if (bmp.IsOk())
         dc.DrawBitmap(bmp, bmpX, bmpY, true);
