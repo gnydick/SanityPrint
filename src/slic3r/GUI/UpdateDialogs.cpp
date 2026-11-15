@@ -172,7 +172,7 @@ void PresetUpdateDialog::apply_theme()
         std::make_pair(*wxWHITE, int(StateColor::Normal))));
     m_primary->SetBackgroundColor(StateColor(
         std::make_pair(wxColour("#F0F0F1"), int(StateColor::Disabled)),
-        std::make_pair(wxColour("#17CC5F"), int(StateColor::Normal))));
+        std::make_pair(wxColour("#3498DB"), int(StateColor::Normal))));
     m_primary->SetBorderColor(StateColor(wxColour("#ACACAC")));
     m_primary->SetTextColor(StateColor(
         std::make_pair(wxColour("#6B6B6A"), int(StateColor::Disabled)),

@@ -1621,7 +1621,7 @@ Print::ApplyStatus Print::apply(const Model &model, DynamicPrintConfig new_full_
                            ? new_full_config.option<ConfigOptionFloats>("filament_diameter")->values.size() : 0;
         const ConfigOptionStrings *filament_colour_opt = new_full_config.option<ConfigOptionStrings>("filament_colour");
         std::vector<std::string> physical_filament_colors = filament_colour_opt ? filament_colour_opt->values : std::vector<std::string>();
-        physical_filament_colors.resize(num_physical, "#26A69A");
+        physical_filament_colors.resize(num_physical, "#5DADE2");
         mixed_filament_manager().mixed_filaments().clear();
         mixed_filament_manager().load_custom_entries(mixed_custom_definitions, physical_filament_colors);
         mixed_filament_manager().apply_gradient_settings(mixed_gradient_mode, mixed_height_lower, mixed_height_upper, mixed_advanced_dither);

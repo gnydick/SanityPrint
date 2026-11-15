@@ -14380,7 +14380,7 @@ static void render_filament_nozzle_mapping_preview_summary(float scale)
     if (collapse_hovered) {
         draw_list->AddRect(collapse_pos,
                            collapse_pos + ImVec2(collapse_size, collapse_size),
-                           IM_COL32(21, 191, 89, 255), 6.0f * scale,
+                           IM_COL32(52, 152, 219, 255), 6.0f * scale,
                            ImDrawFlags_RoundCornersAll, 1.0f * scale);
     }
 

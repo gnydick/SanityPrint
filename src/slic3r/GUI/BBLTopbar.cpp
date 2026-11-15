@@ -510,7 +510,7 @@ bool ButtonsCtrl::InsertPage(
             const bool is_dark = Slic3r::GUI::wxGetApp().dark_mode();
             const bool selected = m_selection == static_cast<int>(index);
             const wxColour normal_bg = selected
-                ? (is_dark ? wxColour(31, 202, 99) : wxColour(21, 192, 89))
+                ? (is_dark ? wxColour(65, 179, 224) : wxColour(52, 152, 219))
                 : (is_dark ? wxColour(1, 1, 1) : wxColour(214, 214, 220));
             const wxColour hover_bg = selected
                 ? wxColour(68, 205, 122)

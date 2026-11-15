@@ -349,7 +349,7 @@ wxBitmap OfficialFilamentColorDialog::make_swatch(const ColorEntry& entry, const
     }
     if (selected) {
         dc.SetBrush(*wxTRANSPARENT_BRUSH);
-        dc.SetPen(wxPen(wxColour("#1FCA63"), FromDIP(2)));
+        dc.SetPen(wxPen(wxColour("#3498DB"), FromDIP(2)));
         dc.DrawRectangle(1, 1, size.GetWidth() - 2, size.GetHeight() - 2);
     }
     dc.SelectObject(wxNullBitmap);

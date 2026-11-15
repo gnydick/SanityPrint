@@ -101,7 +101,7 @@ static void paint_parameter_diff_button(Button* button)
     }
 
     dc.SetFont(button->GetFont());
-    dc.SetTextForeground(dark ? wxColour("#E5E5E5") : wxColour("#15C059"));
+    dc.SetTextForeground(dark ? wxColour("#E5E5E5") : wxColour("#3498DB"));
     const std::string icon_name = button->IsEnabled() ? "parameter_diff" : "parameter_diff_disabled";
     const wxBitmap icon = create_scaled_bitmap(icon_name + (dark ? "_dark" : ""), button, parameter_diff_icon_dip);
     const wxSize icon_size = icon.GetSize();

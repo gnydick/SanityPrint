@@ -44,14 +44,14 @@ static void update_ui(wxWindow* window) { Slic3r::GUI::wxGetApp().UpdateDarkUI(w
 
 static StateColor transmittance_ok_btn_bg()
 {
-    return StateColor(std::pair<wxColour, int>(wxColour(23, 204, 95), StateColor::Pressed),
-                      std::pair<wxColour, int>(wxColour(23, 204, 95, 0.9 * 255), StateColor::Hovered),
-                      std::pair<wxColour, int>(wxColour(23, 204, 95), StateColor::Normal));
+    return StateColor(std::pair<wxColour, int>(wxColour(52, 152, 219), StateColor::Pressed),
+                      std::pair<wxColour, int>(wxColour(52, 152, 219, 0.9 * 255), StateColor::Hovered),
+                      std::pair<wxColour, int>(wxColour(52, 152, 219), StateColor::Normal));
 }
 
 static StateColor transmittance_ok_btn_bd()
 {
-    return StateColor(std::pair<wxColour, int>(wxColour(0, 150, 136), StateColor::Normal));
+    return StateColor(std::pair<wxColour, int>(wxColour(46, 134, 193), StateColor::Normal));
 }
 
 static StateColor transmittance_ok_btn_text()

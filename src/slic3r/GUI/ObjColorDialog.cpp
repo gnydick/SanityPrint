@@ -127,10 +127,10 @@ wxBoxSizer* ObjColorDialog::create_btn_sizer(long flags)
         ok_btn->SetMinSize(BTN_SIZE);
         ok_btn->SetCornerRadius(FromDIP(4));
         ok_btn->Enable(false);
-        ok_btn->SetBackgroundColor(StateColor(std::pair<wxColour, int>(wxColour("#1FCA63"), StateColor::Pressed),
-                                             std::pair<wxColour, int>(wxColour("#1FCA63"), StateColor::Hovered),
-                                             std::pair<wxColour, int>(wxColour("#1FCA63"), StateColor::Disabled),
-                                             std::pair<wxColour, int>(wxColour("#1FCA63"), StateColor::Normal)));
+        ok_btn->SetBackgroundColor(StateColor(std::pair<wxColour, int>(wxColour("#3498DB"), StateColor::Pressed),
+                                             std::pair<wxColour, int>(wxColour("#3498DB"), StateColor::Hovered),
+                                             std::pair<wxColour, int>(wxColour("#3498DB"), StateColor::Disabled),
+                                             std::pair<wxColour, int>(wxColour("#3498DB"), StateColor::Normal)));
         ok_btn->SetBorderColor(ok_btn_bd);
         ok_btn->SetTextColor(ok_btn_text);
         ok_btn->SetFocus();
@@ -202,10 +202,10 @@ ObjColorDialog::ObjColorDialog(wxWindow *                      parent,
     auto btn_sizer = create_btn_sizer(wxOK | wxCANCEL);
     {
         const StateColor ok_btn_green(
-            std::pair<wxColour, int>(wxColour("#1FCA63"), StateColor::Pressed),
-            std::pair<wxColour, int>(wxColour("#1FCA63"), StateColor::Hovered),
-            std::pair<wxColour, int>(wxColour("#1FCA63"), StateColor::Disabled),
-            std::pair<wxColour, int>(wxColour("#1FCA63"), StateColor::Normal));
+            std::pair<wxColour, int>(wxColour("#3498DB"), StateColor::Pressed),
+            std::pair<wxColour, int>(wxColour("#3498DB"), StateColor::Hovered),
+            std::pair<wxColour, int>(wxColour("#3498DB"), StateColor::Disabled),
+            std::pair<wxColour, int>(wxColour("#3498DB"), StateColor::Normal));
         m_button_list[wxOK]->Bind(wxEVT_UPDATE_UI, ([this, ok_btn_green](wxUpdateUIEvent &e) {
            if (m_panel_ObjColor->is_ok()) {
                m_panel_ObjColor->update_warning_text(_L("Note:The color has been selected, you can choose OK to continue or manually adjust it."));
@@ -890,7 +890,7 @@ wxBoxSizer *ObjColorPanel::create_approximate_match_btn_sizer(wxWindow *parent)
     wxString   bgColor   = wxGetApp().dark_mode() ? "#313131" : "#FFFFFF";
     wxString   bgColor2  = wxGetApp().dark_mode() ? "#2B2B2B" : "#EFF0F6";
     wxString   bgColor3  = wxGetApp().dark_mode() ? "#6C6E71" : "#D0D4DE";
-    wxString   fgColor   = wxGetApp().dark_mode() ? "#1FCA63" : "#1FCA63";
+    wxString   fgColor   = wxGetApp().dark_mode() ? "#3498DB" : "#3498DB";
     wxString   fgColor2  = wxGetApp().dark_mode() ? "#F0F0FF" : "#30373D";
     StateColor calc_btn_bg(std::pair<wxColour, int>(wxColour(bgColor /*0, 137, 123*/), StateColor::Pressed), 
                            std::pair<wxColour, int>(wxColour(bgColor /*38, 166, 154*/), StateColor::Hovered),
@@ -927,7 +927,7 @@ wxBoxSizer *ObjColorPanel::create_add_btn_sizer(wxWindow *parent)
     wxString   bgColor   = wxGetApp().dark_mode() ? "#313131" : "#FFFFFF";
     wxString   bgColor2  = wxGetApp().dark_mode() ? "#2B2B2B" : "#EFF0F6";
     wxString   bgColor3  = wxGetApp().dark_mode() ? "#6C6E71" : "#D0D4DE";
-    wxString   fgColor   = wxGetApp().dark_mode() ? "#1FCA63" : "#1FCA63";
+    wxString   fgColor   = wxGetApp().dark_mode() ? "#3498DB" : "#3498DB";
     wxString   fgColor2  = wxGetApp().dark_mode() ? "#F0F0FF" : "#30373D";
     StateColor calc_btn_bg(std::pair<wxColour, int>(wxColour(bgColor /*0, 137, 123*/), StateColor::Pressed), 
                            std::pair<wxColour, int>(wxColour(bgColor /*38, 166, 154*/), StateColor::Hovered),
@@ -964,7 +964,7 @@ wxBoxSizer *ObjColorPanel::create_reset_btn_sizer(wxWindow *parent)
     wxString   bgColor   = wxGetApp().dark_mode() ? "#313131" : "#FFFFFF";
     wxString   bgColor2  = wxGetApp().dark_mode() ? "#2B2B2B" : "#EFF0F6";
     wxString   bgColor3  = wxGetApp().dark_mode() ? "#6C6E71" : "#D0D4DE";
-    wxString   fgColor   = wxGetApp().dark_mode() ? "#1FCA63" : "#1FCA63";
+    wxString   fgColor   = wxGetApp().dark_mode() ? "#3498DB" : "#3498DB";
     wxString   fgColor2  = wxGetApp().dark_mode() ? "#F0F0FF" : "#30373D";
     StateColor calc_btn_bg(std::pair<wxColour, int>(wxColour(bgColor /*0, 137, 123*/), StateColor::Pressed), 
                            std::pair<wxColour, int>(wxColour(bgColor /*38, 166, 154*/), StateColor::Hovered),

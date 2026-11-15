@@ -7800,7 +7800,7 @@ void ObjectList::render_printer_preset_by_ImGui(bool folded_view)
 
     ImDrawList* header_draw_list = ImGui::GetWindowDrawList();
     auto draw_hover_border = [scale](ImDrawList* draw_list, const ImVec2& min, const ImVec2& max) {
-        draw_list->AddRect(min, max, IM_COL32(21, 191, 89, 255),
+        draw_list->AddRect(min, max, IM_COL32(52, 152, 219, 255),
             6.0f * scale, ImDrawFlags_RoundCornersAll, 1.0f * scale);
     };
 

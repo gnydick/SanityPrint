@@ -2294,7 +2294,7 @@ void MixedFilamentManager::refresh_display_colors(const std::vector<std::string>
                 }
 
                 mf.mix_b_percent = mix_percent_from_normalized_pattern(normalized_pattern);
-                mf.display_color = color_percents.empty() ? "#26A69A" : blend_color_multi(color_percents);
+                mf.display_color = color_percents.empty() ? "#5DADE2" : blend_color_multi(color_percents);
                 continue;
             }
         }
@@ -2307,7 +2307,7 @@ void MixedFilamentManager::refresh_display_colors(const std::vector<std::string>
                 build_weighted_gradient_sequence(gradient_ids,
                     gradient_weights.empty() ? std::vector<int>(gradient_ids.size(), 1) : gradient_weights);
             if (gradient_sequence.empty()) {
-                mf.display_color = "#26A69A";
+                mf.display_color = "#5DADE2";
                 continue;
             }
 
@@ -2330,7 +2330,7 @@ void MixedFilamentManager::refresh_display_colors(const std::vector<std::string>
         }
         if (mf.component_a == 0 || mf.component_b == 0 ||
             mf.component_a > filament_colours.size() || mf.component_b > filament_colours.size()) {
-            mf.display_color = "#26A69A";
+            mf.display_color = "#5DADE2";
             continue;
         }
         const int ratio_a = std::max(0, 100 - clamp_int(mf.mix_b_percent, 0, 100));

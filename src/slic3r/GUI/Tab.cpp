@@ -115,7 +115,7 @@ static void paint_support_recommendation_button(Button* button, ConfigOptionsGro
 
     const bool dark = wxGetApp().dark_mode();
     const bool hovered = button->IsEnabled() && (button->GetState() & StateColor::Hovered) != 0;
-    const wxColour foreground(dark && !hovered ? "#C9CDD4" : "#15C059");
+    const wxColour foreground(dark && !hovered ? "#C9CDD4" : "#3498DB");
     const int inset = button->FromDIP(6);
     int icon_x = inset;
     if (group && group->custom_ctrl) {
@@ -521,7 +521,7 @@ void Tab::Highlighter::init(wxWindow* window, bool* show_blink_ptr, bool highlig
     m_highlight_foreground = highlight_foreground;
     if (m_highlight_foreground) {
         m_original_colour = m_custom_ctrl->GetForegroundColour();
-        m_custom_ctrl->SetForegroundColour("#15BF59");
+        m_custom_ctrl->SetForegroundColour("#2E86C1");
     }
 
     *m_show_blink_ptr = true;
@@ -550,7 +550,7 @@ void Tab::Highlighter::blink()
     if (m_custom_ctrl && m_show_blink_ptr) {
         *m_show_blink_ptr = !*m_show_blink_ptr;
         if (m_highlight_foreground)
-            m_custom_ctrl->SetForegroundColour(*m_show_blink_ptr ? wxColour("#15BF59") : m_original_colour);
+            m_custom_ctrl->SetForegroundColour(*m_show_blink_ptr ? wxColour("#2E86C1") : m_original_colour);
         m_custom_ctrl->Refresh();
     }
     else

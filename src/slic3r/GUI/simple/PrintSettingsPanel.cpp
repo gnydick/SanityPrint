@@ -42,7 +42,7 @@ bool PrintSettingsPanel::render(bool embedded)
     // 集中颜色
     const ImU32 slider_bg_color      = is_dark ? IM_COL32(60, 60, 60, 255)  : IM_COL32(230, 230, 230, 255);
     const ImU32 highlight_color      = is_dark ? IM_COL32(200, 200, 200, 255): IM_COL32(255, 255, 255, 255);
-    const ImU32 highlight_text_color = IM_COL32(21, 192, 89, 255);
+    const ImU32 highlight_text_color = IM_COL32(52, 152, 219, 255);
     const ImU32 slider_text_color    = IM_COL32(160, 160, 160, 255);
     const ImU32 label_text_color     = is_dark ? IM_COL32(255, 255, 255, 255): IM_COL32(30, 30, 30, 255);
     const ImU32 panel_bg_color       = is_dark ? IM_COL32(30, 30, 30, 255)   : IM_COL32(255, 255, 255, 255);

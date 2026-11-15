@@ -1077,7 +1077,7 @@ public:
         }
         if (hovered) {
             const ImVec2 btn_max(btn_pos.x + btn_size.x, btn_pos.y + btn_size.y);
-            dl->AddRect(btn_pos, btn_max, IM_COL32(21, 191, 89, 255),
+            dl->AddRect(btn_pos, btn_max, IM_COL32(52, 152, 219, 255),
                 6.0f * view_scale, ImDrawFlags_RoundCornersAll, 1.0f * view_scale);
         }
 

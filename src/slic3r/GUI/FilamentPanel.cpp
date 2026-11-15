@@ -3018,11 +3018,11 @@ bool FilamentPanel::show_filament_grouping_dialog(bool slice_all, bool* mapping_
     confirm_button->SetFont(Label::Body_13);
     confirm_button->SetCornerRadius(4);
     confirm_button->SetForegroundColour(*wxWHITE);
-    confirm_button->SetBorderColor(wxColour("#1FCA63"));
+    confirm_button->SetBorderColor(wxColour("#3498DB"));
     confirm_button->SetBackgroundColor(StateColor(
         std::pair<wxColour, int>(wxColour("#18B957"), StateColor::Pressed),
         std::pair<wxColour, int>(wxColour("#2AD672"), StateColor::Hovered),
-        std::pair<wxColour, int>(wxColour("#1FCA63"), StateColor::Normal)));
+        std::pair<wxColour, int>(wxColour("#3498DB"), StateColor::Normal)));
     confirm_button->SetTextColor(StateColor(
         std::pair<wxColour, int>(*wxWHITE, StateColor::Pressed),
         std::pair<wxColour, int>(*wxWHITE, StateColor::Hovered),

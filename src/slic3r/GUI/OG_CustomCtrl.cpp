@@ -1627,7 +1627,7 @@ void OG_CustomCtrl::CtrlLine::render(wxDC& dc, wxCoord h_pos, wxCoord v_pos)
 
         const auto layout = ctrl->get_field_layout(og_line);
         if (layout.label_width > 0) {
-            wxColour blink_color = StateColor::darkModeColorFor("#15BF59");
+            wxColour blink_color = StateColor::darkModeColorFor("#2E86C1");
             const wxColour* text_clr = field->blink() ? &blink_color : field->label_color();
             draw_text(dc, wxPoint(layout.label_x, v_pos), og_line.label, text_clr,
                       layout.label_width, false, true);

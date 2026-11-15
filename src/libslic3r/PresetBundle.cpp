@@ -5693,7 +5693,7 @@ void PresetBundle::update_multi_material_filament_presets(size_t to_delete_filam
                     this->project_config.set_key_value(key, new ConfigOptionString(value));
             };
 
-            color_opt->values.resize(num_filaments, "#26A69A");
+            color_opt->values.resize(num_filaments, "#5DADE2");
 
             // Keep project colours aligned to physical filaments, then reload
             // the serialized rows. On deletion, incomplete rows retain a zero

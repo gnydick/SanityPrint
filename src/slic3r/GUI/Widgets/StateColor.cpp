@@ -6,7 +6,7 @@ static bool gDarkMode = false;
 static bool operator<(wxColour const &l, wxColour const &r) { return l.GetRGBA() < r.GetRGBA(); }
 
 static std::map<wxColour, wxColour> gDarkColors{
-    {"#0B9B64", "#17CC5F"}, // AI entry links on dark process panels.
+    {"#0B9B64", "#3498DB"}, // AI entry links on dark process panels.
     {"#07110b", "#07110b"}, // AI creation text stays dark on the green selected tab.
     {"#2E86C1", "#1A5F8A"}, // rgb(46, 134, 193)    ORCA color
     {"#1F8EEA", "#2778D2"}, // rgb(31, 142, 234)   ???
