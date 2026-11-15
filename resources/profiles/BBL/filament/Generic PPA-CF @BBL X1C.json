@@ -59,5 +59,8 @@
         "Bambu Lab P1S 0.4 nozzle",
         "Bambu Lab P1S 0.6 nozzle",
         "Bambu Lab P1S 0.8 nozzle"
+    ],
+    "filament_temp_type": [
+        "0"
     ]
 }

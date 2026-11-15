@@ -42,6 +42,15 @@
     "slow_down_min_speed": "20",
     "textured_plate_temp": "50",
     "textured_plate_temp_initial_layer": "50",
+    "filament_temp_type": [
+        "1"
+    ],
+    "filament_cooling_smart_zone": [
+        "1"
+    ],
+    "filament_chamber_temp_limit": [
+        "45"
+    ],
     "compatible_printers": [
         "Creality K2 Plus 0.4 nozzle"
     ],

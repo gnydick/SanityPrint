@@ -112,6 +112,12 @@
     "textured_plate_temp_initial_layer": [
         "90"
     ],
+    "filament_temp_type": [
+        "0"
+    ],
+    "filament_bed_adhesion_strength": [
+        "0.1"
+    ],
     "filament_end_gcode": [
         "; filament end gcode \n\n"
     ]

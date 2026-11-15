@@ -11,5 +11,8 @@
     ],
     "filament_vendor": [
         "Generic"
+    ],
+    "filament_temp_type": [
+        "0"
     ]
 }

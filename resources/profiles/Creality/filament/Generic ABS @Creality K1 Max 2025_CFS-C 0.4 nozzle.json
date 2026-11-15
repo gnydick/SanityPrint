@@ -98,5 +98,17 @@
     "support_material_interface_fan_speed": "-1",
     "temperature_vitrification": "110",
     "textured_plate_temp": "100",
-    "textured_plate_temp_initial_layer": "100"
+    "textured_plate_temp_initial_layer": "100",
+    "filament_temp_type": [
+        "0"
+    ],
+    "filament_cooling_smart_zone": [
+        "1"
+    ],
+    "filament_bed_adhesion_strength": [
+        "0.1"
+    ],
+    "filament_thermal_length": [
+        "100.0"
+    ]
 }

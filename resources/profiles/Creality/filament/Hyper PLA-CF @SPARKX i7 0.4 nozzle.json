@@ -103,5 +103,11 @@
     "support_material_interface_fan_speed": "-1",
     "temperature_vitrification": "60",
     "textured_plate_temp": "55",
-    "textured_plate_temp_initial_layer": "55"
+    "textured_plate_temp_initial_layer": "55",
+    "filament_temp_type": [
+        "1"
+    ],
+    "filament_chamber_temp_limit": [
+        "45"
+    ]
 }

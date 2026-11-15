@@ -38,5 +38,11 @@
     ],
     "temperature_vitrification": [
         "170"
+    ],
+    "filament_temp_type": [
+        "0"
+    ],
+    "filament_thermal_length": [
+        "100.0"
     ]
 }

@@ -41,5 +41,8 @@
     ],
     "slow_down_layer_time": [
         "4"
+    ],
+    "filament_temp_type": [
+        "0"
     ]
 }

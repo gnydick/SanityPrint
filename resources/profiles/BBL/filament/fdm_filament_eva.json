@@ -7,6 +7,9 @@
     "filament_type": [
         "EVA"
     ],
+    "filament_temp_type": [
+        "2"
+    ],
     "filament_dev_chamber_drying_bed_temperature": [
         "70"
     ],

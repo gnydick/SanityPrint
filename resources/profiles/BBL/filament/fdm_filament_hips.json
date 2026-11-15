@@ -88,6 +88,9 @@
     "slow_down_layer_time": [
         "6"
     ],
+    "filament_temp_type": [
+        "2"
+    ],
     "slow_down_min_speed": [
         "20"
     ],

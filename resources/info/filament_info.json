@@ -24,7 +24,7 @@
         "PVA",
         "BVOH"
     ],
-    "high_low_compatible_filament":[
+    "high_low_compatible_filament": [
         "HIPS",
         "PETG",
         "PE",
@@ -38,5 +38,46 @@
         "PETG-GF",
         "PC-CF",
         "ABS-FR"
-    ]
+    ],
+    "base_types": [
+        "PLA",
+        "ABS",
+        "ASA",
+        "PETG",
+        "PCTG",
+        "PET",
+        "PA",
+        "PC",
+        "PE",
+        "PP",
+        "TPU",
+        "HIPS",
+        "PVA",
+        "BVOH",
+        "PPS",
+        "PPA",
+        "EVA",
+        "PHA"
+    ],
+    "base_type": {
+        "PLA-CF": "PLA",
+        "PLA-AERO": "PLA",
+        "ABS-GF": "ABS",
+        "ASA-Aero": "ASA",
+        "PA-CF": "PA",
+        "PA-GF": "PA",
+        "PA6": "PA",
+        "PA6-CF": "PA",
+        "PAHT": "PA",
+        "PAHT-CF": "PA",
+        "PET-CF": "PET",
+        "PETG-CF": "PETG",
+        "PE-CF": "PE",
+        "PP-CF": "PP",
+        "PP-GF": "PP",
+        "PC-CF": "PC",
+        "PPS-CF": "PPS",
+        "PPA-CF": "PPA",
+        "PPA-GF": "PPA"
+    }
 }

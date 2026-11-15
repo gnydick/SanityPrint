@@ -23,5 +23,23 @@
     "compatible_printers": [
         "Creality K2 Plus 0.4 nozzle"
     ],
-    "default_filament_colour": "\"\""
+    "default_filament_colour": "\"\"",
+    "filament_temp_type": [
+        "2"
+    ],
+    "filament_cooling_smart_zone": [
+        "1"
+    ],
+    "filament_bed_adhesion_strength": [
+        "0.3"
+    ],
+    "filament_brim_adhesion_coeff": [
+        "2.0"
+    ],
+    "filament_small_island_threshold": [
+        "20.0"
+    ],
+    "filament_chamber_temp_limit": [
+        "55"
+    ]
 }

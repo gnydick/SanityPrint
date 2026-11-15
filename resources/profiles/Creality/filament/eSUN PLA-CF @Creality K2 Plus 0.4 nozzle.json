@@ -23,5 +23,11 @@
     "compatible_printers": [
         "Creality K2 Plus 0.4 nozzle"
     ],
-    "default_filament_colour": "\"\""
+    "default_filament_colour": "\"\"",
+    "filament_temp_type": [
+        "1"
+    ],
+    "filament_chamber_temp_limit": [
+        "45"
+    ]
 }

@@ -32,5 +32,8 @@
     ],
     "temperature_vitrification": [
         "220"
+    ],
+    "filament_temp_type": [
+        "0"
     ]
 }
