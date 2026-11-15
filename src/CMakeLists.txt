@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.13)
-# project(CrealityPrint-native)
+# project(SanityPrint-native)
 
 add_subdirectory(build-utils)
 add_subdirectory(admesh)
@@ -173,12 +173,12 @@ if (SLIC3R_GUI)
 endif()
 
 if(ORCA_TOOLS)
-    # CrealityPrint_profile_validator
-    add_executable(CrealityPrint_profile_validator CrealityPrint_profile_validator.cpp)
-    target_link_libraries(CrealityPrint_profile_validator libslic3r boost_headeronly libcurl OpenSSL::SSL OpenSSL::Crypto)
-    target_compile_definitions(CrealityPrint_profile_validator PRIVATE -DBOOST_ALL_NO_LIB -DBOOST_USE_WINAPI_VERSION=0x602 -DBOOST_SYSTEM_USE_UTF8)
+    # SanityPrint_profile_validator
+    add_executable(SanityPrint_profile_validator SanityPrint_profile_validator.cpp)
+    target_link_libraries(SanityPrint_profile_validator libslic3r boost_headeronly libcurl OpenSSL::SSL OpenSSL::Crypto)
+    target_compile_definitions(SanityPrint_profile_validator PRIVATE -DBOOST_ALL_NO_LIB -DBOOST_USE_WINAPI_VERSION=0x602 -DBOOST_SYSTEM_USE_UTF8)
     if(WIN32)
-        target_link_libraries(CrealityPrint_profile_validator bcrypt.lib)
+        target_link_libraries(SanityPrint_profile_validator bcrypt.lib)
     endif()
 endif()
 
@@ -189,8 +189,8 @@ if (NOT ${CUSTOM_TYPE} STREQUAL "")
     __build_manifest_config()
 else()
     #customized module_info.cmake
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/platform/msw/CrealityPrint.rc.in ${CMAKE_CURRENT_BINARY_DIR}/CrealityPrint.rc @ONLY)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/platform/msw/CrealityPrint.manifest.in ${CMAKE_CURRENT_BINARY_DIR}/CrealityPrint.manifest @ONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/platform/msw/SanityPrint.rc.in ${CMAKE_CURRENT_BINARY_DIR}/SanityPrint.rc @ONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/platform/msw/SanityPrint.manifest.in ${CMAKE_CURRENT_BINARY_DIR}/SanityPrint.manifest @ONLY)
 endif()
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/platform/osx/Info.plist.in ${CMAKE_CURRENT_BINARY_DIR}/Info.plist @ONLY)
 message("PROJECT_DLL_NAME_WIN32=${PROJECT_DLL_NAME_WIN32}")
@@ -407,7 +407,7 @@ if (APPLE)
     endif()
     endif()
 elseif (MSVC)
-    # Manifest is provided through CrealityPrint.rc, don't generate your own.
+    # Manifest is provided through SanityPrint.rc, don't generate your own.
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /MANIFEST:NO")
 else ()
     # Boost on Raspberry-Pi does not link to pthreads explicitely.
@@ -431,7 +431,7 @@ target_link_libraries(${PROJECT_DLL} libslic3r_gui glad)
     endif ()
     #if (WIN32)
     #    find_library(PSAPI_LIB NAMES Psapi)
-    #    target_link_libraries(CrealityPrint ${PSAPI_LIB})
+    #    target_link_libraries(SanityPrint ${PSAPI_LIB})
     #endif ()
 endif ()
 
@@ -445,7 +445,7 @@ if (WIN32)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -municode")
     endif()
 
-    add_executable(${STARTUP_PROJECT_NAME} WIN32 CrealityPrint_app_msvc.cpp ${CMAKE_CURRENT_BINARY_DIR}/CrealityPrint.rc)
+    add_executable(${STARTUP_PROJECT_NAME} WIN32 SanityPrint_app_msvc.cpp ${CMAKE_CURRENT_BINARY_DIR}/SanityPrint.rc)
     # Generate debug symbols even in release mode.
     if(MSVC)
         target_link_options(${STARTUP_PROJECT_NAME} PUBLIC "$<$<CONFIG:RELEASE>:/DEBUG>")
@@ -510,35 +510,20 @@ if (WIN32)
     		# 	)
         endforeach ()
 
-        # For multi-config generators (Visual Studio), copy DLLs for all configurations
-        # For single-config generators, CMAKE_CONFIGURATION_TYPES is empty, use CMAKE_BUILD_TYPE instead
-        if(CMAKE_CONFIGURATION_TYPES)
-            # Multi-config generator (Visual Studio, Ninja Multi-Config, etc.)
-            foreach(CONF ${CMAKE_CONFIGURATION_TYPES})
-                if ("${CONF}" STREQUAL "Debug")
-                    crealityprint_copy_dlls(COPY_DLLS "Debug" "d" output_dlls_Debug)
-                    if(CGAL_ENABLE_VLD AND VLD_LIBRARY)
-                        copy_vld_dlls(COPY_DLLS "Debug")
-                    endif()
-                elseif("${CONF}" STREQUAL "RelWithDebInfo")
-                    crealityprint_copy_dlls(COPY_DLLS "RelWithDebInfo" "" output_dlls_RelWithDebInfo)
-                elseif("${CONF}" STREQUAL "Release")
-                    crealityprint_copy_dlls(COPY_DLLS "Release" "" output_dlls_Release)
-                endif()
-            endforeach()
-        else()
-            # Single-config generator (Makefile, Ninja, etc.)
-            if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-                crealityprint_copy_dlls(COPY_DLLS "Debug" "d" output_dlls_Debug)
+        # Multi-config generator (Visual Studio): copy DLLs for all configurations.
+        # (Single-config generators are handled in the else branch below.)
+        foreach(CONF ${CMAKE_CONFIGURATION_TYPES})
+            if ("${CONF}" STREQUAL "Debug")
+                sanityprint_copy_dlls(COPY_DLLS "Debug" "d" output_dlls_Debug)
                 if(CGAL_ENABLE_VLD AND VLD_LIBRARY)
                     copy_vld_dlls(COPY_DLLS "Debug")
                 endif()
-            elseif("${CMAKE_BUILD_TYPE}" STREQUAL "RelWithDebInfo")
-                crealityprint_copy_dlls(COPY_DLLS "RelWithDebInfo" "" output_dlls_RelWithDebInfo)
-            else()
-                crealityprint_copy_dlls(COPY_DLLS "Release" "" output_dlls_Release)
+            elseif("${CONF}" STREQUAL "RelWithDebInfo")
+                sanityprint_copy_dlls(COPY_DLLS "RelWithDebInfo" "" output_dlls_RelWithDebInfo)
+            elseif("${CONF}" STREQUAL "Release")
+                sanityprint_copy_dlls(COPY_DLLS "Release" "" output_dlls_Release)
             endif()
-        endif()
+        endforeach()
     else ()
         file(TO_NATIVE_PATH "${CMAKE_CURRENT_BINARY_DIR}/resources" WIN_RESOURCES_SYMLINK)
         message(STATUS "SLIC3R_RESOURCES_DIR_WIN222=${SLIC3R_RESOURCES_DIR_WIN}")
@@ -549,13 +534,25 @@ if (WIN32)
             COMMENT "Symlinking the resources directory into the build tree"
             VERBATIM
         )
+
+        # Single-config generator (Ninja, used by CLion): copy the runtime DLLs.
+        if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+            sanityprint_copy_dlls(COPY_DLLS "Debug" "d" output_dlls_Debug)
+            if(CGAL_ENABLE_VLD AND VLD_LIBRARY)
+                copy_vld_dlls(COPY_DLLS "Debug")
+            endif()
+        elseif("${CMAKE_BUILD_TYPE}" STREQUAL "RelWithDebInfo")
+            sanityprint_copy_dlls(COPY_DLLS "RelWithDebInfo" "" output_dlls_RelWithDebInfo)
+        else()
+            sanityprint_copy_dlls(COPY_DLLS "Release" "" output_dlls_Release)
+        endif()
     endif ()
 else ()
     if (APPLE AND NOT CMAKE_MACOSX_BUNDLE)
         # On OSX, the name of the binary matches the name of the Application.
         add_custom_command(TARGET ${PROJECT_DLL} POST_BUILD
-            COMMAND ln -sf ${PROJECT_DLL} CrealityPrint-slicer
-            WORKING_DIRECTORY "$<TARGET_FILE_DIR:CrealityPrint>"
+            COMMAND ln -sf ${PROJECT_DLL} SanityPrint-slicer
+            WORKING_DIRECTORY "$<TARGET_FILE_DIR:SanityPrint>"
             VERBATIM)
     else ()
         add_custom_command(TARGET ${PROJECT_DLL} POST_BUILD
@@ -571,9 +568,9 @@ else ()
     endif ()
     if (CMAKE_MACOSX_BUNDLE)
         if (CMAKE_CONFIGURATION_TYPES)
-            set(BIN_RESOURCES_DIR "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/CrealityPrint.app/Contents/Resources")
+            set(BIN_RESOURCES_DIR "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/SanityPrint.app/Contents/Resources")
         else()
-            set(BIN_RESOURCES_DIR "${CMAKE_CURRENT_BINARY_DIR}/CrealityPrint.app/Contents/Resources")
+            set(BIN_RESOURCES_DIR "${CMAKE_CURRENT_BINARY_DIR}/SanityPrint.app/Contents/Resources")
         endif()
         set(MACOSX_BUNDLE_ICON_FILE Icon.icns)
         set(MACOSX_BUNDLE_NAME "CrealityPrint")
@@ -625,14 +622,23 @@ if (WIN32)
     if (DEFINED _mesa_opengl_dll AND EXISTS "${_mesa_opengl_dll}")
         install(FILES "${_mesa_opengl_dll}" DESTINATION "mesa")
     endif ()
-    install(FILES ${CMAKE_SOURCE_DIR}/package/runtime/MicrosoftEdgeSetup.exe DESTINATION ".")
-    install(FILES ${CMAKE_SOURCE_DIR}/package/runtime/MicrosoftEdgeWebView2RuntimeInstallerX64.exe DESTINATION ".")
-    install(FILES ${CMAKE_SOURCE_DIR}/package/runtime/vcredist_x64.exe DESTINATION ".")
-    install(FILES ${CMAKE_SOURCE_DIR}/package/runtime/STLThumb-Windows_0.5.0.exe DESTINATION ".")
-    install(FILES ${CMAKE_SOURCE_DIR}/package/runtime/stl-thumb.exe DESTINATION ".")
-    install(FILES ${CMAKE_SOURCE_DIR}/package/runtime/STLThumbWinShellExtension.dll DESTINATION ".")
-    install(FILES ${CMAKE_SOURCE_DIR}/package/runtime/curl.exe DESTINATION ".")
-    install(FILES ${CMAKE_SOURCE_DIR}/package/runtime/libcurl.dll DESTINATION ".")
+    # Bundled runtime redistributables. The public source drop omits the large
+    # ones, so each is optional: present -> bundled, absent -> skipped.
+    foreach(_runtime_file
+            MicrosoftEdgeSetup.exe
+            MicrosoftEdgeWebView2RuntimeInstallerX64.exe
+            vcredist_x64.exe
+            STLThumb-Windows_0.5.0.exe
+            stl-thumb.exe
+            STLThumbWinShellExtension.dll
+            curl.exe
+            libcurl.dll)
+        if (EXISTS "${CMAKE_SOURCE_DIR}/package/runtime/${_runtime_file}")
+            install(FILES "${CMAKE_SOURCE_DIR}/package/runtime/${_runtime_file}" DESTINATION ".")
+        else ()
+            message(STATUS "Optional runtime redistributable not bundled (missing): ${_runtime_file}")
+        endif ()
+    endforeach()
     install(FILES ${CMAKE_SOURCE_DIR}/run_creality_on_e_cores.bat DESTINATION ".")
     install(FILES ${CMAKE_SOURCE_DIR}/tools/updater/updater.exe DESTINATION ".")
 else ()

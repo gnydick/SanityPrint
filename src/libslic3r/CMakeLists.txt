@@ -339,6 +339,8 @@ set(lisbslic3r_sources
     CutUtils.hpp
     PaintReproject.cpp
     PaintReproject.hpp
+    MaterialBehavior.cpp
+    MaterialBehavior.hpp
     ModelCommon.cpp
     ModelCommon.hpp
     Model.cpp

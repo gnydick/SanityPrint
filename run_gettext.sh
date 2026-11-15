@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# CrealityPrint gettext
+# SanityPrint gettext
 # Created by SoftFever on 27/5/23.
 
 # Check for --full argument
@@ -67,9 +67,9 @@ processFile() {
 }
 
 # Run the script for each .po file
-pot_file="./localization/i18n/CrealityPrint.pot"
+pot_file="./localization/i18n/SanityPrint.pot"
 echo "Run the script for each .po file"
-find "./localization/i18n/" -name "CrealityPrint*.po" | while read -r file; do
-    processFile "$file" "CrealityPrint"
+find "./localization/i18n/" -name "SanityPrint*.po" | while read -r file; do
+    processFile "$file" "SanityPrint"
 done
 
