@@ -43,5 +43,14 @@ class ProcessFileKeepsLineEndings(unittest.TestCase):
         self.assertEqual(result, b"// SanityPrint\r\nint x;\r\n")
 
 
+class SkipsUpstreamFileReferences(unittest.TestCase):
+    """Files that name upstream-owned files on disk must not be renamed."""
+
+    def test_breakpad_patch_reference_is_skipped(self):
+        rename_app = load_rename_app()
+        path = rename_app.REPO / "deps" / "breakpad" / "breakpad.cmake"
+        self.assertTrue(rename_app.should_skip(path))
+
+
 if __name__ == "__main__":
     unittest.main()

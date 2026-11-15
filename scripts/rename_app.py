@@ -18,6 +18,7 @@ SKIP_DIRS = {
 }
 SKIP_FILES = {
     "src/libslic3r/creality.cmake",   # internal build plumbing name, not user-visible
+    "deps/breakpad/breakpad.cmake",   # names upstream's 0001-crealityprint-build.patch on disk
 }
 SKIP_SUFFIXES = {".png", ".ico", ".icns", ".jpg", ".jpeg", ".gif",
                  ".ttf", ".otf", ".woff", ".woff2", ".dll", ".lib",
