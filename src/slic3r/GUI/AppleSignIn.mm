@@ -60,7 +60,7 @@ std::string sha256_hex(const std::string &input)
 - (void)authorizationController:(ASAuthorizationController *)controller
  didCompleteWithAuthorization:(ASAuthorization *)authorization
 {
-    NSLog(@"CrealityPrintApple: ASAuthorization didCompleteWithAuthorization enter");
+    NSLog(@"SanityPrintApple: ASAuthorization didCompleteWithAuthorization enter");
     Slic3r::GUI::AppleSignInResult result;
     result.nonce = _nonce;
     ASAuthorizationAppleIDCredential *credential = nil;
@@ -93,7 +93,7 @@ std::string sha256_hex(const std::string &input)
 {
     Slic3r::GUI::AppleSignInResult result;
     result.error = error ? [[error localizedDescription] UTF8String] : "Apple authorization failed";
-    NSLog(@"CrealityPrint Apple Sign in failed: domain=%@ code=%ld description=%@ userInfo=%@",
+    NSLog(@"SanityPrint Apple Sign in failed: domain=%@ code=%ld description=%@ userInfo=%@",
           error.domain, (long) error.code, error.localizedDescription, error.userInfo);
     if (_callback)
         _callback(std::move(result));

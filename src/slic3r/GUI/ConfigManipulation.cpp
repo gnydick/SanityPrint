@@ -84,7 +84,7 @@ bool ConfigManipulation::resolve_arc_fitting_smoothing_conflict(DynamicPrintConf
             changed_key == "smooth_speed_discontinuity_area" ? _L("Smooth speed discontinuity area (Beta)") :
                                                               _L("Extrusion rate smoothing");
         wxString message = format_wxstr(_L("Enabling \"%1%\" conflicts with the following active settings."), winner);
-        message += "\n\n" + _L("To keep the feature you just enabled, Creality Print will make the following changes:");
+        message += "\n\n" + _L("To keep the feature you just enabled, Sanity Print will make the following changes:");
         if (disable_smoothing)
             append_smoothing_actions(message);
         else

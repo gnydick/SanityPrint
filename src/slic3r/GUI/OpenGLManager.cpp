@@ -116,7 +116,7 @@ static bool any_opengl_backend_available()
 {
 #ifdef _WIN32
     wchar_t value[2] = {};
-    const DWORD size = GetEnvironmentVariableW(L"CREALITYPRINT_OPENGL_HARDWARE_AVAILABLE", value, 2);
+    const DWORD size = GetEnvironmentVariableW(L"SANITYPRINT_OPENGL_HARDWARE_AVAILABLE", value, 2);
     return size == 1 && value[0] == L'1';
 #else
     return false;
@@ -127,7 +127,7 @@ static int software_renderer_mode()
 {
 #ifdef _WIN32
     wchar_t value[2] = {};
-    const DWORD size = GetEnvironmentVariableW(L"CREALITYPRINT_OPENGL_SOFTWARE_RENDERER", value, 2);
+    const DWORD size = GetEnvironmentVariableW(L"SANITYPRINT_OPENGL_SOFTWARE_RENDERER", value, 2);
     return size == 1 && (value[0] == L'1' || value[0] == L'2') ? value[0] - L'0' : 0;
 #else
     return 0;
@@ -461,7 +461,7 @@ bool OpenGLManager::init_gl(bool popup_error)
                 ? _L("The current display driver does not provide the required OpenGL support. The application has switched to software rendering, which may cause the interface and 3D operations to run slowly. Please update the display driver when possible.")
                 : _L("The application is using software rendering, which may cause the interface and 3D operations to run slowly.");
             wxMessageBox(message, _L("Software rendering"), wxOK | wxICON_WARNING);
-            SetEnvironmentVariableW(L"CREALITYPRINT_OPENGL_SOFTWARE_RENDERER", L"0");
+            SetEnvironmentVariableW(L"SANITYPRINT_OPENGL_SOFTWARE_RENDERER", L"0");
         }
 #endif
         if (!m_valid_version) {

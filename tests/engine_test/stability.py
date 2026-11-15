@@ -59,7 +59,7 @@ def create_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--slicer", type=Path, default=common.DEFAULT_SLICER,
-        help="要分析的 CrealityPrint.exe，默认使用 RelWithDebInfo 构建",
+        help="要分析的 SanityPrint.exe，默认使用 RelWithDebInfo 构建",
     )
     parser.add_argument(
         "--resume", action="store_true",

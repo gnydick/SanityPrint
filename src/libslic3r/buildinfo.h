@@ -30,7 +30,7 @@
 #define MAIN_GIT_HASH "248eeb5c0eb58e09790fa2b8b83178721f8d661a"
 #define SHIPPING_LEVEL 0
 
-#define PROJECT_DLL_NAME_WIN32 "CrealityPrint_Slicer"
+#define PROJECT_DLL_NAME_WIN32 "SanityPrint_Slicer"
 
 
 // customized [begin]

@@ -84,14 +84,14 @@ json SlicerBridge::DoGetProject3mfContext(const json& params)
     auto* bundle = wxGetApp().preset_bundle;
     auto* plater = wxGetApp().plater();
     if (!bundle || !plater)
-        return {{"success", false}, {"message", "Creality Print project context is not available"}};
+        return {{"success", false}, {"message", "Sanity Print project context is not available"}};
 
     // Match ConfigBase::save_to_json exactly so the Python packager receives
     // the same fully resolved project_settings.config that CP writes itself.
     // full_config_secure deliberately excludes credentials and other secrets.
     const DynamicPrintConfig config = bundle->full_config_secure();
     json project_settings;
-    project_settings["version"] = std::string(CREALITYPRINT_VERSION);
+    project_settings["version"] = std::string(SANITYPRINT_VERSION);
     project_settings["name"] = "project_settings";
     project_settings["from"] = "project";
     for (const std::string& key : config.keys()) {
@@ -121,7 +121,7 @@ json SlicerBridge::DoGetProject3mfContext(const json& params)
     result["current_print_preset"] = bundle->prints.get_edited_preset().name;
     result["current_filament_presets"] = bundle->filament_presets;
     result["extruder_colors"] = plater->get_extruder_colors_from_plater_config();
-    result["application_version"] = std::string(CREALITYPRINT_VERSION);
+    result["application_version"] = std::string(SANITYPRINT_VERSION);
     result["application_stage"] = std::string(PROJECT_VERSION_EXTRA);
     return result;
 }

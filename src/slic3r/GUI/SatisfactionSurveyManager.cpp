@@ -450,7 +450,7 @@ SurveyPrinterSummary summarize_survey_printers(const std::map<std::string, DM::D
     return summary;
 }
 
-nlohmann::json connected_creality_printers(const nlohmann::json& data,
+nlohmann::json connected_sanity_printers(const nlohmann::json& data,
                                             SurveyDeviceDiagnostics& diagnostics)
 {
     std::map<std::string, DM::Device> unique_devices;
@@ -536,7 +536,7 @@ nlohmann::json survey_shown_context(const AppConfig& app_config,
             {"region", app_config.get("region")}
         }},
         {"user", std::move(user_context)},
-        {"devices", connected_creality_printers(device_data, device_diagnostics)}
+        {"devices", connected_sanity_printers(device_data, device_diagnostics)}
     };
 }
 

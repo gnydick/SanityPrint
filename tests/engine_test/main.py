@@ -82,7 +82,7 @@ def add_common_options(parser: argparse.ArgumentParser) -> None:
     )
     common_options.add_argument(
         "--slicer", type=Path, default=common.DEFAULT_SLICER,
-        help="要测试的 CrealityPrint.exe，默认使用 RelWithDebInfo 构建",
+        help="要测试的 SanityPrint.exe，默认使用 RelWithDebInfo 构建",
     )
     common_options.add_argument(
         "--baseline-dir", type=Path,

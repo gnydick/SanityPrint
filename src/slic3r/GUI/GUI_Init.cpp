@@ -55,7 +55,7 @@ static boost::filesystem::path macos_crash_log_dir()
 
     // Fallback, mirroring GUI_App::init_app_config() + set_data_dir(): the alpha build
     // keeps its data in a separate "<major>.0 Alpha" folder.
-    std::string version_dir = CREALITYPRINT_VERSION_MAJOR + std::string(".0");
+    std::string version_dir = SANITYPRINT_VERSION_MAJOR + std::string(".0");
     const std::string version = std::string(PROJECT_VERSION_EXTRA);
     if (boost::algorithm::icontains(version, "alpha"))
         version_dir += " Alpha";

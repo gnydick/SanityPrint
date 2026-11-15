@@ -511,7 +511,7 @@ json SlicerBridge::DoImportGeneratedModel(const json& params)
     if (!bbs_is_creality_3mf(target_path.string().c_str())) {
         boost::system::error_code error;
         boost::filesystem::remove(target_path, error);
-        return {{"success", false}, {"message", "Generated 3MF is not a native Creality Print project"}};
+        return {{"success", false}, {"message", "Generated 3MF is not a native Sanity Print project"}};
     }
 
     auto* plater = wxGetApp().plater();

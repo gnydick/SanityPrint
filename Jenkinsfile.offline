@@ -1,4 +1,4 @@
-// Consolidates CrealityPrint_Release_Package_Offline, CP_Package_Mac_Offline, and CP_Package_Mac__ARM_Offline.
+// Consolidates SanityPrint_Release_Package_Offline, CP_Package_Mac_Offline, and CP_Package_Mac__ARM_Offline.
 pipeline {
     agent none
 
@@ -16,7 +16,7 @@ pipeline {
         text(name: 'BRANCH', defaultValue: 'release-260830', description: 'C3DSlicer branch to build')
         text(name: 'TAG_NAME', defaultValue: '7.2.2', description: 'Base version tag')
         choice(name: 'RTYPE', choices: ['Release', 'Beta', 'Alpha', 'Beta1', 'Beta2', 'Dev'], description: 'Release type')
-        string(name: 'APP_NAME', defaultValue: 'CrealityPrint', description: 'App name')
+        string(name: 'APP_NAME', defaultValue: 'SanityPrint', description: 'App name')
         booleanParam(name: 'WEB_SYNC', defaultValue: true, description: 'Sync Community resources by WEB_BRANCH')
         booleanParam(name: 'INCLUDE_UNRELEASED_MODELS', defaultValue: true, description: '包含指定的未发布机型；勾选后 CXY_TOKEN 和 UNRELEASED_MODELS 才会生效')
         string(name: 'UNRELEASED_MODELS', defaultValue: 'F039', description: '未发布机型的 printerIntName，多个型号用英文分号分隔，例如 F039;F040')

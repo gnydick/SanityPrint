@@ -263,7 +263,7 @@ def summarize(case: dict, model: Path, executable: Path, module: str,
         "configuration": executable.parent.name,
         "executable_sha256": common.sha256_file(executable),
     }
-    slicer_library = executable.with_name("CrealityPrint_Slicer.dll")
+    slicer_library = executable.with_name("SanityPrint_Slicer.dll")
     if slicer_library.is_file():
         build["slicer_library_sha256"] = common.sha256_file(slicer_library)
 

@@ -375,7 +375,7 @@ modules:
         dest: external-packages/ImatiSTL
         
 
-  - name: CrealityPrint 
+  - name: SanityPrint 
     buildsystem: simple
     env:
         CMAKE_POLICY_VERSION_MINIMUM: "3.5"

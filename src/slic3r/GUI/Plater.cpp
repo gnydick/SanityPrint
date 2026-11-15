@@ -23703,7 +23703,7 @@ wxString zaa_conflict_message(const ZaaUiNormalizationRequest& request, const Za
 
     wxString message = format_wxstr(_L("Enabling \"%1%\" conflicts with the following active settings."),
                                     zaa_feature_name(request.changed_key));
-    message += "\n\n" + _L("To keep the feature you just enabled, Creality Print will make the following changes:");
+    message += "\n\n" + _L("To keep the feature you just enabled, Sanity Print will make the following changes:");
     message += "\n" + zaa_plan_actions(plan);
     message += "\n\n" + _L("Apply these changes?");
     return message;

@@ -445,7 +445,7 @@ TransmittancePanel::TransmittancePanel(wxWindow*                       parent,
     auto message_sizer = new wxBoxSizer(wxVERTICAL);
     tip_message_panel->SetSizer(message_sizer);
     {
-        wxString message    = _L("CrealityPrint uses this matrix only when flushing into objects skeleton is enabled.");
+        wxString message    = _L("SanityPrint uses this matrix only when flushing into objects skeleton is enabled.");
         m_tip_message_label = new Label(tip_message_panel, wxEmptyString);
         wxClientDC dc(tip_message_panel);
         wxString   multiline_message;

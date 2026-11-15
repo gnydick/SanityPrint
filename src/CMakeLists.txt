@@ -204,11 +204,11 @@ endif()
 add_subdirectory(slic3r/CLI)
 
 if (WIN32)
-    add_library(${PROJECT_DLL} SHARED CrealityPrint.cpp BaseException.cpp BaseException.h StackWalker.cpp StackWalker.h CxMiniDump.h CxMiniDump.cpp CrealityrintDump.hpp CrealityrintDump.cpp)
+    add_library(${PROJECT_DLL} SHARED SanityPrint.cpp BaseException.cpp BaseException.h StackWalker.cpp StackWalker.h CxMiniDump.h CxMiniDump.cpp CrealityrintDump.hpp CrealityrintDump.cpp)
 elseif (APPLE AND CMAKE_MACOSX_BUNDLE)
-    add_executable(${PROJECT_DLL} MACOSX_BUNDLE CrealityPrint.cpp CrealityrintDump.hpp CrealityrintDump.cpp)
+    add_executable(${PROJECT_DLL} MACOSX_BUNDLE SanityPrint.cpp CrealityrintDump.hpp CrealityrintDump.cpp)
 else ()
-    add_executable(${PROJECT_DLL} CrealityPrint.cpp CrealityrintDump.hpp CrealityrintDump.cpp)
+    add_executable(${PROJECT_DLL} SanityPrint.cpp CrealityrintDump.hpp CrealityrintDump.cpp)
 endif ()
 
 set(slic3r_tracy_client_source
@@ -369,7 +369,7 @@ if (APPLE)
 #    add_definitions(-DBOOST_THREAD_DONT_USE_CHRONO -DBOOST_NO_CXX11_RVALUE_REFERENCES -DBOOST_THREAD_USES_MOVE)
     # -liconv: boost links to libiconv by default
     target_link_libraries(${PROJECT_DLL} "-liconv -framework IOKit" "-framework CoreFoundation" "-framework AVFoundation" "-framework AVKit" "-framework CoreMedia" "-framework VideoToolbox" -lc++)
-    if (CREALITYPRINT_APP_STORE)
+    if (SANITYPRINT_APP_STORE)
         target_link_libraries(${PROJECT_DLL} "-framework AuthenticationServices")
     # Firebase Auth (only when the prebuilt static SDK is vendored in the tree)
     # backs the unified Apple login (loginV2 type 23) on the App Store build.
@@ -416,7 +416,7 @@ endif ()
 
 # Add the Slic3r GUI library, libcurl, OpenGL and GLU libraries.
 if (SLIC3R_GUI)
-#    target_link_libraries(CrealityPrint ws2_32 uxtheme setupapi libslic3r_gui ${wxWidgets_LIBRARIES})
+#    target_link_libraries(SanityPrint ws2_32 uxtheme setupapi libslic3r_gui ${wxWidgets_LIBRARIES})
 target_link_libraries(${PROJECT_DLL} libslic3r_gui glad)
     if (MSVC)
         # Generate debug symbols even in release mode.
@@ -573,10 +573,10 @@ else ()
             set(BIN_RESOURCES_DIR "${CMAKE_CURRENT_BINARY_DIR}/SanityPrint.app/Contents/Resources")
         endif()
         set(MACOSX_BUNDLE_ICON_FILE Icon.icns)
-        set(MACOSX_BUNDLE_NAME "CrealityPrint")
-        set(MACOSX_BUNDLE_DISPLAY_NAME "CrealityPrint")
-        set(MACOSX_BUNDLE_SHORT_VERSION_STRING ${CREALITYPRINT_VERSION})
-        set(MACOSX_BUNDLE_BUNDLE_VERSION ${CREALITYPRINT_BUILD_NUMBER})
+        set(MACOSX_BUNDLE_NAME "SanityPrint")
+        set(MACOSX_BUNDLE_DISPLAY_NAME "SanityPrint")
+        set(MACOSX_BUNDLE_SHORT_VERSION_STRING ${SANITYPRINT_VERSION})
+        set(MACOSX_BUNDLE_BUNDLE_VERSION ${SANITYPRINT_BUILD_NUMBER})
         set(MACOSX_BUNDLE_COPYRIGHT "Copyright(C) 2022-2024 Creality All Rights Reserved")
         
     endif()

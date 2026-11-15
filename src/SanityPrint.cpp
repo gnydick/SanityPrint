@@ -170,14 +170,14 @@ static void initialize_application_environment()
 
 #ifdef WIN32
     if (BlacklistedLibraryCheck::get_instance().perform_check()) {
-        std::wstring message = L"Following DLLs have been injected into the CrealityPrint process:\n\n";
+        std::wstring message = L"Following DLLs have been injected into the SanityPrint process:\n\n";
         message += BlacklistedLibraryCheck::get_instance().get_blacklisted_string();
         message += L"\n\n"
-                   L"CrealityPrint is known to not run correctly with these DLLs injected. "
+                   L"SanityPrint is known to not run correctly with these DLLs injected. "
                    L"We suggest stopping or uninstalling these services if you experience "
-                   L"crashes or unexpected behaviour while using CrealityPrint.\n"
+                   L"crashes or unexpected behaviour while using SanityPrint.\n"
                    L"For example, ASUS Sonic Studio injects a Nahimic driver, which makes "
-                   L"CrealityPrint crash on a secondary monitor.";
+                   L"SanityPrint crash on a secondary monitor.";
         MessageBoxW(nullptr, message.c_str(), L"Warning", MB_OK);
     }
 #endif
@@ -218,7 +218,7 @@ static int run_application(int argc, char **argv)
 
     ApplicationArguments arguments = parse_application_arguments(argc, argv);
 
-    set_current_thread_name("crealityprint_main");
+    set_current_thread_name("sanityprint_main");
     save_main_thread_id();
 
 #ifdef __WXGTK__
@@ -396,7 +396,7 @@ static void __cdecl CrealityInvalidParameterHandler(
     // 2. Write to a log file in temp dir, using only Win32 API to avoid CRT re-entrance.
     wchar_t logPath[MAX_PATH] = {0};
     GetTempPathW(MAX_PATH, logPath);
-    lstrcatW(logPath, L"crealityprint_invalid_param_stack.log");
+    lstrcatW(logPath, L"sanityprint_invalid_param_stack.log");
 
     HANDLE hFile = CreateFileW(logPath, FILE_APPEND_DATA,
                                FILE_SHARE_READ | FILE_SHARE_WRITE,
@@ -460,9 +460,9 @@ static void __cdecl CrealityInvalidParameterHandler(
 
 #if defined(_MSC_VER) || defined(__MINGW32__)
 extern "C" {
-    __declspec(dllexport) int __stdcall crealityprint_main(int argc, wchar_t **argv)
+    __declspec(dllexport) int __stdcall sanityprint_main(int argc, wchar_t **argv)
     {
-        BOOST_LOG_TRIVIAL(error) << "crealityprint_main start";
+        BOOST_LOG_TRIVIAL(error) << "sanityprint_main start";
 	boost::log::core::get()->flush();
         // Convert wchar_t arguments to UTF8.
         std::vector<std::string> 	argv_narrow;
@@ -508,7 +508,7 @@ extern "C" {
                 ss << now;
 
                 std::string timeStr = ss.str();
-                std::string processNameStr = timeStr + std::string("_") +  SLIC3R_PROCESS_NAME + std::string("_") + CREALITYPRINT_VERSION + std::string("_") + PROJECT_VERSION_EXTRA + std::string(".dmp");
+                std::string processNameStr = timeStr + std::string("_") +  SLIC3R_PROCESS_NAME + std::string("_") + SANITYPRINT_VERSION + std::string("_") + PROJECT_VERSION_EXTRA + std::string(".dmp");
                 //boost::filesystem::path newPath(dump_path);
                 //newPath.append(processNameStr).replace_extension(".dmp");
                 logPath.append(processNameStr);
@@ -767,7 +767,7 @@ static bool dumpCallback(const google_breakpad::MinidumpDescriptor& descriptor,v
 		     ss << now;
 
 		     std::string timeStr = ss.str();
-		     std::string processNameStr = timeStr + std::string("_") + SLIC3R_PROCESS_NAME + std::string("_") + CREALITYPRINT_VERSION + std::string("_") + PROJECT_VERSION_EXTRA + std::string(".dmp");
+		     std::string processNameStr = timeStr + std::string("_") + SLIC3R_PROCESS_NAME + std::string("_") + SANITYPRINT_VERSION + std::string("_") + PROJECT_VERSION_EXTRA + std::string(".dmp");
 		     logPath /= processNameStr;
 
 		     if (boost::filesystem::exists(oldPath)) {

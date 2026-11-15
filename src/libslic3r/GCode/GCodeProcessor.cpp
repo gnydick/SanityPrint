@@ -5109,7 +5109,7 @@ bool GCodeProcessor::detect_producer(const std::string_view comment)
         size_t pos = comment.find(search_string);
         if (pos != comment.npos) {
             m_producer = id;
-            m_is_own_generated_gcode = m_producer == EProducer::CrealityPrint &&
+            m_is_own_generated_gcode = m_producer == EProducer::SanityPrint &&
                 search_string != BAMBU_TAG && search_string != BAMBU_TAG_2;
 
             if (m_producer == EProducer::SanityPrint) {

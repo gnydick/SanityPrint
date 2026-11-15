@@ -160,18 +160,18 @@ chmod 755 "$DEB_ROOT/DEBIAN/postinst"
 # executable path, which matches DEBUG_BIN_DIR above.
 cat << EOF > "$DEBUG_ROOT/DEBIAN/control"
 Package: ${PKG_NAME_LOWER}-dbgsym
-Version: @CREALITYPRINT_VERSION@-@PROJECT_VERSION_EXTRA@
+Version: @SANITYPRINT_VERSION@-@PROJECT_VERSION_EXTRA@
 Section: debug
 Priority: optional
 Architecture: $ARCH
 Maintainer: Creality <support@creality.com>
-Depends: $PKG_NAME_LOWER (= @CREALITYPRINT_VERSION@-@PROJECT_VERSION_EXTRA@)
+Depends: $PKG_NAME_LOWER (= @SANITYPRINT_VERSION@-@PROJECT_VERSION_EXTRA@)
 Description: Debug symbols for @SLIC3R_APP_NAME@
  Detached DWARF debug symbols for @SLIC3R_APP_NAME@.
 EOF
 
-DEB_NAME="@SLIC3R_APP_NAME@-V@CREALITYPRINT_VERSION@-@PROJECT_VERSION_EXTRA@-$ARCH.deb"
-DEBUG_DEB_NAME="@SLIC3R_APP_NAME@-V@CREALITYPRINT_VERSION@-@PROJECT_VERSION_EXTRA@-$ARCH-dbgsym.deb"
+DEB_NAME="@SLIC3R_APP_NAME@-V@SANITYPRINT_VERSION@-@PROJECT_VERSION_EXTRA@-$ARCH.deb"
+DEBUG_DEB_NAME="@SLIC3R_APP_NAME@-V@SANITYPRINT_VERSION@-@PROJECT_VERSION_EXTRA@-$ARCH-dbgsym.deb"
 dpkg-deb --root-owner-group --build "$DEB_ROOT" "$DEB_NAME"
 dpkg-deb --root-owner-group --build "$DEBUG_ROOT" "$DEBUG_DEB_NAME"
 

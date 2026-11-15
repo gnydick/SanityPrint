@@ -39,9 +39,9 @@ std::string error_message(int error_code)
     case CLI_FILE_VERSION_NOT_SUPPORTED:
         return "Unsupported 3MF version. Please make sure the 3MF file was created with the official version of Bambu Studio, not a beta version.";
     case CLI_NO_SUITABLE_OBJECTS:
-        return "One of the plate is empty or has no object fully inside it. Please check that the 3mf contains no empty plate in Creality Print before uploading.";
+        return "One of the plate is empty or has no object fully inside it. Please check that the 3mf contains no empty plate in Sanity Print before uploading.";
     case CLI_VALIDATE_ERROR:
-        return "There are some incorrect slicing parameters in the 3mf. Please verify the slicing of all plates in Creality Print before uploading.";
+        return "There are some incorrect slicing parameters in the 3mf. Please verify the slicing of all plates in Sanity Print before uploading.";
     case CLI_OBJECTS_PARTLY_INSIDE:
         return "Some objects are located over the boundary of the heated bed.";
     case CLI_EXPORT_CACHE_DIRECTORY_CREATE_FAILED:
@@ -61,19 +61,19 @@ std::string error_message(int error_code)
     case CLI_NO_SUITABLE_OBJECTS_AFTER_SKIP:
         return "No printable objects to slice after skipping.";
     case CLI_FILAMENT_NOT_MATCH_BED_TYPE:
-        return "Filaments are not compatible with the plate type. Please verify the slicing of all plates in Creality Print before uploading.";
+        return "Filaments are not compatible with the plate type. Please verify the slicing of all plates in Sanity Print before uploading.";
     case CLI_FILAMENTS_DIFFERENT_TEMP:
-        return "The temperature difference of the filaments used is too large. Please verify the slicing of all plates in Creality Print before uploading.";
+        return "The temperature difference of the filaments used is too large. Please verify the slicing of all plates in Sanity Print before uploading.";
     case CLI_OBJECT_COLLISION_IN_SEQ_PRINT:
-        return "Object conflicts were detected when using print-by-object mode. Please verify the slicing of all plates in Creality Print before uploading.";
+        return "Object conflicts were detected when using print-by-object mode. Please verify the slicing of all plates in Sanity Print before uploading.";
     case CLI_OBJECT_COLLISION_IN_LAYER_PRINT:
-        return "Object conflicts were detected. Please verify the slicing of all plates in Creality Print before uploading.";
+        return "Object conflicts were detected. Please verify the slicing of all plates in Sanity Print before uploading.";
     case CLI_SPIRAL_MODE_INVALID_PARAMS:
-        return "Some slicing parameters cannot work with Spiral Vase mode. Please solve the issue in Creality Print before uploading.";
+        return "Some slicing parameters cannot work with Spiral Vase mode. Please solve the issue in Sanity Print before uploading.";
     case CLI_SLICING_ERROR:
-        return "Failed slicing the model. Please verify the slicing of all plates on Creality Print before uploading.";
+        return "Failed slicing the model. Please verify the slicing of all plates on Sanity Print before uploading.";
     case CLI_GCODE_PATH_CONFLICTS:
-        return " G-code conflicts detected after slicing. Please make sure the 3mf file can be successfully sliced in the latest Creality Print.";
+        return " G-code conflicts detected after slicing. Please make sure the 3mf file can be successfully sliced in the latest Sanity Print.";
     default:
         return "Unknown CLI error (" + std::to_string(error_code) + ").";
     }

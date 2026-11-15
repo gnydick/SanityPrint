@@ -1,4 +1,4 @@
-// CrealityPrint_MacAppStorePipeline
+// SanityPrint_MacAppStorePipeline
 //
 // Dedicated Mac App Store build. It intentionally does not share packaging,
 // publication, certificates, cloud APIs, or delta artifacts with hot update.
@@ -30,11 +30,11 @@ pipeline {
     environment {
         CORE_REPO = 'ssh://jenkins@172.20.180.12:29418/yanfa4/core/C3DSlicer'
         COMMUNITY_REPO = 'ssh://jenkins@172.20.180.12:29418/yanfa4/CrealityCommunity'
-        APP_NAME = 'CrealityPrint'
+        APP_NAME = 'SanityPrint'
         APP_STORE_TEAM = 'DMR5SZUGP9'
         APP_STORE_ROOT = '/Users/a/work/C3DSlicer-appstore-local-ba2a28dbc2'
         APP_STORE_KEYCHAIN = '/Users/a/work/C3DSlicer-appstore-local-ba2a28dbc2/.signing-input/appstore-ci.keychain-db'
-        APP_STORE_PROFILE = '/Users/a/work/C3DSlicer-appstore-local-ba2a28dbc2/release-7.2.1-1145-full-debug/CrealityPrintMacAppStore1142.provisionprofile'
+        APP_STORE_PROFILE = '/Users/a/work/C3DSlicer-appstore-local-ba2a28dbc2/release-7.2.1-1145-full-debug/SanityPrintMacAppStore1142.provisionprofile'
         APP_STORE_ENTITLEMENTS = '/Users/a/work/C3DSlicer-appstore-local-ba2a28dbc2/.signing-input/appstore-1146.entitlements'
         APP_STORE_FIREBASE_CONFIG = '/Users/a/work/C3DSlicer-appstore-local-ba2a28dbc2/source/GoogleService-Info.plist'
         ARM_DEPS = '/Users/a/work/C3DSlicer/deps/build_arm64/dep_arm64/usr/local'
@@ -192,9 +192,9 @@ pipeline {
                         -DCMAKE_OSX_ARCHITECTURES=arm64 \
                         -DCMAKE_OSX_DEPLOYMENT_TARGET=12.0 \
                         -DCMAKE_PREFIX_PATH="$ARM_DEPS" \
-                        -DCREALITYPRINT_APP_STORE=ON \
-                        -DCREALITYPRINT_VERSION="$APP_VERSION" \
-                        -DCREALITYPRINT_BUILD_NUMBER="$APP_STORE_BUILD_NUMBER" \
+                        -DSANITYPRINT_APP_STORE=ON \
+                        -DSANITYPRINT_VERSION="$APP_VERSION" \
+                        -DSANITYPRINT_BUILD_NUMBER="$APP_STORE_BUILD_NUMBER" \
                         -DPROCESS_NAME="$APP_NAME" \
                         -DPROJECT_VERSION_EXTRA=Release \
                         -DGENERATE_ORCA_HEADER="$SLICER_HEADER"
@@ -214,9 +214,9 @@ pipeline {
                         -DCMAKE_OSX_ARCHITECTURES=x86_64 \
                         -DCMAKE_OSX_DEPLOYMENT_TARGET=12.0 \
                         -DCMAKE_PREFIX_PATH="$X86_DEPS" \
-                        -DCREALITYPRINT_APP_STORE=ON \
-                        -DCREALITYPRINT_VERSION="$APP_VERSION" \
-                        -DCREALITYPRINT_BUILD_NUMBER="$APP_STORE_BUILD_NUMBER" \
+                        -DSANITYPRINT_APP_STORE=ON \
+                        -DSANITYPRINT_VERSION="$APP_VERSION" \
+                        -DSANITYPRINT_BUILD_NUMBER="$APP_STORE_BUILD_NUMBER" \
                         -DPROCESS_NAME="$APP_NAME" \
                         -DPROJECT_VERSION_EXTRA=Release \
                         -DGENERATE_ORCA_HEADER="$SLICER_HEADER"
@@ -288,7 +288,7 @@ pipeline {
                     INFO_PLIST="$APP_PATH/Contents/Info.plist"
                     lipo -archs "$BIN_PATH" | grep -Eq '(^| )arm64( |$).*x86_64|(^| )x86_64( |$).*arm64'
                     ! otool -L "$BIN_PATH" | grep -E '/opt/homebrew|libzstd\\.1'
-                    [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$INFO_PLIST")" == 'com.creality.crealityprint' ]]
+                    [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$INFO_PLIST")" == 'com.creality.sanityprint' ]]
                     [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$INFO_PLIST")" == "$APP_STORE_BUILD_NUMBER" ]]
                     codesign --verify --deep --strict --verbose=2 "$APP_PATH"
                     codesign --display --entitlements :- "$APP_PATH" 2>&1 | grep -Fq 'com.apple.security.app-sandbox'

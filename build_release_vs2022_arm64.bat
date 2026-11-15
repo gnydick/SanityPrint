@@ -1,4 +1,4 @@
-@REM CrealityPrint/C3DSlicer Windows ARM64 build script for Visual Studio 2022.
+@REM SanityPrint/C3DSlicer Windows ARM64 build script for Visual Studio 2022.
 @echo off
 setlocal ENABLEEXTENSIONS ENABLEDELAYEDEXPANSION
 
@@ -125,12 +125,12 @@ if "%RUN_SLICER%"=="1" (
         exit /b 1
     )
 
-    echo building CrealityPrint ARM64...
+    echo building SanityPrint ARM64...
     if not exist "%WP%\%build_dir%" mkdir "%WP%\%build_dir%"
     cd /d "%WP%\%build_dir%" || exit /b 1
 
     echo on
-    cmake .. -G "%VS_GENERATOR%" -A %VS_PLATFORM% -DBBL_RELEASE_TO_PUBLIC=1 -DCMAKE_PREFIX_PATH="%DEPS%\usr\local" -DCMAKE_INSTALL_PREFIX="./CrealityPrint" -DCMAKE_BUILD_TYPE=%build_type% -DWIN10SDK_PATH="C:/Program Files (x86)/Windows Kits/10/Include/10.0.22621.0" -DENABLE_BREAKPAD=OFF
+    cmake .. -G "%VS_GENERATOR%" -A %VS_PLATFORM% -DBBL_RELEASE_TO_PUBLIC=1 -DCMAKE_PREFIX_PATH="%DEPS%\usr\local" -DCMAKE_INSTALL_PREFIX="./SanityPrint" -DCMAKE_BUILD_TYPE=%build_type% -DWIN10SDK_PATH="C:/Program Files (x86)/Windows Kits/10/Include/10.0.22621.0" -DENABLE_BREAKPAD=OFF
     if errorlevel 1 exit /b 1
     cmake --build . --config %build_type% --target ALL_BUILD -- /m
     if errorlevel 1 exit /b 1

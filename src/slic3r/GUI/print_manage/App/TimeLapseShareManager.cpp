@@ -62,7 +62,7 @@ public:
     TemporaryVideo()
     {
         const auto id = boost::uuids::random_generator()();
-        m_path = fs::temp_directory_path() / ("crealityprint-timelapse-" + boost::uuids::to_string(id) + ".mp4");
+        m_path = fs::temp_directory_path() / ("sanityprint-timelapse-" + boost::uuids::to_string(id) + ".mp4");
     }
 
     ~TemporaryVideo()

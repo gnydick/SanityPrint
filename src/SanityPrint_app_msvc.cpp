@@ -61,10 +61,10 @@ public:
         wc.lpfnWndProc   = OpenGLVersionCheck::supports_opengl2_wndproc;
         wc.hInstance     = (HINSTANCE)GetModuleHandle(nullptr);
         wc.hbrBackground = (HBRUSH)(COLOR_BACKGROUND);
-        wc.lpszClassName = L"CrealityPrint_opengl_version_check";
+        wc.lpszClassName = L"SanityPrint_opengl_version_check";
         wc.style = CS_OWNDC;
         if (RegisterClass(&wc) || GetLastError() == ERROR_CLASS_ALREADY_EXISTS) {
-            HWND hwnd = CreateWindowW(wc.lpszClassName, L"CrealityPrint_opengl_version_check", WS_OVERLAPPEDWINDOW, window_x, window_y, 640, 480, 0, 0, wc.hInstance, (LPVOID)this);
+            HWND hwnd = CreateWindowW(wc.lpszClassName, L"SanityPrint_opengl_version_check", WS_OVERLAPPEDWINDOW, window_x, window_y, 640, 480, 0, 0, wc.hInstance, (LPVOID)this);
             if (hwnd) {
                 message_pump_exit = false;
                 while (GetMessage(&msg, NULL, 0, 0 ) > 0 && ! message_pump_exit)
@@ -296,7 +296,7 @@ bool OpenGLVersionCheck::message_pump_exit = false;
 
 extern "C" {
     typedef int (__stdcall *Slic3rMainFunc)(int argc, wchar_t **argv);
-    Slic3rMainFunc crealityprint_main = nullptr;
+    Slic3rMainFunc sanityprint_main = nullptr;
 }
 
 extern "C" {
@@ -371,13 +371,13 @@ int wmain(int argc, wchar_t **argv)
         } else {
             printf("MESA OpenGL library was loaded successfully\n");
         }
-        SetEnvironmentVariableW(L"CREALITYPRINT_OPENGL_SOFTWARE_RENDERER",
+        SetEnvironmentVariableW(L"SANITYPRINT_OPENGL_SOFTWARE_RENDERER",
             hInstance_OpenGL != nullptr ? (force_mesa ? L"2" : L"1") : L"0");
-        SetEnvironmentVariableW(L"CREALITYPRINT_OPENGL_HARDWARE_AVAILABLE",
+        SetEnvironmentVariableW(L"SANITYPRINT_OPENGL_HARDWARE_AVAILABLE",
             (opengl_probe_has_required_version || hInstance_OpenGL != nullptr) ? L"1" : L"0");
     } else {
-        SetEnvironmentVariableW(L"CREALITYPRINT_OPENGL_SOFTWARE_RENDERER", L"0");
-        SetEnvironmentVariableW(L"CREALITYPRINT_OPENGL_HARDWARE_AVAILABLE",
+        SetEnvironmentVariableW(L"SANITYPRINT_OPENGL_SOFTWARE_RENDERER", L"0");
+        SetEnvironmentVariableW(L"SANITYPRINT_OPENGL_HARDWARE_AVAILABLE",
             opengl_probe_has_required_version ? L"1" : L"0");
     }
 #endif /* SLIC3R_GUI */
@@ -395,19 +395,19 @@ int wmain(int argc, wchar_t **argv)
     }
 
     // resolve function address here
-    crealityprint_main = (Slic3rMainFunc)GetProcAddress(hInstance_Slic3r,
+    sanityprint_main = (Slic3rMainFunc)GetProcAddress(hInstance_Slic3r,
 #ifdef _WIN64
         // there is just a single calling conversion, therefore no mangling of the function name.
-        "crealityprint_main"
+        "sanityprint_main"
 #else	// stdcall calling convention declaration
         "_bambustu_main@8"
 #endif
         );
-    if (crealityprint_main == nullptr) {
-        printf("could not locate the function crealityprint_main in CrealityPrint_Slicer.dll\n");
+    if (sanityprint_main == nullptr) {
+        printf("could not locate the function sanityprint_main in SanityPrint_Slicer.dll\n");
         return -1;
     }
     // argc minus the trailing nullptr of the argv
-    return crealityprint_main((int)argv_extended.size() - 1, argv_extended.data());
+    return sanityprint_main((int)argv_extended.size() - 1, argv_extended.data());
 }
 }

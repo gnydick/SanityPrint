@@ -1,6 +1,6 @@
 # Linux font and filament drag regressions
 
-The Ubuntu 26 dumps from CrealityPrint 7.3.0.6123 identified two independent
+The Ubuntu 26 dumps from SanityPrint 7.3.0.6123 identified two independent
 paths: Pango 1.57.0 looking up a missing font family while GTK populates its emoji
 chooser, and nested GTK native drag loops in the filament grouping dialog.
 

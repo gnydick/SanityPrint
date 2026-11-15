@@ -136,8 +136,8 @@ bool other_slicer_running()
     if (!Process32FirstW(snap, &entry)) { CloseHandle(snap); throw Error("Cannot enumerate source processes"); }
     do {
         if (entry.th32ProcessID != GetCurrentProcessId() &&
-            (_wcsicmp(entry.szExeFile, L"CrealityPrint.exe") == 0 ||
-             _wcsicmp(entry.szExeFile, L"CrealityPrint_app_gui.exe") == 0)) { found = true; break; }
+            (_wcsicmp(entry.szExeFile, L"SanityPrint.exe") == 0 ||
+             _wcsicmp(entry.szExeFile, L"SanityPrint_app_gui.exe") == 0)) { found = true; break; }
     } while (Process32NextW(snap, &entry));
     CloseHandle(snap); return found;
 #elif defined(__linux__)
@@ -145,7 +145,7 @@ bool other_slicer_running()
         const auto id = e.path().filename().string();
         if (id.empty() || id.find_first_not_of("0123456789") != std::string::npos || std::stol(id) == getpid()) continue;
         std::ifstream in(e.path() / "comm"); std::string name; std::getline(in, name);
-        if (name == "CrealityPrint" || name == "crealityprint") return true;
+        if (name == "SanityPrint" || name == "sanityprint") return true;
     }
     return false;
 #elif defined(__APPLE__)
@@ -155,7 +155,7 @@ bool other_slicer_running()
     for (int i = 0; i < size / int(sizeof(pid_t)); ++i) {
         if (ids[i] <= 0 || ids[i] == getpid()) continue;
         char name[1024]{}; proc_name(ids[i], name, sizeof(name));
-        if (std::string(name) == "CrealityPrint") return true;
+        if (std::string(name) == "SanityPrint") return true;
     }
     return false;
 #else
@@ -573,7 +573,7 @@ static Result initialize_impl(const Options& o, fs::path& fallback_source)
         }
         if (!source.empty()) {
             for (int attempt = 0; other_slicer_running(); ++attempt) {
-                if (attempt == 10) throw Error("Another Creality Print process is running; retry after it exits");
+                if (attempt == 10) throw Error("Another Sanity Print process is running; retry after it exits");
                 std::this_thread::sleep_for(std::chrono::milliseconds(500));
             }
         }

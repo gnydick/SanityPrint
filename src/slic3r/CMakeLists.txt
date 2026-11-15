@@ -938,7 +938,7 @@ if (APPLE)
             GUI/wxMediaCtrl2.mm
             GUI/wxMediaCtrl2.h
         )
-    if (CREALITYPRINT_APP_STORE)
+    if (SANITYPRINT_APP_STORE)
         list(APPEND SLIC3R_GUI_SOURCES
             GUI/AppleSignIn.mm
             GUI/FirebaseSignIn.mm
@@ -966,7 +966,7 @@ endif ()
 add_library(libslic3r_gui STATIC ${SLIC3R_GUI_SOURCES})
 # Headers of the vendored static Firebase Auth SDK (unified Apple login).
 set(FIREBASE_SDK_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../deps/Darwin/FirebaseAuthSDK")
-if(CREALITYPRINT_APP_STORE AND EXISTS "${FIREBASE_SDK_DIR}/FirebaseAuth.framework")
+if(SANITYPRINT_APP_STORE AND EXISTS "${FIREBASE_SDK_DIR}/FirebaseAuth.framework")
     target_compile_options(libslic3r_gui PRIVATE "-F${FIREBASE_SDK_DIR}")
 endif()
 target_include_directories(libslic3r_gui PRIVATE Utils)

@@ -1667,7 +1667,7 @@ func subclassCloseButton(hwnd uintptr) {
 func launchSanityPrint(log func(args ...interface{}), installDir string) {
 	exePath := filepath.Join(installDir, "SanityPrint.exe")
 	if _, err := os.Stat(exePath); err != nil {
-		log("skip launch, CrealityPrint.exe not found:", err)
+		log("skip launch, SanityPrint.exe not found:", err)
 		messageBox(getText("manual_start_required"), getText("install_complete"), mbOK|mbIconInformation|mbSystemModal)
 		return
 	}
@@ -1737,11 +1737,11 @@ func launchSanityPrint(log func(args ...interface{}), installDir string) {
 	if ok != 0 {
 		closeHandle(uintptr(process.Thread))
 		closeHandle(uintptr(process.Process))
-		log("launched CrealityPrint.exe with Explorer user token:", exePath)
+		log("launched SanityPrint.exe with Explorer user token:", exePath)
 		return
 	}
 
-	log("failed to launch CrealityPrint.exe with Explorer user token:", err)
+	log("failed to launch SanityPrint.exe with Explorer user token:", err)
 	messageBox(getText("manual_start_required"), getText("install_complete"), mbOK|mbIconInformation|mbSystemModal)
 }
 
@@ -2258,7 +2258,7 @@ func main() {
 	manualURL := flag.String("manual-url", "", "manual download URL")
 	darkMode := flag.Int("dark-mode", -1, "0=light, 1=dark, -1=auto")
 	language := flag.String("language", "en", "language: zh_CN or en")
-	dataDir := flag.String("data-dir", "", "CrealityPrint data directory for writing ota_result.json")
+	dataDir := flag.String("data-dir", "", "SanityPrint data directory for writing ota_result.json")
 	// forceFull: hotfix update where the target shares the same major.minor.patch as the
 	// installed version (only the 4th build field differs). Since the nupkg name only
 	// carries the 3-part version, the updater would normally skip a same-3-part package;
@@ -2331,7 +2331,7 @@ func main() {
 		}
 		log("[OTA_ANALYTICS] (no-window path) Update succeeded, writing ota_result.json with result=success, to=", res.targetVersion)
 		writeOtaResult(*dataDir, "success", *currentVer, res.targetVersion)
-		launchCrealityPrint(log, *installDir)
+		launchSanityPrint(log, *installDir)
 		os.Exit(0)
 	}
 
@@ -2348,7 +2348,7 @@ func main() {
 	if res.err == nil {
 		log("[OTA_ANALYTICS] Update succeeded, writing ota_result.json with result=success, from=", *currentVer, ", to=", res.targetVersion)
 		writeOtaResult(*dataDir, "success", *currentVer, res.targetVersion)
-		launchCrealityPrint(log, *installDir)
+		launchSanityPrint(log, *installDir)
 		os.Exit(0)
 	}
 	if errors.Is(res.err, errCanceled) {
@@ -2473,7 +2473,7 @@ func getText(key string, args ...interface{}) string {
 		case "install_complete":
 			return "安装完成"
 		case "manual_start_required":
-			return "更新已完成，但无法以普通用户权限自动启动 CrealityPrint。请从桌面或开始菜单手动启动。"
+			return "更新已完成，但无法以普通用户权限自动启动 SanityPrint。请从桌面或开始菜单手动启动。"
 		case "update_exception":
 			return "更新过程中出现异常。程序已恢复到原有稳定版本，可继续正常使用。"
 		case "incomplete_rollback_ok":
@@ -2529,7 +2529,7 @@ func getText(key string, args ...interface{}) string {
 	case "install_complete":
 		return "Installation complete"
 	case "manual_start_required":
-		return "The update is complete, but CrealityPrint could not be started with standard user privileges. Please start it manually from the desktop or Start menu."
+		return "The update is complete, but SanityPrint could not be started with standard user privileges. Please start it manually from the desktop or Start menu."
 	case "update_exception":
 		return "An exception occurred during the update. The program has been restored to the previous stable version and can continue to be used normally."
 	case "incomplete_rollback_ok":
@@ -2562,7 +2562,7 @@ func formatIncompleteMessage(res updateResult) string {
 	return getText("update_exception")
 }
 
-// writeOtaResult writes a JSON marker file so that CrealityPrint can report
+// writeOtaResult writes a JSON marker file so that SanityPrint can report
 // the OTA update outcome on next startup.
 func writeOtaResult(dir, result, fromVersion, toVersion string) {
 	if strings.TrimSpace(dir) == "" {

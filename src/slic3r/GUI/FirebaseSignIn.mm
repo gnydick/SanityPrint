@@ -31,7 +31,7 @@ namespace GUI {
 // the unified log, unlike the buffered boost file log.
 extern "C" void cp_apple_debug_log(const char *message)
 {
-    NSLog(@"CrealityPrintApple: %s", message);
+    NSLog(@"SanityPrintApple: %s", message);
 }
 
 bool firebase_auth_available()
@@ -44,7 +44,7 @@ bool firebase_auth_available()
         }
         return [FIRApp defaultApp] != nil;
     } @catch (NSException *exception) {
-        NSLog(@"CrealityPrint FIRApp configure failed: %@ %@", exception.name, exception.reason);
+        NSLog(@"SanityPrint FIRApp configure failed: %@ %@", exception.name, exception.reason);
         return false;
     }
 }
@@ -85,7 +85,7 @@ void firebase_sign_in_with_apple(const std::string &apple_identity_token,
     }
     cp_apple_debug_log("firebase_sign_in_with_apple: credential created, calling signIn");
 
-    NSLog(@"CrealityPrint Firebase Apple sign-in: id_token_len=%lu nonce_present=%d code_len=%lu",
+    NSLog(@"SanityPrint Firebase Apple sign-in: id_token_len=%lu nonce_present=%d code_len=%lu",
           (unsigned long) idToken.length, rawNonce != nil, (unsigned long) (accessToken ? accessToken.length : 0));
 
     [[FIRAuth auth] signInWithCredential:credential
@@ -95,7 +95,7 @@ void firebase_sign_in_with_apple(const std::string &apple_identity_token,
             NSString *domain = error.domain ?: @"unknown";
             NSString *description = error.localizedDescription ?: @"Firebase returned no result";
             const long code = error ? (long) error.code : 0;
-            NSLog(@"CrealityPrint Firebase Apple sign-in failed: domain=%@ code=%ld description=%@",
+            NSLog(@"SanityPrint Firebase Apple sign-in failed: domain=%@ code=%ld description=%@",
                   domain, code, description);
             std::string message = "Firebase sign-in failed (";
             message += domain.UTF8String;
@@ -110,14 +110,14 @@ void firebase_sign_in_with_apple(const std::string &apple_identity_token,
         [result.user getIDTokenWithCompletion:^(NSString *token, NSError *tokenError) {
             if (tokenError != nil || token.length == 0) {
                 NSString *description = tokenError.localizedDescription ?: @"Firebase returned an empty ID token";
-                NSLog(@"CrealityPrint Firebase ID token failed: %@", description);
+                NSLog(@"SanityPrint Firebase ID token failed: %@", description);
                 std::string message = "Firebase ID token error: ";
                 message += description.UTF8String;
                 if (callback)
                     callback({false, {}, uid.UTF8String ? std::string(uid.UTF8String) : "", message});
                 return;
             }
-            NSLog(@"CrealityPrint Firebase Apple sign-in ok: uid_len=%lu id_token_len=%lu",
+            NSLog(@"SanityPrint Firebase Apple sign-in ok: uid_len=%lu id_token_len=%lu",
                   (unsigned long) uid.length, (unsigned long) token.length);
             if (callback)
                 callback({true, std::string(token.UTF8String), std::string(uid.UTF8String), {}});

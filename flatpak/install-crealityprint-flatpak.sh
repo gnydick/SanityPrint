@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-APP_ID="io.github.crealityofficial.CrealityPrint"
-APP_NAME="CrealityPrint"
+APP_ID="io.github.crealityofficial.SanityPrint"
+APP_NAME="SanityPrint"
 
 script_dir=$(CDPATH= cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 bundle_path="${1:-}"
 
 if [ -z "$bundle_path" ]; then
-    bundle_path=$(find "$script_dir" -maxdepth 1 -type f -name 'CrealityPrint-Linux-flatpak_*.flatpak' -printf '%T@ %p\n' 2>/dev/null | sort -nr | awk 'NR == 1 {print $2}')
+    bundle_path=$(find "$script_dir" -maxdepth 1 -type f -name 'SanityPrint-Linux-flatpak_*.flatpak' -printf '%T@ %p\n' 2>/dev/null | sort -nr | awk 'NR == 1 {print $2}')
 fi
 
 if [ -z "$bundle_path" ] || [ ! -f "$bundle_path" ]; then
-    echo "Could not find a CrealityPrint flatpak bundle."
-    echo "Usage: $0 /path/to/CrealityPrint-Linux-flatpak_*.flatpak"
+    echo "Could not find a SanityPrint flatpak bundle."
+    echo "Usage: $0 /path/to/SanityPrint-Linux-flatpak_*.flatpak"
     exit 1
 fi
 
@@ -22,7 +22,7 @@ if ! command -v flatpak >/dev/null 2>&1; then
     exit 1
 fi
 
-install_scope="${CREALITYPRINT_FLATPAK_INSTALLATION:-user}"
+install_scope="${SANITYPRINT_FLATPAK_INSTALLATION:-user}"
 case "$install_scope" in
     user)
         flatpak_install_args=(--user)
@@ -31,7 +31,7 @@ case "$install_scope" in
         flatpak_install_args=(--system)
         ;;
     *)
-        echo "CREALITYPRINT_FLATPAK_INSTALLATION must be 'user' or 'system'."
+        echo "SANITYPRINT_FLATPAK_INSTALLATION must be 'user' or 'system'."
         exit 1
         ;;
 esac
@@ -80,7 +80,7 @@ Icon=$APP_ID
 Exec=flatpak run --branch=master --arch=x86_64 --command=entrypoint --file-forwarding $APP_ID @@u %U @@
 Terminal=false
 Type=Application
-MimeType=model/stl;model/3mf;application/vnd.ms-3mfdocument;application/prs.wavefront-obj;application/x-amf;x-scheme-handler/crealityprintlink;
+MimeType=model/stl;model/3mf;application/vnd.ms-3mfdocument;application/prs.wavefront-obj;application/x-amf;x-scheme-handler/sanityprintlink;
 Categories=Graphics;Utility;3DGraphics;Engineering;
 Keywords=3D;Printing;Slicer;slice;3D;printer;convert;gcode;stl;obj;amf;SLA
 StartupNotify=false

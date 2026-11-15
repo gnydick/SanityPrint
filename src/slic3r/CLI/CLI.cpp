@@ -174,7 +174,7 @@ void print_help()
     boost::nowide::cout
         << SLIC3R_APP_KEY << "-" << SLIC3R_VERSION << ":"
         << std::endl
-        << "Usage: CrealityPrint --cli [ OPTIONS ] [ file.3mf/file.stl ... ]" << std::endl
+        << "Usage: SanityPrint --cli [ OPTIONS ] [ file.3mf/file.stl ... ]" << std::endl
         << std::endl
         << "OPTIONS:" << std::endl;
     cli_misc_config_def.print_cli_help(boost::nowide::cout, false);

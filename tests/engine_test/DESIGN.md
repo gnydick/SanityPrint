@@ -1,6 +1,6 @@
 # 切片引擎测试系统设计
 
-本文记录 `tests/engine_test`、CrealityPrint CLI 和 `libslic3r/Diagnostics` 之间的实现约定。日常 Python 测试命令、参数和案例配置请看 [README.md](README.md)。
+本文记录 `tests/engine_test`、SanityPrint CLI 和 `libslic3r/Diagnostics` 之间的实现约定。日常 Python 测试命令、参数和案例配置请看 [README.md](README.md)。
 
 ## 设计目标
 
@@ -23,7 +23,7 @@ main.py / stability.py
         │
         │ 组织案例、工作目录和命令行
         ▼
-CrealityPrint.exe --cli --slice ...
+SanityPrint.exe --cli --slice ...
         │
         ├── --diagnostics fingerprint
         │       └── Diagnostics::Session + fingerprint(...)
@@ -39,7 +39,7 @@ CrealityPrint.exe --cli --slice ...
 Python 层再负责规范化、汇总、比较、建立基线和输出分析报告。
 ```
 
-CrealityPrint 不读取 Python 基线，也不在 C++ 内部决定回归是否通过。C++ 只执行切片并按请求产生原始报告；基线管理和比较全部由 Python 层完成。
+SanityPrint 不读取 Python 基线，也不在 C++ 内部决定回归是否通过。C++ 只执行切片并按请求产生原始报告；基线管理和比较全部由 Python 层完成。
 
 ## 代码职责
 
@@ -53,7 +53,7 @@ CrealityPrint 不读取 Python 基线，也不在 C++ 内部决定回归是否�
 
 ### CLI 层
 
-- `src/CrealityPrint.cpp`：只负责识别是否存在 `--cli`，然后进入 GUI 或 CLI。
+- `src/SanityPrint.cpp`：只负责识别是否存在 `--cli`，然后进入 GUI 或 CLI。
 - `src/slic3r/CLI/CLI.cpp`：CLI 参数解析、帮助输出和主命令分发。
 - `src/slic3r/CLI/SliceCommand.cpp`：切片命令实现、诊断 Session 生命周期、盘和对象绑定、输出文件保存。
 
@@ -74,7 +74,7 @@ CrealityPrint 不读取 Python 基线，也不在 C++ 内部决定回归是否�
 ```text
 main.py / stability.py
     → fingerprint.py / performance.py
-    → CrealityPrint.exe --cli
+    → SanityPrint.exe --cli
     → CLI::dispatch_command
     → SliceCommand
     → Diagnostics::Session
@@ -169,14 +169,14 @@ git diff --check
 
 性能测试耗时较长，只在性能实现、观察点或相关算法变化时运行。稳定性分析也不是每次提交的固定步骤，只在怀疑结果不确定或验证确定性修复时使用。
 
-## CrealityPrint CLI 模式
+## SanityPrint CLI 模式
 
 ### 模式与命令分发
 
 只有显式传入 `--cli` 才进入 CLI 模式；没有 `--cli` 时由应用入口启动 GUI。CLI 切片格式为：
 
 ```text
-CrealityPrint.exe --cli [参数] --slice <盘号> <输入文件>...
+SanityPrint.exe --cli [参数] --slice <盘号> <输入文件>...
 ```
 
 - `--slice 0`：切全部盘。
@@ -187,7 +187,7 @@ CrealityPrint.exe --cli [参数] --slice <盘号> <输入文件>...
 普通 3MF 切片并保留 G-code：
 
 ```powershell
-.\build_Release\src\RelWithDebInfo\CrealityPrint.exe `
+.\build_Release\src\RelWithDebInfo\SanityPrint.exe `
   --cli `
   --slice 0 `
   --outputdir F:\dev\slice-output `
@@ -209,7 +209,7 @@ CrealityPrint.exe --cli [参数] --slice <盘号> <输入文件>...
 直接采集 G-code 和指纹：
 
 ```powershell
-.\build_Release\src\RelWithDebInfo\CrealityPrint.exe `
+.\build_Release\src\RelWithDebInfo\SanityPrint.exe `
   --cli `
   --outputdir F:\dev\regression-work-dir\single-run `
   --diagnostics fingerprint `
@@ -260,7 +260,7 @@ CrealityPrint.exe --cli [参数] --slice <盘号> <输入文件>...
 当前二进制输出的帮助是参数列表的权威来源：
 
 ```powershell
-.\build_Release\src\RelWithDebInfo\CrealityPrint.exe --cli --help
+.\build_Release\src\RelWithDebInfo\SanityPrint.exe --cli --help
 ```
 
 ## 诊断会话与对象绑定

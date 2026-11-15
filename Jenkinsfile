@@ -17,7 +17,7 @@ pipeline {
         text(name: 'BRANCH', defaultValue: 'release-261030', description: 'C3DSlicer branch to build')
         text(name: 'TAG_NAME', defaultValue: '7.3.1', description: 'Base version tag')
         choice(name: 'RTYPE', choices: ['Beta', 'Alpha', 'Beta1', 'Beta2', 'Dev', 'Release'], description: 'Release type')
-        string(name: 'APP_NAME', defaultValue: 'CrealityPrint', description: 'App name')
+        string(name: 'APP_NAME', defaultValue: 'SanityPrint', description: 'App name')
         booleanParam(name: 'WEB_SYNC', defaultValue: true, description: 'Sync Community resources by WEB_BRANCH')
         booleanParam(name: 'INCLUDE_UNRELEASED_MODELS', defaultValue: false, description: '包含指定的未发布机型；勾选后 CXY_TOKEN 和 UNRELEASED_MODELS 才会生效')
         string(name: 'UNRELEASED_MODELS', defaultValue: 'F039', description: '未发布机型的 printerIntName，多个型号用英文分号分隔，例如 F039;F040')
@@ -38,7 +38,7 @@ pipeline {
         FEISHU_WEBHOOK_CRED = 'creality-release-feishu-webhook'
         OPENCLAW_WEBHOOK_CRED = 'openclaw-webhook'
         WINDOWS_SIGN_SERVICE_URL = 'http://172.20.180.14:3001'
-        WINDOWS_DLL_SIGN_CACHE = 'D:\\Jenkins\\cache\\CrealityPrint\\dll-signatures'
+        WINDOWS_DLL_SIGN_CACHE = 'D:\\Jenkins\\cache\\SanityPrint\\dll-signatures'
         WINDOWS_NINJA_JOBS = '20'
     }
 

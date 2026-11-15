@@ -168,7 +168,7 @@
                 "CMAKE_BUILD_TYPE": "Release",
                 "CMAKE_CONFIGURE_TYPE": "${presetName}",
                 "BBL_RELEASE_TO_PUBLIC": "1",
-                "CMAKE_INSTALL_PREFIX": "./CrealityPrint",
+                "CMAKE_INSTALL_PREFIX": "./SanityPrint",
                 "CMAKE_PREFIX_PATH": "${sourceDir}/deps/build_arm64/dep_arm64/usr/local/",
                 "GENERATE_ORCA_HEADER": "OFF",
                 "CMAKE_MACOSX_RPATH": "ON",

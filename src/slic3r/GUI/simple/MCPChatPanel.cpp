@@ -186,7 +186,7 @@ wxString build_chat_page_url(const wxString& base_url)
     const std::string device_id = Slic3r::GUI::SystemId::get_system_id();
     const std::string encoded_lang = Slic3r::Http::url_encode(std::string(lang.ToUTF8().data()));
     const std::string encoded_region = Slic3r::Http::url_encode(region);
-    const std::string encoded_version = Slic3r::Http::url_encode(std::string(CREALITYPRINT_VERSION));
+    const std::string encoded_version = Slic3r::Http::url_encode(std::string(SANITYPRINT_VERSION));
     const std::string encoded_version_mode = Slic3r::Http::url_encode(version_mode);
     const std::string encoded_type = Slic3r::Http::url_encode(type);
     const std::string encoded_os = Slic3r::Http::url_encode(os_description);

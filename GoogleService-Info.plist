@@ -15,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.creality.crealityprint</string>
+	<string>com.creality.sanityprint</string>
 	<key>PROJECT_ID</key>
 	<string>creality-cloud-1587893611023</string>
 	<key>STORAGE_BUCKET</key>

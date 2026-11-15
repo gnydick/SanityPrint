@@ -23,7 +23,7 @@
 cmake_minimum_required(VERSION 3.2)
 if (APPLE)
     if (NOT CMAKE_OSX_DEPLOYMENT_TARGET)
-        if (CREALITYPRINT_APP_STORE)
+        if (SANITYPRINT_APP_STORE)
             set(CMAKE_OSX_DEPLOYMENT_TARGET "12.0" CACHE STRING "Minimum OS X deployment version" FORCE)
         else()
             set(CMAKE_OSX_DEPLOYMENT_TARGET "11.3" CACHE STRING "Minimum OS X deployment version" FORCE)

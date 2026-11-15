@@ -286,7 +286,7 @@ json SlicerBridge::GetAvailableToolsJSON() const
 std::string SlicerBridge::GenerateSystemPrompt() const
 {
     std::ostringstream ss;
-    ss << "You are an AI assistant embedded in CrealityPrint 3D slicer software.\n"
+    ss << "You are an AI assistant embedded in SanityPrint 3D slicer software.\n"
        << "You can query slicer state and execute slicer operations.\n\n"
        << "## Available Actions\n\n"
        << "When you decide to execute a slicer operation, output an action block in your reply:\n"

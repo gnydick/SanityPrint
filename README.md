@@ -81,10 +81,10 @@ Visit our GitHub Releases page for the latest stable version of Sanity Print, re
     
 # Command line slicing
 
-Creality Print can run slicing jobs from the command line without opening the normal GUI workflow. Use the `--slice` action with one or more input model/project files.
+Sanity Print can run slicing jobs from the command line without opening the normal GUI workflow. Use the `--slice` action with one or more input model/project files.
 
 ```console
-CrealityPrint.exe --slice 0 --outputdir "C:\output" "C:\models\project.3mf"
+SanityPrint.exe --slice 0 --outputdir "C:\output" "C:\models\project.3mf"
 ```
 
 `--slice` selects which plate to slice:
@@ -106,22 +106,22 @@ Examples:
 Slice all plates from a 3MF project:
 
 ```console
-CrealityPrint.exe --slice 0 --outputdir "C:\output" "C:\models\example.3mf"
+SanityPrint.exe --slice 0 --outputdir "C:\output" "C:\models\example.3mf"
 ```
 
 Slice only the first plate and save a log:
 
 ```console
-CrealityPrint.exe --slice 1 --outputdir "C:\output" --logfile "C:\output\slice.log" "C:\models\example.3mf"
+SanityPrint.exe --slice 1 --outputdir "C:\output" --logfile "C:\output\slice.log" "C:\models\example.3mf"
 ```
 
 Slice an STL with external printer/process and filament presets:
 
 ```console
-CrealityPrint.exe --slice 0 --outputdir "C:\output" --load_settings "C:\presets\printer.json;C:\presets\process.json" --load_filaments "C:\presets\pla.json" "C:\models\part.stl"
+SanityPrint.exe --slice 0 --outputdir "C:\output" --load_settings "C:\presets\printer.json;C:\presets\process.json" --load_filaments "C:\presets\pla.json" "C:\models\part.stl"
 ```
 
-Run `CrealityPrint.exe --help` to see the full list of supported command line options.
+Run `SanityPrint.exe --help` to see the full list of supported command line options.
 
 # How to compile
 - Windows 64-bit  

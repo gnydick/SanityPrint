@@ -15,7 +15,7 @@ ENGINE_TEST_ROOT = SCRIPT_PATH.parent
 PROJECT_ROOT = SCRIPT_PATH.parents[2]
 DEFAULT_MANIFEST = ENGINE_TEST_ROOT / "baseline" / "manifest.json"
 DEFAULT_SLICER = (
-    PROJECT_ROOT / "build_Release" / "src" / "RelWithDebInfo" / "CrealityPrint.exe"
+    PROJECT_ROOT / "build_Release" / "src" / "RelWithDebInfo" / "SanityPrint.exe"
 )
 DEFAULT_TRACY_TOOLS = PROJECT_ROOT / "tools" / "tracy-windows-0.13.1"
 

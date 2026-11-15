@@ -309,7 +309,7 @@ static std::string g_data_dir;
 
 std::string data_directory_name()
 {
-    std::string name = CREALITYPRINT_DATA_VERSION;
+    std::string name = SANITYPRINT_DATA_VERSION;
     if (boost::algorithm::icontains(std::string(PROJECT_VERSION_EXTRA), "alpha")) name += " Alpha";
     return name;
 }

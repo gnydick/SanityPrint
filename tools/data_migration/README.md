@@ -1,6 +1,6 @@
 # 工作目录自动迁移
 
-应用与命令行工具共用 `DataDirectoryMigration`，目标数据版本由根 CMake 的 `CREALITYPRINT_DATA_VERSION` 控制，默认 7.3。软件升级为 7.4 而数据版本仍为 7.3 时，不新建目录。
+应用与命令行工具共用 `DataDirectoryMigration`，目标数据版本由根 CMake 的 `SANITYPRINT_DATA_VERSION` 控制，默认 7.3。软件升级为 7.4 而数据版本仍为 7.3 时，不新建目录。
 
 ## 行为
 
@@ -15,7 +15,7 @@
 - 目标 `migration/user-fallback.json` 以 `files` 记录 user 文件摘要、以 `root_files` 记录三个根文件摘要，并记录复制异常，`preserve-user-presets` 防止正常加载删除或改写兜底预设。保全生成且摘要未变的配置不会阻止完整迁移重试；正常启动改写配置后按已有目标规则处理；独立命令行诊断工具仍以非零退出码报告完整迁移失败，修复原因后可在user 文件清单与保全根文件摘要未变化且目标无冲突时重试。
 - Windows 提交时遇到目录临时拒绝访问或共享占用，会静默重试最多约 2 秒；仍失败则复制 user 兜底。
 - 迁移提交成功后自动删除本事务的空 `runtime-backup`；非空备份和迁移锁文件保留。重启恢复或读取已提交状态时也会重试该清理，清理失败不影响已完成的迁移。
-- 父目录迁移锁防止并发；Windows 迁移期间以禁止写入共享方式持有源文件。检测到其他 Creality Print 进程时等待最多约 5 秒后失败重试，不退回较旧来源。
+- 父目录迁移锁防止并发；Windows 迁移期间以禁止写入共享方式持有源文件。检测到其他 Sanity Print 进程时等待最多约 5 秒后失败重试，不退回较旧来源。
 
 ## 云端预设
 
@@ -42,7 +42,7 @@ TARGET 文件名必须等于 7.3（Alpha 为 `7.3 Alpha`）。工具当前仅注
 
 已使用 F 盘仓库资源完成正式目录迁移：
 
-- 来源：`C:\Users\cx2056\AppData\Roaming\Creality\Creality Print\7.0`，实际版本 `7.2.2.5483`。
+- 来源：`C:\Users\cx2056\AppData\Roaming\Creality\Sanity Print\7.0`，实际版本 `7.2.2.5483`。
 - 目标：同级 `7.3`。
 - 82 个用户预设通过原生解析和继承校验，0 个隔离，0 条警告。
 - 82 个 JSON 和 82 个 `.info` 与来源逐字节一致。

@@ -68,7 +68,7 @@ void SlicerBridge::RegisterAllActions()
         { ActionID::GET_PROJECT_3MF_CONTEXT,
           "Get Project 3MF Context",
           "Get Project 3MF Context",
-          "Return the secure, fully resolved current project settings required to build a native Creality Print 3MF.",
+          "Return the secure, fully resolved current project settings required to build a native Sanity Print 3MF.",
           false, {} },
         [this](const json& p) { return DoGetProject3mfContext(p); });
 

@@ -781,8 +781,8 @@ inline bool isRunningInFlatpak() {
 
 static void ensure_flatpak_user_launcher()
 {
-    static const std::string app_id = "io.github.crealityofficial.CrealityPrint";
-    static const std::string app_name = "CrealityPrint";
+    static const std::string app_id = "io.github.crealityofficial.SanityPrint";
+    static const std::string app_name = "SanityPrint";
 
     const char *flatpak_id = std::getenv("FLATPAK_ID");
     if (flatpak_id == nullptr || app_id != flatpak_id)
@@ -822,7 +822,7 @@ static void ensure_flatpak_user_launcher()
             << app_id << " @@u %U @@\n"
             << "Terminal=false\n"
             << "Type=Application\n"
-            << "MimeType=model/stl;model/3mf;application/vnd.ms-3mfdocument;application/prs.wavefront-obj;application/x-amf;x-scheme-handler/crealityprintlink;\n"
+            << "MimeType=model/stl;model/3mf;application/vnd.ms-3mfdocument;application/prs.wavefront-obj;application/x-amf;x-scheme-handler/sanityprintlink;\n"
             << "Categories=Graphics;Utility;3DGraphics;Engineering;\n"
             << "Keywords=3D;Printing;Slicer;slice;3D;printer;convert;gcode;stl;obj;amf;SLA\n"
             << "StartupNotify=false\n"
@@ -2326,7 +2326,7 @@ void GUI_App::post_init()
             // guide (machine -> LAN connect -> new user tour). With default_page
             // set to "1" the app would otherwise open the 3D editor and the
             // guide would never show on a clean install.
-#if defined(__WXOSX__) && defined(CREALITYPRINT_APP_STORE)
+#if defined(__WXOSX__) && defined(SANITYPRINT_APP_STORE)
             // First-launch: keep the home page in front so the home-page SPA
             // renders the onboarding guide. Other platforms keep the original
             // default page.
@@ -3601,7 +3601,7 @@ void GUI_App::init_app_config()
             DataMigration::Options migration;
             migration.target = std::filesystem::u8path(Slic3r::data_dir());
             migration.resources = std::filesystem::u8path(resources_dir());
-            migration.data_version = CREALITYPRINT_DATA_VERSION;
+            migration.data_version = SANITYPRINT_DATA_VERSION;
             migration.application_version = SANITYPRINT_VERSION;
             migration.alpha = boost::algorithm::icontains(std::string(PROJECT_VERSION_EXTRA), "alpha");
             migration.validate_preset = DataMigration::validate_preset_readonly;
@@ -4293,7 +4293,7 @@ bool GUI_App::OnInit()
                     }
                 }
 #else
-                std::cout << "Creality Print Version: " << CREALITYPRINT_VERSION << std::endl;
+                std::cout << "Sanity Print Version: " << SANITYPRINT_VERSION << std::endl;
 #endif
                 exit(0);
             }
@@ -4765,7 +4765,7 @@ bool GUI_App::on_init_inner(bool isdump_launcher)
 
 #if !defined(CUSTOMIZED) || defined(CUSTOM_CHECKUPDATE_ENABLED)
         Bind(EVT_SLIC3R_VERSION_ONLINE, [this](const wxCommandEvent& evt) {
-#if defined(CREALITYPRINT_APP_STORE) && defined(__WXOSX__)
+#if defined(SANITYPRINT_APP_STORE) && defined(__WXOSX__)
             // Mac App Store updates are delivered by the store, never by an external download.
             return;
 #endif
@@ -4917,7 +4917,7 @@ bool GUI_App::on_init_inner(bool isdump_launcher)
 #endif
 
         Bind(EVT_ENTER_FORCE_UPGRADE, [this](const wxCommandEvent& evt) {
-#if defined(CREALITYPRINT_APP_STORE) && defined(__WXOSX__)
+#if defined(SANITYPRINT_APP_STORE) && defined(__WXOSX__)
             return;
 #endif
             if (this->mainframe == nullptr || this->m_is_closing)
@@ -10072,7 +10072,7 @@ void GUI_App::process_msg_loop()
 
 void GUI_App::check_update(bool show_tips, int by_user)
 {
-#if defined(CREALITYPRINT_APP_STORE) && defined(__WXOSX__)
+#if defined(SANITYPRINT_APP_STORE) && defined(__WXOSX__)
     (void)show_tips;
     (void)by_user;
     return;
@@ -10298,7 +10298,7 @@ void GUI_App::trigger_deferred_restore_project()
 
 void GUI_App::check_new_version(bool show_tips, int by_user)
 {
-#if defined(CREALITYPRINT_APP_STORE) && defined(__WXOSX__)
+#if defined(SANITYPRINT_APP_STORE) && defined(__WXOSX__)
     (void)show_tips;
     (void)by_user;
     return;
@@ -10379,7 +10379,7 @@ void GUI_App::check_new_version_cx(bool show_tips, int by_user)
 {
     // SanityPrint: update checks against the Creality Cloud API are disabled.
     return;
-#if defined(CREALITYPRINT_APP_STORE) && defined(__WXOSX__)
+#if defined(SANITYPRINT_APP_STORE) && defined(__WXOSX__)
     (void)show_tips;
     (void)by_user;
     return;
@@ -10625,7 +10625,7 @@ void GUI_App::check_new_version_cx_updated(bool show_tips, int by_user)
                 // When semver parts are equal, compare build id so hotfix builds
                 // (e.g. 7.1.0.200 vs 7.1.0.100) also trigger the update dialog.
                 if (remote_version == current_version) {
-                    const int current_build_id = parse_creality_version(std::string(CREALITYPRINT_VERSION)).build_id;
+                    const int current_build_id = parse_creality_version(std::string(SANITYPRINT_VERSION)).build_id;
                     const int remote_build_id  = parse_creality_version(version).build_id;
                     if (remote_build_id <= current_build_id) {
                         if (show_tips) {
@@ -10704,7 +10704,7 @@ void GUI_App::check_new_version_cx_updated(bool show_tips, int by_user)
                 {
                     int cur_maj = 0, cur_min = 0, cur_pat = 0;
                     int new_maj = 0, new_min = 0, new_pat = 0;
-                    sscanf(std::string(CREALITYPRINT_VERSION).c_str(), "%d.%d.%d", &cur_maj, &cur_min, &cur_pat);
+                    sscanf(std::string(SANITYPRINT_VERSION).c_str(), "%d.%d.%d", &cur_maj, &cur_min, &cur_pat);
                     sscanf(version.c_str(), "%d.%d.%d", &new_maj, &new_min, &new_pat);
                     const bool is_hotfix = (new_maj == cur_maj && new_min == cur_min && new_pat == cur_pat);
                     if (is_hotfix && has_full)
@@ -10916,7 +10916,7 @@ void GUI_App::process_update_packages(const std::vector<PackageInfo>& updater_pa
 }
 void GUI_App::check_new_version_sf(bool show_tips, int by_user)
 {
-#if defined(CREALITYPRINT_APP_STORE) && defined(__WXOSX__)
+#if defined(SANITYPRINT_APP_STORE) && defined(__WXOSX__)
     (void)show_tips;
     (void)by_user;
     return;
@@ -14549,7 +14549,7 @@ void GUI_App::window_pos_center(wxTopLevelWindow *window)
 
 bool GUI_App::config_wizard_startup()
 {
-#if defined(CREALITYPRINT_APP_STORE)
+#if defined(SANITYPRINT_APP_STORE)
     // App Store builds: only offer the legacy wizard when the SPA guide was
     // never finished. Other platforms keep the original condition unchanged.
     const bool guide_finished = app_config->get("firstguide", "finish") == "1";

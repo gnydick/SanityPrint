@@ -3,7 +3,7 @@ pipeline {
     options { timestamps() }
     parameters {
         string(name: 'BRANCH', defaultValue: 'release-260330', description: 'Git branch to build (配合 Jenkins 多分支或手动指定)')
-        string(name: 'APP_VERSION', defaultValue: '7.0.0', description: 'Sets CREALITYPRINT_VERSION passed to CMake')
+        string(name: 'APP_VERSION', defaultValue: '7.0.0', description: 'Sets SANITYPRINT_VERSION passed to CMake')
         string(name: 'VERSION_EXTRA', defaultValue: 'Alpha', description: 'Sets PROJECT_VERSION_EXTRA (Alpha/Beta/Release)')
         string(name: 'CP_BUILD_CPU', defaultValue: '0', description: 'CP build CPU concurrency; 0 uses all logical processors')
         // ========== New parameters for Web sync and packaging options ==========
@@ -18,20 +18,20 @@ pipeline {
     environment {
         BUILD_DIR = 'build'
         BUILD_TYPE = 'Release'
-        INSTALL_PREFIX = "${WORKSPACE}\\build\\CrealityPrint"
-        PROCESS_NAME = 'CrealityPrint'
+        INSTALL_PREFIX = "${WORKSPACE}\\build\\SanityPrint"
+        PROCESS_NAME = 'SanityPrint'
         SQUIRREL_VERSION = '2.0.1'
         SQUIRREL_EXE = "${WORKSPACE}\\tools\\Squirrel.exe"
         NUGET_EXE = "${WORKSPACE}\\tools\\nuget.exe"
         KEEP_VERSIONS = '5'
         SSH_PORT = '9122'
-        SSH_TARGET = "cxsw@172.20.180.14:/vagrant_data/www/shared/crealityprint/${JOB_NAME}"
-        FEED_URL = "http://172.20.180.14/shared/crealityprint/${JOB_NAME}"
+        SSH_TARGET = "cxsw@172.20.180.14:/vagrant_data/www/shared/sanityprint/${JOB_NAME}"
+        FEED_URL = "http://172.20.180.14/shared/sanityprint/${JOB_NAME}"
         // ========== Community repository for Web resources ==========
         COMMUNITY_REPO = 'ssh://jenkins@172.20.180.12:29418/yanfa4/CrealityCommunity'
         FEISHU_WEBHOOK = 'https://open.feishu.cn/open-apis/bot/v2/hook/6355c46f-75e2-4f64-b762-aa601586225d'
         WINDOWS_SIGN_SERVICE_URL = 'http://172.20.180.14:3001'
-        WINDOWS_DLL_SIGN_CACHE = 'D:\\Jenkins\\cache\\CrealityPrint\\dll-signatures'
+        WINDOWS_DLL_SIGN_CACHE = 'D:\\Jenkins\\cache\\SanityPrint\\dll-signatures'
     }
     stages {
         stage('Checkout') {
@@ -191,7 +191,7 @@ cmake -S . -B %BUILD_DIR% ^
   -DCMAKE_BUILD_TYPE=%BUILD_TYPE% ^
   -DCMAKE_INSTALL_PREFIX="%INSTALL_PREFIX%" ^
   -DPROCESS_NAME=%PROCESS_NAME% ^
-  -DCREALITYPRINT_VERSION=%APP_VERSION% ^
+  -DSANITYPRINT_VERSION=%APP_VERSION% ^
   -DPROJECT_VERSION_EXTRA=%VERSION_EXTRA% ^
   -DSQUIRREL_CLI="%SQUIRREL_EXE%" ^
   -DSQUIRREL_NUGET_EXE="%NUGET_EXE%" ^
@@ -254,8 +254,8 @@ powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "%WORKSPACE%\\sc
                 New-Item -ItemType Directory -Force -Path $symbolInputDir | Out-Null
 
                 # Preserve the exact DLL/PDB pair before Authenticode signing changes the DLL.
-                $slicerDll = Join-Path $srcReleaseDir "CrealityPrint_Slicer.dll"
-                $slicerPdb = Join-Path $srcReleaseDir "CrealityPrint_Slicer.pdb"
+                $slicerDll = Join-Path $srcReleaseDir "SanityPrint_Slicer.dll"
+                $slicerPdb = Join-Path $srcReleaseDir "SanityPrint_Slicer.pdb"
                 foreach ($requiredFile in @($slicerDll, $slicerPdb)) {
                     if (-not (Test-Path $requiredFile -PathType Leaf)) {
                         throw "Required debug input not found: $requiredFile"
@@ -266,13 +266,13 @@ powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "%WORKSPACE%\\sc
                     Copy-Item -Destination $symbolInputDir -Force
                 Copy-Item -Path $slicerDll -Destination $symbolInputDir -Force
 
-                $preservedDll = Join-Path $symbolInputDir "CrealityPrint_Slicer.dll"
+                $preservedDll = Join-Path $symbolInputDir "SanityPrint_Slicer.dll"
                 $dllSignature = Get-AuthenticodeSignature -FilePath $preservedDll
                 if ($dllSignature.Status.ToString() -ne "NotSigned") {
                     throw "Preserved DLL is not an unsigned build output: status=$($dllSignature.Status), path=$preservedDll"
                 }
                 $dllHash = (Get-FileHash -Path $preservedDll -Algorithm SHA256).Hash
-                $dllHashFile = Join-Path $symbolInputDir "CrealityPrint_Slicer.dll.sha256"
+                $dllHashFile = Join-Path $symbolInputDir "SanityPrint_Slicer.dll.sha256"
                 [System.IO.File]::WriteAllText($dllHashFile, $dllHash, [System.Text.Encoding]::ASCII)
                 Write-Host "=== Preserved pre-sign debug inputs ==="
                 Write-Host "Source: $srcReleaseDir"
@@ -345,12 +345,12 @@ echo updater.exe signed successfully.
             }
         }
 
-        stage('Sign CrealityPrint.exe') {
+        stage('Sign SanityPrint.exe') {
             steps {
                 bat '''
 @echo off
 set "EXE_PATH=%WORKSPACE%\\%BUILD_DIR%\\src\\%BUILD_TYPE%\\%PROCESS_NAME%.exe"
-echo Signing CrealityPrint.exe: %EXE_PATH%
+echo Signing SanityPrint.exe: %EXE_PATH%
 powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "%WORKSPACE%\\scripts\\sign_windows_file.ps1" ^
     -FilePath "%EXE_PATH%" ^
     -SignServiceUrl "%WINDOWS_SIGN_SERVICE_URL%"
@@ -450,7 +450,7 @@ echo ZIP package created: %BUILD_DIR%\\%zipName%
                         withCredentials([sshUserPrivateKey(credentialsId: 'cxsw-ssh-key', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
                             def portVal = (env.SSH_PORT ?: '9122') as Integer
                             def remote = [name: 'creality-sync', host: '172.20.180.14', user: env.SSH_USER, port: portVal, identityFile: env.SSH_KEY, allowAnyHosts: true]
-                            def remoteReleases = "/vagrant_data/www/shared/crealityprint/${env.JOB_NAME}/${envName}/Releases"
+                            def remoteReleases = "/vagrant_data/www/shared/sanityprint/${env.JOB_NAME}/${envName}/Releases"
                             try {
                                 sshGet remote: remote, from: "${remoteReleases}/RELEASES", into: "${localReleases}", override: true
                             } catch (Exception e) {
@@ -526,7 +526,7 @@ echo ZIP package created: %BUILD_DIR%\\%zipName%
                         withCredentials([sshUserPrivateKey(credentialsId: 'cxsw-ssh-key', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
                             def portVal = (env.SSH_PORT ?: '9122') as Integer
                             def remote = [name: 'creality-sync', host: '172.20.180.14', user: env.SSH_USER, port: portVal, identityFile: env.SSH_KEY, allowAnyHosts: true]
-                            def remoteReleases = "/vagrant_data/www/shared/crealityprint/${env.JOB_NAME}/${envName}/Releases"
+                            def remoteReleases = "/vagrant_data/www/shared/sanityprint/${env.JOB_NAME}/${envName}/Releases"
 
                             def allVersions = []
                             try {
@@ -829,7 +829,7 @@ if errorlevel 1 exit /b 1
                 }
 
                 $pdbFiles = @(Get-ChildItem -Path $symbolInputDir -Filter "*.pdb" -File -ErrorAction SilentlyContinue)
-                $unsignedDll = Join-Path $symbolInputDir "CrealityPrint_Slicer.dll"
+                $unsignedDll = Join-Path $symbolInputDir "SanityPrint_Slicer.dll"
                 if ($pdbFiles.Count -eq 0) {
                     throw "No preserved PDB files found in $symbolInputDir"
                 }
@@ -839,7 +839,7 @@ if errorlevel 1 exit /b 1
 
                 # Revalidate immediately before archiving. This prevents a later stage from
                 # silently replacing or signing the preserved DLL.
-                $dllHashFile = Join-Path $symbolInputDir "CrealityPrint_Slicer.dll.sha256"
+                $dllHashFile = Join-Path $symbolInputDir "SanityPrint_Slicer.dll.sha256"
                 if (-not (Test-Path $dllHashFile -PathType Leaf)) {
                     throw "Preserved DLL hash file not found: $dllHashFile"
                 }
@@ -904,7 +904,7 @@ if errorlevel 1 exit /b 1
                         } else {
                             envName = 'prod'
                         }
-                        def remoteBase = "/vagrant_data/www/shared/crealityprint/${env.JOB_NAME}/${envName}"
+                        def remoteBase = "/vagrant_data/www/shared/sanityprint/${env.JOB_NAME}/${envName}"
                         def portVal = (env.SSH_PORT ?: '9122') as Integer
                         def remote = [
                             name: 'creality-publish',

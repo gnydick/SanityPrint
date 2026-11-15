@@ -11,7 +11,7 @@
 
 // Unbuffered crash-investigation logging (implemented in FirebaseSignIn.mm,
 // which is only compiled for the Mac App Store build).
-#if defined(__APPLE__) && defined(CREALITYPRINT_APP_STORE)
+#if defined(__APPLE__) && defined(SANITYPRINT_APP_STORE)
 extern "C" void cp_apple_debug_log(const char *message);
 #endif
 #include "slic3r/GUI/MainFrame.hpp"
@@ -214,7 +214,7 @@ wxEND_EVENT_TABLE()
                 host == wxT("id.creality.cn") || host == wxT("id-dev.creality.cn");
             if (is_creality_login_host) {
                 urlToLoad = append_param(urlToLoad, wxT("webview"), wxT("1"));
-#if defined(__WXOSX__) && defined(CREALITYPRINT_APP_STORE)
+#if defined(__WXOSX__) && defined(SANITYPRINT_APP_STORE)
                 urlToLoad = append_param(urlToLoad, wxT("app_store"), wxT("macos"));
 #endif
             }
@@ -408,7 +408,7 @@ wxEND_EVENT_TABLE()
         {
             // 页面加载完成
             BOOST_LOG_TRIVIAL(error) << "WebView page loaded successfully";
-#if defined(__WXOSX__) && defined(CREALITYPRINT_APP_STORE)
+#if defined(__WXOSX__) && defined(SANITYPRINT_APP_STORE)
             // App Store 审核（Guideline 4）：应用未实现原生 Sign in with Apple
             // 流程前，在商店版登录页隐藏 Apple 登录入口。按钮由账号中心登录页
             // 渲染，class 为 apple-icon（Google 图标为 google-icon，不受影响）。
@@ -486,7 +486,7 @@ wxEND_EVENT_TABLE()
                         if (msg.contains("callback") && msg["callback"].is_string()) {
                             std::string cb = msg["callback"].get<std::string>();
                             if (!cb.empty()) {
-#if defined(__WXOSX__) && defined(CREALITYPRINT_APP_STORE)
+#if defined(__WXOSX__) && defined(SANITYPRINT_APP_STORE)
                                 // 双保险：注入的点击拦截未生效时，Apple 相关 callback
                                 // 也不跳出系统浏览器，转原生流程
                                 if (cb.find("apple") != std::string::npos) {
@@ -527,7 +527,7 @@ wxEND_EVENT_TABLE()
 
         void LoginDialog::StartNativeAppleSignIn()
         {
-#if defined(__APPLE__) && defined(CREALITYPRINT_APP_STORE)
+#if defined(__APPLE__) && defined(SANITYPRINT_APP_STORE)
             cp_apple_debug_log("StartNativeAppleSignIn: entry (apple-icon)");
             start_apple_sign_in([this](AppleSignInResult apple) {
                 cp_apple_debug_log(("OnAppleSignIn: authorization callback, success=" + std::string(apple.success ? "1" : "0")).c_str());
@@ -573,7 +573,7 @@ wxEND_EVENT_TABLE()
         // same JSON shape to NetworkAgent::change_user.
         void LoginDialog::send_apple_login_v2(const std::string& firebase_id_token, int login_attempt)
         {
-#if defined(__APPLE__) && defined(CREALITYPRINT_APP_STORE)
+#if defined(__APPLE__) && defined(SANITYPRINT_APP_STORE)
             cp_apple_debug_log("send_apple_login_v2: enter");
             nlohmann::json request;
             request["type"] = 23;

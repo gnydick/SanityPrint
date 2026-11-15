@@ -348,7 +348,7 @@ void ZUserLogin::OnScriptMessage(wxWebViewEvent &evt)
                 std::string jump_url = j["data"]["url"].get<std::string>();
                 CallAfter([this, jump_url] {
                     wxString url = wxString::FromUTF8(jump_url);
-#if defined(__APPLE__) && defined(CREALITYPRINT_APP_STORE)
+#if defined(__APPLE__) && defined(SANITYPRINT_APP_STORE)
                     // Keep third-party sign-in inside the app (App Store
                     // review, Guideline 4): present the provider page in an
                     // in-app window; the OAuth callback is still handled by

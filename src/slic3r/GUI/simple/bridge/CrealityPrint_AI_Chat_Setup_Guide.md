@@ -1,6 +1,6 @@
-﻿# CrealityPrint AI 聊天助手 - 完整配置与开发流程文档
+﻿# SanityPrint AI 聊天助手 - 完整配置与开发流程文档
 
-> 本文档涵盖从零搭建 CrealityPrint AI 聊天助手的完整流程，包括 Dify 配置、DeepSeek 模型接入、前后端架构、以及开发调试要点。
+> 本文档涵盖从零搭建 SanityPrint AI 聊天助手的完整流程，包括 Dify 配置、DeepSeek 模型接入、前后端架构、以及开发调试要点。
 
 ---
 
@@ -10,7 +10,7 @@
 2. [Dify 部署与配置](#2-dify-部署与配置)
 3. [DeepSeek 模型接入](#3-deepseek-模型接入)
 4. [Dify 应用创建与提示词配置](#4-dify-应用创建与提示词配置)
-5. [CrealityPrint 前端配置](#5-crealityprint-前端配置)
+5. [SanityPrint 前端配置](#5-sanityprint-前端配置)
 6. [C++ 后端架构](#6-c-后端架构)
 7. [JS Bridge 通信协议](#7-js-bridge-通信协议)
 8. [ACTION 指令系统](#8-action-指令系统)
@@ -24,7 +24,7 @@
 
 `
 +---------------------------+         SSE Streaming         +------------------+
-|  CrealityPrint (桌面端)    | ---- HTTPS (chat-messages) -> |   Dify Server    |
+|  SanityPrint (桌面端)    | ---- HTTPS (chat-messages) -> |   Dify Server    |
 |                           | <--- SSE events ------------ |   (Docker)       |
 |  +---------------------+ |                                +--------+---------+
 |  | wxWebView           | |                                         |
@@ -112,7 +112,7 @@ docker compose up -d
 
 1. 在 Dify 首页点击 **创建应用**
 2. 选择类型: **聊天助手 (Chat)**（不是 Agent）
-3. 输入应用名称: 如 CrealityPrint AI 助手
+3. 输入应用名称: 如 SanityPrint AI 助手
 
 ### 4.2 模型选择
 
@@ -128,7 +128,7 @@ docker compose up -d
 **Dify 中的系统提示词 (推荐配置):**
 
 `
-你是 CrealityPrint 3D 切片软件的内置 AI 助手。你可以直接控制切片器执行操作。
+你是 SanityPrint 3D 切片软件的内置 AI 助手。你可以直接控制切片器执行操作。
 
 核心规则:
 1. 当用户请求执行操作时，使用 [ACTION] 格式块输出指令
@@ -169,7 +169,7 @@ Body:
   "inputs": {},
   "query": "[系统指令 + 用户消息]",
   "response_mode": "streaming",
-  "user": "crealityprint-user",
+  "user": "sanityprint-user",
   "conversation_id": ""   // 首次为空，后续填入
 }
 `
@@ -178,7 +178,7 @@ Body:
 
 ---
 
-## 5. CrealityPrint 前端配置
+## 5. SanityPrint 前端配置
 
 ### 5.1 文件位置
 
@@ -191,7 +191,7 @@ resources/web/chat/
 
 ### 5.2 首次使用配置
 
-启动 CrealityPrint 后，打开 AI 聊天面板:
+启动 SanityPrint 后，打开 AI 聊天面板:
 1. 显示配置面板，需填入:
    - **API 地址**: Dify 服务的 API Base URL (如 http://192.168.1.100/v1)
    - **API Key**: Dify 应用的 API Key (如 pp-xxxx)
@@ -207,7 +207,7 @@ const enrichedQuery = systemContext + userMessage;
 `
 
 系统指令包含:
-- **角色定义**: "You are the AI assistant built into CrealityPrint 3D slicer"
+- **角色定义**: "You are the AI assistant built into SanityPrint 3D slicer"
 - **ACTION 格式说明**: 精确的 JSON 格式定义
 - **具体示例**: 7-8 个完整的用户输入 -> AI 输出示例
 - **参数参考表**: 常用打印参数的 key、中文名、取值范围
@@ -434,15 +434,15 @@ plater->on_config_change(bundle->full_config());
 # 编译 libslic3r_gui (含 MCPChatPanel + SlicerBridge)
 cmake --build c:\WORK\C3DSlicer\build_Release --target libslic3r_gui --config Release
 
-# 链接 CrealityPrint_Slicer.dll
-cmake --build c:\WORK\C3DSlicer\build_Release --target CrealityPrint_Slicer --config Release
+# 链接 SanityPrint_Slicer.dll
+cmake --build c:\WORK\C3DSlicer\build_Release --target SanityPrint_Slicer --config Release
 `
 
 ### 10.2 注意事项
 
-- 链接 DLL 前必须关闭正在运行的 CrealityPrint，否则 LNK1104（文件被锁定）
+- 链接 DLL 前必须关闭正在运行的 SanityPrint，否则 LNK1104（文件被锁定）
 - 前端文件 (html/css/js) 修改后不需要编译，重新打开聊天窗口即可
-- C++ 修改需要重新编译 libslic3r_gui + 重新链接 CrealityPrint_Slicer
+- C++ 修改需要重新编译 libslic3r_gui + 重新链接 SanityPrint_Slicer
 
 ### 10.3 调试技巧
 

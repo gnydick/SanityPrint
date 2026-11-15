@@ -1,8 +1,8 @@
 # 切片引擎测试
 
-这套工具通过 CrealityPrint CLI 驱动切片引擎，提供指纹回归、性能回归和稳定性分析。指纹回归又分为最终 G-code 回归和模块回归。算法内部诊断指纹只在正式回归失败后帮助定位原因，不参与通过或失败的判定。
+这套工具通过 SanityPrint CLI 驱动切片引擎，提供指纹回归、性能回归和稳定性分析。指纹回归又分为最终 G-code 回归和模块回归。算法内部诊断指纹只在正式回归失败后帮助定位原因，不参与通过或失败的判定。
 
-本文是中文使用手册，介绍 Python 命令、参数、输出和基线文件。CrealityPrint CLI 协议、内部架构、诊断会话、指纹计算、Tracy 采集和判定流程请看 [DESIGN.md](DESIGN.md)。
+本文是中文使用手册，介绍 Python 命令、参数、输出和基线文件。SanityPrint CLI 协议、内部架构、诊断会话、指纹计算、Tracy 采集和判定流程请看 [DESIGN.md](DESIGN.md)。
 
 ## 应该使用哪个功能
 
@@ -13,7 +13,7 @@
 | 判断代码修改是否造成性能回退 | 性能回归 | `main.py performance-test` |
 | 同一代码重复切片却偶尔得到不同结果 | 稳定性分析 | `stability.py` |
 
-日常使用只需要执行 `main.py` 或 `stability.py`，不需要直接调用其他 Python 文件，也不需要了解 CrealityPrint 内部诊断实现。当前模块回归支持 `support`。
+日常使用只需要执行 `main.py` 或 `stability.py`，不需要直接调用其他 Python 文件，也不需要了解 SanityPrint 内部诊断实现。当前模块回归支持 `support`。
 
 几个常用概念：
 
@@ -28,7 +28,7 @@
 命令可在项目任意目录执行，以下示例从项目根目录运行。执行前需要：
 
 - 在 Visual Studio 中完成 RelWithDebInfo 编译。
-- 确认切片程序存在于 `build_Release\src\RelWithDebInfo\CrealityPrint.exe`。
+- 确认切片程序存在于 `build_Release\src\RelWithDebInfo\SanityPrint.exe`。
 - 在 `baseline\manifest.json` 中配置测试案例，并确保对应的 3MF 文件存在。
 - 确保 `python` 命令可以从 `PATH` 中找到。
 
@@ -125,7 +125,7 @@ python <项目目录>\tests\engine_test\main.py <命令> [参数]
 | 参数 | 默认值 | 作用 |
 | --- | --- | --- |
 | `--manifest <文件>` | `tests\engine_test\baseline\manifest.json` | 指定案例清单。相对路径按当前命令行工作目录解析。 |
-| `--slicer <文件>` | `build_Release\src\RelWithDebInfo\CrealityPrint.exe` | 指定要测试的切片程序，适合测试其他构建目录或比较不同版本。 |
+| `--slicer <文件>` | `build_Release\src\RelWithDebInfo\SanityPrint.exe` | 指定要测试的切片程序，适合测试其他构建目录或比较不同版本。 |
 | `--baseline-dir <目录>` | manifest 所在目录 | 指定基线的读取或写入目录。不会改变 manifest 中输入文件的相对路径基准。 |
 | `--work-dir <目录>` | 临时目录 | 保存本次 G-code、报告、Tracy 文件和日志。不指定时使用临时目录并在结束后删除。 |
 | `--case <名称>` | 全部适用案例 | 只处理 manifest 中指定名称的案例；可重复传入。模块命令默认只选择声明了对应 `modules` 的案例。 |
@@ -356,7 +356,7 @@ python .\tests\engine_test\main.py performance-test `
 
 脚本会在正式采样前自动完成预热。Tracy 工具固定从项目的 `tools\tracy-windows-0.13.1` 目录加载，不需要通过命令行指定。每一轮先启动 `tracy-capture.exe`，再启动 CLI 切片。切片结束后通过 `tracy-csvexport.exe --unwrap` 提取已接入的 Tracy Zone。实际参与性能回归判定的观察点由 `manifest.json` 中对应案例的 `performance.metrics` 指定。性能命令不读取或比较 G-code、模块与诊断基线；需要按目标分别运行 `gcode-test` 或 `module-test` 验证结果正确性。
 
-运行自动性能回归前，请关闭正在连接 CrealityPrint 的 Tracy Profiler，并避免同时启动另一个启用了 Tracy 的 CrealityPrint 进程，以免 Capture 连接到错误的进程。GUI 手工分析仍直接使用 Tracy Profiler，不需要经过回归脚本；只需在点击切片前让 Profiler 完成连接。
+运行自动性能回归前，请关闭正在连接 SanityPrint 的 Tracy Profiler，并避免同时启动另一个启用了 Tracy 的 SanityPrint 进程，以免 Capture 连接到错误的进程。GUI 手工分析仍直接使用 Tracy Profiler，不需要经过回归脚本；只需在点击切片前让 Profiler 完成连接。
 
 工作目录结构：
 
@@ -410,7 +410,7 @@ python .\tests\engine_test\stability.py
   [--timeout <秒>]
   [--baseline-dir <目录>]
   [--manifest <文件>]
-  [--slicer <CrealityPrint.exe>]
+  [--slicer <SanityPrint.exe>]
   [--resume]
   [--analyze-only]
 ```
@@ -425,7 +425,7 @@ python .\tests\engine_test\stability.py
 | `--timeout <秒>` | `900` | 每轮中每个案例允许的最长执行时间。 |
 | `--baseline-dir <目录>` | 不使用 | 指定后，每轮与该目录中的固定基线比较；不指定时，各轮切片结果直接互比。 |
 | `--manifest <文件>` | `tests\engine_test\baseline\manifest.json` | 使用另一份案例清单。 |
-| `--slicer <文件>` | RelWithDebInfo 的 `CrealityPrint.exe` | 使用另一个切片程序，适合比较不同代码版本。 |
+| `--slicer <文件>` | RelWithDebInfo 的 `SanityPrint.exe` | 使用另一个切片程序，适合比较不同代码版本。 |
 | `--resume` | 关闭 | 工作目录已有部分结果时，跳过已有的 `run-XX.result.json`，继续未完成轮次。 |
 | `--analyze-only` | 关闭 | 不重新切片，只读取已有的 `run-*.result.json` 并重新生成分析报告。 |
 
@@ -528,7 +528,7 @@ F:\dev\regression-analysis\
 - `name`：案例唯一名称，也是该案例各类基线文件的文件名前缀。
 - `input`：相对于 `manifest.json` 所在目录的 3MF 路径；也可使用绝对路径。
 - `plate`：`0` 表示切全部盘，`1` 表示第一个盘，以此类推。
-- `args`：原样追加到 CrealityPrint CLI 的额外参数。
+- `args`：原样追加到 SanityPrint CLI 的额外参数。
 - `modules`：可选的模块回归声明。当前可填写 `support`；模块命令只处理声明了目标模块的案例。
 - `performance`：可选的性能测试配置。没有该字段的案例会在批量性能测试中跳过；如果通过 `--case` 显式选择，则会报告配置缺失。
 - `performance.metrics`：决定性能测试成败的观察点集合。键是 Tracy Zone 的完整路径。

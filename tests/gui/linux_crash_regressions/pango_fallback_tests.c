@@ -29,7 +29,7 @@ int main(void)
     PangoLayout *layout = pango_layout_new(context);
     pango_layout_set_font_description(layout, description);
     // U+1FAEA was being resolved in the original Ubuntu 26 crash.
-    pango_layout_set_text(layout, "CrealityPrint \xF0\x9F\xAB\xAA", -1);
+    pango_layout_set_text(layout, "SanityPrint \xF0\x9F\xAB\xAA", -1);
     PangoRectangle extent;
     pango_layout_get_extents(layout, &extent, NULL);
     printf("PASS: Pango %s: missing family and U+1FAEA fallback\n", pango_version_string());

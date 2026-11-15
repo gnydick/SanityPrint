@@ -2308,7 +2308,7 @@ int SliceCommand::parse_options(SliceCommandOptions &options)
         return result;
     }
 
-    BOOST_LOG_TRIVIAL(warning) << boost::format("cli mode, Current CrealityPrint Version %1%") % SLIC3R_VERSION;
+    BOOST_LOG_TRIVIAL(warning) << boost::format("cli mode, Current SanityPrint Version %1%") % SLIC3R_VERSION;
     BOOST_LOG_TRIVIAL(info) << "Input file count: " << m_input_files.size();
     if (!options.pipe_name.empty()) {
         BOOST_LOG_TRIVIAL(info) << "Will use pipe " << options.pipe_name;
