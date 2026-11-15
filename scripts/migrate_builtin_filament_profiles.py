@@ -17,6 +17,9 @@ import json
 import pathlib
 import sys
 
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+from text_io import match_newlines, read_exact, write_exact
+
 REPO_ROOT = pathlib.Path(__file__).parent.parent
 PROFILES_DIR = REPO_ROOT / "resources" / "profiles"
 
@@ -103,7 +106,7 @@ NEW_FIELDS = set(DEFAULTS.keys())
 def migrate_file(path: pathlib.Path, dry_run: bool) -> bool:
     """Migrate a single JSON file. Returns True if changed."""
     try:
-        text = path.read_text(encoding="utf-8")
+        text = read_exact(path)
         data = json.loads(text)
     except Exception as e:
         print(f"  SKIP {path.name}: {e}", file=sys.stderr)
@@ -131,7 +134,8 @@ def migrate_file(path: pathlib.Path, dry_run: bool) -> bool:
             print(f"    + {k} = {v[0]}")
 
     if not dry_run:
-        path.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        out = json.dumps(data, indent=2, ensure_ascii=False) + "\n"
+        write_exact(path, match_newlines(out, text))
 
     return True
 

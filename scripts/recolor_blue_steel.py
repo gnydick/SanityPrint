@@ -13,6 +13,9 @@ Blue-steel palette (replaces Creality teal/green brand colors):
 """
 import argparse, pathlib, sys
 
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+from text_io import read_exact, write_exact
+
 REPO = pathlib.Path(__file__).parent.parent
 
 SKIP_DIRS = {".git", "scripts"}
@@ -97,7 +100,7 @@ def should_skip(path: pathlib.Path) -> bool:
 
 def process_file(path: pathlib.Path, dry_run: bool) -> int:
     try:
-        original = path.read_text(encoding="utf-8", errors="replace")
+        original = read_exact(path, errors="replace")
     except Exception:
         return 0
     text = original
@@ -112,7 +115,7 @@ def process_file(path: pathlib.Path, dry_run: bool) -> int:
     rel = path.relative_to(REPO)
     print(f"  {'DRY ' if dry_run else ''}RECOLOR {rel}  ({count} swaps)")
     if not dry_run:
-        path.write_text(text, encoding="utf-8")
+        write_exact(path, text)
     return count
 
 
