@@ -80,7 +80,10 @@ def replace_in_text(text: str) -> tuple[str, int]:
 
 def process_file(path: pathlib.Path, dry_run: bool) -> int:
     try:
-        original = path.read_text(encoding="utf-8", errors="replace")
+        # newline="" keeps each file's own line endings on read and write;
+        # the default turns every LF into CRLF on Windows.
+        with open(path, encoding="utf-8", errors="replace", newline="") as f:
+            original = f.read()
     except Exception:
         return 0
     new_text, n = replace_in_text(original)
@@ -89,7 +92,8 @@ def process_file(path: pathlib.Path, dry_run: bool) -> int:
     rel = path.relative_to(REPO)
     print(f"  {'DRY ' if dry_run else ''}EDIT {rel}  ({n} replacements)")
     if not dry_run:
-        path.write_text(new_text, encoding="utf-8")
+        with open(path, "w", encoding="utf-8", newline="") as f:
+            f.write(new_text)
     return n
 
 
