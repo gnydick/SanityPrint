@@ -1,0 +1,169 @@
+#!/bin/bash
+
+# 获取配置的clang-format风格
+STYLE=$(git config --get hooks.clangformat.style)
+
+GIT_ROOT=$(git rev-parse --show-toplevel)
+# 定义 clang-format.exe 的路径（假设在根目录下）
+CLANG_FORMAT="${GIT_ROOT}/clang-format.exe"
+# 检测操作系统类型
+case "$(uname -s)" in
+    Linux*)     OS=Linux;;
+    Darwin*)    OS=macOS;;
+    CYGWIN*|MINGW*) OS=Windows;;
+    *)          OS=Unknown
+esac
+
+# 调用对应平台的子脚本
+if [ "$OS" = "Windows" ]; then
+    CLANG_FORMAT="${GIT_ROOT}/clang-format.exe"
+else
+	# 检查clang-format是否安装
+	if ! command -v clang-format >/dev/null 2>&1; then
+		echo "错误：未安装 clang-format" >&2
+		echo "安装方法：" >&2
+		echo "  macOS: brew install clang-format" >&2
+		echo "  Linux: sudo apt-get install clang-format" >&2
+		exit 1
+	fi
+	CLANG_FORMAT="clang-format"
+fi
+
+# 检查文件是否存在
+if [ ! -f "${CLANG_FORMAT}" ]; then
+    echo "错误：未找到 ${CLANG_FORMAT}，请确保 clang-format.exe 在项目根目录下！" >&2
+    exit 1
+fi
+
+if [ -n "${STYLE}" ]; then
+  STYLEARG="-style=${STYLE}"
+else
+  # 尝试使用项目根目录的.clang-format文件
+  if [ -f "$(git rev-parse --show-toplevel)/.clang-format" ]; then
+    STYLEARG="-style=file"
+  else
+    STYLEARG=""
+  fi
+fi
+
+# 格式化单个文件函数
+format_file() {
+  file="${1}"
+  if [ -f "${file}" ]; then
+     "${CLANG_FORMAT}" -i ${STYLEARG} "${file}"
+    echo "clang-format ${STYLEARG} -i ${file}"
+    
+    # 统一行尾符为CRLF（Windows格式）
+    normalize_line_endings "${file}"
+    
+    # 在文件第一行添加格式化标记
+    add_format_marker "${file}"
+    
+    git add "${file}"
+  fi
+}
+
+# 统一文件行尾符处理
+normalize_line_endings() {
+  file="${1}"
+  if [ -f "${file}" ]; then
+    # 由于Git的core.autocrlf=true会自动处理行尾符转换
+    # 我们只需要确保文件内容一致性，让Git处理行尾符
+    # 这样可以避免与Git的自动转换产生冲突
+    
+    # 检查文件是否有混合行尾符
+    if grep -q $'\r\n' "${file}" && grep -q $'[^\r]\n' "${file}"; then
+      # 文件有混合行尾符，统一处理
+      if [ "$OS" = "Windows" ]; then
+        # Windows环境：移除所有CR，让Git的autocrlf处理
+        tr -d '\r' < "${file}" > "${file}.tmp" && mv "${file}.tmp" "${file}"
+        echo "Normalized mixed line endings for ${file}"
+      else
+        # Unix/Linux环境：统一为LF
+        tr -d '\r' < "${file}" > "${file}.tmp" && mv "${file}.tmp" "${file}"
+        echo "Normalized line endings to LF for ${file}"
+      fi
+    fi
+  fi
+}
+
+# 添加格式化标记到文件第一行
+add_format_marker() {
+  file="${1}"
+  if [ -f "${file}" ]; then
+    # 获取文件扩展名
+    ext="${file##*.}"
+    
+    # 根据文件类型选择注释符号
+    case "${ext}" in
+      cpp|cc|c|h|hpp)
+        marker="// [FORMATTED BY CLANG-FORMAT $(date '+%Y-%m-%d %H:%M:%S')]"
+        ;;
+      *)
+        marker="// [FORMATTED BY CLANG-FORMAT $(date '+%Y-%m-%d %H:%M:%S')]"
+        ;;
+    esac
+    
+    # 检查第一行是否已经有格式化标记
+    first_line=$(head -n 1 "${file}")
+    if [[ "${first_line}" == *"[FORMATTED BY CLANG-FORMAT"* ]]; then
+      # 如果已有标记，更新第一行的时间戳
+      temp_file=$(mktemp)
+      echo "${marker}" > "${temp_file}"
+      tail -n +2 "${file}" >> "${temp_file}"
+      mv "${temp_file}" "${file}"
+      echo "Updated format marker in ${file}"
+    else
+      # 如果没有标记，添加新标记到第一行
+      temp_file=$(mktemp)
+      echo "${marker}" > "${temp_file}"
+      cat "${file}" >> "${temp_file}"
+      mv "${temp_file}" "${file}"
+      echo "Added format marker to ${file}"
+    fi
+  fi
+}
+
+# 检查是否需要格式化
+is_need_format() {
+  file="${1}"
+  need=1
+  
+  # 忽略/test/目录下的文件
+  if [[ "${file}" == */test/* ]]; then
+    need=0
+  fi
+  
+  if [[ $need -eq 1 ]]; then
+    # 只处理C/C++源文件
+    if [[ "${file}" != *.cpp && "${file}" != *.h && "${file}" != *.cc && "${file}" != *.c && "${file}" != *.hpp ]]; then
+      need=0
+    fi
+  fi
+  
+  return $need
+}
+
+case "${1}" in
+  --about )
+    echo "Runs clang-format on source files"
+    ;;
+  * )
+    # 获取暂存区的文件列表
+    # 对于amend操作，也需要检查当前暂存的文件
+    if git rev-parse --verify HEAD >/dev/null 2>&1; then
+      # 有提交历史，使用diff-index
+      files=$(git diff-index --cached --name-only HEAD)
+    else
+      # 初始提交，使用diff-index --cached
+      files=$(git diff-index --cached --name-only --diff-filter=A HEAD 2>/dev/null || git ls-files --cached)
+    fi
+    
+    for file in $files; do
+      is_need_format "${file}"
+      if [[ $? -eq 1 ]]; then
+        format_file "${file}"
+      fi
+    done
+    ;;
+esac
