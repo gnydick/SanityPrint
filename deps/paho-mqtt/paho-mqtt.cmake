@@ -14,6 +14,7 @@ orcaslicer_add_cmake_project(MQTTC
   # GIT_TAG v1.9.2
   URL https://github.com/eclipse-paho/paho.mqtt.c/archive/refs/tags/v1.3.15.tar.gz
   URL_HASH SHA256=60ce2cfdc146fcb81c621cb8b45874d2eb1d4693105d048f60e31b8f3468be90
+  DEPENDS ${OPENSSL_PKG}
   CMAKE_ARGS
     -DPAHO_BUILD_STATIC=${_build_static} 
     -DPAHO_WITH_SSL=${_build_with_ssl} 
