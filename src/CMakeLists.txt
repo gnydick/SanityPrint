@@ -323,31 +323,19 @@ if (WIN32)
     # This has to be a separate target due to the windows command line lenght limits
     add_custom_target(COPY_DLLS ALL DEPENDS ${PROJECT_DLL})
 
-    if (CMAKE_CONFIGURATION_TYPES)
-        foreach (CONF ${CMAKE_CONFIGURATION_TYPES})
-            file(TO_NATIVE_PATH "${CMAKE_CURRENT_BINARY_DIR}/${CONF}" WIN_CONF_OUTPUT_DIR)
-            file(TO_NATIVE_PATH "${CMAKE_CURRENT_BINARY_DIR}/${CONF}/resources" WIN_RESOURCES_SYMLINK)
-            message(STATUS "WIN_RESOURCES_SYMLINK=${WIN_RESOURCES_SYMLINK}")
-            message(STATUS "SLIC3R_RESOURCES_DIR_WIN=${SLIC3R_RESOURCES_DIR_WIN}")
-            add_custom_command(TARGET ${PROJECT_DLL} POST_BUILD
-                COMMAND if exist "${WIN_CONF_OUTPUT_DIR}" "("
-                        if not exist "${WIN_RESOURCES_SYMLINK}" "("
-                            mklink /J "${WIN_RESOURCES_SYMLINK}" "${SLIC3R_RESOURCES_DIR_WIN}"
-                        ")"
-                    ")"
-                COMMENT "Symlinking the resources directory into the build tree"
-                VERBATIM
-            )
-            
-            # add_custom_command(TARGET ${PROJECT_DLL} PRE_BUILD
-            #     COMMAND ${CMAKE_COMMAND} -E make_directory ${WIN_RESOURCES_SYMLINK}
-    		# 	COMMAND ${CMAKE_COMMAND} -E copy_directory
-    		# 	${CMAKE_SOURCE_DIR}/resources/
-    		# 	"$<TARGET_FILE_DIR:${PROJECT_DLL}>/resources/"
-            #     COMMENT "TARGET_FILE_DIR :$<TARGET_FILE_DIR:${PROJECT_DLL}>/resources/"
-    		# 	)
-        endforeach ()
+    # Point <exe dir>/resources at this checkout's resources/ on every build, replacing a junction
+    # left by another checkout or a moved source folder (#25). A target, not a POST_BUILD step,
+    # so it also runs when the DLL is already up to date.
+    add_custom_target(link_resources ALL
+        COMMAND "${CMAKE_COMMAND}" "-DLINK=$<TARGET_FILE_DIR:${PROJECT_DLL}>/resources" "-DTARGET=${SLIC3R_RESOURCES_DIR}"
+                -P "${PROJECT_SOURCE_DIR}/cmake/RefreshJunction.cmake"
+        COMMENT "Linking the resources directory into the build tree"
+        VERBATIM
+    )
+    add_dependencies(link_resources ${PROJECT_DLL})
+    add_dependencies(${STARTUP_PROJECT_NAME} link_resources)
 
+    if (CMAKE_CONFIGURATION_TYPES)
         # Multi-config generator (Visual Studio): copy DLLs for all configurations.
         # (Single-config generators are handled in the else branch below.)
         foreach(CONF ${CMAKE_CONFIGURATION_TYPES})
@@ -363,16 +351,6 @@ if (WIN32)
             endif()
         endforeach()
     else ()
-        file(TO_NATIVE_PATH "${CMAKE_CURRENT_BINARY_DIR}/resources" WIN_RESOURCES_SYMLINK)
-        message(STATUS "SLIC3R_RESOURCES_DIR_WIN222=${SLIC3R_RESOURCES_DIR_WIN}")
-
-        
-        add_custom_command(TARGET ${PROJECT_DLL} POST_BUILD
-            COMMAND if not exist "${WIN_RESOURCES_SYMLINK}" "(" mklink /J "${WIN_RESOURCES_SYMLINK}" "${SLIC3R_RESOURCES_DIR_WIN}" ")"
-            COMMENT "Symlinking the resources directory into the build tree"
-            VERBATIM
-        )
-
         # Single-config generator (Ninja, used by CLion): copy the runtime DLLs.
         if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
             sanityprint_copy_dlls(COPY_DLLS "Debug" "d" output_dlls_Debug)
