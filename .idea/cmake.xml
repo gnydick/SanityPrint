@@ -2,12 +2,7 @@
 <project version="4">
   <component name="CMakeSharedSettings">
     <configurations>
-      <configuration
-          PROFILE_NAME="Release"
-          ENABLED="true"
-          CONFIG_NAME="Release"
-          GENERATION_DIR="D:\cpbuild\clion-build"
-          GENERATION_OPTIONS="-DBBL_RELEASE_TO_PUBLIC=1 -DPROJECT_VERSION_EXTRA=Release -DCMAKE_PREFIX_PATH=D:/cpbuild/OrcaSlicer_dep/usr/local -DWIN10SDK_PATH=&quot;C:/Program Files (x86)/Windows Kits/10/Include/10.0.22621.0&quot;" />
+      <configuration PROFILE_NAME="Release" ENABLED="true" GENERATION_DIR="D:/cpbuild/clion-build" CONFIG_NAME="Release" GENERATION_OPTIONS="-G Ninja -DBBL_RELEASE_TO_PUBLIC=1 -DPROJECT_VERSION_EXTRA=Release -DCMAKE_PREFIX_PATH=D:/cpbuild/OrcaSlicer_dep/usr/local -DWIN10SDK_PATH=&quot;C:/Program Files (x86)/Windows Kits/10/Include/10.0.22621.0&quot;" BUILD_OPTIONS="-j 32" />
     </configurations>
   </component>
 </project>
