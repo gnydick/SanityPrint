@@ -314,30 +314,28 @@ std::string data_directory_name()
     return name;
 }
 
+std::string data_dir_for_root(const std::string &dir)
+{
+    if (dir.empty())
+        return dir;
+    const std::string version_dir = data_directory_name();
+#ifdef _WIN32
+    return dir + "\\" + SLIC3R_APP_USE_FORDER + "\\" + version_dir;
+#else
+    return dir + "/" + SLIC3R_APP_USE_FORDER + "/" + version_dir;
+#endif
+}
+
 void set_data_dir(const std::string &dir, bool use_directly)
 {
 	if(use_directly)
 	{
 		g_data_dir = dir;
 	}else{
-		const std::string version_dir = data_directory_name();
-
-		if(dir.empty())
-		{
-			g_data_dir = dir;
+		if (!dir.empty() && !boost::filesystem::exists(dir)) {
+			boost::filesystem::create_directories(dir);
 		}
-		else
-		{
-            if (!dir.empty() && !boost::filesystem::exists(dir)) {
-                boost::filesystem::create_directories(dir);
-            }
-			#ifdef _WIN32
-            g_data_dir = dir + "\\" + SLIC3R_APP_USE_FORDER + "\\" + version_dir;
-			#else
-            g_data_dir = dir + "/" + SLIC3R_APP_USE_FORDER + "/" + version_dir;
-			#endif
-            //g_data_dir = dir + "\\" + SLIC3R_APP_USE_FORDER + "\\" + version_dir;
-        }
+		g_data_dir = data_dir_for_root(dir);
     }
 
     if (!g_data_dir.empty() && !boost::filesystem::exists(g_data_dir)) {
