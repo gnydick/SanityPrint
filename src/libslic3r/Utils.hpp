@@ -181,6 +181,9 @@ const std::string& custom_gcodes_dir();
 
 // Set a path with preset files.
 void set_data_dir(const std::string &path, bool use_directly = false);
+// The data folder set_data_dir(root) would use: <root>/<SLIC3R_APP_USE_FORDER>/<major>.0[ Alpha].
+// Empty root gives an empty path. Changes nothing on disk.
+std::string data_dir_for_root(const std::string &root);
 // Return a full path to the GUI resource files.
 const std::string& data_dir();
 
