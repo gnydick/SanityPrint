@@ -2,6 +2,7 @@
 #include "CxMiniDump.h"
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/path.hpp>
+#include <boost/nowide/convert.hpp>
 #include <windows.h>
 #include <shlobj_core.h>
 #include <iostream>
@@ -155,7 +156,12 @@ LONG MiniDump::ApplicationCrashHandler(EXCEPTION_POINTERS *pException)
 	// Create the dump file;
 	CreateDumpFile(szDumpFile, pException);
 	
-	std::wstring exePath = GetExecutableDirectory() + L"/resources/dumptools/dumptool.exe";
+	// The resources folder the app uses (SLIC3R_RESOURCES_DIR in a checkout run, #25); before it is
+	// set, the packaged <exe dir>/resources.
+	const std::string& res_dir = Slic3r::resources_dir();
+	std::wstring exePath = (res_dir.empty() ? GetExecutableDirectory() + L"/resources"
+	                                        : boost::nowide::widen(res_dir))
+	                       + L"/dumptools/dumptool.exe";
 	//"C:/Users/Administrator/AppData/Roaming/Creality/New C3D/dump/20241023_114858_SanityPrint_6.0.0.382_Alpha.dmp" "" "6.0.0.192" "zh_CN"
 	std::string version = SANITYPRINT_VERSION;
 	std::wstring wVersion(version.begin(), version.end());

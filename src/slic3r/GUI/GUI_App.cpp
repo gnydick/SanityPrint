@@ -1,5 +1,6 @@
 #include "boost/filesystem/operations.hpp"
 #include "libslic3r/Technologies.hpp"
+#include "libslic3r/AppDirs.hpp"
 #include "GUI_App.hpp"
 #include "slic3r/Utils/Http.hpp"
 #include <nlohmann/json.hpp>
@@ -3075,6 +3076,27 @@ void GUI_App::init_app_config()
         chdir(encode_path((Slic3r::data_dir() + "/log").c_str()).c_str());
     } else {
         m_datadir_redefined = true;
+#ifndef __linux__
+        // A checkout's own --datadir folder (#25) starts as a copy of the user's SanityPrint data,
+        // then of an existing CrealityPrint install. The sources are never changed.
+        // Decision: Gabe, 2026-11-16 (#25).
+        const boost::filesystem::path user_data_dir(wxStandardPaths::Get().GetUserDataDir().ToUTF8().data());
+        const boost::filesystem::path creality_base = user_data_dir.parent_path() / "Creality" / "Creality Print";
+        const std::vector<std::filesystem::path> seed_sources = {
+            std::filesystem::u8path(data_dir_for_root(user_data_dir.string())),
+            std::filesystem::u8path((creality_base / (std::string(SANITYPRINT_VERSION_MAJOR) + ".0")).string()),
+            std::filesystem::u8path((creality_base / "6.0").string()),
+        };
+        try {
+            const std::filesystem::path seeded = seed_folder_from_first(std::filesystem::u8path(Slic3r::data_dir()), seed_sources);
+            if (!seeded.empty()) {
+                migrate_user_filament_presets(boost::filesystem::path(Slic3r::data_dir()));
+                is_copy_after = true;
+            }
+        } catch (const std::exception &e) {
+            BOOST_LOG_TRIVIAL(error) << "Could not copy user data into --datadir " << Slic3r::data_dir() << ": " << e.what();
+        }
+#endif
     }
 
     // start log here

@@ -158,3 +158,6 @@ http-client.private.env.json
 # Github Copilot persisted session migrations, see: https://github.com/microsoft/copilot-intellij-feedback/issues/712#issuecomment-3322062215
 .idea/**/copilot.data.migration.*.xml
 .claude/machinery/observations.json
+
+# Per-checkout app data folder: the SanityPrint run config passes --datadir $PROJECT_DIR$\.appdata (#25).
+/.appdata/
