@@ -5,7 +5,7 @@
     "fast": "\"%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -ExecutionPolicy Bypass -File scripts/build_check.ps1 <components>",
     "merge": "\"%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -ExecutionPolicy Bypass -File scripts/build_check.ps1 -Merge",
     "heavy": "\"D:\\cpbuild\\tools\\cmake-3.31.12-windows-x86_64\\bin\\ctest.exe\" --test-dir \"D:\\cpbuild\\check-<checkout>\" -C Release --output-on-failure",
-    "declaration": "a test's folder under tests/ sets its tier: tests/example is merge, every other folder is heavy"
+    "declaration": "a test's folder under tests/ sets its tier: tests/example and tests/app_dirs are merge, every other folder is heavy"
   },
   "components": {
     "libslic3r": "src/libslic3r/",
