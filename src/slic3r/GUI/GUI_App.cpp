@@ -3,6 +3,7 @@
 #include "DataDirectoryVersion.hpp"
 #include "boost/filesystem/operations.hpp"
 #include "libslic3r/Technologies.hpp"
+#include "libslic3r/AppDirs.hpp"
 #include "GUI_App.hpp"
 #include "BaseColorSpectraCache.hpp"
 #include "OfficialMaterialColorCache.hpp"
@@ -3572,6 +3573,29 @@ bool GUI_App::confirm_mesh_paint_warning()
     return dlg.ShowModal() == wxID_YES;
 }
 
+// Bring the data folder at data_dir() up to this version's layout. Never stops startup.
+static void migrate_data_dir()
+{
+    try {
+        DataMigration::Options migration;
+        migration.target = std::filesystem::u8path(Slic3r::data_dir());
+        migration.resources = std::filesystem::u8path(resources_dir());
+        migration.data_version = SANITYPRINT_DATA_VERSION;
+        migration.application_version = SANITYPRINT_VERSION;
+        migration.alpha = boost::algorithm::icontains(std::string(PROJECT_VERSION_EXTRA), "alpha");
+        migration.validate_preset = DataMigration::validate_preset_readonly;
+        DataMigration::initialize(migration);
+    } catch (const std::exception& error) {
+        // The migration engine preserves legacy user data when the transaction fails.
+        // Continue silently and initialize the application configuration normally.
+        BOOST_LOG_TRIVIAL(warning) << "Skipping data directory migration; continuing startup in "
+                                   << Slic3r::data_dir() << ": " << error.what();
+    } catch (...) {
+        BOOST_LOG_TRIVIAL(warning) << "Skipping data directory migration after an unknown error; continuing startup in "
+                                   << Slic3r::data_dir();
+    }
+}
+
 void GUI_App::init_app_config()
 {
 	// Profiles for the alpha are stored into the PrusaSlicer-alpha directory to not mix with the current release.
@@ -3597,29 +3621,30 @@ void GUI_App::init_app_config()
             root = wxFileName::GetHomeDir() + wxS("/.config");
         set_data_dir((root + "/" + GetAppName()).ToUTF8().data());
 #endif
-        try {
-            DataMigration::Options migration;
-            migration.target = std::filesystem::u8path(Slic3r::data_dir());
-            migration.resources = std::filesystem::u8path(resources_dir());
-            migration.data_version = SANITYPRINT_DATA_VERSION;
-            migration.application_version = SANITYPRINT_VERSION;
-            migration.alpha = boost::algorithm::icontains(std::string(PROJECT_VERSION_EXTRA), "alpha");
-            migration.validate_preset = DataMigration::validate_preset_readonly;
-            DataMigration::initialize(migration);
-        } catch (const std::exception& error) {
-            // The migration engine preserves legacy user data when the transaction fails.
-            // Continue silently and initialize the application configuration normally.
-            BOOST_LOG_TRIVIAL(warning) << "Skipping data directory migration; continuing startup in "
-                                       << Slic3r::data_dir() << ": " << error.what();
-        } catch (...) {
-            BOOST_LOG_TRIVIAL(warning) << "Skipping data directory migration after an unknown error; continuing startup in "
-                                       << Slic3r::data_dir();
-        }
+        migrate_data_dir();
         fs::create_directories(fs::path(Slic3r::data_dir()) / "log");
         chdir(encode_path((Slic3r::data_dir() + "/log").c_str()).c_str());
     } else {
-        // Explicit --datadir keeps its existing behavior and never imports another installation.
         m_datadir_redefined = true;
+#ifndef __linux__
+        // A checkout's own --datadir folder (#25) starts as a copy of the user's SanityPrint data,
+        // then of an existing CrealityPrint install, then gets the same migration as the default
+        // data folder. The sources are never changed.
+        // Decision: Gabe, 2026-11-16 (#25); migration after the copy: Gabe, 2026-11-19.
+        const boost::filesystem::path user_data_dir(wxStandardPaths::Get().GetUserDataDir().ToUTF8().data());
+        const boost::filesystem::path creality_base = user_data_dir.parent_path() / "Creality" / "Creality Print";
+        const std::vector<std::filesystem::path> seed_sources = {
+            std::filesystem::u8path(data_dir_for_root(user_data_dir.string())),
+            std::filesystem::u8path((creality_base / (std::string(SANITYPRINT_VERSION_MAJOR) + ".0")).string()),
+            std::filesystem::u8path((creality_base / "6.0").string()),
+        };
+        try {
+            if (!seed_folder_from_first(std::filesystem::u8path(Slic3r::data_dir()), seed_sources).empty())
+                migrate_data_dir();
+        } catch (const std::exception &e) {
+            BOOST_LOG_TRIVIAL(error) << "Could not copy user data into --datadir " << Slic3r::data_dir() << ": " << e.what();
+        }
+#endif
     }
 
     // start log here

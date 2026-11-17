@@ -485,17 +485,9 @@ if (WIN32)
     # This has to be a separate target due to the windows command line lenght limits
     add_custom_target(COPY_DLLS ALL DEPENDS ${PROJECT_DLL})
 
-    # Point <exe dir>/resources at this checkout's resources/ on every build, replacing a junction
-    # left by another checkout or a moved source folder (#25). A target, not a POST_BUILD step,
-    # so it also runs when the DLL is already up to date.
-    add_custom_target(link_resources ALL
-        COMMAND "${CMAKE_COMMAND}" "-DLINK=$<TARGET_FILE_DIR:${PROJECT_DLL}>/resources" "-DTARGET=${SLIC3R_RESOURCES_DIR}"
-                -P "${PROJECT_SOURCE_DIR}/cmake/RefreshJunction.cmake"
-        COMMENT "Linking the resources directory into the build tree"
-        VERBATIM
-    )
-    add_dependencies(link_resources ${PROJECT_DLL})
-    add_dependencies(${STARTUP_PROJECT_NAME} link_resources)
+    # No resources link in the build tree (#25): the app reads SLIC3R_RESOURCES_DIR, which each
+    # checkout's run config sets to that checkout's resources/. Without it, the app reads
+    # <exe dir>/resources (the packaged layout).
 
     if (CMAKE_CONFIGURATION_TYPES)
         # Multi-config generator (Visual Studio): copy DLLs for all configurations.
