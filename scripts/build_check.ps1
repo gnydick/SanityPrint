@@ -1,7 +1,7 @@
 # Build check run by the machinery git hooks (tiers.fast at commit, tiers.merge at push to main).
 #
 #   build_check.ps1 <component>...   build only what the touched components need (commit tier)
-#   build_check.ps1 -Merge           build SanityPrint_app_gui and run example_tests (push tier)
+#   build_check.ps1 -Merge           build SanityPrint_app_gui and run the merge-tier tests (push tier)
 #
 # Components are recorded in .claude/machinery/config.json (`components`). Each maps to one check:
 #   libslic3r -> target libslic3r       gui     -> target libslic3r_gui
@@ -69,7 +69,11 @@ $targets = @{ libslic3r = 'libslic3r'; gui = 'libslic3r_gui'; app = 'SanityPrint
 $checks = @()
 if ($Merge) {
   $checks += { Build 'SanityPrint_app_gui' }
-  $checks += { (Build 'example_tests') -and (Step 'ctest example_tests' $ctest @('--test-dir', "`"$bld`"", '-C', 'Release', '-R', '^example_tests$', '--output-on-failure')) }
+  # Merge-tier tests: the folders tests/example and tests/app_dirs (tiers.declaration).
+  # Each test is its own step with --no-tests=error, so a test that goes missing fails the check.
+  foreach ($t in 'example_tests', 'app_dirs_tests') {
+    $checks += [scriptblock]::Create("(Build '$t') -and (Step 'ctest $t' `$ctest @('--test-dir', '`"$bld`"', '-C', 'Release', '-R', '^$t`$', '--no-tests=error', '--output-on-failure'))")
+  }
 } else {
   if (-not $Components) { Fail 'no components given - usage: build_check.ps1 <component>... | -Merge' }
   foreach ($c in $Components) {
