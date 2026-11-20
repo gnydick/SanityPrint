@@ -170,3 +170,6 @@ http-client.private.env.json
 
 # Per-checkout app data folder: the SanityPrint run config passes --datadir $PROJECT_DIR$\.appdata (#25).
 /.appdata/
+
+# CLion project name: each checkout names itself after its folder (worktree name).
+.idea/.name
