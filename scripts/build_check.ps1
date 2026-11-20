@@ -30,7 +30,8 @@ if (-not (Test-Path $vswhere)) { Fail "vswhere not found at $vswhere - install V
 $vsPath = & $vswhere -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
 $vcvars = if ($vsPath) { Join-Path $vsPath 'VC\Auxiliary\Build\vcvars64.bat' } else { '' }
 if (-not $vcvars -or -not (Test-Path $vcvars)) { Fail "vcvars64.bat not found under '$vsPath' - install the VC.Tools.x86.x64 component" }
-$deps = Join-Path $CpbuildRoot 'OrcaSlicer_dep\usr\local'
+# upstream-refresh needs its own deps (upstream wants wxWidgets 3.3); main's OrcaSlicer_dep lacks them.
+$deps = Join-Path $CpbuildRoot 'OrcaSlicer_dep_refresh\usr\local'
 if (-not (Test-Path $deps)) { Fail "deps not installed at $deps - run .claude/skills/build-crealityprint/scripts/build_deps.ps1" }
 
 cmd /c "`"$vcvars`" && set" | ForEach-Object { if ($_ -match '^(.*?)=(.*)$') { [Environment]::SetEnvironmentVariable($matches[1], $matches[2]) } }
