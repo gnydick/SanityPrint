@@ -49,6 +49,24 @@ if(GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/.git")
         # full 4-part version string; without it the build is just the X.Y.Z from the tag.
         if(DEFINED ENV{BUILD_ID} AND NOT "$ENV{BUILD_ID}" STREQUAL "")
             set(SANITYPRINT_VERSION "${SANITYPRINT_VERSION}.$ENV{BUILD_ID}")
+        else()
+            # Our tags are Creality's tags, so the build number is the one Creality released
+            # under the same tag. creality_release.txt records that full version (a.b.c.build);
+            # scripts/update_creality_build.ps1 rewrites it from Creality's GitHub release.
+            # The AI chat page compares only the build number against its minimum.
+            set(_cp_release_file "${CMAKE_SOURCE_DIR}/creality_release.txt")
+            set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${_cp_release_file}")
+            set(_cp_release "")
+            if(EXISTS "${_cp_release_file}")
+                file(STRINGS "${_cp_release_file}" _cp_release LIMIT_COUNT 1)
+                string(STRIP "${_cp_release}" _cp_release)
+            endif()
+            if(_cp_release MATCHES "^([0-9]+\\.[0-9]+\\.[0-9]+)\\.([0-9]+)$" AND CMAKE_MATCH_1 STREQUAL SANITYPRINT_VERSION)
+                set(SANITYPRINT_VERSION "${_cp_release}")
+            else()
+                message(FATAL_ERROR "creality_release.txt holds '${_cp_release}', which is not Creality's release "
+                    "for tag ${_cp_git_tag}. Run: powershell -File scripts/update_creality_build.ps1")
+            endif()
         endif()
     endif()
 endif()
@@ -70,4 +88,11 @@ string(REGEX MATCH "^([0-9]+)\\.([0-9]+)\\.([0-9]+)" CXSW3D ${SANITYPRINT_VERSIO
 set(SANITYPRINT_VERSION_MAJOR ${CMAKE_MATCH_1})
 set(SANITYPRINT_VERSION_MINOR ${CMAKE_MATCH_2})
 set(SANITYPRINT_VERSION_PATCH ${CMAKE_MATCH_3})
+# SLIC3R_VERSION keeps upstream's four-part shape (a.b.c.d, like the 7.0.0.0 placeholder):
+# the Windows manifest rejects fewer parts, and upstream code reads it by fixed offsets.
+# A version from a git tag alone has three parts, so it gets ".0".
+if(SANITYPRINT_VERSION MATCHES "^[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+")
 set(SLIC3R_VERSION "${SANITYPRINT_VERSION}")
+else()
+set(SLIC3R_VERSION "${SANITYPRINT_VERSION_MAJOR}.${SANITYPRINT_VERSION_MINOR}.${SANITYPRINT_VERSION_PATCH}.0")
+endif()
