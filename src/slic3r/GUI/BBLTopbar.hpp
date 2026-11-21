@@ -53,7 +53,6 @@ public:
     void OnLogo(wxAuiToolBarEvent& evt);
     void OnDownMgr(wxAuiToolBarEvent& evt);
     void OnLogin(wxAuiToolBarEvent& evt);
-    void OnFeedback(wxAuiToolBarEvent& evt);
     void EnableSaveItem(bool enable);
     void EnableUndoItem(bool enable);
     void EnableRedoItem(bool enable);
@@ -144,7 +143,6 @@ private:
     wxAuiToolBarItem* m_save_project_item;
     wxAuiToolBarItem* m_upload_btn;
     wxAuiToolBarItem* m_feedback_separator_item{nullptr};
-    wxAuiToolBarItem* m_feedback_item;
     wxAuiToolBarItem* m_tabs_leading_spacer_item{nullptr};
     wxAuiToolBarItem* m_title_spacer_item{nullptr};
     wxControl* m_easy_mode_switch_ctrl{ nullptr };

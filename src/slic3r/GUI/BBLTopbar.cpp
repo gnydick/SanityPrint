@@ -684,7 +684,6 @@ enum CUSTOM_ID
     ID_DOWNMANAGER,
     ID_LOGIN,
     ID_FILAMENT_SYNC,
-    ID_FEEDBACK_BTN,
     ID_TOP_MORE,
     ID_TOOL_BAR = 3200,
     ID_AMS_NOTEBOOK,
@@ -1097,6 +1096,15 @@ void BBLTopbar::Init(wxFrame* parent)
     // child painted on top of the toolbar, and anything inside tab..separator gets covered by it.
     addDipSpacer(10);
     m_feedback_separator_item = this->AddSeparator();
+    // Dedicated gap between the separator and the sync button: the push-progress bar is painted ONLY
+    // here during a sync (layout_sync_overlay), so it never overlaps the title region.
+    addDipSpacer(170);
+
+    // Filament sync button, right of the title region so the filename label can never overlap it.
+    {
+        wxBitmap sync_bitmap = create_scaled_bitmap(is_dark ? "topbar_sync" : "topbar_sync_light", this, (TOPBAR_ICON_SIZE));
+        this->AddTool(ID_FILAMENT_SYNC, "", sync_bitmap, _L("Sync filaments to printers"));
+    }
     addDipSpacer(10);
 
     m_easy_mode_switch_ctrl = new EasyModeSwitchCtrl(this);
@@ -1105,16 +1113,7 @@ void BBLTopbar::Init(wxFrame* parent)
     m_easy_mode_switch_item->SetMinSize(m_easy_mode_switch_ctrl->GetMinSize());
     m_action_spacer_items.push_back(addDipSpacer(10));
 
-    {
-        wxSize   feedbackSize(FromDIP(24), FromDIP(24));
-        wxBitmap feedback_bitmap = create_scaled_bitmap3(is_dark ? "user_feedback" : "user_feedback_light", this, (TOPBAR_ICON_SIZE), feedbackSize);
-        wxBitmap feedback_disable_bitmap = create_scaled_bitmap3("user_feedback_disable", this, (TOPBAR_ICON_SIZE), feedbackSize);
-        wxBitmap feedback_hover_bitmap = create_scaled_bitmap3("user_feedback_hover", this, (TOPBAR_ICON_SIZE), feedbackSize);
-        m_feedback_item = this->AddTool(ID_FEEDBACK_BTN, "", feedback_bitmap, _L("User Feedback"));
-        m_feedback_item->SetDisabledBitmap(feedback_disable_bitmap);
-        m_feedback_item->SetHoverBitmap(feedback_hover_bitmap);
-        m_action_spacer_items.push_back(addDipSpacer(10));
-    }
+    // No User Feedback button: it sends feedback to Creality, not to SanityPrint.
     m_more_item = AddTool(ID_TOP_MORE, "", create_scaled_bitmap("toolbar_more", this, 20), _L("More"));
     m_more_item->SetKind(m_title_spacer_item->GetKind());
     m_more_item->SetSpacerPixels(0);
@@ -1187,7 +1186,6 @@ void BBLTopbar::Init(wxFrame* parent)
     this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnIconize, this, ID_MINBTN);
     this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnFullScreen, this, wxID_MAXIMIZE_FRAME);
     this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnCloseFrame, this, wxID_CLOSE_FRAME);
-    this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnFeedback, this, ID_FEEDBACK_BTN);
     Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnMore, this, ID_TOP_MORE);
     this->Bind(wxEVT_LEFT_DCLICK, &BBLTopbar::OnMouseLeftDClock, this);
     #if defined(WIN32) || defined(__WXGTK__)
@@ -1694,7 +1692,6 @@ void BBLTopbar::OnDownMgr(wxAuiToolBarEvent& evt) {}
 
 void BBLTopbar::OnLogin(wxAuiToolBarEvent& evt) {}
 
-void BBLTopbar::OnFeedback(wxAuiToolBarEvent& evt) {}
 
 void BBLTopbar::SetFileMenu(wxMenu* file_menu)
 {
@@ -1774,8 +1771,6 @@ void BBLTopbar::SetActionsCollapsed(bool collapsed)
     m_easy_mode_switch_item->SetKind(collapsed ? spacer_kind : control_kind);
     m_easy_mode_switch_item->SetSpacerPixels(0);
     m_easy_mode_switch_ctrl->Show(!collapsed);
-    m_feedback_item->SetKind(collapsed ? spacer_kind : wxITEM_NORMAL);
-    m_feedback_item->SetSpacerPixels(0);
     m_more_item->SetKind(collapsed ? wxITEM_NORMAL : spacer_kind);
     for (auto* spacer : m_action_spacer_items)
         spacer->SetSpacerPixels(collapsed ? 0 : FromDIP(10));
@@ -1829,15 +1824,9 @@ void BBLTopbar::OnMore(wxAuiToolBarEvent& event)
     wxMenu menu;
     const int mode_id = menu.Append(wxID_ANY, _L("Switch AI/Pro mode"))->GetId();
     menu.Enable(mode_id, m_easy_mode_switch_ctrl->IsEnabled());
-    const int feedback_id = menu.Append(wxID_ANY, _L("User Feedback"))->GetId();
-    menu.Enable(feedback_id, GetToolEnabled(ID_FEEDBACK_BTN));
     menu.Bind(wxEVT_MENU, [this](wxCommandEvent&) {
         static_cast<EasyModeSwitchCtrl*>(m_easy_mode_switch_ctrl)->ToggleMode();
     }, mode_id);
-    menu.Bind(wxEVT_MENU, [this](wxCommandEvent&) {
-        wxAuiToolBarEvent feedback_event(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, ID_FEEDBACK_BTN);
-        OnFeedback(feedback_event);
-    }, feedback_id);
     const wxRect rect = GetToolRect(ID_TOP_MORE);
     PopupMenu(&menu, wxPoint(rect.x, rect.GetBottom()));
 }
